@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1 语言规范与 S2 CLI、错误模型和词法分析已审查通过并合入 `main`；S3 AST 与 parser 已在 `stage/s03-ast-parser` 完成代码和测试，等待主窗口审查。**S3 parser 复用 S2 的 `SyntaxError` 诊断；runtime 尚未实现。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1 语言规范、S2 CLI/错误/词法分析已审查通过；S3 AST/parser 已带一项明确遗留审查通过并合入 `main`。**S3 parser 复用 S2 的 `SyntaxError` 诊断；runtime 尚未实现。S4 开工先为索引和字段访问 AST 保存访问符位置并补定位测试。
 
 ## 阅读入口
 
