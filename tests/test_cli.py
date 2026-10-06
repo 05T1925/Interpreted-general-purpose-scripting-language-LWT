@@ -26,6 +26,16 @@ def run_lwt(
     )
 
 
+def run_source(
+    source: str, *, input_bytes: bytes = b""
+) -> tuple[str, subprocess.CompletedProcess[bytes]]:
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "program.lwt"
+        path.write_text(source, encoding="utf-8")
+        result = run_lwt(str(path), input_bytes=input_bytes)
+    return str(path), result
+
+
 class CliArgumentTests(unittest.TestCase):
     def test_source_without_program_arguments(self) -> None:
         parsed = parse_cli_args(["script.anything"])
@@ -351,9 +361,9 @@ class CliProcessTests(unittest.TestCase):
 
     def test_unimplemented_valid_syntax_is_rejected_before_any_output(self) -> None:
         cases = (
-            ('emit "hidden"; when (false) { emit "also hidden"; }', "when"),
             ('emit "hidden"; len("value");', "len"),
             ('emit "hidden"; emit [1, 2];', "["),
+            ('emit "hidden"; when (true) { each (x in [1]) { emit x; } }', "each"),
         )
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "incomplete.lwt"
@@ -369,6 +379,113 @@ class CliProcessTests(unittest.TestCase):
                         "runtime support for this syntax is not implemented yet\n",
                     )
                     self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_when_executes_only_the_selected_branch(self) -> None:
+        source = (
+            'when (true) { emit "then"; } otherwise { emit input(); } '
+            'when (false) { emit "wrong"; } otherwise { emit "else"; } '
+            'when (false) { emit "also wrong"; } emit input();'
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "when.lwt"
+            path.write_text(source, encoding="utf-8")
+            result = run_lwt(str(path), input_bytes=b"still here\n")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"then\nelse\nstill here\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_when_condition_requires_boolean_at_keyword_location(self) -> None:
+        source = "  when (1) { emit 1; }"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "when-type.lwt"
+            path.write_text(source, encoding="utf-8")
+            result = run_lwt(str(path))
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:3: RuntimeError: when condition must be a boolean\n",
+        )
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_when_block_has_scope_and_updates_nearest_outer_binding(self) -> None:
+        source = (
+            "let count = 1; when (true) { let local = count + 1; "
+            "count = local; emit local; } emit count; emit local;"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "when-scope.lwt"
+            path.write_text(source, encoding="utf-8")
+            result = run_lwt(str(path))
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"2\n2\n")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.rfind('local') + 1}: RuntimeError: undefined variable 'local'\n",
+        )
+
+    def test_while_rechecks_condition_and_creates_a_scope_each_iteration(self) -> None:
+        source = (
+            "let i = 0; while (i < 4) { let iteration = i; "
+            "when (iteration % 2 == 0) { emit iteration; } "
+            "otherwise { emit -iteration; } i = i + 1; } emit i;"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "while.lwt"
+            path.write_text(source, encoding="utf-8")
+            result = run_lwt(str(path))
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"0\n-1\n2\n-3\n4\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_while_false_runs_zero_times_and_does_not_leak_bindings(self) -> None:
+        source = 'while (false) { emit "wrong"; } emit "done";'
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "while-zero.lwt"
+            path.write_text(source, encoding="utf-8")
+            result = run_lwt(str(path))
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"done\n")
+        self.assertEqual(result.stderr, b"")
+
+        source = "let i = 0; while (i < 1) { let hidden = 7; i = i + 1; } emit hidden;"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "while-scope.lwt"
+            path.write_text(source, encoding="utf-8")
+            result = run_lwt(str(path))
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.rfind('hidden') + 1}: RuntimeError: undefined variable 'hidden'\n",
+        )
+
+    def test_while_condition_requires_boolean_at_keyword_location(self) -> None:
+        source = "while (null) {}"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "while-type.lwt"
+            path.write_text(source, encoding="utf-8")
+            result = run_lwt(str(path))
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:1: RuntimeError: while condition must be a boolean\n",
+        )
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_break_and_continue_remain_syntax_errors_before_execution(self) -> None:
+        for keyword in ("break", "continue"):
+            source = f'emit "hidden"; {keyword};'
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / f"{keyword}.lwt"
+                path.write_text(source, encoding="utf-8")
+                with self.subTest(keyword=keyword):
+                    result = run_lwt(str(path))
+            self.assertEqual(result.returncode, 2)
+            self.assertEqual(result.stdout, b"")
+            self.assertIn(b"SyntaxError", result.stderr)
+            self.assertNotIn(b"Traceback", result.stderr)
 
     def test_syntax_error_has_source_path_position_and_no_traceback(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -420,6 +537,254 @@ class CliProcessTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout, b"")
         self.assertEqual(result.stderr, b"")
+
+
+class S5FunctionCliTests(unittest.TestCase):
+    def test_functions_are_preregistered_and_top_level_order_is_preserved(self) -> None:
+        source = (
+            'emit add(2, 3); fn add(left, right) { return left + right; } '
+            'emit "after";'
+        )
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"5\nafter\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_mutual_recursion_and_recursive_activation_records(self) -> None:
+        source = (
+            'emit is_even(12); emit is_odd(7); emit factorial(6); '
+            'fn is_even(n) { when (n == 0) { return true; } return is_odd(n - 1); } '
+            'fn is_odd(n) { when (n == 0) { return false; } return is_even(n - 1); } '
+            'fn factorial(n) { let result = 1; when (n > 1) { '
+            'result = n * factorial(n - 1); } return result; }'
+        )
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"true\ntrue\n720\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_return_propagates_from_nested_block_when_and_while(self) -> None:
+        source = (
+            'fn find(limit) { let i = 0; while (i < limit) { '
+            'when (i == 2) { { return i + 10; } } i = i + 1; } return; } '
+            'fn explicit_null() { return null; } fn empty_return() { return; } '
+            'fn natural_end() { emit "body"; } '
+            'emit find(5); emit find(1); emit explicit_null(); emit empty_return(); '
+            'emit natural_end();'
+        )
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"12\nnull\nnull\nnull\nbody\nnull\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_function_activation_uses_fresh_locals_and_shares_globals(self) -> None:
+        source = (
+            'let total = 1; fn add_global(amount) { total = total + amount; '
+            'return total; } fn local() { let count = 0; count = count + 1; '
+            'return count; } fn show(parameter) { { let parameter = parameter + 1; '
+            'emit parameter; } return parameter; } '
+            'emit add_global(2); emit total; emit local(); emit local(); emit show(5);'
+        )
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"3\n3\n1\n1\n6\n5\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_function_cannot_read_the_callers_local_variable(self) -> None:
+        source = (
+            'fn outer() { let local = 5; return inner(); } '
+            'fn inner() { return local; } emit outer();'
+        )
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.index('local', source.index('fn inner')) + 1}: "
+            "RuntimeError: undefined variable 'local'\n",
+        )
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_function_does_not_see_a_global_before_its_let_executes(self) -> None:
+        source = "fn read_future() { return future; } emit read_future(); let future = 7;"
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.index('future', source.index('return future')) + 1}: "
+            "RuntimeError: undefined variable 'future'\n",
+        )
+
+    def test_unknown_function_is_resolved_before_its_arguments(self) -> None:
+        source = 'emit "before"; missing(input());'
+        path, result = run_source(source, input_bytes=b"\xff\n")
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"before\n")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.index('missing') + 1}: RuntimeError: undefined function 'missing'\n",
+        )
+        self.assertNotIn(b"valid UTF-8", result.stderr)
+
+    def test_unknown_calls_are_not_pre_resolved_in_unselected_or_unused_code(self) -> None:
+        source = (
+            'when (false) { missing(input()); } fn unused() { never_declared(); } '
+            'emit input();'
+        )
+        path, result = run_source(source, input_bytes=b"available\n")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"available\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_function_arguments_evaluate_left_to_right_before_arity_check(self) -> None:
+        source = (
+            'fn mark(value) { emit value; return value; } '
+            'fn join(left, right) { return left + right; } '
+            'emit join(mark("first"), mark("second")); '
+            'fn one(value) { return value; } '
+            'fn extra_a() { emit "arg-a"; return 1; } '
+            'fn extra_b() { emit "arg-b"; return 2; } '
+            'emit one(extra_a(), extra_b());'
+        )
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"first\nsecond\nfirstsecond\narg-a\narg-b\n")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.rindex('one(') + 1}: RuntimeError: "
+            "function 'one' expects 1 arguments, got 2\n",
+        )
+
+    def test_function_arity_error_for_too_few_arguments_uses_call_location(self) -> None:
+        source = "fn one(value) { return value; } emit one();"
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.rindex('one(') + 1}: RuntimeError: "
+            "function 'one' expects 1 arguments, got 0\n",
+        )
+
+    def test_input_and_emit_work_inside_user_functions(self) -> None:
+        source = 'fn ask() { emit "prompt"; return input(); } emit ask();'
+        path, result = run_source(source, input_bytes="雪\n".encode("utf-8"))
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, "prompt\n雪\n".encode("utf-8"))
+        self.assertEqual(result.stderr, b"")
+
+    def test_duplicate_function_is_reported_before_top_level_output(self) -> None:
+        source = 'emit "must not print"; fn same() {} fn same() {}'
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.rfind('fn same') + 4}: RuntimeError: "
+            "duplicate function declaration 'same'\n",
+        )
+
+    def test_all_builtin_function_names_are_reserved(self) -> None:
+        for name in (
+            "input",
+            "args",
+            "read_text",
+            "len",
+            "split",
+            "trim",
+            "to_int",
+            "str",
+            "push",
+            "fail",
+        ):
+            source = f'emit "must not print"; fn {name}() {{}}'
+            path, result = run_source(source)
+            with self.subTest(name=name):
+                self.assertEqual(result.returncode, 3)
+                self.assertEqual(result.stdout, b"")
+                self.assertEqual(
+                    result.stderr.decode("utf-8"),
+                    f"{path}:1:{source.index(f'fn {name}') + 4}: RuntimeError: "
+                    f"function name '{name}' conflicts with a built-in\n",
+                )
+                self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_parameter_cannot_be_redeclared_in_function_outer_body(self) -> None:
+        source = "fn f(arg) { let arg = input(); } f(1);"
+        path, result = run_source(source, input_bytes=b"\xff")
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.rfind('let arg') + len('let ') + 1}: RuntimeError: "
+            "variable 'arg' is already declared in this scope\n",
+        )
+        self.assertNotIn(b"valid UTF-8", result.stderr)
+
+    def test_recursion_limit_is_runtime_error_at_recursive_call(self) -> None:
+        source = "fn spin() { return spin(); } spin();"
+        path, result = run_source(source)
+        recursive_call = source.index("spin()", source.index("{") + 1)
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{recursive_call + 1}: RuntimeError: host recursion limit reached\n",
+        )
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_record_name_shares_no_function_namespace_but_remains_incomplete(self) -> None:
+        source = 'fn Person() {} emit "hidden"; record Person {};'
+        path, result = run_source(source)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(result.stdout, b"")
+        self.assertIn(b"Incomplete", result.stderr)
+        self.assertNotIn(b"duplicate function", result.stderr)
+
+    def test_unimplemented_construct_in_uninvoked_function_prevents_execution(self) -> None:
+        source = 'emit "hidden"; fn unused() { emit len(input()); }'
+        path, result = run_source(source, input_bytes=b"\xff")
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(result.stdout, b"")
+        self.assertIn(b"Incomplete", result.stderr)
+        self.assertNotIn(b"valid UTF-8", result.stderr)
+
+    def test_unimplemented_builtins_report_incomplete_not_undefined_function(self) -> None:
+        for name in (
+            "args",
+            "read_text",
+            "len",
+            "split",
+            "trim",
+            "to_int",
+            "str",
+            "push",
+            "fail",
+        ):
+            source = f'emit "hidden"; {name}();'
+            path, result = run_source(source)
+            with self.subTest(name=name):
+                self.assertEqual(result.returncode, 1)
+                self.assertEqual(result.stdout, b"")
+                self.assertIn(b"Incomplete", result.stderr)
+                self.assertNotIn(b"undefined function", result.stderr)
+
+    def test_array_index_and_field_access_remain_incomplete(self) -> None:
+        cases = (
+            ('emit "hidden"; emit [1][0];', "[1]"),
+            ('fn get() { return 1; } emit "hidden"; emit get().field;', "get().field"),
+        )
+        for source, marker in cases:
+            path, result = run_source(source)
+            with self.subTest(source=source):
+                self.assertEqual(result.returncode, 1)
+                self.assertEqual(result.stdout, b"")
+                self.assertEqual(
+                    result.stderr.decode("utf-8"),
+                    f"{path}:1:{source.index(marker) + 1}: Incomplete: "
+                    "runtime support for this syntax is not implemented yet\n",
+                )
 
 
 if __name__ == "__main__":

@@ -1,8 +1,7 @@
-"""S4 scalar runtime for the LWT language.
+"""S4/S5 runtime for the currently supported LWT language subset.
 
-This module deliberately executes only literals, variables, scalar operators,
-explicit blocks, ``emit`` and the ``input()`` builtin. Unsupported but valid
-syntax is detected before execution so it cannot produce partial output.
+Unsupported but valid syntax is detected before execution so it cannot produce
+partial output.
 """
 
 from __future__ import annotations
@@ -16,10 +15,12 @@ from .ast_nodes import (
     BinaryExpression,
     Block,
     CallExpression,
+    EachStatement,
     EmitStatement,
     Expression,
     ExpressionStatement,
     FieldExpression,
+    FunctionDeclaration,
     IndexExpression,
     LetStatement,
     LiteralExpression,
@@ -32,8 +33,6 @@ from .ast_nodes import (
     VariableExpression,
     WhenStatement,
     WhileStatement,
-    EachStatement,
-    FunctionDeclaration,
 )
 from .errors import LwtError, SourceLocation
 from .lexer import TokenKind
@@ -50,6 +49,28 @@ _LITERAL_KINDS = frozenset(
         TokenKind.NULL,
     }
 )
+_BUILTIN_NAMES = frozenset(
+    {
+        "input",
+        "args",
+        "read_text",
+        "len",
+        "split",
+        "trim",
+        "to_int",
+        "str",
+        "push",
+        "fail",
+    }
+)
+
+
+class _ReturnSignal(Exception):
+    """Internal control transfer caught only by the active function call."""
+
+    def __init__(self, value: object) -> None:
+        super().__init__()
+        self.value = value
 
 
 class Environment:
@@ -68,6 +89,12 @@ class Environment:
                 return environment
             environment = environment.parent
         return None
+
+    def global_scope(self) -> Environment:
+        environment = self
+        while environment.parent is not None:
+            environment = environment.parent
+        return environment
 
 
 def parse_decimal_integer(lexeme: str) -> int:
@@ -103,9 +130,10 @@ def execute(
     input_stream: BinaryIO | None = None,
     output_stream: TextIO | None = None,
 ) -> None:
-    """Execute an S4 program or raise a located LWT error.
+    """Execute a supported LWT program or raise a located LWT error.
 
-    A whole-program capability scan happens before any evaluation or output.
+    Function registration and the whole-program capability scan happen before
+    any evaluation or output.
     ``input_stream`` is binary so LF and CRLF handling is independent of host
     text-mode newline conversion.
     """
@@ -116,6 +144,23 @@ def execute(
         output_stream = sys.stdout
 
     try:
+        functions: dict[str, FunctionDeclaration] = {}
+        for item in program.items:
+            if not isinstance(item, FunctionDeclaration):
+                continue
+            name = item.name.name
+            if name in _BUILTIN_NAMES:
+                _runtime_error(
+                    f"function name {name!r} conflicts with a built-in",
+                    item.name.location,
+                )
+            if name in functions:
+                _runtime_error(
+                    f"duplicate function declaration {name!r}",
+                    item.name.location,
+                )
+            functions[name] = item
+
         unsupported = _first_unsupported(program)
         if unsupported is not None:
             raise LwtError(
@@ -127,7 +172,11 @@ def execute(
 
         environment = Environment()
         for item in program.items:
-            _execute_statement(item, environment, input_stream, output_stream)
+            if isinstance(item, FunctionDeclaration):
+                continue
+            _execute_statement(
+                item, environment, input_stream, output_stream, functions
+            )
     except RecursionError:
         # Report the host limit as a runtime failure without imposing a fixed
         # language-level depth limit or leaking a Python traceback.
@@ -148,8 +197,16 @@ def _first_unsupported(program: Program) -> SourceLocation | None:
 
 
 def _unsupported_statement(statement: object) -> SourceLocation | None:
+    if isinstance(statement, FunctionDeclaration):
+        return _unsupported_statement(statement.body)
     if isinstance(statement, LetStatement):
         return _unsupported_expression(statement.initializer)
+    if isinstance(statement, ReturnStatement):
+        return (
+            _unsupported_expression(statement.value)
+            if statement.value is not None
+            else None
+        )
     if isinstance(statement, EmitStatement):
         return _unsupported_expression(statement.value)
     if isinstance(statement, ExpressionStatement):
@@ -160,14 +217,25 @@ def _unsupported_statement(statement: object) -> SourceLocation | None:
             if location is not None:
                 return location
         return None
+
+    if isinstance(statement, WhenStatement):
+        return (
+            _unsupported_expression(statement.condition)
+            or _unsupported_statement(statement.then_branch)
+            or (
+                _unsupported_statement(statement.otherwise_branch)
+                if statement.otherwise_branch is not None
+                else None
+            )
+        )
+    if isinstance(statement, WhileStatement):
+        return _unsupported_expression(statement.condition) or _unsupported_statement(
+            statement.body
+        )
     if isinstance(
         statement,
         (
             RecordDeclaration,
-            FunctionDeclaration,
-            ReturnStatement,
-            WhenStatement,
-            WhileStatement,
             EachStatement,
         ),
     ):
@@ -193,7 +261,10 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
             return expression.target.location
         return _unsupported_expression(expression.value)
     if isinstance(expression, CallExpression):
-        if expression.callee.name != "input":
+        if (
+            expression.callee.name in _BUILTIN_NAMES
+            and expression.callee.name != "input"
+        ):
             return expression.location
         for argument in expression.arguments:
             location = _unsupported_expression(argument)
@@ -213,6 +284,7 @@ def _execute_statement(
     environment: Environment,
     input_stream: BinaryIO,
     output_stream: TextIO,
+    functions: dict[str, FunctionDeclaration],
 ) -> None:
     if isinstance(statement, LetStatement):
         name = statement.name.name
@@ -221,24 +293,77 @@ def _execute_statement(
                 f"variable {name!r} is already declared in this scope",
                 statement.name.location,
             )
-        value = _evaluate(statement.initializer, environment, input_stream)
+        value = _evaluate(
+            statement.initializer, environment, input_stream, output_stream, functions
+        )
         environment.values[name] = value
         return
 
+    if isinstance(statement, ReturnStatement):
+        value = (
+            _evaluate(statement.value, environment, input_stream, output_stream, functions)
+            if statement.value is not None
+            else None
+        )
+        raise _ReturnSignal(value)
+
     if isinstance(statement, EmitStatement):
-        value = _evaluate(statement.value, environment, input_stream)
+        value = _evaluate(statement.value, environment, input_stream, output_stream, functions)
         output_stream.write(_display_scalar(value) + "\n")
         return
 
     if isinstance(statement, ExpressionStatement):
-        _evaluate(statement.expression, environment, input_stream)
+        _evaluate(statement.expression, environment, input_stream, output_stream, functions)
         return
 
     if isinstance(statement, Block):
         nested = Environment(environment)
         for child in statement.statements:
-            _execute_statement(child, nested, input_stream, output_stream)
+            _execute_statement(child, nested, input_stream, output_stream, functions)
         return
+
+    if isinstance(statement, WhenStatement):
+        condition = _evaluate(
+            statement.condition, environment, input_stream, output_stream, functions
+        )
+        if type(condition) is not bool:
+            _runtime_error("when condition must be a boolean", statement.location)
+        if condition:
+            _execute_statement(
+                statement.then_branch,
+                environment,
+                input_stream,
+                output_stream,
+                functions,
+            )
+        elif statement.otherwise_branch is not None:
+            _execute_statement(
+                statement.otherwise_branch,
+                environment,
+                input_stream,
+                output_stream,
+                functions,
+            )
+        return
+
+    if isinstance(statement, WhileStatement):
+        while True:
+            condition = _evaluate(
+                statement.condition,
+                environment,
+                input_stream,
+                output_stream,
+                functions,
+            )
+            if type(condition) is not bool:
+                _runtime_error("while condition must be a boolean", statement.location)
+            if not condition:
+                return
+            # Executing the Block creates a new child environment on every
+            # iteration, so bindings from the prior iteration are discarded.
+            _execute_statement(
+                statement.body, environment, input_stream, output_stream, functions
+            )
 
     # The capability scan must reject every other statement before execution.
     raise AssertionError(f"unsupported statement passed to evaluator: {type(statement)!r}")
@@ -248,6 +373,8 @@ def _evaluate(
     expression: Expression,
     environment: Environment,
     input_stream: BinaryIO,
+    output_stream: TextIO,
+    functions: dict[str, FunctionDeclaration],
 ) -> object:
     if isinstance(expression, LiteralExpression):
         if expression.kind is TokenKind.INT:
@@ -264,7 +391,7 @@ def _evaluate(
         return binding.values[expression.name.name]
 
     if isinstance(expression, AssignmentExpression):
-        # S4's whole-program scan admits only simple variable targets.
+        # The whole-program scan admits only simple variable targets.
         if not isinstance(expression.target, VariableExpression):
             raise AssertionError("unsupported assignment target passed to evaluator")
         identifier = expression.target.name
@@ -274,12 +401,16 @@ def _evaluate(
                 f"undefined variable {identifier.name!r}",
                 expression.operator_location,
             )
-        value = _evaluate(expression.value, environment, input_stream)
+        value = _evaluate(
+            expression.value, environment, input_stream, output_stream, functions
+        )
         binding.values[identifier.name] = value
         return value
 
     if isinstance(expression, UnaryExpression):
-        value = _evaluate(expression.operand, environment, input_stream)
+        value = _evaluate(
+            expression.operand, environment, input_stream, output_stream, functions
+        )
         if expression.operator is TokenKind.MINUS:
             if type(value) is not int:
                 _runtime_error("unary '-' requires an integer", expression.location)
@@ -291,13 +422,15 @@ def _evaluate(
         raise AssertionError(f"unknown unary operator: {expression.operator!r}")
 
     if isinstance(expression, BinaryExpression):
-        left = _evaluate(expression.left, environment, input_stream)
+        left = _evaluate(expression.left, environment, input_stream, output_stream, functions)
         if expression.operator is TokenKind.AND:
             if type(left) is not bool:
                 _runtime_error("'and' requires boolean operands", expression.operator_location)
             if not left:
                 return False
-            right = _evaluate(expression.right, environment, input_stream)
+            right = _evaluate(
+                expression.right, environment, input_stream, output_stream, functions
+            )
             if type(right) is not bool:
                 _runtime_error("'and' requires boolean operands", expression.operator_location)
             return right
@@ -306,30 +439,89 @@ def _evaluate(
                 _runtime_error("'or' requires boolean operands", expression.operator_location)
             if left:
                 return True
-            right = _evaluate(expression.right, environment, input_stream)
+            right = _evaluate(
+                expression.right, environment, input_stream, output_stream, functions
+            )
             if type(right) is not bool:
                 _runtime_error("'or' requires boolean operands", expression.operator_location)
             return right
 
         # Every non-short-circuit binary operation evaluates left then right.
-        right = _evaluate(expression.right, environment, input_stream)
+        right = _evaluate(
+            expression.right, environment, input_stream, output_stream, functions
+        )
         return _evaluate_binary(expression, left, right)
 
     if isinstance(expression, CallExpression):
-        arguments = [
-            _evaluate(argument, environment, input_stream)
-            for argument in expression.arguments
-        ]
-        if expression.callee.name == "input":
+        name = expression.callee.name
+        if name == "input":
+            arguments = [
+                _evaluate(argument, environment, input_stream, output_stream, functions)
+                for argument in expression.arguments
+            ]
             if arguments:
                 _runtime_error(
                     "input expects 0 arguments", expression.callee.location
                 )
             return _read_input_line(input_stream, expression.callee.location)
-        raise AssertionError("unsupported function call passed to evaluator")
+        if name in _BUILTIN_NAMES:
+            # Unimplemented builtins are rejected by the preflight scan.
+            raise AssertionError("unsupported builtin call passed to evaluator")
+
+        declaration = functions.get(name)
+        if declaration is None:
+            _runtime_error(f"undefined function {name!r}", expression.callee.location)
+
+        arguments = [
+            _evaluate(argument, environment, input_stream, output_stream, functions)
+            for argument in expression.arguments
+        ]
+        if len(arguments) != len(declaration.parameters):
+            _runtime_error(
+                f"function {name!r} expects {len(declaration.parameters)} arguments, "
+                f"got {len(arguments)}",
+                expression.callee.location,
+            )
+        try:
+            return _invoke_user_function(
+                declaration,
+                arguments,
+                environment.global_scope(),
+                input_stream,
+                output_stream,
+                functions=functions,
+            )
+        except RecursionError:
+            _runtime_error("host recursion limit reached", expression.callee.location)
 
     # Unsupported nodes are rejected by _first_unsupported before execution.
     raise AssertionError(f"unsupported expression passed to evaluator: {type(expression)!r}")
+
+
+def _invoke_user_function(
+    declaration: FunctionDeclaration,
+    arguments: list[object],
+    global_environment: Environment,
+    input_stream: BinaryIO,
+    output_stream: TextIO,
+    functions: dict[str, FunctionDeclaration],
+) -> object:
+    """Run a function with a fresh activation whose parent is always global."""
+
+    activation = Environment(global_environment)
+    for parameter, argument in zip(declaration.parameters, arguments):
+        activation.values[parameter.name] = argument
+
+    try:
+        # The function's outer body shares its scope with the parameters.
+        # Nested Block statements create child scopes in _execute_statement.
+        for statement in declaration.body.statements:
+            _execute_statement(
+                statement, activation, input_stream, output_stream, functions
+            )
+    except _ReturnSignal as returned:
+        return returned.value
+    return None
 
 
 def _evaluate_binary(
