@@ -71,6 +71,6 @@
 
 课件[课程简介](../第1章：课程简介.pdf)、[编程智能体简介](../第%202%20章：编程智能体简介.pdf)、[工作流与代码审查](../第%203%20章：工作流与代码审查.pdf)强调接口、测试、性能、Agent 规则/技能和“修改→审查→测试→提交”闭环。本方案将它们转化为可核对的交付过程；课件属于参考资料，具体作业要求仍以 `大作业内容.md` 为准。
 
-远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，并合并其仅含 README 的初始提交与本地规划提交；是否已推送，以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
+远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，合并其仅含 README 的初始提交与本地规划提交，并正常推送 `main`；后续同步状态以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
 
 **当前仅完成规划和 Git 历史整合。** 解释器、黑盒通过率、Agent 应用、性能数据、PPT 均待实施；详细进度见 `project.md`。外部资料支持方法选择，LWT 的语法、应用边界和阶段门槛是本项目的设计判断，后续以实现和测试证据复检。

@@ -11,8 +11,8 @@
 | 项目 | 状态 | 证据或说明 |
 |---|---|---|
 | Git 本地仓库 | 已建立 | `main` 有原始规划提交；已合并远端独立的 README 初始提交 |
-| GitHub `origin` | 已绑定并 fetch | [目标仓库](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)；推送状态以 `git status -sb` 核实 |
-| 总方向与详细规划 | 已编写，待本次复检提交 | 根目录两份 Markdown；可随实施修订 |
+| GitHub `origin` | 已绑定并推送 `main` | [目标仓库](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)；本地 `main` 跟踪 `origin/main` |
+| 总方向与详细规划 | 已编写并提交 | 根目录两份 Markdown；可随实施修订 |
 | 正式语法规范 | 未开始 | 下一个核心任务，不能将规划草案冒充正式规范 |
 | 解释器与示例 | 未开始 | `python -m lwt` 尚不存在 |
 | 黑盒测试/CI | 未开始 | `tools/run_tests.py` 尚不存在 |
@@ -30,10 +30,9 @@
 
 ## 下一步工作顺序
 
-1. 完成本次规划复检，核对链接、需求覆盖和远端同步。
-2. 写 `docs/language-spec.md`：正式词法、EBNF、类型/作用域、CLI 与错误约定；逐项解决[详细规划第 3 节](详细实施规划.md)的歧义。
-3. 依次实现 lexer、parser、runtime 和一键黑盒驱动；每个功能随规范和测试一起提交。
-4. 在功能稳定后进行 Agent 盲测、应用开发、性能实验、PPT 与新克隆验收。
+1. 写 `docs/language-spec.md`：正式词法、EBNF、类型/作用域、CLI 与错误约定；逐项解决[详细规划第 3 节](详细实施规划.md)的歧义。
+2. 依次实现 lexer、parser、runtime 和一键黑盒驱动；每个功能随规范和测试一起提交。
+3. 在功能稳定后进行 Agent 盲测、应用开发、性能实验、PPT 与新克隆验收。
 
 ## Agent 开始任何任务时
 
