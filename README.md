@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1 语言规范、S2 CLI/错误/词法分析已审查通过；S3 AST/parser 已带一项明确遗留审查通过并合入 `main`。**S3 parser 复用 S2 的 `SyntaxError` 诊断；runtime 尚未实现。S4 开工先为索引和字段访问 AST 保存访问符位置并补 AST 定位测试；相关运行时错误定位在 S6 随索引/字段功能验证。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S3 已审查并合入 `main`；S3 的访问符位置遗留已由 S4 的独立提交修复。S4 标量 runtime 已在 `stage/s04-runtime-core` 实现，等待主窗口审查。**当前执行子集包括标量表达式、变量与显式块、`emit` 和 `input()`；不是完整解释器。
 
 ## 阅读入口
 
@@ -11,10 +11,16 @@
 5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已在本阶段分支正文补入两项澄清。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 
-运行当前阶段的 parser、CLI 与 lexer 阶段性测试：
+运行 lexer、parser、runtime 与 CLI 阶段性测试。2026-10-07 在 Python 3.13.7 上，当前 S4 分支全套 75 项 unittest 通过；这些不是最终黑盒测试集，S4 仍等待主窗口复审：
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-空源文件（包括仅空白或注释）由 `python -m lwt <source-path>` 成功返回；词法或语法错误返回 2，CLI/源文件错误返回 4。词法和语法均有效的非空文件会被解析，但因 runtime 尚未实现而显示临时 `Incomplete` 诊断并返回 1；该阶段性行为预计在 S4 解释执行能力具备后移除。阶段分支的实现仍待主窗口复审，后续再补充完整解释器、一键黑盒测试、性能和应用命令。
+运行示例：
+
+```powershell
+python -m lwt examples/basic_io.lwt
+```
+
+运行后输入一行；示例会回显该行。当前支持 `let`、`emit`、表达式语句、显式块作用域、整数/字符串/布尔/`null`、标量运算、变量赋值和零参数 `input()`。`when`/循环、函数、数组、record、索引/字段访问及其他内置函数尚未执行；含这些语法的程序会在执行前返回临时 `Incomplete`/1，不会产生部分 stdout。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/文件错误返回 4。临时代码 1 不是最终语言行为。当前阶段分支仍待主窗口复审。

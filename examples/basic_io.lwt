@@ -1,0 +1,5 @@
+# S4 example: scalar output, a variable, and one UTF-8 input line.
+let prompt = "Enter one line:";
+emit prompt;
+let answer = input();
+emit answer;

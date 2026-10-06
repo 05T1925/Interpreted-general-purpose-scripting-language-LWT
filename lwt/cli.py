@@ -1,4 +1,4 @@
-"""Command-line argument handling and the S3 parser-only stage behavior."""
+"""Command-line argument handling and the currently supported runtime subset."""
 
 from __future__ import annotations
 
@@ -7,9 +7,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
 
-from .errors import LwtError, SourceLocation, format_diagnostic
+from .errors import LwtError, format_diagnostic
 from .lexer import scan
 from .parser import parse
+from .runtime import execute
 
 
 @dataclass(frozen=True, slots=True)
@@ -57,7 +58,7 @@ def _read_source(source_path: str) -> str:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Read, lex, and parse a program; execution remains unavailable in S3."""
+    """Read, lex, parse, and execute the currently supported LWT subset."""
 
     _configure_standard_streams()
     arguments = list(sys.argv[1:] if argv is None else argv)
@@ -66,7 +67,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         parsed = parse_cli_args(arguments)
         source_path = parsed.source_path
-        # Reserved for a future args() implementation; S2 does not expose builtins.
+        # Program arguments remain reserved for a later args() implementation.
         _program_args = parsed.program_args
         source_text = _read_source(source_path)
         tokens = scan(source_text)
@@ -75,15 +76,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         sys.stderr.write(format_diagnostic(error, source_path) + "\n")
         return error.exit_code
 
-    if not program.items:
-        return 0
-
-    first_token = tokens[0]
-    incomplete = LwtError(
-        "Incomplete",
-        "runtime is not implemented yet",
-        1,
-        SourceLocation(first_token.line, first_token.column),
-    )
-    sys.stderr.write(format_diagnostic(incomplete, source_path) + "\n")
-    return incomplete.exit_code
+    try:
+        execute(program, sys.stdin.buffer, sys.stdout)
+    except LwtError as error:
+        sys.stderr.write(format_diagnostic(error, source_path) + "\n")
+        return error.exit_code
+    return 0
