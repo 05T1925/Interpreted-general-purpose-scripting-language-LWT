@@ -13,10 +13,10 @@
 | Git 本地仓库 | 已建立 | `main` 有原始规划提交；已合并远端独立的 README 初始提交 |
 | GitHub `origin` | 已绑定并推送 `main` | [目标仓库](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)；本地 `main` 跟踪 `origin/main` |
 | 总方向与详细规划 | 已编写并提交 | 根目录两份 Markdown；可随实施修订 |
-| 阶段接力路线图 | 已编写 | S0、S1 已审查通过；S2 阶段分支已完成、待主窗口审查；S3–S12 未开始 |
-| 正式语法规范 | S1 已审查通过；S2 澄清随阶段分支待审查 | [语言规范](docs/language-spec.md)正文含重复 record 字段错误和注释 BOM 规则 |
-| CLI、错误模型与词法分析 | S2 已完成、待主窗口审查 | `stage/s02-cli-lexer`；parser/runtime 尚未实现 |
-| 阶段性词法/CLI 测试 | S2 已完成 | `python -m unittest discover -s tests -v`：39 项通过；不是最终黑盒测试集 |
+| 阶段接力路线图 | 已编写 | S0–S2 已审查通过；S3 尚未开始 |
+| 正式语法规范 | S1 已审查通过；S2 澄清已随实现合入 | [语言规范](docs/language-spec.md)正文含重复 record 字段错误和注释 BOM 规则 |
+| CLI、错误模型与词法分析 | S2 已审查通过并合入 `main` | `lwt/`；parser/runtime 尚未实现 |
+| 阶段性词法/CLI 测试 | S2 已审查通过 | `python -m unittest discover -s tests -v`：39 项通过；不是最终黑盒测试集 |
 | 黑盒测试/CI | 未开始 | `tools/run_tests.py` 尚不存在 |
 | Agent 指南与应用 | 未开始 | 应在正式规范及运行入口稳定后开展 |
 | 性能报告与 PPT | 未开始 | 不得填写假定的测量数字或通过率 |
@@ -32,8 +32,9 @@
 
 ## 下一步工作顺序
 
-1. **S1 已审查通过**：S1 提交已合入 `main`。原有两项低风险澄清已在 S2 阶段分支写入 `docs/language-spec.md` 正文。
-2. **S2 已完成、待主窗口审查**：阶段分支实现 CLI、错误模型、词法分析和 39 项阶段性 unittest；整数 token 保留原始十进制词素，不转换为 Python `int`，任意精度转换策略留到 S4/S7 处理。主分支不含本阶段实现；审查通过后再派发 S3。
+1. **S1、S2 已审查通过**：S1 语言规范和 S2 CLI/错误/词法实现均已合入 `main`；S2 同步补齐重复 `record` 字段诊断和注释 BOM 规则。
+2. **下一阶段 S3：AST 与语法分析**：实现与规范一致的 AST/Parser、解析和语法错误测试；重复 `record` 字段需要 parser 正反例。S3 不实现运行时，语法有效的非空程序仍返回临时 `Incomplete`/1。
+3. 任意精度整数的十进制解析与显示风险留到 S4/S7 处理；S2 词法器只保留原始整数词素，没有转换或位数限制。
 
 ## Agent 开始任何任务时
 
