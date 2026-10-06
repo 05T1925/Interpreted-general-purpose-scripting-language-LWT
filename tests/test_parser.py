@@ -174,6 +174,51 @@ class ParserStructureTests(unittest.TestCase):
         self.assertIsInstance(final_target.object, IndexExpression)
         self.assertIsInstance(final_target.object.object, CallExpression)
 
+    def test_postfix_access_tokens_have_locations_separate_from_expression_start(self) -> None:
+        source = "emit array[0]; emit person.field; emit get_array()[0].field;"
+        program = parse_source(source)
+
+        array_access = program.items[0].value
+        self.assertIsInstance(array_access, IndexExpression)
+        self.assertEqual(
+            array_access.location,
+            SourceLocation(1, source.index("array") + 1),
+        )
+        self.assertEqual(
+            array_access.access_location,
+            SourceLocation(1, source.index("[") + 1),
+        )
+
+        record_access = program.items[1].value
+        self.assertIsInstance(record_access, FieldExpression)
+        self.assertEqual(
+            record_access.location,
+            SourceLocation(1, source.index("person") + 1),
+        )
+        self.assertEqual(
+            record_access.access_location,
+            SourceLocation(1, source.index(".field") + 1),
+        )
+        self.assertEqual(
+            record_access.field.location,
+            SourceLocation(1, source.index(".field") + 2),
+        )
+
+        chain = program.items[2].value
+        self.assertIsInstance(chain, FieldExpression)
+        self.assertIsInstance(chain.object, IndexExpression)
+        chain_start = source.index("get_array") + 1
+        self.assertEqual(chain.location, SourceLocation(1, chain_start))
+        self.assertEqual(chain.object.location, SourceLocation(1, chain_start))
+        self.assertEqual(
+            chain.object.access_location,
+            SourceLocation(1, source.index("[", source.index("get_array")) + 1),
+        )
+        self.assertEqual(
+            chain.access_location,
+            SourceLocation(1, source.index(".field", source.index("get_array")) + 1),
+        )
+
     def test_token_locations_are_retained_for_names_and_expression_operators(self) -> None:
         program = parse_source("fn f(arg) { emit arg + 1; }")
         function = program.items[0]

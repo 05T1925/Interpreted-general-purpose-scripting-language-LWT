@@ -245,12 +245,24 @@ class Parser:
         expression = self._atom()
         while True:
             if self._match(TokenKind.LEFT_BRACKET):
+                access = self._previous()
                 index = self._expression()
                 self._consume(TokenKind.RIGHT_BRACKET, "expected ']' after index")
-                expression = IndexExpression(expression, index, expression.location)
+                expression = IndexExpression(
+                    expression,
+                    index,
+                    _token_location(access),
+                    expression.location,
+                )
             elif self._match(TokenKind.DOT):
+                access = self._previous()
                 field = self._identifier("expected field name after '.'")
-                expression = FieldExpression(expression, field, expression.location)
+                expression = FieldExpression(
+                    expression,
+                    field,
+                    _token_location(access),
+                    expression.location,
+                )
             else:
                 return expression
 

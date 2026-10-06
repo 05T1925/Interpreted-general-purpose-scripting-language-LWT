@@ -166,6 +166,7 @@ class AssignmentExpression:
 class IndexExpression:
     object: Expression
     index: Expression
+    access_location: SourceLocation
     location: SourceLocation
 
 
@@ -173,6 +174,7 @@ class IndexExpression:
 class FieldExpression:
     object: Expression
     field: Identifier
+    access_location: SourceLocation
     location: SourceLocation
 
 
