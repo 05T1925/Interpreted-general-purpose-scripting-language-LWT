@@ -62,7 +62,7 @@
 | `详细实施规划.md` | 语义草案、接口、任务、测试、性能、应用和验收操作 | 决策或执行方法变化时；规范冻结后指向正式规范 |
 | `阶段执行与审查路线图.md` | 两窗口职责、S 阶段的交付、报告和复审门槛 | 派发顺序或阶段验收方法变化时 |
 | `project.md` | Agent 启动上下文、当前状态、下一个任务和证据索引 | 每次阶段状态或关键决策变化后 |
-| `docs/language-spec.md`（S1 已审查，带两项 S2 开工前澄清） | LWT 语法与运行时行为的正式规范 | 每次语言行为变化时与测试同提交；S1 尚无实现与测试 |
+| `docs/language-spec.md`（S1 已审查；S2 澄清已写入阶段分支） | LWT 语法与运行时行为的正式规范 | 每次语言行为变化时与测试同提交；S2 已完成 lexer/CLI，待审查 |
 | `docs/developer-guide.md`（待建） | 人和 Agent 的实际编码手册 | 语法/CLI/内置函数变化时 |
 | `AGENTS.md` | 自动发现的项目入口，指向 `project.md` | 仓库工作约定变化时 |
 
@@ -74,4 +74,4 @@
 
 远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，合并其仅含 README 的初始提交与本地规划提交，并正常推送 `main`；后续同步状态以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
 
-**当前已完成规划、Git 历史整合和 S1 语言规范审查。** 规范保留两项 S2 开工前需澄清的低风险规则：重复 `record` 字段的诊断契约、注释中 U+FEFF 的处理。Python 3.11+ 十进制整数转换限制也列为 S4/S7 实现风险。解释器、黑盒通过率、Agent 应用、性能数据、PPT 均待实施；详细进度见 `project.md`。外部资料支持方法选择，LWT 的语法、应用边界和阶段门槛是本项目的设计判断，后续以实现和测试证据复检。
+**当前已完成规划、Git 历史整合和 S1 语言规范审查；S2 阶段分支已完成 CLI、统一错误模型、lexer 和阶段性测试，待主窗口审查。** 39 项阶段性 unittest 通过；parser/runtime、最终黑盒通过率、Agent 应用、性能数据、PPT 均待后续阶段实施。Python 3.11+ 十进制整数转换限制列为 S4/S7 实现风险；S2 的整数 token 保留原始词素。详细进度见 `project.md`。外部资料支持方法选择，LWT 的语法、应用边界和阶段门槛是本项目的设计判断，后续以实现和测试证据复检。
