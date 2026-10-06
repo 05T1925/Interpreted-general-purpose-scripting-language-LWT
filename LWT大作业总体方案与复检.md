@@ -74,4 +74,4 @@
 
 远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，合并其仅含 README 的初始提交与本地规划提交，并正常推送 `main`；后续同步状态以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
 
-**当前已完成规划、Git 历史整合，以及 S1 语言规范和 S2 CLI/错误/lexer 审查。** S2 的 39 项阶段性 unittest 已通过；下一步是 S3 AST 与语法分析，parser/runtime、最终黑盒通过率、Agent 应用、性能数据、PPT 均待后续阶段实施。Python 3.11+ 十进制整数转换限制列为 S4/S7 实现风险；S2 的整数 token 保留原始词素。详细进度见 `project.md`。外部资料支持方法选择，LWT 的语法、应用边界和阶段门槛是本项目的设计判断，后续以实现和测试证据复检。
+**当前已完成规划、Git 历史整合，以及 S1 语言规范和 S2 CLI/错误/lexer 审查。** S3 AST 与 parser 已在 `stage/s03-ast-parser` 实现并等待主窗口审查；该分支 62 项阶段性 unittest 通过，包含已审查的 S2 39 项。S3 不含 runtime，因而没有 LWT 程序执行结果；最终黑盒通过率、Agent 应用、性能数据和 PPT 均待后续阶段实施。Python 3.11+ 十进制整数转换限制列为 S4/S7 实现风险；lexer/parser 保留原始整数词素。详细进度见 `project.md`。外部资料支持方法选择，LWT 的语法、应用边界和阶段门槛是本项目的设计判断，后续以实现和测试证据复检。

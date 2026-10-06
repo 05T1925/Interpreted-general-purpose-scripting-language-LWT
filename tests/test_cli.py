@@ -155,8 +155,50 @@ class CliProcessTests(unittest.TestCase):
         self.assertEqual(result.stdout, b"")
         self.assertEqual(
             result.stderr.decode("utf-8"),
-            f"{path}:1:1: Incomplete: parser and runtime are not implemented yet\n",
+            f"{path}:1:1: Incomplete: runtime is not implemented yet\n",
         )
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_syntax_error_has_source_path_position_and_no_traceback(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "syntax error.lwt"
+            path.write_text("let value = ;", encoding="utf-8")
+            result = run_lwt(str(path))
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:13: SyntaxError: expected expression\n",
+        )
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_duplicate_record_declaration_field_points_to_second_name(self) -> None:
+        source = "record Person {name, name};"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "duplicate-field.lwt"
+            path.write_text(source, encoding="utf-8")
+            result = run_lwt(str(path))
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.rfind('name') + 1}: SyntaxError: "
+            "duplicate field name in record declaration\n",
+        )
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_complete_lexing_reports_later_lex_error_before_syntax_error(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "lex-before-parse.lwt"
+            path.write_text("let value = ;\n@", encoding="utf-8")
+            result = run_lwt(str(path))
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:2:1: LexError: unexpected character U+0040\n",
+        )
+        self.assertNotIn(b"SyntaxError", result.stderr)
         self.assertNotIn(b"Traceback", result.stderr)
 
     def test_comment_bom_and_invalid_characters_inside_comment_are_ignored(self) -> None:

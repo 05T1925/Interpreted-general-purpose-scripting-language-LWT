@@ -1,4 +1,4 @@
-"""Command-line argument handling and S2's honest incomplete-stage behavior."""
+"""Command-line argument handling and the S3 parser-only stage behavior."""
 
 from __future__ import annotations
 
@@ -8,7 +8,8 @@ from pathlib import Path
 from typing import Sequence
 
 from .errors import LwtError, SourceLocation, format_diagnostic
-from .lexer import TokenKind, scan
+from .lexer import scan
+from .parser import parse
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,7 +57,7 @@ def _read_source(source_path: str) -> str:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Run S2's CLI contract; parsing and execution are intentionally absent."""
+    """Read, lex, and parse a program; execution remains unavailable in S3."""
 
     _configure_standard_streams()
     arguments = list(sys.argv[1:] if argv is None else argv)
@@ -69,17 +70,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         _program_args = parsed.program_args
         source_text = _read_source(source_path)
         tokens = scan(source_text)
+        program = parse(tokens)
     except LwtError as error:
         sys.stderr.write(format_diagnostic(error, source_path) + "\n")
         return error.exit_code
 
-    if len(tokens) == 1 and tokens[0].kind is TokenKind.EOF:
+    if not program.items:
         return 0
 
     first_token = tokens[0]
     incomplete = LwtError(
         "Incomplete",
-        "parser and runtime are not implemented yet",
+        "runtime is not implemented yet",
         1,
         SourceLocation(first_token.line, first_token.column),
     )
