@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S4 已审查并合入 `main`；S3 的访问符位置遗留已由 S4 的独立提交修复。S5 控制流与函数实现已提交到 `stage/s05-control-flow-functions`，等待主窗口审查。**当前可执行范围包括标量表达式、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数和 `return`。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S5 已审查并合入本地 `main`；S3 的访问符位置遗留已由 S4 的独立提交修复。S5 合入后的本地 `main` 尚未推送到 `origin`。**当前可执行范围包括标量表达式、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数和 `return`。
 
 ## 阅读入口
 
@@ -8,10 +8,10 @@
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
 4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式、S0–S12 阶段门槛和报告格式。
-5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已在本阶段分支正文补入两项澄清。
+5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已将两项审查澄清并入正文。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 
-运行 lexer、parser、runtime 与 CLI 阶段性测试。2026-10-07 在 Python 3.13.7 上，S5 阶段分支全套 101 项 unittest 通过；这些不是最终黑盒测试集，S5 尚待主窗口审查：
+运行 lexer、parser、runtime 与 CLI 阶段性测试。2026-10-07 在 Python 3.13.7 上，S5 合入前阶段分支与主窗口复跑的全套 101 项 unittest 均通过；这些不是最终黑盒测试集：
 
 ```powershell
 python -m unittest discover -s tests -v
@@ -30,4 +30,4 @@ python -m lwt examples/control_flow.lwt
 python -m lwt examples/functions.lwt
 ```
 
-`control_flow.lwt` 的预期输出是 `0\n-1\n2\n-3\n`；`functions.lwt` 的预期输出是 `120\n`。当前执行 `let`、`emit`、表达式语句、显式块、整数/字符串/布尔/`null`、标量运算、变量赋值、`input()`、`when/otherwise`、`while`、函数调用和返回。`each`、数组、record、索引/字段访问及 `input()` 以外的内置函数仍会在执行前返回临时 `Incomplete`/1，且不产生部分 stdout。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/文件错误返回 4。临时代码 1 不是最终语言行为。S6 及后续阶段尚未开始。
+`control_flow.lwt` 的实际输出是 `0\n-1\n2\n-3\n`；`functions.lwt` 的实际输出是 `120\n`。当前执行 `let`、`emit`、表达式语句、显式块、整数/字符串/布尔/`null`、标量运算、变量赋值、`input()`、`when/otherwise`、`while`、函数调用和返回。`each`、数组、record、索引/字段访问及 `input()` 以外的内置函数仍会在执行前返回临时 `Incomplete`/1，且不产生部分 stdout。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/文件错误返回 4。临时代码 1 不是最终语言行为。S6 尚未开始。
