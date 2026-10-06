@@ -1,0 +1,9 @@
+# S5 example: the call precedes the declaration; factorial is recursive.
+emit factorial(5);
+
+fn factorial(n) {
+    when (n <= 1) {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}

@@ -1,0 +1,10 @@
+# S5 example: while reevaluates its condition and when selects one branch.
+let i = 0;
+while (i < 4) {
+    when (i % 2 == 0) {
+        emit i;
+    } otherwise {
+        emit -i;
+    }
+    i = i + 1;
+}

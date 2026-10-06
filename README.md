@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S4 已审查并合入 `main`；S3 的访问符位置遗留已由 S4 的独立提交修复。**当前执行子集包括标量表达式、变量与显式块、`emit` 和 `input()`；不是完整解释器。S5 待派发，将扩展分支、循环、函数与返回。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S4 已审查并合入 `main`；S3 的访问符位置遗留已由 S4 的独立提交修复。S5 控制流与函数实现已提交到 `stage/s05-control-flow-functions`，等待主窗口审查。**当前可执行范围包括标量表达式、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数和 `return`。
 
 ## 阅读入口
 
@@ -11,7 +11,7 @@
 5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已在本阶段分支正文补入两项澄清。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 
-运行 lexer、parser、runtime 与 CLI 阶段性测试。2026-10-07 在 Python 3.13.7 上，主窗口复跑全套 75 项 unittest 通过；这些不是最终黑盒测试集：
+运行 lexer、parser、runtime 与 CLI 阶段性测试。2026-10-07 在 Python 3.13.7 上，S5 阶段分支全套 101 项 unittest 通过；这些不是最终黑盒测试集，S5 尚待主窗口审查：
 
 ```powershell
 python -m unittest discover -s tests -v
@@ -23,4 +23,11 @@ python -m unittest discover -s tests -v
 python -m lwt examples/basic_io.lwt
 ```
 
-运行后输入一行；示例会回显该行。当前支持 `let`、`emit`、表达式语句、显式块作用域、整数/字符串/布尔/`null`、标量运算、变量赋值和零参数 `input()`。`when`/循环、函数、数组、record、索引/字段访问及其他内置函数尚未执行；含这些语法的程序会在执行前返回临时 `Incomplete`/1，不会产生部分 stdout。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/文件错误返回 4。临时代码 1 不是最终语言行为。S5 及后续阶段尚未实现。
+输入一行后，基础示例会回显该行。S5 示例可分别运行：
+
+```powershell
+python -m lwt examples/control_flow.lwt
+python -m lwt examples/functions.lwt
+```
+
+`control_flow.lwt` 的预期输出是 `0\n-1\n2\n-3\n`；`functions.lwt` 的预期输出是 `120\n`。当前执行 `let`、`emit`、表达式语句、显式块、整数/字符串/布尔/`null`、标量运算、变量赋值、`input()`、`when/otherwise`、`while`、函数调用和返回。`each`、数组、record、索引/字段访问及 `input()` 以外的内置函数仍会在执行前返回临时 `Incomplete`/1，且不产生部分 stdout。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/文件错误返回 4。临时代码 1 不是最终语言行为。S6 及后续阶段尚未开始。
