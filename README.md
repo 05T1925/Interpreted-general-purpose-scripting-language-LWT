@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S10 已通过主窗口审查并合入本地 `main`；S11 性能实验和 S12 答辩交付尚未开始。**本地 `main` 比 `origin/main` 领先 24 个提交；`origin/main` 仍为 S4，本地阶段进度尚未推送。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S10 已通过主窗口审查并合入本地 `main`；S11 与 S12 状态见 [`project.md`](project.md)。本地 `main` 比 `origin/main` 领先 24 个提交；本地阶段进度尚未推送。
 
 ## 阅读入口
 
@@ -88,5 +88,23 @@ python tools/run_app_concurrency.py
 ```
 
 应用测试经公开 CLI 运行，不纳入 S8 的 194 项语言黑盒矩阵。并发工具使用固定输入分别同时启动 1、2、4 个独立操作系统进程，不代表 LWT 线程支持；原始逐试次结果位于[`reports/app-concurrency.json`](reports/app-concurrency.json)。
+
+## S11 性能实验
+
+从仓库根目录运行正式 LWT/Python 成对实验：
+
+```powershell
+python tools/benchmark.py
+```
+
+默认对 `arithmetic` 和 `array_scan` 两组负载各用 N=100、1000、5000，每个语言/负载/规模进行 10 次独立新进程计时，共 120 个正式子进程，另有 12 个经输出验证但不计时的 warm-up。固定 seed 交错配对运行；计时是包含解释器启动和 LWT 词法/语法分析的端到端墙钟时间，不代表纯运行时速度。原始逐次记录和校验值追加到 [`bench/results.json`](bench/results.json)，可复算的报告在 [`reports/performance.md`](reports/performance.md)。
+
+先做不进入正式统计的校准：
+
+```powershell
+python tools/benchmark.py --calibration
+```
+
+校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
 当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 已审查通过并合入本地 `main`，包含逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流。S9 开发指南、仓库 Skill 和三项独立盲测已审查通过并合入本地 `main`；Skill 自动路由仍不可观测。S10 日志分析器有 246 行有效 LWT，25 项公开 CLI 测试通过；1/2/4 个独立进程各 5 轮读取结果一致，阶段经主窗口审查并快进合入本地 `main`。S11 尚未开始。

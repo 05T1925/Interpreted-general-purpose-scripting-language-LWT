@@ -1,0 +1,23 @@
+let n = to_int(args()[0]);
+let values = [];
+let i = 0;
+
+while (i < n) {
+    let value = (i * 17 + 3) % 1009;
+    push(values, value);
+    i = i + 1;
+}
+
+let total = 0;
+let hits = 0;
+let j = 0;
+while (j < len(values)) {
+    let value = values[j];
+    total = total + value;
+    when (value % 97 == 0) {
+        hits = hits + 1;
+    }
+    j = j + 1;
+}
+
+emit str(n) + "|" + str(total) + "|" + str(hits);
