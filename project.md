@@ -11,7 +11,7 @@
 | 项目 | 状态 | 证据或说明 |
 |---|---|---|
 | Git 本地仓库 | 已建立 | `main` 有原始规划提交；已合并远端独立的 README 初始提交 |
-| GitHub `origin` | 已绑定；本地阶段进度尚未推送 | [目标仓库](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)；S13 实时查询确认 `origin/main=de608f7`（S4）；本地 `main=8647575` 含已审查的 S5–S11，比远端领先 31 个提交；S13 留在独立阶段分支 |
+| GitHub `origin` | 已绑定；本地阶段进度尚未推送 | [目标仓库](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)；S13 实时查询确认 `origin/main=de608f7`（S4）；本地 `main=8647575` 含已审查的 S5–S11，比远端领先 31 个提交；S13 位于 `stage/s13-comprehensive-review`，未推送、未合并 |
 | 总方向与详细规划 | 已编写并提交 | 根目录两份 Markdown；可随实施修订 |
 | 阶段接力路线图 | 已编写 | S0–S11 已审查并合入本地 `main`；S13 执行完成、等待主窗口审查；S12 仍延后，须待 S13 审查通过后开始 |
 | 正式语法规范 | S1 已审查通过；S2 澄清已随实现合入 | [语言规范](docs/language-spec.md)正文含重复 record 字段错误和注释 BOM 规则 |
