@@ -94,3 +94,23 @@ python -m unittest discover -s tests -p "test_log_detective.py" -v
 ```
 
 设计边界、实测观察、自动测试和未验证事项见 [`../docs/s15-app-gui.md`](../docs/s15-app-gui.md)。
+
+## 独立贪吃蛇（S16）
+
+贪吃蛇是独立的 Python/Tkinter 演示程序，不调用 LWT 日志分析器，也不计入 `app/log_report.lwt` 的课程代码行数。从仓库根目录启动：
+
+```powershell
+python app/snake_game.py
+```
+
+方向键或 WASD 控制移动；Space 在准备状态开始、运行时暂停、暂停时继续；R 或“重新开始”按钮重置棋盘与得分。游戏使用固定 140 毫秒事件间隔。窗口失去焦点后自动暂停，回到窗口后按 Space 或“继续”恢复。
+
+蛇碰墙或撞到非尾部蛇身时结束。长度大于 1 时拒绝直接反向；若本步不吃食物，蛇头可以进入本步将离开的尾格。吃到食物后长度增加一格、得分增加 10 分，食物从剩余空格中均匀选择。填满棋盘即胜利。核心状态与规则位于不依赖 Tkinter 的 `snake_game_core.py`，界面与定时器在 `snake_game_ui.py`；导入核心不会打开窗口。
+
+无头规则测试可在没有显示器的环境中运行：
+
+```powershell
+python -m unittest discover -s tests -p "test_snake_game.py" -v
+```
+
+Tkinter 可能未随 Python 安装；若启动时报 Tk 或桌面不可用，核心测试仍可运行。S16 的完整审计、桌面验收限制和验证记录见 [`../docs/s16-app-review-snake.md`](../docs/s16-app-review-snake.md)。

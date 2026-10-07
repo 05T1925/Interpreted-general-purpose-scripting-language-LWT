@@ -112,3 +112,14 @@
 | `python tools/run_app_concurrency.py` | 在临时一次性 worktree 的最终代码提交 `5fd6f399814577b5d180905007fb7059ac73cd62` 中执行以避免覆盖 S10 已提交 raw；退出码 0。Warm-up 成功，1/2/4 进程各 5 轮、共 35 个子进程；每个 stdout 与 warm-up 字节相同，所有 return code 为 0、stderr 为空，输入 SHA-256 前后未变（`9db070518d4bfa375e62eca0000e84835432e03e4156778b6c204a7a50321214`）。批次毫秒：1 `[187.911, 172.352, 180.338, 168.139, 195.441]`，2 `[192.580, 200.891, 183.362, 181.600, 181.868]`，4 `[190.779, 206.275, 192.049, 192.046, 199.309]`。临时 worktree 中生成的 raw 已随目录删除，原始 S10 报告文件未改；不据此作性能结论。 |
 
 正式 S11 `bench/results.json` 未重新运行或改写。Python 3.10、远端 Actions 和完整可归因的人工 GUI 操作轨迹尚未验证；Python 3.10、远端 CI、新克隆、PPT 和最终演示交由 S12。S15 没有合并或推送，当前结论为**实施完成，等待主窗口审查**。
+
+## S16｜应用复检与独立贪吃蛇（2026-10-07）
+
+- **分支与基线：** `stage/s16-app-review-snake`；基线为已审查本地 `main` 的 `09cf5f5eb4d1dded17fd43b84d3e5b48e0dd62b6`。开工时工作区干净，S15 最终提交 `390d484e2f21a044fcd8c9e8121712c215e1b309` 为基线祖先。实时 `origin/main` 为 `de608f7fbf50946715d370df014657169eb8f26d`，本地比远端领先 44 个提交；未推送。
+- **工作范围：** 完成 S15 GUI 遗留的桌面可用性检查；定向审计 S10/S15 应用及相关测试/fixture/并发文档；新增独立 Python/Tkinter 贪吃蛇、无头核心、界面、规则测试和文档。课程要求的 246 行有效 LWT 日志分析器仍是 LWT 应用主体。
+- **审计结论：** S10/S15 自动测试和代码复核没有发现可稳定复现的缺陷。子进程继续使用参数数组、`sys.executable -m lwt`、仓库根 `cwd`、`shell=False`、UTF-8 与 timeout；工作线程只等待 CLI，Tk 更新由主线程队列轮询处理。未改日志分析器、CLI 契约或现有应用实现。
+- **贪吃蛇提交：** `930c6d13d8f7cbffb9cb98a91e81b64ff846d2ef` 添加启动入口、纯状态核心、Tkinter Canvas UI 和 11 项无头测试。实现固定 tick、碰撞、增分/增长、反向输入拒绝、即将离开的尾格规则、自动失焦暂停、随机空格投食与满盘胜利。
+- **人工 GUI 验收限制：** `python -c "import tkinter; print(tkinter.TkVersion)"` 实际输出 Tk 8.6，但本会话桌面工具返回 `apps: []`，`cua.listApps()` / `cua.listWindows()` 不可用，无法实际点击、键入或归因窗口操作。因此 S15 游戏的计分/报告/重开/文件选择/错误恢复/Enter/缩放均未验证，Snake 的窗口/按键/缩放/焦点实测也未验证。完整逐项记录在[`docs/s16-app-review-snake.md`](s16-app-review-snake.md)。
+- **最终自动验证：** `python -m unittest discover -s tests -p "test_snake_game.py" -v` 11 项通过；S15 `test_log_detective.py` 11 项通过；S10 `test_app.py` 25 项通过；全量 unittest 241 项通过；黑盒测试 194/194；完整性检查 194 cases / 287 matrix links / 194 referenced cases；compileall 通过；LWT 行数 246；默认和组合过滤 CLI 均退出码 0。
+- **历史证据：** 未运行 `python tools/run_app_concurrency.py`，因为没有发现影响既有并发结论的缺陷且该命令会覆盖受保护 raw；未运行正式性能基准。S10 并发记录和 S11 性能 JSON/报告未更改。S12 未开始。
+- **阶段状态：** 实施完成，等待主窗口审查；没有合并或推送。完整命令表和风险列于[`S16 执行报告`](s16-app-review-snake.md)。
