@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S5 已审查并合入本地 `main`；S6 数组、record、`each` 和复合值显示已在 `stage/s06-arrays-records-each` 完成并提交，等待主窗口审查。**本地 `main` 为 `b8ec1bb899c74e9fb1bd0ddc6e5187d8e0229126`，`origin/main` 仍为 S4 的 `de608f7fbf50946715d370df014657169eb8f26d`；S5/S6 均未推送。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S6 已审查并合入本地 `main`；S5/S6 尚未推送到 `origin`。**`origin/main` 仍为 S4；本地 `main` 已含 S5、S6 及审查文档提交。
 
 ## 阅读入口
 
@@ -11,7 +11,7 @@
 5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已将两项审查澄清并入正文。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 
-运行 lexer、parser、runtime 与 CLI 阶段性测试。2026-10-07 在 Python 3.13.7 上，S6 阶段全套 137 项 unittest 通过；其中 33 项新增 CLI 黑盒用例、3 项运行时修改原子性补充测试。这些不是最终黑盒测试集：
+运行 lexer、parser、runtime 与 CLI 阶段性测试。2026-10-07 在 Python 3.13.7 上，S6 阶段分支和主窗口复跑的全套 137 项 unittest 均通过。这些不是最终黑盒测试集：
 
 ```powershell
 python -m unittest discover -s tests -v
@@ -23,7 +23,7 @@ python -m unittest discover -s tests -v
 python -m lwt examples/basic_io.lwt
 ```
 
-输入一行后，基础示例会回显该行。S5 示例可分别运行：
+输入一行后，基础示例会回显该行。控制流、函数和集合示例可分别运行：
 
 ```powershell
 python -m lwt examples/control_flow.lwt
