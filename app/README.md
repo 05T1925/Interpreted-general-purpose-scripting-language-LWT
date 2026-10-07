@@ -21,7 +21,7 @@ python -m lwt app/log_report.lwt -- INPUT_PATH [--level LEVEL] [--keyword TEXT] 
 - `--keyword TEXT` 对第四字段 message 作区分大小写的子串匹配；不检查时间、级别或模块，不能为空。
 - 同时给出 `--level` 和 `--keyword` 时使用 AND 条件。
 - `--top N` 限制模块排行项数，默认 `5`；只接受 ASCII 数字组成的非负十进制整数。`0` 保留排行标题但不输出排行条目。
-- 未知、重复、缺值的选项，额外位置参数、缺少路径、空 keyword 和不合法 top 都通过 LWT `fail()` 给出单行 usage 诊断；stdout 为空、进程非零退出，不产生 Python traceback。
+- 未知、重复、缺值的选项，额外位置参数、缺少路径、空 keyword 和不合法 top 都通过 LWT `fail()` 给出单行 usage 诊断；stdout 为空、进程以运行时错误退出码 `3` 结束，不产生 Python traceback。为区分选项和值，`--level`、`--keyword`、`--top` 后的参数若以 `--` 开头会按缺少值处理；因此当前 CLI 不接受以 `--` 开头的 level/keyword 字面值。
 
 所有参数错误都在打开文件和打印报告前检查。文件不存在、不可读取或不是有效 UTF-8 时由 `read_text()` 报运行时错误，退出码为 3；这类错误同样不会打印应用报告或 Python traceback。
 

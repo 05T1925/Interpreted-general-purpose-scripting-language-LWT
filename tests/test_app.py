@@ -78,7 +78,7 @@ class LogReportCliTests(unittest.TestCase):
 
     def assert_usage_error(self, *application_args: str) -> None:
         result = self.invoke(*application_args)
-        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(result.returncode, 3, result.stderr)
         self.assertEqual(result.stdout, "")
         self.assertNotIn("Traceback", result.stderr)
         self.assertEqual(result.stderr.count("\n"), 1, result.stderr)
@@ -215,8 +215,30 @@ class LogReportCliTests(unittest.TestCase):
         )
 
     def test_default_top_is_five_and_ties_sort_by_module_name(self) -> None:
-        result = self.invoke(str(SAMPLE.relative_to(ROOT)))
-        self.assert_success(result, EXPECTED.read_text(encoding="utf-8"))
+        result = self.invoke_bytes(
+            b"t1|INFO|foxtrot|sixth\n"
+            b"t2|INFO|echo|fifth\n"
+            b"t3|INFO|delta|fourth\n"
+            b"t4|INFO|charlie|third\n"
+            b"t5|INFO|bravo|second\n"
+            b"t6|INFO|alpha|first\n"
+        )
+        self.assert_success(
+            result,
+            report(
+                6,
+                6,
+                0,
+                6,
+                levels=("INFO|6",),
+                modules=("alpha|1", "bravo|1", "charlie|1", "delta|1", "echo|1"),
+                examples=(
+                    "t1|INFO|foxtrot|sixth",
+                    "t2|INFO|echo|fifth",
+                    "t3|INFO|delta|fourth",
+                ),
+            ),
+        )
 
     def test_top_one_and_zero(self) -> None:
         one = self.invoke(str(SAMPLE.relative_to(ROOT)), "--top", "1")
