@@ -123,3 +123,14 @@
 - **最终自动验证：** `python -m unittest discover -s tests -p "test_snake_game.py" -v` 11 项通过；S15 `test_log_detective.py` 11 项通过；S10 `test_app.py` 25 项通过；全量 unittest 241 项通过；黑盒测试 194/194；完整性检查 194 cases / 287 matrix links / 194 referenced cases；compileall 通过；LWT 行数 246；默认和组合过滤 CLI 均退出码 0。
 - **历史证据：** 未运行 `python tools/run_app_concurrency.py`，因为没有发现影响既有并发结论的缺陷且该命令会覆盖受保护 raw；未运行正式性能基准。S10 并发记录和 S11 性能 JSON/报告未更改。S12 未开始。
 - **阶段状态：** 实施完成，等待主窗口审查；没有合并或推送。完整命令表和风险列于[`S16 执行报告`](s16-app-review-snake.md)。
+
+## S17｜应用复检与 GUI 视觉/交互打磨（2026-10-07）
+
+- **基线与分支：** 开工在干净 `main`，HEAD `ffc276f941c591f804ad7b78d976c36ee87bf59a`，与提示规划基线相同。`git status -sb` 显示本地 `main` 比 `origin/main` 跟踪值 ahead 48；本阶段未查询实时远端，未同步或推送。由该基线创建 `stage/s17-app-polish`。
+- **桌面接口与启动尝试：** `cua.getState()` 返回 `apps: []`，只列浏览器表面且浏览器状态请求失败；没有截图、点击或键盘输入操作。Windows CPython 3.13.7、Tk 8.6。代码修改后分别启动 `app/log_detective.py` 与 `app/snake_game.py`；系统主窗口标题为 `LWT 日志侦探` 和 `LWT 贪吃蛇`，两者窗口句柄非零，WM_CLOSE 后进程均以退出码 0 结束。没有人工执行窗口中的任何玩法流程。
+- **审查与改进：** 核对 S10 LWT CLI 边界、S15 worker/queue/Tk 主线程交互与关闭轮询、Snake 单挂起 `after` 定时器和焦点暂停。新建共享 `app/ui_theme.py`，使用 Tk `TkDefaultFont` 回退；日志侦探更新卡片、动态换行、正误/忙闲状态显示、Enter 事件收尾和关闭轮询取消；Snake 更新 HUD/控制说明/动态遮罩与小格网格细节。
+- **缺陷复现与修复：** GAME_OVER/WON 的旧主按钮分支只调用 `restart()`，无头复现得到 `ready` 且 tick 不会安排，与“再来一局”文案不符。`SnakeGame.activate_primary_action()` 现在对终态重置后立即开始；应用主按钮共用该状态动作。添加终态输局、满盘胜利各一项回归，断言新局状态 RUNNING、得分归零、蛇身重置。此结果是可控状态测试，不是 GUI 点击实测。
+- **代码/测试提交：** `7412e83` 整理两款 UI 与共享主题；`8e5d26c` 加入 Snake 终态动作回归测试。完整 SHA 与最终文档提交见阶段执行报告和 Git 日志。
+- **实际自动验证：** Snake 定向 13 项、Log Detective 11 项、S10 应用 CLI 25 项、全量 unittest 243 项通过；黑盒 194/194；完整性检查 194 cases / 287 matrix links / 194 referenced cases；compileall 通过；有效 LWT 行数 246；默认与组合过滤 CLI 退出码 0。`git diff --check` 通过。完整命令摘要、人工验收矩阵和保护文件 Git blob ID 对比见 [`docs/s17-app-polish.md`](s17-app-polish.md)。
+- **保护范围：** 六个保护文件 `app/log_report.lwt`、`tests/test_app.py`、S10 并发 JSON/报告和 S11 性能 JSON/报告的工作区 blob ID 均与基线一致。没有改动 `lwt/`、规范或 S8 黑盒；未运行 `tools/run_app_concurrency.py` 或 `tools/benchmark.py`。
+- **阶段状态：** 实施完成，等待主窗口审查。两款 GUI 的具体交互、缩放、焦点切换和状态提示需在具有窗口输入/截图能力的环境逐项确认；S12 未开始，阶段未合并或推送。

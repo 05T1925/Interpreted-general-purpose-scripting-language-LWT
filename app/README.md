@@ -95,7 +95,7 @@ python -m unittest discover -s tests -p "test_log_detective.py" -v
 
 设计边界、实测观察、自动测试和未验证事项见 [`../docs/s15-app-gui.md`](../docs/s15-app-gui.md)。
 
-## 独立贪吃蛇（S16）
+## 独立贪吃蛇（S16；S17 复检与界面打磨）
 
 贪吃蛇是独立的 Python/Tkinter 演示程序，不调用 LWT 日志分析器，也不计入 `app/log_report.lwt` 的课程代码行数。从仓库根目录启动：
 
@@ -103,7 +103,7 @@ python -m unittest discover -s tests -p "test_log_detective.py" -v
 python app/snake_game.py
 ```
 
-方向键或 WASD 控制移动；Space 在准备状态开始、运行时暂停、暂停时继续；R 或“重新开始”按钮重置棋盘与得分。游戏使用固定 140 毫秒事件间隔。窗口失去焦点后自动暂停，回到窗口后按 Space 或“继续”恢复。
+方向键或 WASD 控制移动；Space 在准备状态开始、运行时暂停、暂停时继续；R 或“重新开始”按钮重置棋盘与得分。游戏结束或胜利时，主按钮变为“再来一局”，点击后会重置并立即开始；R 仍将棋盘重置到准备状态。方向键在按钮获得焦点时仍可控制蛇。游戏使用固定 140 毫秒事件间隔。窗口失去焦点后自动暂停，回到窗口后按 Space 或“继续”恢复。
 
 蛇碰墙或撞到非尾部蛇身时结束。长度大于 1 时拒绝直接反向；若本步不吃食物，蛇头可以进入本步将离开的尾格。吃到食物后长度增加一格、得分增加 10 分，食物从剩余空格中均匀选择。填满棋盘即胜利。核心状态与规则位于不依赖 Tkinter 的 `snake_game_core.py`，界面与定时器在 `snake_game_ui.py`；导入核心不会打开窗口。
 
@@ -113,4 +113,4 @@ python app/snake_game.py
 python -m unittest discover -s tests -p "test_snake_game.py" -v
 ```
 
-Tkinter 可能未随 Python 安装；若启动时报 Tk 或桌面不可用，核心测试仍可运行。S16 的完整审计、桌面验收限制和验证记录见 [`../docs/s16-app-review-snake.md`](../docs/s16-app-review-snake.md)。
+Tkinter 可能未随 Python 安装；若启动时报 Tk 或桌面不可用，核心测试仍可运行。S17 为两款 GUI 统一了配色、间距和系统默认字体回退；日志侦探的题面、反馈与所选路径随窗口宽度调整，Snake 棋盘缩小时收敛网格细节，结束提示按棋盘尺寸排版。当前执行环境能启动两个窗口并确认标题和正常关闭，但没有可操作窗口/输入接口，因而分数反馈、文件选择、键盘、缩放、焦点切换等真实交互仍未验证。逐项记录见 [`../docs/s17-app-polish.md`](../docs/s17-app-polish.md)；S16 的原始审计见 [`../docs/s16-app-review-snake.md`](../docs/s16-app-review-snake.md)。

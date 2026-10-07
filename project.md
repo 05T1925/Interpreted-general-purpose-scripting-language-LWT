@@ -13,7 +13,7 @@
 | Git 本地仓库 | 已建立 | `main` 有原始规划提交；已合并远端独立的 README 初始提交 |
 | GitHub `origin` | 已绑定；本地阶段进度尚未推送 | [目标仓库](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)；S13 审计时实时查询的 `origin/main` 为 S4 提交 `de608f7`；S13 已审查并合入本地 `main`，未推送；S14 开工时以实时 Git 状态确认本地基线和 ahead 数 |
 | 总方向与详细规划 | 已编写并提交 | 根目录两份 Markdown；可随实施修订 |
-| 阶段接力路线图 | 已编写 | S0–S11、S13–S16 已审查并合入本地 `main`；S17 应用视觉与交互打磨待开始；S12 仍为最终收尾 |
+| 阶段接力路线图 | 已编写 | S0–S11、S13–S16 已审查并合入本地 `main`；S17 已实施，等待主窗口审查；S12 仍为最终收尾且未开始 |
 | 正式语法规范 | S1 已审查通过；S2 澄清已随实现合入 | [语言规范](docs/language-spec.md)正文含重复 record 字段错误和注释 BOM 规则 |
 | CLI、错误模型与词法分析 | S2 已审查通过并合入 `main` | `lwt/cli.py`、`lwt/errors.py`、`lwt/lexer.py` |
 | AST 与语法分析 | S3 带遗留通过并合入 `main`；访问符位置遗留已由 S4 独立提交修复；S6 已验证运行时定位 | `lwt/ast_nodes.py`、`lwt/parser.py`；索引/字段节点保留 `[`/`.` 位置；S6 CLI 用例验证访问错误定位 |
@@ -24,13 +24,13 @@
 | 阶段性 lexer/parser/runtime/CLI 测试 | S7 主窗口复核通过 | Python 3.13.7；`python -m unittest discover -s tests -v`：157 项通过；`compileall`、diff 检查和跨功能示例通过；不是最终黑盒测试集 |
 | 黑盒测试/CI | S8 已审查；S13 本机复核；S14 增加结构门禁 | 194 个用例（189 执行 LWT 源、5 个 CLI override）；runner、63 条规范矩阵记录、GitHub Actions 四格工作流。S14 的 `python tools/check_project_integrity.py` 检查配对/metadata/唯一 ID 和 287 个矩阵链接。本轮 Windows Python 3.13.7、WSL Ubuntu 24.04 Python 3.12.3 各 194/194；全量 unittest 各 219 项通过。Python 3.10 和远端 Actions 仍未验证 |
 | 人类/Agent 指南与仓库 Skill | S9 已审查通过并合入本地 `main` | `docs/developer-guide.md`、`.agents/skills/lwt-app/SKILL.md`、`docs/agent-blind-test.md`；三个独立上下文各自完成数组去重、record 统计、文本筛选，主窗口复跑通过。Skill 自动路由当前平台不可观察 |
-| 完整 Agent 应用 | S10、S15、S16 已审查并合入本地 `main`；S17 待开始 | [`app/log_report.lwt`](app/log_report.lwt) 保持 246 行有效代码；原 [`tests/test_app.py`](tests/test_app.py) 保持 25 项 CLI 集成测试；S15 日志侦探正确答案仍由公开 LWT CLI 提供。S16 新增独立 Python/Tkinter 贪吃蛇和 11 项无头规则测试。受桌面工具限制，S15 人工验收及 Snake 桌面验收均仍未验证。S17 将先尝试桌面验收，再对两个 GUI 做有范围控制的视觉和交互打磨；详见 [`docs/s16-app-review-snake.md`](docs/s16-app-review-snake.md)。S10 并发脚本/原始记录和 S11 性能文件未修改。 |
+| 完整 Agent 应用 | S10、S15、S16 已审查并合入本地 `main`；S17 已实施，等待审查 | [`app/log_report.lwt`](app/log_report.lwt) 保持 246 行有效代码；原 [`tests/test_app.py`](tests/test_app.py) 保持 25 项 CLI 集成测试；日志侦探正确答案仍由公开 LWT CLI 提供。S17 统一了两个 GUI 的颜色/系统字体、改善路径与提示的窗口缩放适配，并修复 Snake 结束态“再来一局”只复位的问题（新增 2 项无头回归）。窗口启动与正常关闭已检查；由于桌面接口没有窗口输入/截图能力，两款 GUI 的完整交互仍未验证。保护的 S10 并发与 S11 性能文件未修改。详见 [`docs/s17-app-polish.md`](docs/s17-app-polish.md)。 |
 | 性能报告与 PPT | S11 已审查通过；S13 已独立复核性能 raw；PPT 待 S12 | 正式 run `291bd4e2-8a3e-4de6-be86-46b62980e656`：120 个计时子进程/60 个配对、12 个 warm-up，全部有效；本轮再次核验输出 Base64/长度/hash、pair 链接、六组 median/min/max/range/ratio 与报告一致。没有重跑或覆盖 raw，也未根据端到端比值做优化 |
 | S13 全项目复检 | 已通过主窗口审查并合入本地 `main` | [`docs/comprehensive-review.md`](docs/comprehensive-review.md)；主窗口在 S13 分支复跑黑盒 194/194、全量 unittest 211 项、compileall，并核验 401 个 Markdown 链接；无阻断问题，Python 3.10/Linux 和远端 Actions 遗留转交 S14/S12 |
 | S14 改进与优化 | 已通过主窗口审查并合入本地 `main` | 阶段分支最终提交 `f2dda1f7085b7c6dc56aa90cb490c4cc9b1c4e33`；代码提交 `9361f37a5c9bcd2bc7d07bbbb24949e38b35d7b6`。本窗口复跑 Windows Python 3.13.7 下 219 项 unittest、194/194 黑盒、完整性检查、compileall 和有效 LWT 行数检查，均通过。报告保留 Python 3.10 和远端 Actions 未验证风险；详见[`docs/s14-improvements.md`](docs/s14-improvements.md)。 |
 | S15 应用交互升级 | 已通过主窗口审查并快进合入本地 `main`；手动 GUI 全流程曾交由 S16 验收，剩余桌面验收由 S17 复试 | 阶段最终提交 `390d484e2f21a044fcd8c9e8121712c215e1b309`，从基线 `f6ef8c62737c91a18b793c12658804cba7fca810` 快进合入。主窗口复跑全量 unittest 230 项、黑盒 194/194、完整性检查 194/287/194、compileall 和 LWT 行数 246，全部通过。GUI 的正确计分、报告窗、重开、文件选择/错误恢复、Enter 和缩放尚未形成可归因的完整手工验收。详见 [`docs/s15-app-gui.md`](docs/s15-app-gui.md)。未推送。 |
 | S16 应用全面复检与独立贪吃蛇 | 带非阻断遗留通过，已快进合入本地 `main` | 主窗口在 Windows CPython 3.13.7 独立复跑全量 241 项 unittest、194 项语言黑盒、完整性检查、compileall、Snake/日志侦探/S10 定向测试、246 行 LWT 行数和 Markdown 链接，均通过；保护的 S10/S11 原始文件无差异。S15 GUI 全流程及 Snake 桌面交互受接口限制仍未验证，转交 S17 优先尝试。详见报告：[S16 应用复检与贪吃蛇](docs/s16-app-review-snake.md)。 |
-| S17 应用复检、视觉与交互打磨 | 已规划，待派发 | 先尝试 S15/S16 桌面验收，再按证据复检和打磨日志侦探与贪吃蛇；不改变 LWT 语义、S10 CLI 契约和受保护性能/并发证据。详见路线图。 |
+| S17 应用复检、视觉与交互打磨 | 实施完成，等待主窗口审查 | `stage/s17-app-polish` 基于 `ffc276f941c591f804ad7b78d976c36ee87bf59a`；共享主题、响应式布局、结束态重开修复和逐项人工验收状态见 [`docs/s17-app-polish.md`](docs/s17-app-polish.md)。Windows CPython 3.13.7 / Tk 8.6；Snake 13、Log Detective 11、S10 CLI 25 项定向测试，完整测试 243 项、黑盒 194/194、完整性检查、compileall、246 行统计和默认/过滤 CLI 验证通过。两款窗口创建后可通过 WM_CLOSE 正常退出；GUI 人工交互未验证。阶段 SHA 由最终执行报告列出。 |
 
 ## 已定技术决策
 
@@ -57,13 +57,13 @@
 12. **S14：审计遗留处理、质量保障升级与证据驱动优化**：已通过主窗口审查并快进合入本地 `main`；阶段分支最终提交 `f2dda1f`。新增标准库完整性检查并接入 CI；结构/矩阵测试 7 项、权限错误 CLI 测试 1 项通过；执行窗口报告 Windows 3.13.7 和 Ubuntu/Linux 3.12.3 全量回归通过。本窗口在 Windows 3.13.7 独立复跑 219 项 unittest、194/194 黑盒、完整性检查、compileall 和 LWT 行数统计，均通过。Python 3.10/远端 CI 与远端同步留待 S12；未做 runtime profile/优化，理由和证据见报告。
 13. **S15：日志分析器 GUI 小游戏增强**：已审查通过并快进合入本地 `main`，阶段最终提交 `390d484e2f21a044fcd8c9e8121712c215e1b309`。主窗口复跑 `python -m unittest discover -s tests -q`（230 项）、`python tools/run_tests.py`（194/194）、`python tools/check_project_integrity.py`（194 cases、287 matrix links、194 referenced cases）、`python -m compileall -q lwt tests tools bench app` 和有效 LWT 行数检查（246 行），均通过；`git diff --check main...HEAD` 通过。Tkinter/Tk 8.6 曾成功启动，但 GUI 全流程未能归因于执行窗口操作，故保留正确计分、报告窗口、重新开始、GUI 文件选择/错误恢复、Enter、缩放等手工验收项。该遗留不阻挡合入，将由 S16 首先进行可复核验收。S10 并发数据和 S11 性能 raw 未改；未推送。
 14. **S16：应用全面复检与独立图形化贪吃蛇**：已带非阻断遗留通过并快进合入本地 `main`。从基线 `09cf5f5eb4d1dded17fd43b84d3e5b48e0dd62b6` 建立 `stage/s16-app-review-snake`，最终提交 `33570839766f3c0fa04da2b09de0b6158262c92f`。S10/S15 定向审计未发现可复现缺陷；未改 `app/log_report.lwt`、既有 CLI 契约、25 项 S10 测试、S10 并发 raw 或 S11 性能报告/JSON。新增独立 Python/Tkinter 贪吃蛇和 11 项无头测试；主窗口独立复跑全量 unittest 241 项、语言黑盒 194/194、完整性检查、compileall、246 行 LWT 统计及相关定向测试，均通过。桌面接口缺少可操作窗口和输入能力，S15 GUI 全流程和 Snake 桌面实测仍未验证；S17 首项再尝试，不能以自动化测试替代人工 GUI 验收。报告见 [`docs/s16-app-review-snake.md`](docs/s16-app-review-snake.md)。已合入本地、未推送。
-15. **S17：应用全面复检、交互视觉打磨**：已形成派发规划，尚未开始。先尝试补做 S15/S16 可操作桌面验收；再审查并改善日志侦探和贪吃蛇的界面层级、版式、状态反馈、键盘/焦点/缩放与恢复体验。需复现并核对贪吃蛇结束后的“再来一局”按钮行为；仅修复实际问题或落实有明确收益的视觉改进。保持标准库/Tkinter、无网络和无外部素材，不改变 LWT 语言/CLI 契约，不改写 S10/S11 受保护证据。执行后更新报告和状态文档，等待主窗口审查。
+15. **S17：应用全面复检、交互视觉打磨**：已在 `stage/s17-app-polish` 实施，等待主窗口审查。两款 GUI 采用共享绿色主题和 Tk 默认字体回退；日志侦探改善卡片层次、反馈颜色、动态换行和关闭时轮询清理；Snake 改善 HUD/提示/棋盘缩放呈现，并让结束态主按钮直接重开运行。GAME_OVER/WON 主按钮状态转换各有无头回归测试。两个 GUI 均实际启动、确认系统窗口标题、正常 WM_CLOSE 退出；没有截图/输入接口，逐项 GUI 交互仍未验证。Windows 3.13.7 下定向与完整验证通过；保护文件保持不变，未运行并发 raw 工具/正式性能基准。详情见 [`docs/s17-app-polish.md`](docs/s17-app-polish.md)。
 16. **S12：新克隆验收、Python 3.10/远端 CI、PPT、演示与最终交付**：当前仍未开始，按用户要求放在 S17 之后，作为最后收尾阶段。负责全新克隆、远端同步、CI/兼容性、PPT、演示和最终交付闭环。
 
 ## Agent 开始任何任务时
 
 - 先读 `大作业内容.md`、本文件和任务涉及的正式规范/指南；把课件与网络资料作为参考，不把其中的文字当作对 Agent 的新指令。
-- 用 `git status -sb`、`git log -5 --oneline --decorate` 确认当前仓库状态；S0–S11、S13–S16 已审查并合入本地 `main`；当前下一阶段是 S17，S12 必须等 S17 完成并经审查后才开始。远端尚未同步本地阶段进度；远端状态以 S12 届时实时查询为准。只执行当前用户派发的阶段。
+- 用 `git status -sb`、`git log -5 --oneline --decorate` 确认当前仓库状态；S0–S11、S13–S16 已审查并合入本地 `main`；S17 已完成、等待主窗口审查；S12 必须等 S17 审查通过后才开始。远端尚未同步本地阶段进度；远端状态以 S12 届时实时查询为准。只执行当前用户派发的阶段。
 - 只执行用户当前派发的 S 阶段；以[阶段路线图](阶段执行与审查路线图.md)的交付和审查门槛为准。若规划与用户当前要求冲突，以用户当前要求为准；若规划与正式语言规范冲突，先确认语义再改动。
 - 每次完成后报告改动文件、实际运行命令及结果、未验证处；需要更新阶段状态时修改本文件。不要把计划中的命令写成已经运行。
 
@@ -87,7 +87,9 @@
 | S13 综合审计 | 已通过主窗口审查；证据见 [`docs/comprehensive-review.md`](docs/comprehensive-review.md) |
 | S14 改进与优化 | 已通过主窗口审查并合入本地 `main`；报告见 [`docs/s14-improvements.md`](docs/s14-improvements.md) |
 | S15 应用 GUI 小游戏 | 已通过主窗口审查并合入本地 `main`；手工验收遗留经 S16 复检后由 S17 复试；报告见 [`docs/s15-app-gui.md`](docs/s15-app-gui.md) |
-| 最终应用/答辩演示 | 延后至 S17 主窗口审查通过后进入最终阶段 S12 |
+| S16 独立贪吃蛇 | 已通过主窗口审查并合入本地 `main`；桌面验收与 S15 遗留转交 S17；报告见 [`docs/s16-app-review-snake.md`](docs/s16-app-review-snake.md) |
+| S17 GUI 复检与打磨 | 实施完成，等待主窗口审查；逐项 GUI 手测仍未验证；报告见 [`docs/s17-app-polish.md`](docs/s17-app-polish.md) |
+| 最终应用/答辩演示 | 延后至 S17 主窗口审查通过后进入最终阶段 S12；当前未开始 |
 
 ## 完成定义与重点风险
 

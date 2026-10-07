@@ -22,7 +22,7 @@
 2. **语言范围：** 整数、字符串、布尔、`null`、数组、命名 `record`、输入输出、条件与循环、函数及递归。以 `record`、`when/otherwise`、`each`、`emit` 的组合形成有辨识度的 LWT 语法。只实现支撑作业和应用所需的少量内置函数。
 3. **测试：** 所有被测程序是 `.lwt`，Python 驱动仅通过公开 CLI 注入输入、比较 stdout/stderr/退出码。覆盖以“规范条款 → 正常/边界/错误用例”矩阵为准，70 个以上独立用例是目标，不是替代覆盖率的指标。[Python `subprocess.run`](https://docs.python.org/3/library/subprocess.html)提供进程输出捕获与超时机制。
 4. **性能：** 至少两组成对 LWT/Python 脚本，使用相同算法、输入规模与结果校验。每次启动新进程测端到端耗时，保存多次原始数据并报告中位数、最小值、波动和时间比；同时说明进程启动与解析成本。[Python 计时文档](https://docs.python.org/3/library/timeit.html)提醒重复测量及环境噪声的影响。
-5. **Agent 应用：** 保留 S10 的只读 LWT 命令行日志分析器作为应用核心，覆盖解析、过滤、统计、排行、坏记录处理与 Unicode。S15 已在其外层增加 Python 标准库 Tkinter 图形界面和日志侦探小游戏；每次答题的正确统计由公开 LWT CLI 计算，Python 界面不复制日志解析规则。原有 stdout 契约、246 行有效 LWT 主体、并发读取脚本和原始证据继续保留；界面工作线程只负责避免窗口阻塞，不代表 LWT 语言支持线程。S15 已通过主窗口审查；S16 的定向复检未发现可复现缺陷并新增独立 Python/Tkinter 贪吃蛇，已带非阻断桌面验收遗留通过。S17 将先尝试对两个 GUI 做可归因的桌面验收，再进行有证据的视觉与交互打磨；自动化测试不替代人工 GUI 验收。
+5. **Agent 应用：** 保留 S10 的只读 LWT 命令行日志分析器作为应用核心，覆盖解析、过滤、统计、排行、坏记录处理与 Unicode。S15 在其外层增加标准库 Tkinter 日志侦探；每题正确统计仍由公开 LWT CLI 计算，Python 不复制日志解析规则。S16 新增与日志分析器分开的贪吃蛇。S17 已实施两款 GUI 的共同主题、响应式信息排版和状态反馈，并修复 Snake 结束态“再来一局”动作；桌面窗口创建/关闭已验证，真实操作仍因缺少输入/截图接口未验证。应用体验阶段不改变 LWT 语言语义和既有 CLI/性能证据。
 6. **文档与历史：** 语法规范是实现行为的唯一权威说明；开发指南面向使用者；根目录 `project.md` 面向 Agent 复用；`AGENTS.md` 提醒 Agent 先读该文件。小步提交、测试和审查先于提交；新克隆仓库能按 README 复现。GitHub Actions 在一键测试稳定后接入同一命令。[官方 GitHub Python CI 指南](https://docs.github.com/en/actions/tutorials/build-and-test-code/python)建议显式设置 Python 版本。
 
 ## 三、优先级和阶段门槛
@@ -76,4 +76,4 @@ S13 是进入最终交付前的全面审计；S14 接续 S13 风险登记，完�
 
 远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，合并其仅含 README 的初始提交与本地规划提交，并正常推送 `main`；后续同步状态以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
 
-**S0–S11、S13–S16 已通过主窗口审查并合入本地 `main`；S17 待开始；S12 按用户要求仍是最后收尾阶段且未开始。**S16 在 Windows Python 3.13.7 上通过完整 unittest 241 项、194/194 黑盒、项目完整性检查、compileall 和 246 行 LWT 应用计数；新增贪吃蛇无头规则测试 11 项。当前会话无法操作桌面窗口，S15 全流程和 Snake 图形交互仍未验证；S17 将先尝试补测，不能使用自动化测试代替桌面验收。S14 证据见[`docs/s14-improvements.md`](docs/s14-improvements.md)，S15 记录见[`docs/s15-app-gui.md`](docs/s15-app-gui.md)，S16 记录见[`docs/s16-app-review-snake.md`](docs/s16-app-review-snake.md)。Python 3.10 与远端 Actions、最终新克隆、PPT、答辩演示和远端同步仍由 S12 负责。
+**S0–S11、S13–S16 已通过主窗口审查并合入本地 `main`；S17 已实施，等待主窗口审查；S12 按用户要求仍为最终收尾且未开始。**S17 在 Windows Python 3.13.7 / Tk 8.6 下完成 GUI 代码、状态回归和项目检查；日志侦探与贪吃蛇窗口均创建成功并可正常关闭。由于桌面控制接口未提供窗口输入或截图，两款应用的完整人工操作仍未验证。报告见[`docs/s17-app-polish.md`](docs/s17-app-polish.md)。Python 3.10、远端 Actions、新克隆验收、PPT、答辩演示和远端同步仍由 S12 负责。
