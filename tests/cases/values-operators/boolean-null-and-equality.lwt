@@ -1,0 +1,1 @@
+emit true == true; emit false != true; emit null == null; emit 1 == "1";

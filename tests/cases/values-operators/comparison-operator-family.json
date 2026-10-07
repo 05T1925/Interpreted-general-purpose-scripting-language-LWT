@@ -1,0 +1,15 @@
+{
+  "id": "comparison-operator-family",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\ntrue\ntrue\ntrue\ntrue\n",
+    "stderr": ""
+  }
+}

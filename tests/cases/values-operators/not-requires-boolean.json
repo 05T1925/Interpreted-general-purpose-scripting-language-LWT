@@ -1,0 +1,15 @@
+{
+  "id": "not-requires-boolean",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/not-requires-boolean.lwt:1:6: RuntimeError: 'not' requires a boolean\n"
+  }
+}

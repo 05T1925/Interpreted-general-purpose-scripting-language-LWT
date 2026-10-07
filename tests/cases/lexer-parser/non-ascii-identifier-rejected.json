@@ -1,0 +1,16 @@
+{
+  "id": "non-ascii-identifier-rejected",
+  "spec_refs": [
+    "2.1",
+    "2.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/non-ascii-identifier-rejected.lwt:1:5: LexError: unexpected character U+4E2D\n"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "cli-source-is-directory",
+  "spec_refs": [
+    "6",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 4,
+    "stdout": "",
+    "stderr": "lwt: FileError: cannot read source file\n"
+  },
+  "cli_args_override": [
+    "tests/cases/fixtures"
+  ]
+}

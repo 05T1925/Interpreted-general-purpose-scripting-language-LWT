@@ -1,0 +1,16 @@
+{
+  "id": "record-instance-identity",
+  "spec_refs": [
+    "4.2",
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\nfalse\n",
+    "stderr": ""
+  }
+}

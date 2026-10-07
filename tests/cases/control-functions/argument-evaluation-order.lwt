@@ -1,0 +1,1 @@
+let n = 0; fn f(a, b) { return [a, b]; } emit f(n = n + 1, n = n + 1); emit n;

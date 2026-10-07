@@ -1,0 +1,20 @@
+{
+  "id": "cli-args-require-separator",
+  "spec_refs": [
+    "6",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 4,
+    "stdout": "",
+    "stderr": "lwt: CliError: program arguments must follow --\n"
+  },
+  "cli_args_override": [
+    "tests/cases/fixtures/read-lines.txt",
+    "extra"
+  ]
+}

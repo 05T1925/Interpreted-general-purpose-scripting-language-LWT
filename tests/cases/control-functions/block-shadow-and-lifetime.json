@@ -1,0 +1,15 @@
+{
+  "id": "block-shadow-and-lifetime",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "2\n1\n",
+    "stderr": ""
+  }
+}

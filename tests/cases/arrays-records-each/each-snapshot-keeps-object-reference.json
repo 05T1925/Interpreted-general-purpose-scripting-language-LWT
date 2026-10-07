@@ -1,0 +1,16 @@
+{
+  "id": "each-snapshot-keeps-object-reference",
+  "spec_refs": [
+    "4.1",
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n2\n[2, 3]\n",
+    "stderr": ""
+  }
+}

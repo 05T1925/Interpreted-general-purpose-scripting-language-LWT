@@ -1,0 +1,1 @@
+record Node {next}; let n = Node{next: null}; n.next = n; emit n;

@@ -1,0 +1,15 @@
+{
+  "id": "to-int-empty-rejected",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/to-int-empty-rejected.lwt:1:1: RuntimeError: to_int expects text matching -?[0-9]+\n"
+  }
+}

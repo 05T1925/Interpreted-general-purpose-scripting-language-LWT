@@ -1,0 +1,1 @@
+record Box {value}; let b = Box{value: 1}; let a = [b, b]; let i = 0; each (x in a) { emit x.value; x.value = x.value + 1; i = i + 1; } emit [i, b.value];

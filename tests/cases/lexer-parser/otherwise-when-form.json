@@ -1,0 +1,15 @@
+{
+  "id": "otherwise-when-form",
+  "spec_refs": [
+    "3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/otherwise-when-form.lwt:1:26: SyntaxError: expected '{' to begin block\n"
+  }
+}

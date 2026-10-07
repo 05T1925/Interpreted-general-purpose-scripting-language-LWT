@@ -1,0 +1,16 @@
+{
+  "id": "function-name-cannot-replace-builtin",
+  "spec_refs": [
+    "5",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/function-name-cannot-replace-builtin.lwt:1:12: RuntimeError: function name 'len' conflicts with a built-in\n"
+  }
+}

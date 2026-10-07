@@ -1,0 +1,15 @@
+{
+  "id": "minus-requires-integers",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/minus-requires-integers.lwt:1:10: RuntimeError: operator '-' requires integer operands\n"
+  }
+}

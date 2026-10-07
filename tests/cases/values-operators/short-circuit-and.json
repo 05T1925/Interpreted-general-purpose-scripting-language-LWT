@@ -1,0 +1,16 @@
+{
+  "id": "short-circuit-and",
+  "spec_refs": [
+    "4.2",
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "false\n",
+    "stderr": ""
+  }
+}

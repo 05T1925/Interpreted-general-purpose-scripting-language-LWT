@@ -1,0 +1,1 @@
+let n = 0; fn mark() { n = n + 1; return true; } emit false or mark(); emit n;

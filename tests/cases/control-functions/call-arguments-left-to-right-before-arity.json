@@ -1,0 +1,16 @@
+{
+  "id": "call-arguments-left-to-right-before-arity",
+  "spec_refs": [
+    "4.1",
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "1\n1\n",
+    "stderr": "tests/cases/control-functions/call-arguments-left-to-right-before-arity.lwt:1:41: RuntimeError: function 'f' expects 1 arguments, got 2\n"
+  }
+}

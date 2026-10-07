@@ -1,0 +1,1 @@
+emit "quote: \" slash: \\ line:\n tab:\t";

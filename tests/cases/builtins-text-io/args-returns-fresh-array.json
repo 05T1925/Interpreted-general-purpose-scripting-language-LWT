@@ -1,0 +1,17 @@
+{
+  "id": "args-returns-fresh-array",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [
+    "original"
+  ],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[\"original\"]\n",
+    "stderr": ""
+  }
+}

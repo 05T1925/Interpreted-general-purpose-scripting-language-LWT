@@ -1,0 +1,1 @@
+let len = 7; emit len; emit len("x");

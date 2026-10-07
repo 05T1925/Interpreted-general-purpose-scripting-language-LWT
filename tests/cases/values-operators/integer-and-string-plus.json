@@ -1,0 +1,15 @@
+{
+  "id": "integer-and-string-plus",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "9\nLWT\n",
+    "stderr": ""
+  }
+}

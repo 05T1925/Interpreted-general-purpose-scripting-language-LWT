@@ -1,0 +1,15 @@
+{
+  "id": "builtin-arity",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/builtin-arity.lwt:1:1: RuntimeError: len expects 1 argument\n"
+  }
+}

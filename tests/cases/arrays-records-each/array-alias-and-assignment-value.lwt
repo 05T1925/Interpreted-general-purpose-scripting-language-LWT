@@ -1,0 +1,1 @@
+let a = [1]; let b = a; emit a[0] = 9; emit b;

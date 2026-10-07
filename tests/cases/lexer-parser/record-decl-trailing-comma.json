@@ -1,0 +1,15 @@
+{
+  "id": "record-decl-trailing-comma",
+  "spec_refs": [
+    "3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/record-decl-trailing-comma.lwt:1:13: SyntaxError: expected record field name\n"
+  }
+}

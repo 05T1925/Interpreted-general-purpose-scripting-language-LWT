@@ -1,0 +1,15 @@
+{
+  "id": "function-and-record-name-spaces",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\nSame{x: 2}\n",
+    "stderr": ""
+  }
+}

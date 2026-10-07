@@ -1,0 +1,15 @@
+{
+  "id": "args-arity",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/args-arity.lwt:1:1: RuntimeError: args expects 0 arguments\n"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "keyword-not-identifier",
+  "spec_refs": [
+    "2.1",
+    "3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/keyword-not-identifier.lwt:1:5: SyntaxError: expected variable name after 'let'\n"
+  }
+}

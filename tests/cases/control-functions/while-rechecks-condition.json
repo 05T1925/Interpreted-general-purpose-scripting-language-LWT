@@ -1,0 +1,15 @@
+{
+  "id": "while-rechecks-condition",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "0\n1\n2\n",
+    "stderr": ""
+  }
+}

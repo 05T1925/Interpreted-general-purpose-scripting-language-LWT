@@ -1,0 +1,1 @@
+record R {x}; let r = R{x: 1}; emit r.y;

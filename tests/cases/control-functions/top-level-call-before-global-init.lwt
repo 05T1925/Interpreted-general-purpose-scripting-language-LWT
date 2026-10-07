@@ -1,0 +1,1 @@
+fn f() { return later; } emit f(); let later = 2;

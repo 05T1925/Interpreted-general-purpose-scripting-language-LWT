@@ -1,0 +1,1 @@
+fn f() { { return 5; } emit 9; } emit f();

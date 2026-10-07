@@ -1,0 +1,15 @@
+{
+  "id": "builtin-type",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/builtin-type.lwt:1:1: RuntimeError: trim expects a string\n"
+  }
+}

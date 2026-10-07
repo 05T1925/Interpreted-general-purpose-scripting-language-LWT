@@ -1,0 +1,16 @@
+{
+  "id": "duplicate-let-before-initializer",
+  "spec_refs": [
+    "4.1",
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/duplicate-let-before-initializer.lwt:1:16: RuntimeError: variable 'x' is already declared in this scope\n"
+  }
+}

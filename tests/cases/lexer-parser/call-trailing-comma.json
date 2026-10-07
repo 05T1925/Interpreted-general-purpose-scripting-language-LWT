@@ -1,0 +1,15 @@
+{
+  "id": "call-trailing-comma",
+  "spec_refs": [
+    "3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/call-trailing-comma.lwt:1:5: SyntaxError: expected expression\n"
+  }
+}

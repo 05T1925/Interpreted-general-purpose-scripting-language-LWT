@@ -1,0 +1,15 @@
+{
+  "id": "to-int-arity",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/to-int-arity.lwt:1:1: RuntimeError: to_int expects 1 argument\n"
+  }
+}

@@ -1,0 +1,1 @@
+record Pair {left, right}; emit Pair{right: 2, left: 1};

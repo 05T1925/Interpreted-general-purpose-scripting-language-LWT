@@ -1,0 +1,15 @@
+{
+  "id": "assignment-evaluates-receiver-once",
+  "spec_refs": [
+    "4.1"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[2, [8]]\n",
+    "stderr": ""
+  }
+}

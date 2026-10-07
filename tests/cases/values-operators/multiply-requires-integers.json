@@ -1,0 +1,15 @@
+{
+  "id": "multiply-requires-integers",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/multiply-requires-integers.lwt:1:11: RuntimeError: operator '*' requires integer operands\n"
+  }
+}

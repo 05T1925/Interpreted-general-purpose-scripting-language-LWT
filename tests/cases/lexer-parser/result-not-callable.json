@@ -1,0 +1,15 @@
+{
+  "id": "result-not-callable",
+  "spec_refs": [
+    "3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/result-not-callable.lwt:1:14: SyntaxError: expected ';' after expression\n"
+  }
+}

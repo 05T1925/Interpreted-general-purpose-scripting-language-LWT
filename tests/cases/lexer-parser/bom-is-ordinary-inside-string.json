@@ -1,0 +1,15 @@
+{
+  "id": "bom-is-ordinary-inside-string",
+  "spec_refs": [
+    "2.1"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "a﻿b\n",
+    "stderr": ""
+  }
+}

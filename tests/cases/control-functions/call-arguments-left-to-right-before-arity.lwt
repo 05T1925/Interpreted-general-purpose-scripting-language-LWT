@@ -1,0 +1,1 @@
+fn f(a) {} fn g() { emit 1; return 0; } f(g(), g());

@@ -1,0 +1,15 @@
+{
+  "id": "function-too-many-arguments",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/function-too-many-arguments.lwt:1:14: RuntimeError: function 'one' expects 1 arguments, got 2\n"
+  }
+}

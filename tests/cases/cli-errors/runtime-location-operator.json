@@ -1,0 +1,15 @@
+{
+  "id": "runtime-location-operator",
+  "spec_refs": [
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/cli-errors/runtime-location-operator.lwt:1:8: RuntimeError: division by zero\n"
+  }
+}

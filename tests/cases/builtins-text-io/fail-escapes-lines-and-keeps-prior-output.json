@@ -1,0 +1,16 @@
+{
+  "id": "fail-escapes-lines-and-keeps-prior-output",
+  "spec_refs": [
+    "6",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": "bad\nline\rnext\n"
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "before\n",
+    "stderr": "tests/cases/builtins-text-io/fail-escapes-lines-and-keeps-prior-output.lwt:1:16: RuntimeError: bad\\nline\\rnext\n"
+  }
+}

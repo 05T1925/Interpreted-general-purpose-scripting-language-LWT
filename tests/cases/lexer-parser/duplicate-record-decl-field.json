@@ -1,0 +1,16 @@
+{
+  "id": "duplicate-record-decl-field",
+  "spec_refs": [
+    "3",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/duplicate-record-decl-field.lwt:1:14: SyntaxError: duplicate field name in record declaration\n"
+  }
+}

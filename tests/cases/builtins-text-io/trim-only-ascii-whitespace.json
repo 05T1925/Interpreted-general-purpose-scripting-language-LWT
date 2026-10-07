@@ -1,0 +1,15 @@
+{
+  "id": "trim-only-ascii-whitespace",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": " \t\r\u000b\fX  \n"
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[\"X \"]\n[\"a b\"]\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "comparison-types",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/comparison-types.lwt:1:8: RuntimeError: operator '<' requires two integers or two strings\n"
+  }
+}

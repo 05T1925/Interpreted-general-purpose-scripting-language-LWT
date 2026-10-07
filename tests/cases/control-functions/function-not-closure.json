@@ -1,0 +1,15 @@
+{
+  "id": "function-not-closure",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/function-not-closure.lwt:1:21: RuntimeError: undefined variable 'hidden'\n"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "while-condition-strict",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/while-condition-strict.lwt:1:1: RuntimeError: while condition must be a boolean\n"
+  }
+}

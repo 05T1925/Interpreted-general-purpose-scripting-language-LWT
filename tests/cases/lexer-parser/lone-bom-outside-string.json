@@ -1,0 +1,16 @@
+{
+  "id": "lone-bom-outside-string",
+  "spec_refs": [
+    "2.1",
+    "2.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/lone-bom-outside-string.lwt:1:8: LexError: unexpected character U+FEFF\n"
+  }
+}

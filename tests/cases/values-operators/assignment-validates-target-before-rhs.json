@@ -1,0 +1,16 @@
+{
+  "id": "assignment-validates-target-before-rhs",
+  "spec_refs": [
+    "4.1",
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/assignment-validates-target-before-rhs.lwt:1:17: RuntimeError: array index is out of range\n"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "chained-comparison",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/chained-comparison.lwt:1:12: RuntimeError: operator '<' requires two integers or two strings\n"
+  }
+}

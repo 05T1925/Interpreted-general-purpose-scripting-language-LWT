@@ -1,0 +1,16 @@
+{
+  "id": "duplicate-function-prepass-before-statements",
+  "spec_refs": [
+    "5",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/duplicate-function-prepass-before-statements.lwt:1:22: RuntimeError: duplicate function declaration 'f'\n"
+  }
+}

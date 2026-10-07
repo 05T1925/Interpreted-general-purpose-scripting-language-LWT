@@ -1,0 +1,15 @@
+{
+  "id": "negative-floor-division-modulo",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "-3\n2\n-3\n-2\n",
+    "stderr": ""
+  }
+}

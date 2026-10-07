@@ -1,0 +1,16 @@
+{
+  "id": "right-associative-assignment",
+  "spec_refs": [
+    "3",
+    "4.1"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "3\n[3, 3]\n",
+    "stderr": ""
+  }
+}

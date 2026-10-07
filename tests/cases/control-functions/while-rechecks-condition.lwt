@@ -1,0 +1,1 @@
+let n = 0; while (n < 3) { emit n; n = n + 1; }

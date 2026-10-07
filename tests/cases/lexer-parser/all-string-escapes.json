@@ -1,0 +1,16 @@
+{
+  "id": "all-string-escapes",
+  "spec_refs": [
+    "2.1",
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "quote: \" slash: \\ line:\n tab:\t\n",
+    "stderr": ""
+  }
+}

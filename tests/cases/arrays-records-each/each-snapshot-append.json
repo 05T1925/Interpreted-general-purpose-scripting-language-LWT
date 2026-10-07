@@ -1,0 +1,15 @@
+{
+  "id": "each-snapshot-append",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n2\n[1, 2, 9, 9]\n",
+    "stderr": ""
+  }
+}

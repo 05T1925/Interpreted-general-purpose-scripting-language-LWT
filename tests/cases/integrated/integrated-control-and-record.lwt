@@ -1,0 +1,1 @@
+record Task {name, done}; fn label(t) { when (t.done) { return t.name + ":done"; } otherwise { return t.name + ":todo"; } } let tasks = [Task{name: "a", done: false}, Task{name: "b", done: true}]; each (t in tasks) { emit label(t); }

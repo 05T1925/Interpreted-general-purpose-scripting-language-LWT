@@ -1,0 +1,15 @@
+{
+  "id": "to-int-sign-and-leading-zero",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "-12\n0\n",
+    "stderr": ""
+  }
+}

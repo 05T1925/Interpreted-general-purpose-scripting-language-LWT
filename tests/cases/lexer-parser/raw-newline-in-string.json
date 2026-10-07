@@ -1,0 +1,16 @@
+{
+  "id": "raw-newline-in-string",
+  "spec_refs": [
+    "2.1",
+    "2.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/raw-newline-in-string.lwt:1:6: LexError: raw newline in string literal\n"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "boolean-null-and-equality",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\ntrue\ntrue\nfalse\n",
+    "stderr": ""
+  }
+}

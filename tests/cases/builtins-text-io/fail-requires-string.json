@@ -1,0 +1,15 @@
+{
+  "id": "fail-requires-string",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/fail-requires-string.lwt:1:1: RuntimeError: fail expects a string message\n"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "invalid-utf8-source",
+  "spec_refs": [
+    "2.1",
+    "2.2",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 4,
+    "stdout": "",
+    "stderr": "lwt: FileError: source file is not valid UTF-8\n"
+  }
+}

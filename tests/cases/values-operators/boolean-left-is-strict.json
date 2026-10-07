@@ -1,0 +1,15 @@
+{
+  "id": "boolean-left-is-strict",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/boolean-left-is-strict.lwt:1:8: RuntimeError: 'and' requires boolean operands\n"
+  }
+}

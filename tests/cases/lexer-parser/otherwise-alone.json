@@ -1,0 +1,15 @@
+{
+  "id": "otherwise-alone",
+  "spec_refs": [
+    "3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/otherwise-alone.lwt:1:1: SyntaxError: expected expression\n"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "integrated-input-text-and-args",
+  "spec_refs": [
+    "1",
+    "6"
+  ],
+  "args": [
+    "demo",
+    "two words"
+  ],
+  "stdin": {
+    "text": "  hello  \n"
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "hello\n[\"demo\", \"two words\"]\n",
+    "stderr": ""
+  }
+}

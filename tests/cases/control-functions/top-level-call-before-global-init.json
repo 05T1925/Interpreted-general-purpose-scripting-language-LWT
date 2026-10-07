@@ -1,0 +1,15 @@
+{
+  "id": "top-level-call-before-global-init",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/top-level-call-before-global-init.lwt:1:17: RuntimeError: undefined variable 'later'\n"
+  }
+}

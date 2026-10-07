@@ -1,0 +1,19 @@
+{
+  "id": "cli-bare-separator",
+  "spec_refs": [
+    "6",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 4,
+    "stdout": "",
+    "stderr": "lwt: CliError: expected a source path\n"
+  },
+  "cli_args_override": [
+    "--"
+  ]
+}

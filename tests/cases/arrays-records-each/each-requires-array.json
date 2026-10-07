@@ -1,0 +1,15 @@
+{
+  "id": "each-requires-array",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/each-requires-array.lwt:1:1: RuntimeError: each requires an array\n"
+  }
+}

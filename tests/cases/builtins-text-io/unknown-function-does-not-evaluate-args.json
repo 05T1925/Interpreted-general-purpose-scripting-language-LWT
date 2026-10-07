@@ -1,0 +1,15 @@
+{
+  "id": "unknown-function-does-not-evaluate-args",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/unknown-function-does-not-evaluate-args.lwt:1:1: RuntimeError: undefined function 'missing'\n"
+  }
+}

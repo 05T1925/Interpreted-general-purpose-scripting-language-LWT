@@ -1,0 +1,16 @@
+{
+  "id": "only-one-initial-bom-is-removed",
+  "spec_refs": [
+    "2.1",
+    "2.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/only-one-initial-bom-is-removed.lwt:1:1: LexError: unexpected character U+FEFF\n"
+  }
+}

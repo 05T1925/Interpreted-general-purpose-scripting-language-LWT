@@ -1,0 +1,16 @@
+{
+  "id": "nonselected-branch-has-no-side-effect",
+  "spec_refs": [
+    "5",
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  }
+}

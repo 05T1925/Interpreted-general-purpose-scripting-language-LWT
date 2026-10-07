@@ -1,0 +1,1 @@
+record A {x}; record B {x}; emit A{x: 1} == B{x: 1};

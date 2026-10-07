@@ -1,0 +1,16 @@
+{
+  "id": "record-needs-semicolon",
+  "spec_refs": [
+    "2.1",
+    "3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/record-needs-semicolon.lwt:1:12: SyntaxError: expected ';' after record declaration\n"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "args-boundaries",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [
+    "",
+    "two words",
+    "中",
+    "--",
+    ""
+  ],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[\"\", \"two words\", \"中\", \"--\", \"\"]\n",
+    "stderr": ""
+  }
+}

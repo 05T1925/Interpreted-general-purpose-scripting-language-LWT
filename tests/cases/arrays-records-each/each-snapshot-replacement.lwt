@@ -1,0 +1,1 @@
+let a = [1, 2]; each (x in a) { emit x; a[1] = 8; } emit a;

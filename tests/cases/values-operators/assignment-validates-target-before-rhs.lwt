@@ -1,0 +1,1 @@
+let xs = [0]; xs[2] = fail("rhs");

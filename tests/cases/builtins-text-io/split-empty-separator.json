@@ -1,0 +1,15 @@
+{
+  "id": "split-empty-separator",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/split-empty-separator.lwt:1:1: RuntimeError: split separator must not be empty\n"
+  }
+}

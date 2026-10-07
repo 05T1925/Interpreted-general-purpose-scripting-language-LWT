@@ -1,0 +1,15 @@
+{
+  "id": "when-condition-strict",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/when-condition-strict.lwt:1:1: RuntimeError: when condition must be a boolean\n"
+  }
+}

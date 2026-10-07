@@ -1,0 +1,1 @@
+record R {x}; let a = R{x: 1}; let b = a; let c = R{x: 1}; emit a == b; emit a == c;

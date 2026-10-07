@@ -1,0 +1,15 @@
+{
+  "id": "block-variable-expires",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/block-variable-expires.lwt:1:25: RuntimeError: undefined variable 'local'\n"
+  }
+}

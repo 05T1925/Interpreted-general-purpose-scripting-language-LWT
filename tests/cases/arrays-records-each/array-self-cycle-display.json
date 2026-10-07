@@ -1,0 +1,15 @@
+{
+  "id": "array-self-cycle-display",
+  "spec_refs": [
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[<cycle>]\n",
+    "stderr": ""
+  }
+}

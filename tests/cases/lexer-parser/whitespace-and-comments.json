@@ -1,0 +1,18 @@
+{
+  "id": "whitespace-and-comments",
+  "spec_refs": [
+    "2.1"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "tags": [
+    "boundary"
+  ]
+}

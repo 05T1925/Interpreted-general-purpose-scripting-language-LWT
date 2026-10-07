@@ -1,0 +1,1 @@
+record Empty {}; fn empty() { return; } emit Empty{}; emit []; emit empty();

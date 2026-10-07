@@ -1,0 +1,16 @@
+{
+  "id": "division-by-zero",
+  "spec_refs": [
+    "4.2",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/division-by-zero.lwt:1:8: RuntimeError: division by zero\n"
+  }
+}

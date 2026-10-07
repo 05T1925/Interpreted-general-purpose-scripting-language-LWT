@@ -1,0 +1,1 @@
+emit read_text("tests/cases/fixtures");

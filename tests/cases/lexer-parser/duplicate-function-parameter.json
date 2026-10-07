@@ -1,0 +1,16 @@
+{
+  "id": "duplicate-function-parameter",
+  "spec_refs": [
+    "3",
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/duplicate-function-parameter.lwt:1:9: SyntaxError: duplicate parameter name\n"
+  }
+}

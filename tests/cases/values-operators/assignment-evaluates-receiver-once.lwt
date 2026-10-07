@@ -1,0 +1,1 @@
+let xs = [0]; let calls = 0; fn receiver() { calls = calls + 1; return xs; } fn offset() { calls = calls + 1; return 0; } receiver()[offset()] = 8; emit [calls, xs];

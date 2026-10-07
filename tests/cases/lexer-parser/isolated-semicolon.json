@@ -1,0 +1,16 @@
+{
+  "id": "isolated-semicolon",
+  "spec_refs": [
+    "2.1",
+    "3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/isolated-semicolon.lwt:1:1: SyntaxError: expected expression\n"
+  }
+}

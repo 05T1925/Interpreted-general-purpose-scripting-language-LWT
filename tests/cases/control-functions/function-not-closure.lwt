@@ -1,0 +1,1 @@
+fn inner() { return hidden; } fn outer() { let hidden = 7; return inner(); } outer();

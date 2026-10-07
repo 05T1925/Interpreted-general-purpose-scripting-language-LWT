@@ -1,0 +1,17 @@
+{
+  "id": "empty-array-call-record",
+  "spec_refs": [
+    "3",
+    "4.3",
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "Empty{}\n[]\nnull\n",
+    "stderr": ""
+  }
+}

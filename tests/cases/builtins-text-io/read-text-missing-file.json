@@ -1,0 +1,16 @@
+{
+  "id": "read-text-missing-file",
+  "spec_refs": [
+    "6",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/read-text-missing-file.lwt:1:6: RuntimeError: could not read text file\n"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "syntax-eof-location",
+  "spec_refs": [
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/cli-errors/syntax-eof-location.lwt:1:7: SyntaxError: expected ';' after emit statement\n"
+  }
+}

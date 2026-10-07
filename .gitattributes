@@ -1,0 +1,3 @@
+/tests/cases/fixtures/read-lines.txt -text whitespace=-blank-at-eol,-blank-at-eof
+/tests/cases/lexer-parser/normalized-cr-lines.lwt -text whitespace=-blank-at-eol,-blank-at-eof
+/tests/cases/lexer-parser/whitespace-and-comments.lwt -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab

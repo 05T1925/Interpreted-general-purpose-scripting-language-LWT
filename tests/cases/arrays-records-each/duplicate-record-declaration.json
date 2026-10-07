@@ -1,0 +1,16 @@
+{
+  "id": "duplicate-record-declaration",
+  "spec_refs": [
+    "5",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/duplicate-record-declaration.lwt:1:29: RuntimeError: duplicate record declaration 'R'\n"
+  }
+}

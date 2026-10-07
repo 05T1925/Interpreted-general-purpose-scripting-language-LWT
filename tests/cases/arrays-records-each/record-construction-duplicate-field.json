@@ -1,0 +1,15 @@
+{
+  "id": "record-construction-duplicate-field",
+  "spec_refs": [
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/record-construction-duplicate-field.lwt:1:20: RuntimeError: record construction for 'R' repeats field 'x'\n"
+  }
+}

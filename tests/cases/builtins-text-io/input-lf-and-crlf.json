@@ -1,0 +1,15 @@
+{
+  "id": "input-lf-and-crlf",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": "first\r\nsecond\n"
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "first\nsecond\n",
+    "stderr": ""
+  }
+}

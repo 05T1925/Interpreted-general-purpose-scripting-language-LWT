@@ -1,0 +1,15 @@
+{
+  "id": "index-nonarray",
+  "spec_refs": [
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/index-nonarray.lwt:1:7: RuntimeError: indexing requires an array\n"
+  }
+}

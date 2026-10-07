@@ -1,0 +1,16 @@
+{
+  "id": "record-fields-evaluate-in-source-order",
+  "spec_refs": [
+    "4.1",
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "R{a: 2, b: 1}\n",
+    "stderr": ""
+  }
+}

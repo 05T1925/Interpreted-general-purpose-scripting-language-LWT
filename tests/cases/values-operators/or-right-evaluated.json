@@ -1,0 +1,16 @@
+{
+  "id": "or-right-evaluated",
+  "spec_refs": [
+    "4.1",
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\n1\n",
+    "stderr": ""
+  }
+}

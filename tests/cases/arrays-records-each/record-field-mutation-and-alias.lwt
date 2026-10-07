@@ -1,0 +1,1 @@
+record R {x}; let a = R{x: 1}; let b = a; emit a.x = 5; emit b.x;

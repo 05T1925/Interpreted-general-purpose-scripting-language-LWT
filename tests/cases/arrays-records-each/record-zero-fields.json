@@ -1,0 +1,16 @@
+{
+  "id": "record-zero-fields",
+  "spec_refs": [
+    "3",
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "Empty{}\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "implicit-return-null",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "null\n",
+    "stderr": ""
+  }
+}

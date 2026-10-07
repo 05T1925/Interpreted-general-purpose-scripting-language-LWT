@@ -1,0 +1,16 @@
+{
+  "id": "syntax-error-prevents-execution",
+  "spec_refs": [
+    "3",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/syntax-error-prevents-execution.lwt:1:17: SyntaxError: expected expression\n"
+  }
+}

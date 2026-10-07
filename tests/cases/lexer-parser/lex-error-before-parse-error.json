@@ -1,0 +1,16 @@
+{
+  "id": "lex-error-before-parse-error",
+  "spec_refs": [
+    "2.2",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/lex-error-before-parse-error.lwt:2:1: LexError: unexpected character U+0040\n"
+  }
+}

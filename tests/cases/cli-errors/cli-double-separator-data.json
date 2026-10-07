@@ -1,0 +1,18 @@
+{
+  "id": "cli-double-separator-data",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [
+    "--",
+    "x"
+  ],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[\"--\", \"x\"]\n",
+    "stderr": ""
+  }
+}

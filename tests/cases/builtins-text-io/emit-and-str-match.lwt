@@ -1,0 +1,1 @@
+let x = ["quote: \" slash: \\ line:\n tab:\t", 1]; emit x; emit str(x);

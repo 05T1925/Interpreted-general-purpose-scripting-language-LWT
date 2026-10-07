@@ -1,0 +1,15 @@
+{
+  "id": "split-preserves-empty-fields",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[\"\", \"a\", \"\", \"b\", \"\"]\n[\"\"]\n",
+    "stderr": ""
+  }
+}

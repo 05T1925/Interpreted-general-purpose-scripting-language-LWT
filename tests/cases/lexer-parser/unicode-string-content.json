@@ -1,0 +1,15 @@
+{
+  "id": "unicode-string-content",
+  "spec_refs": [
+    "2.1"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "中文🙂é\n",
+    "stderr": ""
+  }
+}

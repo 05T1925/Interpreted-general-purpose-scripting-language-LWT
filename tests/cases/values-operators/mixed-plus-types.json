@@ -1,0 +1,15 @@
+{
+  "id": "mixed-plus-types",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/mixed-plus-types.lwt:1:8: RuntimeError: '+' requires two integers or two strings\n"
+  }
+}

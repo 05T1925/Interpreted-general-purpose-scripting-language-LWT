@@ -1,0 +1,16 @@
+{
+  "id": "input-invalid-utf8",
+  "spec_refs": [
+    "6",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "base64": "/w=="
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/input-invalid-utf8.lwt:1:6: RuntimeError: standard input is not valid UTF-8\n"
+  }
+}

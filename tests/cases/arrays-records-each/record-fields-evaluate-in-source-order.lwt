@@ -1,0 +1,1 @@
+let n = 0; fn next() { n = n + 1; return n; } record R {a, b}; emit R{b: next(), a: next()};

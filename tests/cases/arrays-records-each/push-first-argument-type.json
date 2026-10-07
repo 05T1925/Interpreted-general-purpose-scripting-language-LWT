@@ -1,0 +1,15 @@
+{
+  "id": "push-first-argument-type",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/push-first-argument-type.lwt:1:1: RuntimeError: push first argument must be an array\n"
+  }
+}

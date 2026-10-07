@@ -1,0 +1,15 @@
+{
+  "id": "each-snapshot-replacement",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n2\n[1, 8]\n",
+    "stderr": ""
+  }
+}

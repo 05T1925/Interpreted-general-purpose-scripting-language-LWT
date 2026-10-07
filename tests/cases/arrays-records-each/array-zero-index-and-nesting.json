@@ -1,0 +1,15 @@
+{
+  "id": "array-zero-index-and-nesting",
+  "spec_refs": [
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "4\n5\n",
+    "stderr": ""
+  }
+}

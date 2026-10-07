@@ -1,0 +1,16 @@
+{
+  "id": "leading-zero-decimal",
+  "spec_refs": [
+    "2.1",
+    "4.1"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "42\n",
+    "stderr": ""
+  }
+}

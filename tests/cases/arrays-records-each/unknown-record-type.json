@@ -1,0 +1,15 @@
+{
+  "id": "unknown-record-type",
+  "spec_refs": [
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/unknown-record-type.lwt:1:6: RuntimeError: undefined record type 'Missing'\n"
+  }
+}

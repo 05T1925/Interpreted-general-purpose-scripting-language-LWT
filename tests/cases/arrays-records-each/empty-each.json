@@ -1,0 +1,18 @@
+{
+  "id": "empty-each",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  "tags": [
+    "boundary"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "function-arity",
+  "spec_refs": [
+    "5",
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/function-arity.lwt:1:15: RuntimeError: function 'f' expects 2 arguments, got 1\n"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "args-empty",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[]\n",
+    "stderr": ""
+  }
+}

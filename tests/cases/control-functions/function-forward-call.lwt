@@ -1,0 +1,1 @@
+emit later(3); fn later(x) { return x + 1; }

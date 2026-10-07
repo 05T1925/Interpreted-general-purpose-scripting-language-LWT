@@ -1,0 +1,1 @@
+let a = 0; let b = 0; emit a = b = 3; emit [a, b];

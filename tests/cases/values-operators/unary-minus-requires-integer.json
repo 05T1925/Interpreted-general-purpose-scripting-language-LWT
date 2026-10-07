@@ -1,0 +1,15 @@
+{
+  "id": "unary-minus-requires-integer",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/unary-minus-requires-integer.lwt:1:6: RuntimeError: unary '-' requires an integer\n"
+  }
+}

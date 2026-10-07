@@ -1,0 +1,1 @@
+record Empty {}; emit Empty{};

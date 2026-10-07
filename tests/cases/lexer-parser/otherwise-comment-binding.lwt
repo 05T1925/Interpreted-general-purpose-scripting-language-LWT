@@ -1,0 +1,2 @@
+when (false) {} # belongs to previous when
+otherwise { emit 9; }

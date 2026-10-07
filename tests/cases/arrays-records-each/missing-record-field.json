@@ -1,0 +1,15 @@
+{
+  "id": "missing-record-field",
+  "spec_refs": [
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/missing-record-field.lwt:1:38: RuntimeError: record 'R' has no field 'y'\n"
+  }
+}

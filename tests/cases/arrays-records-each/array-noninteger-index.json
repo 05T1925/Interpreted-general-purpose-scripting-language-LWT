@@ -1,0 +1,15 @@
+{
+  "id": "array-noninteger-index",
+  "spec_refs": [
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/array-noninteger-index.lwt:1:20: RuntimeError: array index must be an integer\n"
+  }
+}

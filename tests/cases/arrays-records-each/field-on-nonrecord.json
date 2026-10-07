@@ -1,0 +1,16 @@
+{
+  "id": "field-on-nonrecord",
+  "spec_refs": [
+    "4.3",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/field-on-nonrecord.lwt:1:7: RuntimeError: field access requires a record\n"
+  }
+}

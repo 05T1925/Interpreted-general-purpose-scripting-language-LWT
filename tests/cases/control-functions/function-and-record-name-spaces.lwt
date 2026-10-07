@@ -1,0 +1,1 @@
+fn Same() { return 1; } record Same {x}; emit Same(); emit Same{x: 2};

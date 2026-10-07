@@ -1,0 +1,15 @@
+{
+  "id": "input-final-line-without-lf",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": "last"
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "last\n",
+    "stderr": ""
+  }
+}

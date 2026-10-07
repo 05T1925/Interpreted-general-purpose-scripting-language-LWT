@@ -1,0 +1,1 @@
+let a = []; emit push(a, 4); emit a;

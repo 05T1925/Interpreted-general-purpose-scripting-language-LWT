@@ -1,0 +1,15 @@
+{
+  "id": "otherwise-comment-binding",
+  "spec_refs": [
+    "3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "9\n",
+    "stderr": ""
+  }
+}

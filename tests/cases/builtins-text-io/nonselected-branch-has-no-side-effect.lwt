@@ -1,0 +1,1 @@
+when (true) { emit 1; } otherwise { fail("skip"); }

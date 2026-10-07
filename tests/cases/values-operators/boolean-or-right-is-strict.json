@@ -1,0 +1,15 @@
+{
+  "id": "boolean-or-right-is-strict",
+  "spec_refs": [
+    "4.2"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/values-operators/boolean-or-right-is-strict.lwt:1:12: RuntimeError: 'or' requires boolean operands\n"
+  }
+}

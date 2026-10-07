@@ -1,0 +1,1 @@
+emit split("aaaa", "aa");

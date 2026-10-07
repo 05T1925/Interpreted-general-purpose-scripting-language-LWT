@@ -1,0 +1,16 @@
+{
+  "id": "unbound-self-initializer",
+  "spec_refs": [
+    "4.1",
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/unbound-self-initializer.lwt:1:9: RuntimeError: undefined variable 'x'\n"
+  }
+}

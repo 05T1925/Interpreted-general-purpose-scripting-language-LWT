@@ -1,0 +1,15 @@
+{
+  "id": "array-upper-bound",
+  "spec_refs": [
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/arrays-records-each/array-upper-bound.lwt:1:20: RuntimeError: array index is out of range\n"
+  }
+}

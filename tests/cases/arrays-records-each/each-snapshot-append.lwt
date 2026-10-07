@@ -1,0 +1,1 @@
+let a = [1, 2]; each (x in a) { emit x; push(a, 9); } emit a;

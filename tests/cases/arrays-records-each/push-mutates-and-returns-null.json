@@ -1,0 +1,16 @@
+{
+  "id": "push-mutates-and-returns-null",
+  "spec_refs": [
+    "4.3",
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "null\n[4]\n",
+    "stderr": ""
+  }
+}

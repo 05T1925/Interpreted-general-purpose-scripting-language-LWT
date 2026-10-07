@@ -1,0 +1,16 @@
+{
+  "id": "record-field-mutation-and-alias",
+  "spec_refs": [
+    "4.1",
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "5\n5\n",
+    "stderr": ""
+  }
+}

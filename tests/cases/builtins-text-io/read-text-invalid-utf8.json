@@ -1,0 +1,16 @@
+{
+  "id": "read-text-invalid-utf8",
+  "spec_refs": [
+    "6",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/read-text-invalid-utf8.lwt:1:6: RuntimeError: text file is not valid UTF-8\n"
+  }
+}

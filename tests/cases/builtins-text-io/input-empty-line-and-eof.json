@@ -1,0 +1,15 @@
+{
+  "id": "input-empty-line-and-eof",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": "\n"
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "\nnull\n",
+    "stderr": ""
+  }
+}

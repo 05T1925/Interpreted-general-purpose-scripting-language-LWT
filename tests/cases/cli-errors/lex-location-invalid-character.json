@@ -1,0 +1,16 @@
+{
+  "id": "lex-location-invalid-character",
+  "spec_refs": [
+    "2.2",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/cli-errors/lex-location-invalid-character.lwt:1:6: LexError: unexpected character U+0040\n"
+  }
+}

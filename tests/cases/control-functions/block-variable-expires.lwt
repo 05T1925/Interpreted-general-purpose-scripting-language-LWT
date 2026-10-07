@@ -1,0 +1,1 @@
+{ let local = 1; } emit local;

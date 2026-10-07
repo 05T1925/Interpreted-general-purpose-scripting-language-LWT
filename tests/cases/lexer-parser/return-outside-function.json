@@ -1,0 +1,16 @@
+{
+  "id": "return-outside-function",
+  "spec_refs": [
+    "3",
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/return-outside-function.lwt:1:1: SyntaxError: return is only allowed inside a function\n"
+  }
+}

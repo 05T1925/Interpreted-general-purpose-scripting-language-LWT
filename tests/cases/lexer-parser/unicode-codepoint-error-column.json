@@ -1,0 +1,16 @@
+{
+  "id": "unicode-codepoint-error-column",
+  "spec_refs": [
+    "2.1",
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/unicode-codepoint-error-column.lwt:1:11: LexError: unexpected character U+0040\n"
+  }
+}

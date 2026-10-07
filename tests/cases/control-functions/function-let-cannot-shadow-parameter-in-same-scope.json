@@ -1,0 +1,15 @@
+{
+  "id": "function-let-cannot-shadow-parameter-in-same-scope",
+  "spec_refs": [
+    "5"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/control-functions/function-let-cannot-shadow-parameter-in-same-scope.lwt:1:15: RuntimeError: variable 'x' is already declared in this scope\n"
+  }
+}

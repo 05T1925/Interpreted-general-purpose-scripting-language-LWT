@@ -1,0 +1,15 @@
+{
+  "id": "record-field-declaration-order",
+  "spec_refs": [
+    "4.3"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "Pair{left: 1, right: 2}\n",
+    "stderr": ""
+  }
+}

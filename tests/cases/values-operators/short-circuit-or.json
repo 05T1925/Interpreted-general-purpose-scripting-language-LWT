@@ -1,0 +1,16 @@
+{
+  "id": "short-circuit-or",
+  "spec_refs": [
+    "4.2",
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "diagnostic-path-keeps-cli-argument",
+  "spec_refs": [
+    "7"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/cli-errors/diagnostic-path-keeps-cli-argument.lwt:1:6: RuntimeError: undefined variable 'nope'\n"
+  }
+}

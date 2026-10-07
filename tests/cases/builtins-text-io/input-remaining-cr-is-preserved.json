@@ -1,0 +1,15 @@
+{
+  "id": "input-remaining-cr-is-preserved",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "base64": "eA15Cg=="
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[\"x\\ry\"]\n",
+    "stderr": ""
+  }
+}

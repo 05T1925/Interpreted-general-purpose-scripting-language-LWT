@@ -1,0 +1,15 @@
+{
+  "id": "read-text-normalizes-bom-and-newlines",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "alpha\nbeta\ngamma\n\n",
+    "stderr": ""
+  }
+}

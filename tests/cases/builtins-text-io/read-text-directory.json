@@ -1,0 +1,15 @@
+{
+  "id": "read-text-directory",
+  "spec_refs": [
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/builtins-text-io/read-text-directory.lwt:1:6: RuntimeError: could not read text file\n"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "display-control-characters",
+  "spec_refs": [
+    "4.3",
+    "6"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[\"\\u0000\\u0001\\u001F\\u007F\"]\n",
+    "stderr": ""
+  }
+}

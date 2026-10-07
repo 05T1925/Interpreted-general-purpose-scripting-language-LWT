@@ -1,0 +1,1 @@
+let line = input(); emit trim(line); emit args();
