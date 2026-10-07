@@ -1,6 +1,6 @@
 # S15 日志分析器 GUI 与小游戏执行记录
 
-> 状态：实施完成，等待主窗口审查。阶段基线：`f6ef8c62737c91a18b793c12658804cba7fca810`；阶段分支：`stage/s15-log-detective-gui`。代码提交：`b8cb5604ba5e8968b099b9b42e52f90fc74ac573`、`5fd6f399814577b5d180905007fb7059ac73cd62`；测试提交：`2c49b356bfc34c3f56ff6b2a22705127dddafa2b`；文档提交和最终阶段 HEAD 见执行窗口最终报告。
+> 状态：主窗口审查通过，带有明确的 GUI 手工验收遗留，已快进合入本地 `main`。阶段基线：`f6ef8c62737c91a18b793c12658804cba7fca810`；阶段分支：`stage/s15-log-detective-gui`；阶段最终提交：`390d484e2f21a044fcd8c9e8121712c215e1b309`。代码提交：`b8cb5604ba5e8968b099b9b42e52f90fc74ac573`、`5fd6f399814577b5d180905007fb7059ac73cd62`；测试提交：`2c49b356bfc34c3f56ff6b2a22705127dddafa2b`。
 
 ## 目标与范围
 
@@ -86,8 +86,25 @@ python app/log_detective.py
 | `python tools/run_app_concurrency.py` | 0，在一次性临时 Git worktree（HEAD `5fd6f399814577b5d180905007fb7059ac73cd62`）中运行；1/2/4 进程各 5 轮、共 35 个子进程，warm-up 成功，stdout 全一致、return code 全为 0、stderr 全空；输入 SHA-256 为 `9db070518d4bfa375e62eca0000e84835432e03e4156778b6c204a7a50321214`，试验前后不变。批次时间 ms：1 进程 `[187.911, 172.352, 180.338, 168.139, 195.441]`；2 进程 `[192.580, 200.891, 183.362, 181.600, 181.868]`；4 进程 `[190.779, 206.275, 192.049, 192.046, 199.309]`。脚本生成的临时 raw 随 worktree 删除，仓库原始报告不变；这些时间不用于性能结论。 |
 | `git diff --check` / `git diff --check main...HEAD` | 均退出码 0；阶段提交与待提交文档无空白错误。文档暂存后另运行 `git diff --cached --check`。 |
 
-S10/S11 证据保留情况和未验证项也列于 [Agent 开发记录](agent-dev-log.md)；主窗口应复核差异后决定阶段审查结论。
+S10/S11 证据保留情况和未验证项也列于 [Agent 开发记录](agent-dev-log.md)。
 
 ## 未验证与 S12 交接
 
-没有 Python 3.10 环境或远端 GitHub Actions 实测；由 S12 按既定计划核验。S12 仍未开始，继续负责新克隆验收、Python 3.10/远端 CI、PPT、最终演示和远端同步。S15 不改语言规范、黑盒覆盖矩阵或解释器；未运行正式性能实验，也未改写 S11 性能原始数据。阶段没有合并或推送。
+没有 Python 3.10 环境或远端 GitHub Actions 实测；由 S12 按既定计划核验。S15 不改语言规范、黑盒覆盖矩阵或解释器；未运行正式性能实验，也未改写 S11 性能原始数据。
+
+## 主窗口审查结果（2026-10-07）
+
+结论：**带非阻断遗留通过，并快进合入本地 `main`。**阶段分支 `stage/s15-log-detective-gui` 从 `f6ef8c62737c91a18b793c12658804cba7fca810` 出发，`main` 为其祖先，工作区干净，`git diff --check main...HEAD` 通过。阶段最终提交 `390d484e2f21a044fcd8c9e8121712c215e1b309` 已快进合入；没有推送远端。
+
+主窗口独立复跑结果：
+
+- `python -m unittest discover -s tests -q`：230 项通过。
+- `python tools/run_tests.py`：194/194 黑盒用例通过。
+- `python tools/check_project_integrity.py`：194 个用例配对、287 个矩阵链接、194 个引用 ID，检查通过。
+- `python -m compileall -q lwt tests tools bench app`：通过。
+- `python tools/count_lwt_lines.py app/log_report.lwt`：246 行有效 LWT。
+- `git diff --check main...HEAD`：通过。
+
+保留给 S16 第一项的人工 GUI 验收：可归因地操作并核验正确答案得分更新、完整报告窗口、重新开始与分数重置、GUI 文件选择后的查询、文件/CLI 错误恢复、Enter 提交和窗口缩放。S15 已证明窗口可启动并有相关无头状态/CLI 测试，但这些测试不能替代桌面操作记录。S16 需要逐项给出操作步骤和观察结果；若当时没有可用桌面，继续标记未验证，不得将其改写为通过。
+
+S12 仍未开始并继续位于最后阶段，负责新克隆验收、Python 3.10/远端 CI、PPT、最终演示和远端同步。
