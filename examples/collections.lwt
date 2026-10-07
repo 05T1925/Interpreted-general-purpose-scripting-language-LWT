@@ -1,0 +1,26 @@
+# S6 example: each keeps a shallow snapshot while the source array changes.
+record Task { name, done };
+
+let tasks = [
+    Task{name: "draft", done: false},
+    Task{name: "review", done: true}
+];
+let observed = [];
+let pass = 0;
+
+each (task in tasks) {
+    emit task.name;
+    push(observed, task.name);
+    pass = pass + 1;
+    when (pass == 1) {
+        # The first snapshot item refers to the same mutable record.
+        task.done = true;
+        # The snapshot still visits the original review record at position 1.
+        tasks[1] = Task{name: "replacement", done: false};
+        # The appended item is visible in tasks but is not visited this time.
+        push(tasks, Task{name: "late", done: false});
+    }
+}
+
+emit observed;
+emit tasks;
