@@ -91,7 +91,7 @@ python app/snake_game.py
 | `python tools/count_lwt_lines.py app/log_report.lwt` | `Effective LWT lines: 246`。 |
 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log` | 退出码 0；6 条匹配、6 条有效、1 条坏行。 |
 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log --level WARN --keyword retry --top 2` | 退出码 0；1 条匹配，模块 `cache|1`，匹配样例为 `retry scheduled`。 |
-| `git diff --check` | 通过；当前 Windows Git 对 LF 文件显示其将规范化为 CRLF 的提示，不是空白错误。最终提交差异检查在文档完成后复跑。 |
+| `git diff --check` / `git diff --check main...HEAD` | 均通过；当前 Windows Git 对 LF 文件显示其将规范化为 CRLF 的提示，不是空白错误。暂存差异与最终提交差异均完成检查。 |
 | Markdown 本地链接/代码围栏检查 | 20 个 Markdown 文件、439 个本地链接；缺失链接 0、未闭合围栏 0。 |
 
 一次早期测试把 4×1 的“撞墙”棋盘用作普通移动案例，但该盘上的下一格正好是最后空格，正确规则会先触发满盘胜利。将测试棋盘改为 4×2、使食物位于蛇行路径外后，墙碰撞测试按预期通过；游戏规则没有为适应测试而改变。
