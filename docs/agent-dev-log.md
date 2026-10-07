@@ -50,6 +50,7 @@
 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log` | 退出码 0、stderr 空；stdout 与 `app/fixtures/sample.expected.txt` 逐字匹配。6 条有效、1 条坏记录。 |
 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log --level WARN --keyword retry --top 2` | 退出码 0、stderr 空；1 条匹配，level 为 `WARN|1`，module 为 `cache|1`，示例为规范指定的 WARN retry 行。 |
 | `python tools/run_app_concurrency.py` | warm-up 成功；在提交 `4e010043cde9239128ec13d61ec15e0ca2a44117` 上对 1、2、4 个进程各完成 5 个试次，共 35 个进程；每个 stdout 与 warm-up 字节相同，所有 return code 为 0、stderr 为空，输入前后哈希一致。 |
+| 本地干净克隆复现 | 使用 `git clone --local --no-hardlinks --branch stage/s10-agent-log-analyzer <repo> <temp>/checkout` 创建临时克隆，克隆 HEAD 为 `99acb37af431b1ba40f9266c1d67ee0e393d9f9f`；在克隆根目录运行 README 默认命令 `python -m lwt app/log_report.lwt -- app/fixtures/sample.log`，退出码 0、stderr 为空，stdout 与克隆内 expected 文件逐字匹配。临时克隆在测试结束时删除。 |
 
 并发固定文件为 `app/fixtures/concurrency.log`，120 条记录、7846 bytes，SHA-256 `512fa16f3d0ea7911709dbf4ee5a3ba13a05f926be01c071106973aa9909a118`。应用源文件来自提交 `f7bde96f95861c6090d343b0a181061b93b3d601`，其 SHA-256 为 `39807dd117813578896bc68165f161c48c106a99603a22406c7e4e637aa8acc1`。最后一次试验每组 5 个批次墙钟时间（毫秒）为：1 进程 `[114.724, 117.517, 119.408, 116.536, 119.902]`；2 进程 `[128.779, 133.330, 131.858, 133.494, 132.105]`；4 进程 `[141.669, 141.270, 139.623, 142.419, 139.272]`。每个子进程的返回码、完整 stdout/stderr Base64 原字节、长度和 SHA-256，以及命令、OS、Python、日期和计时数据均在 [`reports/app-concurrency.json`](../reports/app-concurrency.json)；方法、结果表和限制见 [`docs/app-concurrency.md`](app-concurrency.md)。
 
