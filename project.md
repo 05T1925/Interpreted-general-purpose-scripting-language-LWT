@@ -13,7 +13,7 @@
 | Git 本地仓库 | 已建立 | `main` 有原始规划提交；已合并远端独立的 README 初始提交 |
 | GitHub `origin` | 已绑定；本地阶段进度尚未推送 | [目标仓库](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)；S13 审计时实时查询的 `origin/main` 为 S4 提交 `de608f7`；S13 已审查并合入本地 `main`，未推送；S14 开工时以实时 Git 状态确认本地基线和 ahead 数 |
 | 总方向与详细规划 | 已编写并提交 | 根目录两份 Markdown；可随实施修订 |
-| 阶段接力路线图 | 已编写 | S0–S11、S13 已审查并合入本地 `main`；S14 改进与优化是当前下一阶段；最终收尾 S12 延后到 S14 审查通过后 |
+| 阶段接力路线图 | 已编写 | S0–S11、S13 已审查并合入本地 `main`；S14 执行稿已完成、等待主窗口审查；S12 延后到 S14 审查通过后 |
 | 正式语法规范 | S1 已审查通过；S2 澄清已随实现合入 | [语言规范](docs/language-spec.md)正文含重复 record 字段错误和注释 BOM 规则 |
 | CLI、错误模型与词法分析 | S2 已审查通过并合入 `main` | `lwt/cli.py`、`lwt/errors.py`、`lwt/lexer.py` |
 | AST 与语法分析 | S3 带遗留通过并合入 `main`；访问符位置遗留已由 S4 独立提交修复；S6 已验证运行时定位 | `lwt/ast_nodes.py`、`lwt/parser.py`；索引/字段节点保留 `[`/`.` 位置；S6 CLI 用例验证访问错误定位 |
@@ -22,12 +22,12 @@
 | 数组、record 与 `each` | S6 已审查并快进合入本地 `main`；尚未推送 | 数组索引/赋值/别名/`push`；record 预登记、构造和字段读写；浅快照遍历；身份相等和循环安全显示 |
 | 文件/文本内置函数与 CLI 集成 | S7 已审查并快进合入本地 `main` | 已支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`；S7 提交 `4f11b80`，未推送 |
 | 阶段性 lexer/parser/runtime/CLI 测试 | S7 主窗口复核通过 | Python 3.13.7；`python -m unittest discover -s tests -v`：157 项通过；`compileall`、diff 检查和跨功能示例通过；不是最终黑盒测试集 |
-| 黑盒测试/CI | S8 已审查；S13 本机复核通过 | 194 个用例（189 执行 LWT 源、5 个 CLI override）；runner、63 条规范矩阵记录、GitHub Actions 四格工作流。本轮 Windows Python 3.11.16、3.13.7 各 194/194；全量 unittest 211 项（两个版本均通过）。远端 CI 和受支持的 Python 3.10/Linux 格仍未验证；WSL 只有低于支持下限的 Python 3.8.10 |
+| 黑盒测试/CI | S8 已审查；S13 本机复核；S14 增加结构门禁 | 194 个用例（189 执行 LWT 源、5 个 CLI override）；runner、63 条规范矩阵记录、GitHub Actions 四格工作流。S14 的 `python tools/check_project_integrity.py` 检查配对/metadata/唯一 ID 和 287 个矩阵链接。本轮 Windows Python 3.13.7、WSL Ubuntu 24.04 Python 3.12.3 各 194/194；全量 unittest 各 219 项通过。Python 3.10 和远端 Actions 仍未验证 |
 | 人类/Agent 指南与仓库 Skill | S9 已审查通过并合入本地 `main` | `docs/developer-guide.md`、`.agents/skills/lwt-app/SKILL.md`、`docs/agent-blind-test.md`；三个独立上下文各自完成数组去重、record 统计、文本筛选，主窗口复跑通过。Skill 自动路由当前平台不可观察 |
 | 完整 Agent 应用 | S10 已审查并快进合入本地 `main` | [`app/log_report.lwt`](app/log_report.lwt) 有效代码 246 行；[`tests/test_app.py`](tests/test_app.py) 25 项 CLI 集成测试；1/2/4 个独立进程各 5 轮输出一致。主窗口复跑黑盒 194/194、全量 unittest 199 项、应用测试 25 项、compileall 和并发验证均通过；详见阶段路线图审查记录。未推送 |
 | 性能报告与 PPT | S11 已审查通过；S13 已独立复核性能 raw；PPT 待 S12 | 正式 run `291bd4e2-8a3e-4de6-be86-46b62980e656`：120 个计时子进程/60 个配对、12 个 warm-up，全部有效；本轮再次核验输出 Base64/长度/hash、pair 链接、六组 median/min/max/range/ratio 与报告一致。没有重跑或覆盖 raw，也未根据端到端比值做优化 |
 | S13 全项目复检 | 已通过主窗口审查并合入本地 `main` | [`docs/comprehensive-review.md`](docs/comprehensive-review.md)；主窗口在 S13 分支复跑黑盒 194/194、全量 unittest 211 项、compileall，并核验 401 个 Markdown 链接；无阻断问题，Python 3.10/Linux 和远端 Actions 遗留转交 S14/S12 |
-| S14 改进与优化 | 当前下一阶段，尚未开始 | 以 S13 风险登记为输入，完成持续性质量保障和证据驱动的有限优化；具体范围见阶段路线图 |
+| S14 改进与优化 | 实施已完成，等待主窗口审查 | `stage/s14-quality-improvements`；报告见[`docs/s14-improvements.md`](docs/s14-improvements.md)。结构检查复用现有 runner，新增矩阵链接验证并纳入 CI；`read_text()` 的 `PermissionError` 经跨平台确定性 CLI 测试。无 runtime profile 证据支持优化，故未改运行时。 |
 
 ## 已定技术决策
 
@@ -51,7 +51,7 @@
 9. **S10：Agent 编写的完整 LWT 应用**：已在 `stage/s10-agent-log-analyzer` 实现只读日志分析器，246 行有效 LWT；公开 CLI 应用测试 25 项；样例输出及过滤输出符合契约；并发固定文件以 1/2/4 独立进程各 5 轮验证，全部 stdout 与 warm-up 字节一致、stderr 空、退出码 0。主窗口审查时复跑黑盒 194/194、全量 unittest 199 项、应用测试 25 项、compileall、行数工具和并发驱动，均通过。审查补充提交 `56e1c23` 明确以 `--` 开头的选项值限制、强化默认 Top-5 截断用例和 usage 退出码断言；随后阶段分支已快进合入本地 `main`。过程和原始证据见 `docs/agent-dev-log.md`、`docs/app-concurrency.md`、`reports/app-concurrency.json`。未推送。
 10. **S11：LWT/Python 性能实验与报告**：已在 `stage/s11-performance-report` 上实现 arithmetic 与 array_scan 两组成对程序、标准库 runner 和定向测试。校准中的 Windows stdout 换行差异已修正；失败 run 保留，修复后校准有效。正式 run `291bd4e2-8a3e-4de6-be86-46b62980e656` 由干净提交 `c6f38a0e9ee796c9ac82498599d91da542ae325a` 采集，120/120 正式子进程及 12/12 warm-up 均通过；主窗口从原始 JSON 独立复算六组 median/min/max/range/ratio，并复核输出哈希和源文件哈希。主窗口发现失败子进程和其无效配对可能被重复计为两次失败，已在提交 `2d2585c` 拆分计数并加回归测试；定向测试 12 项、全量 unittest 211 项通过。S11 已审查通过并快进合入本地 `main`，未推送。
 11. **S13：全面复检、证据审计与有根据的优化**：已通过主窗口审查并合入本地 `main`。报告[`docs/comprehensive-review.md`](docs/comprehensive-review.md) 记录课程交付追踪、规范/实现/矩阵映射、S10/S11 证据、逐项命令结果和风险。审计阶段没有定位到运行时性能热点，因此未做性能代码改动；S13 执行未制作 PPT、未做新克隆验收、未推送。
-12. **S14：审计遗留处理、质量保障升级与证据驱动优化**：按用户要求插入 S12 前，当前尚未开始。以 S13 的 R-01 至 R-04 风险为输入，验证 Python/平台支持边界，持久化高价值完整性检查，审查文件读取权限错误测试，并在 profiling 能定位热点时做小范围可测优化。具体范围以 S14 派发提示和路线图为准。
+12. **S14：审计遗留处理、质量保障升级与证据驱动优化**：执行已完成，等待主窗口审查；阶段分支 `stage/s14-quality-improvements`，实现提交 `9361f37a5c9bcd2bc7d07bbbb24949e38b35d7b6`。新增标准库完整性检查并接入 CI；结构/矩阵测试 7 项、权限错误 CLI 测试 1 项通过；Windows 3.13.7 和 Ubuntu/Linux 3.12.3 完整回归通过。R-01 的 Python 3.10/远端 CI 与 R-02 远端同步留待 S12；R-03 已有注入回归；R-04 表述复核无须修正。未做 runtime profile/优化，理由和证据见报告。
 13. **S12：新克隆验收、PPT、演示与最终交付**：最终收尾阶段，按用户要求延后至 S14 完成并经主窗口审查后再派发；当前未开始。
 
 ## Agent 开始任何任务时
@@ -67,6 +67,7 @@
 |---|---|
 | 执行 LWT | `python -m lwt examples/guide/hello.lwt` |
 | 一键黑盒测试 | `python tools/run_tests.py`（S8，194 项） |
+| 项目完整性检查 | `python tools/check_project_integrity.py`（194 对用例、287 个矩阵链接） |
 | S10 应用测试 | `python -m unittest discover -s tests -p "test_app.py" -v`（25 项） |
 | S10 日志分析器 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log`（已合入本地 `main`） |
 | 有效 LWT 行数 | `python tools/count_lwt_lines.py app/log_report.lwt`（246 行） |
@@ -75,7 +76,7 @@
 | S11 非正式校准 | `python tools/benchmark.py --calibration`（raw 记录保留但不进入正式报告统计） |
 | S11 报告与原始数据 | [`reports/performance.md`](reports/performance.md)、[`bench/results.json`](bench/results.json) |
 | S13 综合审计 | 已通过主窗口审查；证据见 [`docs/comprehensive-review.md`](docs/comprehensive-review.md) |
-| S14 改进与优化 | 当前下一阶段，等待详细派发提示语 |
+| S14 改进与优化 | 实施已完成，等待主窗口审查；报告见 [`docs/s14-improvements.md`](docs/s14-improvements.md) |
 | 最终应用/答辩演示 | 延后至 S14 审查通过后进入 S12 |
 
 ## 完成定义与重点风险

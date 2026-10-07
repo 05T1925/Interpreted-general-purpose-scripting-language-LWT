@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13 已通过主窗口审查并合入本地 `main`；按用户安排，先执行 S14 改进与优化，再进入最终收尾 S12。状态见 [`project.md`](project.md)。截至本次路线更新，本地 `main` 比实时核对的 `origin/main` 领先 35 个提交；本地阶段进度尚未推送。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13 已通过主窗口审查并合入本地 `main`；S14 实施已完成，等待主窗口审查；S12 最终收尾仍按用户安排延后。状态见 [`project.md`](project.md) 和 [S14 执行报告](docs/s14-improvements.md)。
 
 ## 阅读入口
 
@@ -16,6 +16,15 @@
 10. [S10 日志分析器说明](app/README.md)：输入格式、CLI 契约、报告语义和实现限制。
 11. [并发读取报告](docs/app-concurrency.md)：1/2/4 个独立 LWT 进程的一致性和计时记录。
 12. [S13 全项目复检报告](docs/comprehensive-review.md)：课程要求追踪、规范/实现/测试映射、应用与性能原始证据审计、环境限制和 S12 交接。
+13. [S14 改进报告](docs/s14-improvements.md)：完整性门禁、权限错误回归、平台实测和未验证事项。
+
+运行仓库结构完整性检查：
+
+```powershell
+python tools/check_project_integrity.py
+```
+
+该命令复用黑盒 runner 的配对/metadata/ID 校验，并检查覆盖矩阵中的测试文件链接。它证明库存与链接结构完整，不替代黑盒执行和人工语义覆盖复核。
 
 运行完整 LWT CLI 黑盒测试集：
 
@@ -23,7 +32,7 @@
 python tools/run_tests.py
 ```
 
-语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。当前共有 194 项黑盒用例，其中 189 项执行配对 LWT 程序、5 项专测 CLI 参数契约。S13 本轮在 Windows Python 3.11.16、3.13.7 各测得 194/194，全量 unittest 在两个版本均为 211 项通过。GitHub Actions 尚未远端触发，Python 3.10/Linux 受支持矩阵仍未验证；WSL 只有低于项目最低版本的 Python 3.8.10。
+语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。当前共有 194 项黑盒用例，其中 189 项执行配对 LWT 程序、5 项专测 CLI 参数契约。S14 本轮在 Windows Python 3.13.7 和 WSL Ubuntu 24.04 / Linux Python 3.12.3 各测得 194/194，全量 unittest 各为 219 项通过。完整性检查当前报告 194 个配对用例、287 个矩阵链接和 194 个被引用 ID。GitHub Actions 尚未远端运行，Python 3.10 格仍未验证。
 
 运行 lexer、parser、runtime、CLI 和黑盒 runner 的开发辅助 unittest：
 
@@ -37,7 +46,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q lwt tests tools
 ```
 
-项目目标支持 Python 3.10+ 标准库；当前本地受支持环境实测为 Windows Python 3.11.16 和 3.13.7。`.github/workflows/tests.yml` 在 push、pull request 和手动触发时运行 Python 3.10/3.13 × Ubuntu/Windows 矩阵，并执行同一黑盒命令以及 unittest/compileall。Python 3.10、受支持版本的 Linux 和远端 workflow 尚未实际运行，不能据此声称 CI 已通过；本机 WSL Python 3.8.10 低于支持范围。
+项目目标支持 Python 3.10+ 标准库；S14 本轮实际运行 Windows Python 3.13.7 和 Ubuntu 24.04 / Linux Python 3.12.3。`.github/workflows/tests.yml` 在 push、pull request 和手动触发时运行 Python 3.10/3.13 × Ubuntu/Windows 矩阵，并先运行新增的完整性检查，再执行黑盒、unittest 和 compileall。Python 3.10 与远端 workflow 尚未实际运行，不能据此声称四格 CI 已通过。
 
 运行示例：
 
@@ -110,4 +119,4 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S9 开发指南、仓库 Skill 和三项独立盲测已审查通过，Skill 自动路由仍不可观测；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S13 全面审计已通过主窗口审查并合入本地 `main`，报告见[综合审计](docs/comprehensive-review.md)。当前下一阶段为 S14 改进与优化，之后才进入 S12 新克隆验收、PPT、演示和最终交付。
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S9 开发指南、仓库 Skill 和三项独立盲测已审查通过，Skill 自动路由仍不可观测；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S13 全面审计已通过主窗口审查并合入本地 `main`，报告见[综合审计](docs/comprehensive-review.md)。S14 已增加项目完整性检查、CI 门禁和确定性权限错误回归，执行报告等待主窗口审查；审查通过后再进入 S12 新克隆验收、PPT、演示和最终交付。
