@@ -1,0 +1,22 @@
+record Task {name, done};
+
+let tasks = [
+    Task{name: "design", done: true},
+    Task{name: "implement", done: false},
+    Task{name: "test", done: true},
+    Task{name: "docs", done: false}
+];
+
+let total = 0;
+let completed = 0;
+each (task in tasks) {
+    total = total + 1;
+    when (task.done) {
+        completed = completed + 1;
+    }
+}
+let not_completed = total - completed;
+
+emit total;
+emit completed;
+emit not_completed;

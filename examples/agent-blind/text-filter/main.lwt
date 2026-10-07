@@ -1,0 +1,11 @@
+let text = read_text(args()[0]);
+each (line in split(text, "\n")) {
+    when (line != "") {
+        let columns = split(line, "|");
+        when (len(columns) >= 2) {
+            when (trim(columns[0]) == "WARN") {
+                emit trim(columns[1]);
+            }
+        }
+    }
+}

@@ -1,0 +1,5 @@
+INFO|service ready
+
+ WARN | disk low 
+WARN|retry scheduled
+INFO|shutdown
