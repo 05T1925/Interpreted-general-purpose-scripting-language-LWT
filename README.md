@@ -91,6 +91,8 @@ python tools/run_app_concurrency.py
 
 ## S11 性能实验
 
+S11 已在 `stage/s11-performance-report` 完成实施和正式测量，当前等待主窗口审查；本阶段未合入或推送，S12 尚未开始。状态和提交记录以 [`project.md`](project.md) 与[阶段路线图](阶段执行与审查路线图.md)为准。
+
 从仓库根目录运行正式 LWT/Python 成对实验：
 
 ```powershell
@@ -107,4 +109,4 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 已审查通过并合入本地 `main`，包含逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流。S9 开发指南、仓库 Skill 和三项独立盲测已审查通过并合入本地 `main`；Skill 自动路由仍不可观测。S10 日志分析器有 246 行有效 LWT，25 项公开 CLI 测试通过；1/2/4 个独立进程各 5 轮读取结果一致，阶段经主窗口审查并快进合入本地 `main`。S11 尚未开始。
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 已审查通过并合入本地 `main`，包含逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流。S9 开发指南、仓库 Skill 和三项独立盲测已审查通过并合入本地 `main`；Skill 自动路由仍不可观测。S10 日志分析器有 246 行有效 LWT，25 项公开 CLI 测试通过；1/2/4 个独立进程各 5 轮读取结果一致，阶段经主窗口审查并快进合入本地 `main`。S11 成对性能测量已完成并等待主窗口审查，S12 尚未开始。
