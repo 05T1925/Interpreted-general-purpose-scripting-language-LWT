@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S9 已审查并合入本地 `main`；S9 合入提交为 `165451a`。**本地 `main` 比 `origin/main` 领先 16 个提交；`origin/main` 仍为 S4，本地阶段进度尚未推送。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S9 已审查并合入本地 `main`；S10 日志分析器、应用测试和独立进程读取验证已提交到 `stage/s10-agent-log-analyzer`，等待主窗口审查。**本地 `main` 比 `origin/main` 领先 16 个提交；`origin/main` 仍为 S4，本地阶段进度尚未推送。
 
 ## 阅读入口
 
@@ -13,6 +13,8 @@
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
 8. [Agent Skill](.agents/skills/lwt-app/SKILL.md)：仓库内 LWT 应用编写/调试工作流；是否被其他 Agent 平台自动发现取决于该平台。
 9. [S9 独立盲测记录](docs/agent-blind-test.md)：三道新上下文盲测、可复现命令、结果和路由评估限制。
+10. [S10 日志分析器说明](app/README.md)：输入格式、CLI 契约、报告语义和实现限制。
+11. [并发读取报告](docs/app-concurrency.md)：1/2/4 个独立 LWT 进程的一致性和计时记录。
 
 运行完整 LWT CLI 黑盒测试集：
 
@@ -68,4 +70,23 @@ review
 [7, "pear", 4]
 ```
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 已审查通过并合入本地 `main`，包含逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流。S9 开发指南、仓库 Skill 和三项独立盲测已审查通过并合入本地 `main`；Skill 自动路由仍不可观测。S10 尚待派发，尚未开始完整应用。
+## S10 日志分析器
+
+从仓库根目录运行默认固定样例或过滤示例：
+
+```powershell
+python -m lwt app/log_report.lwt -- app/fixtures/sample.log
+python -m lwt app/log_report.lwt -- app/fixtures/sample.log --level WARN --keyword retry --top 2
+```
+
+完整参数和坏行规则见[应用说明](app/README.md)，实际开发过程见[Agent 开发记录](docs/agent-dev-log.md)。运行应用 CLI 集成测试和有效 LWT 行数统计：
+
+```powershell
+python -m unittest discover -s tests -p "test_app.py" -v
+python tools/count_lwt_lines.py app/log_report.lwt
+python tools/run_app_concurrency.py
+```
+
+应用测试经公开 CLI 运行，不纳入 S8 的 194 项语言黑盒矩阵。并发工具使用固定输入分别同时启动 1、2、4 个独立操作系统进程，不代表 LWT 线程支持；原始逐试次结果位于[`reports/app-concurrency.json`](reports/app-concurrency.json)。
+
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 已审查通过并合入本地 `main`，包含逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流。S9 开发指南、仓库 Skill 和三项独立盲测已审查通过并合入本地 `main`；Skill 自动路由仍不可观测。S10 已在阶段分支实现 246 行有效 LWT 日志分析器、24 项应用 CLI 测试，以及 1/2/4 个独立进程各 5 轮读取验证，等待主窗口审查；未合入或推送。S11 尚未开始。
