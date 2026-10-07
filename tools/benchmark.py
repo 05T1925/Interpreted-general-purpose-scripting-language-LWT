@@ -371,6 +371,7 @@ def ms(ns: float | int) -> str:
 
 def render_report(results: dict[str, Any]) -> str:
     formal_runs = [run for run in results["runs"] if run.get("mode") == "formal"]
+    calibration_runs = [run for run in results["runs"] if run.get("mode") == "calibration"]
     sections = [
         "# LWT/Python 成对性能实验报告",
         "",
@@ -390,11 +391,44 @@ def render_report(results: dict[str, Any]) -> str:
         "",
         "计时依据：[Python 3.10 `perf_counter_ns`](https://docs.python.org/3.10/library/time.html#time.perf_counter_ns)、[Python 3.10 `subprocess.run`](https://docs.python.org/3.10/library/subprocess.html)、[`timeit` 重复测量说明](https://docs.python.org/3.10/library/timeit.html)。官方文档指出 `perf_counter` 适于测短时差值并包含等待时间；`timeit` 说明重复样本会受其他进程干扰，因此本报告保留中位数及完整离散范围，不只选择最快值。",
         "",
+        "## 校准记录（不计入正式结果）",
+        "",
+    ]
+    if not calibration_runs:
+        sections.append("暂无校准记录。")
+    for run in calibration_runs:
+        failed_warmups = [item for item in run["warmups"] if not item["verification"]["passed"]]
+        sections.extend([
+            f"### {run['run_id']}（`{run['status']}`）",
+            "",
+            f"- Git SHA：`{run['git']['commit_sha']}`；开始时工作区干净：`{run['git']['working_tree_clean_at_start']}`；warm-up `{len(run['warmups'])}` 条，校准计时 `{len(run['trials'])}` 条。",
+        ])
+        if failed_warmups:
+            sections.append(
+                f"- 该校准因 {len(failed_warmups)} 条 warm-up 未通过而停止；按协议未启动计时校准。失败详情和原始字节见 raw JSON。本次观察到的 Windows Python 文本 stdout 使用 CRLF，而 LWT 契约输出 LF；修复后的 Python workload 改用 ASCII 字节写出。该失败运行保留，不纳入任何性能数字。"
+            )
+        elif run["status"] == "valid":
+            grouped: dict[tuple[str, int], dict[str, dict[str, Any]]] = {}
+            for trial in run["trials"]:
+                grouped.setdefault((trial["benchmark"], trial["size"]), {})[trial["language"]] = trial
+            sections.extend([
+                "- 校准持续时间只用于确认三种规模可完成；规模 N=100、1000、5000 在校准后保持不变。选择规模依据是它们代表小/中/大循环工作量，最大规模在此次环境内可完成；未根据 LWT/Python 结果优劣挑选。校准数据不属于正式试次。",
+                "",
+                "| benchmark | N | LWT calibration (ms) | Python calibration (ms) |",
+                "|---|---:|---:|---:|",
+            ])
+            for (benchmark_name, n), by_language in sorted(grouped.items()):
+                if set(by_language) == {"lwt", "python"}:
+                    sections.append(
+                        f"| {benchmark_name} | {n} | {ms(by_language['lwt']['elapsed_ns'])} | {ms(by_language['python']['elapsed_ns'])} |"
+                    )
+        sections.append("")
+    sections.extend([
         "## 正式结果",
         "",
         "| benchmark | N | 配对数 | LWT median (ms) | LWT min (ms) | LWT max (ms) | LWT range (ms) | Python median (ms) | Python min (ms) | Python max (ms) | Python range (ms) | median ratio LWT/Python |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
-    ]
+    ])
     found = False
     for run in formal_runs:
         summaries = formal_summaries(run)

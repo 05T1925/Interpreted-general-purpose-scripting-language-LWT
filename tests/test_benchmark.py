@@ -94,6 +94,26 @@ class BenchmarkReportTests(unittest.TestCase):
         }
         self.assertEqual(benchmark.formal_summaries(run), [])
 
+    def test_report_labels_calibration_separately_from_formal_results(self):
+        run = {
+            "run_id": "calibration-only", "mode": "calibration", "status": "valid",
+            "started_at_utc": "2026-10-07T00:00:00.000000Z", "finished_at_utc": "2026-10-07T00:00:01.000000Z",
+            "git": {"commit_sha": "abc123", "working_tree_clean_at_start": True},
+            "environment": {"platform": "Windows", "machine": "AMD64", "python_version": "3.13.7", "python_executable": "python.exe", "processor": "CPU"},
+            "seed": 42, "sizes": [100], "formal_repeats": 0, "timeout_seconds": 60,
+            "source_sha256": {"bench/arithmetic.lwt": "a", "bench/arithmetic.py": "b", "bench/array_scan.lwt": "c", "bench/array_scan.py": "d"},
+            "trials": [
+                {"benchmark": "arithmetic", "size": 100, "language": "lwt", "elapsed_ns": 1_000_000},
+                {"benchmark": "arithmetic", "size": 100, "language": "python", "elapsed_ns": 500_000},
+            ],
+            "pairs": [], "warmups": [], "failure_count": 0,
+        }
+        report = benchmark.render_report({"schema_version": 1, "runs": [run]})
+        self.assertIn("校准记录（不计入正式结果）", report)
+        self.assertIn("calibration-only", report)
+        self.assertIn("| arithmetic | 100 | 1.000 | 0.500 |", report)
+        self.assertIn("尚无有效正式运行", report)
+
     def test_report_references_run_identity_raw_and_command_schema(self):
         run = {
             "run_id": "run-test-01", "mode": "formal", "status": "invalid",
