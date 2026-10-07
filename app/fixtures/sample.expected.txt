@@ -1,0 +1,19 @@
+LWT log report
+Total lines: 7
+Valid records: 6
+Malformed lines: 1
+Matched records: 6
+Level counts:
+ERROR|2
+INFO|2
+WARN|2
+Top modules:
+cache|2
+api|1
+auth|1
+db|1
+web|1
+Matching examples (first 3):
+2026-10-07T10:00:00Z|INFO|auth|login accepted
+2026-10-07T10:00:01Z|WARN|cache|eviction started
+2026-10-07T10:00:02Z|ERROR|db|connection lost

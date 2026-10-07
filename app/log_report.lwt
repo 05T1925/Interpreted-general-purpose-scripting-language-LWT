@@ -1,0 +1,356 @@
+# LWT read-only log report application.
+# All parsing, filtering, aggregation, sorting, and formatting happen in LWT.
+
+record Options {
+    path,
+    has_level,
+    level,
+    has_keyword,
+    keyword,
+    top,
+    has_top
+};
+
+record LogRecord {
+    timestamp,
+    level,
+    module_name,
+    message,
+    raw
+};
+
+record Count {
+    name,
+    count,
+    selected
+};
+
+record Report {
+    total_lines,
+    valid_records,
+    malformed_lines,
+    matched_records,
+    level_counts,
+    module_counts,
+    examples
+};
+
+fn usage_error(message) {
+    fail("usage: python -m lwt app/log_report.lwt -- INPUT_PATH [--level LEVEL] [--keyword TEXT] [--top N]; " + message);
+}
+
+fn begins_with_option(text) {
+    when (text == "") {
+        return false;
+    }
+    let pieces = split(text, "--");
+    when (pieces[0] == "") {
+        return true;
+    }
+    return false;
+}
+
+fn remove_all(text, marker) {
+    let pieces = split(text, marker);
+    let result = "";
+    each (piece in pieces) {
+        result = result + piece;
+    }
+    return result;
+}
+
+fn is_ascii_decimal(text) {
+    when (len(text) == 0) {
+        return false;
+    }
+    let remaining = text;
+    let digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    each (digit in digits) {
+        remaining = remove_all(remaining, digit);
+    }
+    return remaining == "";
+}
+
+fn parse_top(text) {
+    when (not(is_ascii_decimal(text))) {
+        usage_error("--top requires a non-negative decimal integer");
+    }
+    return to_int(text);
+}
+
+fn option_value(values, index, option_name) {
+    when (index + 1 >= len(values)) {
+        usage_error("missing value for " + option_name);
+    }
+    let value = values[index + 1];
+    when (begins_with_option(value)) {
+        usage_error("missing value for " + option_name);
+    }
+    return value;
+}
+
+fn parse_options() {
+    let values = args();
+    when (len(values) == 0) {
+        usage_error("missing INPUT_PATH");
+    }
+    when (values[0] == "") {
+        usage_error("INPUT_PATH must not be empty");
+    }
+
+    let options = Options{
+        path: values[0],
+        has_level: false,
+        level: "",
+        has_keyword: false,
+        keyword: "",
+        top: 5,
+        has_top: false
+    };
+    let index = 1;
+
+    while (index < len(values)) {
+        let option = values[index];
+        when (option == "--level") {
+            when (options.has_level) {
+                usage_error("--level may appear only once");
+            }
+            options.level = option_value(values, index, "--level");
+            options.has_level = true;
+            index = index + 2;
+        } otherwise {
+            when (option == "--keyword") {
+                when (options.has_keyword) {
+                    usage_error("--keyword may appear only once");
+                }
+                options.keyword = option_value(values, index, "--keyword");
+                when (options.keyword == "") {
+                    usage_error("--keyword must not be empty");
+                }
+                options.has_keyword = true;
+                index = index + 2;
+            } otherwise {
+                when (option == "--top") {
+                    index = parse_top_option(values, index, options);
+                } otherwise {
+                    when (begins_with_option(option)) {
+                        usage_error("unknown option " + option);
+                    } otherwise {
+                        usage_error("unexpected positional argument " + option);
+                    }
+                }
+            }
+        }
+    }
+    return options;
+}
+
+fn parse_top_option(values, index, options) {
+    when (options.has_top) {
+        usage_error("--top may appear only once");
+    }
+    let raw_value = option_value(values, index, "--top");
+    options.top = parse_top(raw_value);
+    options.has_top = true;
+    return index + 2;
+}
+
+fn logical_lines(text) {
+    let lines = [];
+    when (text == "") {
+        return lines;
+    }
+
+    let parts = split(text, "\n");
+    let limit = len(parts);
+    when (parts[limit - 1] == "") {
+        # For non-empty text, one final empty split part means the source
+        # ended in LF. Remove exactly that terminator result.
+        limit = limit - 1;
+    }
+
+    let index = 0;
+    while (index < limit) {
+        push(lines, parts[index]);
+        index = index + 1;
+    }
+    return lines;
+}
+
+fn parse_log_line(line) {
+    let fields = split(line, "|");
+    when (len(fields) != 4) {
+        return null;
+    }
+    return LogRecord{
+        timestamp: fields[0],
+        level: fields[1],
+        module_name: fields[2],
+        message: fields[3],
+        raw: line
+    };
+}
+
+fn record_matches(record_value, options) {
+    when (options.has_level and record_value.level != options.level) {
+        return false;
+    }
+    when (options.has_keyword) {
+        let message_parts = split(record_value.message, options.keyword);
+        when (len(message_parts) == 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+fn find_count(counts, name) {
+    let index = 0;
+    while (index < len(counts)) {
+        when (counts[index].name == name) {
+            return index;
+        }
+        index = index + 1;
+    }
+    return -1;
+}
+
+fn add_count(counts, name) {
+    let found = find_count(counts, name);
+    when (found == -1) {
+        push(counts, Count{name: name, count: 1, selected: false});
+    } otherwise {
+        counts[found].count = counts[found].count + 1;
+    }
+    return null;
+}
+
+fn build_report(lines, options) {
+    let valid = 0;
+    let malformed = 0;
+    let matched = 0;
+    let levels = [];
+    let modules = [];
+    let examples = [];
+
+    each (line in lines) {
+        let record_value = parse_log_line(line);
+        when (record_value == null) {
+            malformed = malformed + 1;
+        } otherwise {
+            valid = valid + 1;
+            when (record_matches(record_value, options)) {
+                matched = matched + 1;
+                add_count(levels, record_value.level);
+                add_count(modules, record_value.module_name);
+                when (len(examples) < 3) {
+                    push(examples, record_value);
+                }
+            }
+        }
+    }
+
+    return Report{
+        total_lines: len(lines),
+        valid_records: valid,
+        malformed_lines: malformed,
+        matched_records: matched,
+        level_counts: levels,
+        module_counts: modules,
+        examples: examples
+    };
+}
+
+fn emit_level_counts(counts) {
+    let emitted = 0;
+    while (emitted < len(counts)) {
+        let best_index = -1;
+        let index = 0;
+        while (index < len(counts)) {
+            when (counts[index].selected == false) {
+                when (best_index < 0) {
+                    best_index = index;
+                } otherwise {
+                    when (counts[index].name < counts[best_index].name) {
+                        best_index = index;
+                    }
+                }
+            }
+            index = index + 1;
+        }
+        when (best_index >= 0) {
+            emit counts[best_index].name + "|" + str(counts[best_index].count);
+            counts[best_index].selected = true;
+        }
+        emitted = emitted + 1;
+    }
+    return null;
+}
+
+fn is_better_module(candidate, current) {
+    when (candidate.count > current.count) {
+        return true;
+    }
+    when (candidate.count == current.count and candidate.name < current.name) {
+        return true;
+    }
+    return false;
+}
+
+fn emit_top_modules(counts, top_limit) {
+    let emitted = 0;
+    while (emitted < len(counts) and emitted < top_limit) {
+        let best_index = -1;
+        let index = 0;
+        while (index < len(counts)) {
+            when (counts[index].selected == false) {
+                when (best_index < 0) {
+                    best_index = index;
+                } otherwise {
+                    when (is_better_module(counts[index], counts[best_index])) {
+                        best_index = index;
+                    }
+                }
+            }
+            index = index + 1;
+        }
+        when (best_index >= 0) {
+            emit counts[best_index].name + "|" + str(counts[best_index].count);
+            counts[best_index].selected = true;
+        }
+        emitted = emitted + 1;
+    }
+    return null;
+}
+
+fn emit_examples(records) {
+    each (record_value in records) {
+        emit record_value.raw;
+    }
+    return null;
+}
+
+fn emit_report(report, top_limit) {
+    emit "LWT log report";
+    emit "Total lines: " + str(report.total_lines);
+    emit "Valid records: " + str(report.valid_records);
+    emit "Malformed lines: " + str(report.malformed_lines);
+    emit "Matched records: " + str(report.matched_records);
+    emit "Level counts:";
+    emit_level_counts(report.level_counts);
+    emit "Top modules:";
+    emit_top_modules(report.module_counts, top_limit);
+    emit "Matching examples (first 3):";
+    emit_examples(report.examples);
+    return null;
+}
+
+fn main() {
+    let options = parse_options();
+    let text = read_text(options.path);
+    let lines = logical_lines(text);
+    let report = build_report(lines, options);
+    emit_report(report, options.top);
+}
+
+main();

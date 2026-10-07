@@ -1,0 +1,7 @@
+2026-10-07T10:00:00Z|INFO|auth|login accepted
+2026-10-07T10:00:01Z|WARN|cache|eviction started
+2026-10-07T10:00:02Z|ERROR|db|connection lost
+2026-10-07T10:00:03Z|WARN|cache|retry scheduled
+malformed|line
+2026-10-07T10:00:04Z|ERROR|api|request failed
+2026-10-07T10:00:05Z|INFO|web|ready
