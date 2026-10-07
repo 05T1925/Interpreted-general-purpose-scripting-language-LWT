@@ -15,7 +15,6 @@ from app.log_detective_core import (
     DEFAULT_LOG,
     QUESTIONS,
     AnalysisResult,
-    AnalyzerError,
     GameSession,
     analyze_question,
     full_report,
@@ -176,6 +175,7 @@ class LogDetectiveApp:
                     self.answer_entry.focus_set()
                 elif result.action == "report":
                     self._open_report(str(result.value))
+                    self._render_state()
         except queue.Empty:
             pass
         if self.root.winfo_exists():
@@ -207,7 +207,8 @@ class LogDetectiveApp:
         index = self.session.index
         self.question_var.set(f"问题：{self.session.current_question.condition} 的匹配记录数是多少？")
         self.answer_entry.configure(state="normal")
-        self.submit_button.configure(state="disabled" if self.busy or self.session.answered else "normal")
+        can_submit = not self.busy and not self.session.answered and index in self.results
+        self.submit_button.configure(state="normal" if can_submit else "disabled")
         self.next_button.configure(
             text="查看最终结果" if index + 1 == self.session.question_count else "下一题",
             state="normal" if self.session.answered and not self.busy else "disabled",
