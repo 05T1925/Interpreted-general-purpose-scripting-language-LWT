@@ -68,6 +68,12 @@ class CaseInventoryTests(unittest.TestCase):
 
         self.assertEqual([case.case_id for case in cases], ["a-first", "z-last"])
 
+    def test_empty_case_tree_is_a_configuration_error(self) -> None:
+        with self.assertRaisesRegex(
+            runner.ConfigurationError, "no black-box test cases were discovered"
+        ):
+            runner.discover_cases(self.root)
+
     def test_text_stdin_and_default_timeout(self) -> None:
         self.write_case(metadata={"stdin": {"text": "hello\n"}})
 

@@ -262,6 +262,8 @@ def discover_cases(case_root: Path = CASE_ROOT) -> list[TestCase]:
 
     if problems:
         raise ConfigurationError("test configuration errors:\n  " + "\n  ".join(problems))
+    if not cases:
+        raise ConfigurationError("no black-box test cases were discovered")
     return cases
 
 
