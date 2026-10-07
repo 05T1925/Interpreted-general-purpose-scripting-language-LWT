@@ -253,6 +253,10 @@ class LogReportCliTests(unittest.TestCase):
             ),
         )
 
+    def test_top_accepts_large_decimal_without_host_conversion_limit(self) -> None:
+        result = self.invoke(str(SAMPLE.relative_to(ROOT)), "--top", "9" * 6000)
+        self.assert_success(result, EXPECTED.read_text(encoding="utf-8"))
+
     def test_level_order_is_ascending(self) -> None:
         result = self.invoke_bytes(b"t|Z|m|z\nt|A|m|a\nt|M|m|m\n")
         self.assert_success(
