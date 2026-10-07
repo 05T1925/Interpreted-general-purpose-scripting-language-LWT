@@ -1,4 +1,652 @@
 {
-  "schema_version": 1,
-  "runs": []
+  "runs": [
+    {
+      "calibration_repeats": 1,
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "environment": {
+        "machine": "AMD64",
+        "os": "Windows",
+        "os_version": "10.0.26200",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "python_executable": "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]"
+      },
+      "errors": [],
+      "failure_count": 6,
+      "finished_at_utc": "2026-10-07T07:24:46.463598Z",
+      "formal_repeats": 0,
+      "git": {
+        "commit_sha": "b69fe8a76217212497d89b76274b7a7d6c1d9c0a",
+        "status_porcelain_at_start": "",
+        "working_tree_clean_at_start": true
+      },
+      "mode": "calibration",
+      "pairs": [],
+      "planned_subprocess_counts": {
+        "measured_trials": 12,
+        "total": 24,
+        "warmups": 12
+      },
+      "repo_root": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "run_id": "354fccce-bba0-4690-ad33-6a7811562a1a",
+      "schema_version": 1,
+      "seed": 20261007,
+      "sizes": [
+        100,
+        1000,
+        5000
+      ],
+      "source_sha256": {
+        "bench/arithmetic.lwt": "54eb47c9266cba9f068670e09092a92b26d6b995888690e336d3f9e5032b1287",
+        "bench/arithmetic.py": "45a71df904d45ee6e4a487fc80ac3c39de5e48bf9e60765e5a9154d2082142f3",
+        "bench/array_scan.lwt": "2b656dec876de3cae8f78cdb0e8fae16904ce4391a348c49a842e6c419377b21",
+        "bench/array_scan.py": "e100a35dfea802b9e4022effda8bd6decae02984dbfb69ed2d8230f1a202a399"
+      },
+      "started_at_utc": "2026-10-07T07:24:44.807617Z",
+      "status": "invalid",
+      "timeout_seconds": 60,
+      "timing": {
+        "boundary": "immediately before subprocess.run through immediately after return/timeout/launch error",
+        "clock": "time.perf_counter_ns",
+        "excludes_after_timer": [
+          "stdout verification",
+          "hashing",
+          "statistics",
+          "JSON serialization and write"
+        ],
+        "includes": [
+          "process creation",
+          "Python startup",
+          "LWT package import and source lex/parse",
+          "workload",
+          "stdout/stderr production",
+          "waiting for child completion"
+        ],
+        "metric": "new-process end-to-end wall-clock time",
+        "shell": false,
+        "stdin": "subprocess.DEVNULL",
+        "stdout_stderr": "captured bytes"
+      },
+      "trials": [],
+      "warmup_policy": {
+        "runs_per_benchmark_size_language": 1,
+        "timed": false,
+        "validated": true
+      },
+      "warmups": [
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "-m",
+            "lwt",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+            "--",
+            "100"
+          ],
+          "attempt_id": "warmup-0001",
+          "benchmark": "array_scan",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 1,
+          "expected_stdout": {
+            "base64": "MTAwfDQ0MDkwfDEK",
+            "byte_length": 12,
+            "sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+          },
+          "input": {
+            "n": 100
+          },
+          "kind": "warmup",
+          "language": "lwt",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 100,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "MTAwfDQ0MDkwfDEK",
+            "byte_length": 12,
+            "sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:45.186712Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": true,
+            "failure_reasons": [],
+            "passed": true,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+            "100"
+          ],
+          "attempt_id": "warmup-0002",
+          "benchmark": "array_scan",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 2,
+          "expected_stdout": {
+            "base64": "MTAwfDQ0MDkwfDEK",
+            "byte_length": 12,
+            "sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+          },
+          "input": {
+            "n": 100
+          },
+          "kind": "warmup",
+          "language": "python",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 100,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "MTAwfDQ0MDkwfDENCg==",
+            "byte_length": 13,
+            "sha256": "b4a7e76bd1c51d5e68360066a119e7dbe5906a157dcf08a64c4bf27e31398426"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:45.242516Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": false,
+            "failure_reasons": [
+              "stdout_does_not_match_independent_expectation"
+            ],
+            "passed": false,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+            "1000"
+          ],
+          "attempt_id": "warmup-0003",
+          "benchmark": "array_scan",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 3,
+          "expected_stdout": {
+            "base64": "MTAwMHw1MDAxOTN8MTEK",
+            "byte_length": 15,
+            "sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+          },
+          "input": {
+            "n": 1000
+          },
+          "kind": "warmup",
+          "language": "python",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 1000,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "MTAwMHw1MDAxOTN8MTENCg==",
+            "byte_length": 16,
+            "sha256": "5b0b6a76483b111c0de7e6fad033278d9114fa9bf598141e296da0443386e2ef"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:45.299851Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": false,
+            "failure_reasons": [
+              "stdout_does_not_match_independent_expectation"
+            ],
+            "passed": false,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+            "5000"
+          ],
+          "attempt_id": "warmup-0004",
+          "benchmark": "arithmetic",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 4,
+          "expected_stdout": {
+            "base64": "NTAwMHwxMjUwMjUwMAo=",
+            "byte_length": 14,
+            "sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+          },
+          "input": {
+            "n": 5000
+          },
+          "kind": "warmup",
+          "language": "python",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 5000,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "NTAwMHwxMjUwMjUwMA0K",
+            "byte_length": 15,
+            "sha256": "bf7699c7501b6570ecca890c68e197df65abfd02f7b43f6749f1224fe4924029"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:45.362592Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": false,
+            "failure_reasons": [
+              "stdout_does_not_match_independent_expectation"
+            ],
+            "passed": false,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+            "1000"
+          ],
+          "attempt_id": "warmup-0005",
+          "benchmark": "arithmetic",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 5,
+          "expected_stdout": {
+            "base64": "MTAwMHw1MDA1MDAK",
+            "byte_length": 12,
+            "sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+          },
+          "input": {
+            "n": 1000
+          },
+          "kind": "warmup",
+          "language": "python",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 1000,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "MTAwMHw1MDA1MDANCg==",
+            "byte_length": 13,
+            "sha256": "214f599810d2c9f84900dfdeb9d7ca24fdc72356c4e650e5bf72f7c2df853541"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:45.418153Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": false,
+            "failure_reasons": [
+              "stdout_does_not_match_independent_expectation"
+            ],
+            "passed": false,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+            "5000"
+          ],
+          "attempt_id": "warmup-0006",
+          "benchmark": "array_scan",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 6,
+          "expected_stdout": {
+            "base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+            "byte_length": 16,
+            "sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+          },
+          "input": {
+            "n": 5000
+          },
+          "kind": "warmup",
+          "language": "python",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 5000,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "NTAwMHwyNTE0NzM1fDU0DQo=",
+            "byte_length": 17,
+            "sha256": "d20c8934d843c6d5dcab3743cea2cbc038ebc2467dda5d9172766e892150fa63"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:45.483366Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": false,
+            "failure_reasons": [
+              "stdout_does_not_match_independent_expectation"
+            ],
+            "passed": false,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "-m",
+            "lwt",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+            "--",
+            "1000"
+          ],
+          "attempt_id": "warmup-0007",
+          "benchmark": "array_scan",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 7,
+          "expected_stdout": {
+            "base64": "MTAwMHw1MDAxOTN8MTEK",
+            "byte_length": 15,
+            "sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+          },
+          "input": {
+            "n": 1000
+          },
+          "kind": "warmup",
+          "language": "lwt",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 1000,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "MTAwMHw1MDAxOTN8MTEK",
+            "byte_length": 15,
+            "sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:45.642799Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": true,
+            "failure_reasons": [],
+            "passed": true,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+            "100"
+          ],
+          "attempt_id": "warmup-0008",
+          "benchmark": "arithmetic",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 8,
+          "expected_stdout": {
+            "base64": "MTAwfDUwNTAK",
+            "byte_length": 9,
+            "sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+          },
+          "input": {
+            "n": 100
+          },
+          "kind": "warmup",
+          "language": "python",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 100,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "MTAwfDUwNTANCg==",
+            "byte_length": 10,
+            "sha256": "f0161a306c9ebbe23be7e1266cd6c609440b466f66404448df787792575dbed6"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:45.714450Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": false,
+            "failure_reasons": [
+              "stdout_does_not_match_independent_expectation"
+            ],
+            "passed": false,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "-m",
+            "lwt",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+            "--",
+            "1000"
+          ],
+          "attempt_id": "warmup-0009",
+          "benchmark": "arithmetic",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 9,
+          "expected_stdout": {
+            "base64": "MTAwMHw1MDA1MDAK",
+            "byte_length": 12,
+            "sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+          },
+          "input": {
+            "n": 1000
+          },
+          "kind": "warmup",
+          "language": "lwt",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 1000,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "MTAwMHw1MDA1MDAK",
+            "byte_length": 12,
+            "sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:45.867593Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": true,
+            "failure_reasons": [],
+            "passed": true,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "-m",
+            "lwt",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+            "--",
+            "5000"
+          ],
+          "attempt_id": "warmup-0010",
+          "benchmark": "arithmetic",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 10,
+          "expected_stdout": {
+            "base64": "NTAwMHwxMjUwMjUwMAo=",
+            "byte_length": 14,
+            "sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+          },
+          "input": {
+            "n": 5000
+          },
+          "kind": "warmup",
+          "language": "lwt",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 5000,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "NTAwMHwxMjUwMjUwMAo=",
+            "byte_length": 14,
+            "sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:46.042639Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": true,
+            "failure_reasons": [],
+            "passed": true,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "-m",
+            "lwt",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+            "--",
+            "100"
+          ],
+          "attempt_id": "warmup-0011",
+          "benchmark": "arithmetic",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 11,
+          "expected_stdout": {
+            "base64": "MTAwfDUwNTAK",
+            "byte_length": 9,
+            "sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+          },
+          "input": {
+            "n": 100
+          },
+          "kind": "warmup",
+          "language": "lwt",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 100,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "MTAwfDUwNTAK",
+            "byte_length": 9,
+            "sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:46.187799Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": true,
+            "failure_reasons": [],
+            "passed": true,
+            "stderr_empty": true
+          }
+        },
+        {
+          "argv": [
+            "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "-m",
+            "lwt",
+            "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+            "--",
+            "5000"
+          ],
+          "attempt_id": "warmup-0012",
+          "benchmark": "array_scan",
+          "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+          "elapsed_ns": null,
+          "execution_order": 12,
+          "expected_stdout": {
+            "base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+            "byte_length": 16,
+            "sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+          },
+          "input": {
+            "n": 5000
+          },
+          "kind": "warmup",
+          "language": "lwt",
+          "launch_error": null,
+          "return_code": 0,
+          "size": 5000,
+          "stderr": {
+            "base64": "",
+            "byte_length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+            "byte_length": 16,
+            "sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+          },
+          "timed_out": false,
+          "timeout_seconds": 60,
+          "timestamp_utc": "2026-10-07T07:24:46.445454Z",
+          "verification": {
+            "exit_success": true,
+            "expected_output_match": true,
+            "failure_reasons": [],
+            "passed": true,
+            "stderr_empty": true
+          }
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
 }

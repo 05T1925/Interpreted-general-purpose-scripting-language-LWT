@@ -1,4 +1,5 @@
 import base64
+import subprocess
 import unittest
 
 from tools import benchmark
@@ -110,6 +111,29 @@ class BenchmarkReportTests(unittest.TestCase):
         self.assertIn("bench/results.json", report)
         self.assertIn("正式样本 `0` 条", report)
         self.assertIn("无效正式运行", report)
+
+
+class BenchmarkWorkloadTests(unittest.TestCase):
+    def test_paired_workloads_emit_identical_exact_bytes(self):
+        for name, size in (("arithmetic", 100), ("array_scan", 100)):
+            expected = benchmark.expected_stdout(name, size)
+            outputs = []
+            for language in benchmark.LANGUAGES:
+                completed = subprocess.run(
+                    benchmark.make_argv(language, name, size),
+                    cwd=str(benchmark.ROOT),
+                    shell=False,
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    timeout=30,
+                    check=False,
+                )
+                self.assertEqual(completed.returncode, 0)
+                self.assertEqual(completed.stderr, b"")
+                self.assertEqual(completed.stdout, expected)
+                outputs.append(completed.stdout)
+            self.assertEqual(outputs[0], outputs[1])
 
 
 if __name__ == "__main__":

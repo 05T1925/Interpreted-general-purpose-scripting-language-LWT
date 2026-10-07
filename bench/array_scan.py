@@ -20,7 +20,8 @@ def main():
             hits = hits + 1
         j = j + 1
 
-    sys.stdout.write(str(n) + "|" + str(total) + "|" + str(hits) + "\n")
+    output = str(n) + "|" + str(total) + "|" + str(hits) + "\n"
+    sys.stdout.buffer.write(output.encode("ascii"))
 
 
 if __name__ == "__main__":

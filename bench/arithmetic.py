@@ -8,7 +8,8 @@ def main():
     while i <= n:
         total = total + i
         i = i + 1
-    sys.stdout.write(str(n) + "|" + str(total) + "\n")
+    output = str(n) + "|" + str(total) + "\n"
+    sys.stdout.buffer.write(output.encode("ascii"))
 
 
 if __name__ == "__main__":
