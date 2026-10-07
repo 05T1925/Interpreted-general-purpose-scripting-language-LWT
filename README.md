@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S7 已审查并合入本地 `main`；S8 黑盒测试/覆盖矩阵/CI 草案已提交到 `stage/s08-blackbox-ci`，等待主窗口审查，尚未标记通过。**本地 `main` 比 `origin/main` 领先 9 个提交；`origin/main` 仍为 S4，这些本地进度尚未推送。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S8 已审查并合入本地 `main`；S8 阶段提交为 `e2c5f2b`，空用例集保护补强提交为 `8789408`。**本地 `main` 比 `origin/main` 领先 12 个提交；`origin/main` 仍为 S4，这些本地进度尚未推送。
 
 ## 阅读入口
 
@@ -17,7 +17,7 @@
 python tools/run_tests.py
 ```
 
-语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。当前共有 194 项黑盒用例，其中 189 项执行配对 LWT 程序、5 项专测 CLI 参数契约。2026-10-07 在 Windows Python 3.11.16 和 3.13.7 上各 194/194 通过；同两版本的 173 项 unittest 和 compileall 均通过。GitHub Actions 尚未远端触发，Python 3.10/Linux 结果未验证。
+语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。当前共有 194 项黑盒用例，其中 189 项执行配对 LWT 程序、5 项专测 CLI 参数契约。执行窗口在 Windows Python 3.11.16、3.13.7 各测得 194/194；主窗口补充“空测试集必须失败”的检查后，在 Python 3.13.7 重跑 194/194，174 项 unittest 通过，且从临时目录启动黑盒运行器也通过。GitHub Actions 尚未远端触发，Python 3.10/Linux 结果未验证。
 
 运行 lexer、parser、runtime、CLI 和黑盒 runner 的开发辅助 unittest：
 
@@ -31,7 +31,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q lwt tests tools
 ```
 
-项目目标支持 Python 3.10+ 标准库；当前本地完整实测环境为 Windows Python 3.11.16 和 3.13.7。`.github/workflows/tests.yml` 在 push、pull request 和手动触发时运行 Python 3.10/3.13 × Ubuntu/Windows 矩阵，并执行同一黑盒命令以及 unittest/compileall。Python 3.10 和 Linux 本地不可用；远端 workflow 尚未运行，不能据此声称 CI 已通过。
+项目目标支持 Python 3.10+ 标准库；当前本地实测环境为 Windows Python 3.11.16 和 3.13.7。`.github/workflows/tests.yml` 在 push、pull request 和手动触发时运行 Python 3.10/3.13 × Ubuntu/Windows 矩阵，并执行同一黑盒命令以及 unittest/compileall。Python 3.10、Linux 和远端 workflow 尚未实际运行，不能据此声称 CI 已通过。
 
 运行示例：
 
@@ -65,4 +65,4 @@ review
 [7, "pear", 4]
 ```
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 草案包含逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流，等待主窗口审查；S9 及以后未开始。
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 已审查通过并合入本地 `main`，包含逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S9 及以后尚未实施。
