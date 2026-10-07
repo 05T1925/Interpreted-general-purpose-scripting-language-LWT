@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import os
 import sys
 import tempfile
 import unittest
@@ -14,25 +15,38 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
 
 def run_lwt(
-    *arguments: str, input_bytes: bytes = b""
+    *arguments: str, input_bytes: bytes = b"", cwd: str | Path | None = None
 ) -> subprocess.CompletedProcess[bytes]:
     return subprocess.run(
         [sys.executable, "-m", "lwt", *arguments],
-        cwd=REPOSITORY_ROOT,
+        cwd=REPOSITORY_ROOT if cwd is None else cwd,
         input=input_bytes,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        env={
+            **os.environ,
+            "PYTHONPATH": str(REPOSITORY_ROOT)
+            + os.pathsep
+            + os.environ.get("PYTHONPATH", ""),
+        },
         check=False,
     )
 
 
 def run_source(
-    source: str, *, input_bytes: bytes = b""
+    source: str,
+    *,
+    input_bytes: bytes = b"",
+    cwd: str | Path | None = None,
+    program_args: tuple[str, ...] = (),
 ) -> tuple[str, subprocess.CompletedProcess[bytes]]:
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "program.lwt"
         path.write_text(source, encoding="utf-8")
-        result = run_lwt(str(path), input_bytes=input_bytes)
+        arguments = [str(path)]
+        if program_args:
+            arguments.extend(("--", *program_args))
+        result = run_lwt(*arguments, input_bytes=input_bytes, cwd=cwd)
     return str(path), result
 
 
@@ -359,26 +373,15 @@ class CliProcessTests(unittest.TestCase):
         )
         self.assertNotIn(b"Traceback", result.stderr)
 
-    def test_unimplemented_valid_syntax_is_rejected_before_any_output(self) -> None:
-        cases = (
-            ('emit "hidden"; len("value");', "len"),
-            ('emit "hidden"; when (false) { str([1]); }', "str"),
-            ('emit "hidden"; fn unused() { fail("stop"); }', "fail"),
+    def test_s7_builtins_in_unselected_and_uninvoked_code_are_not_executed(self) -> None:
+        source = (
+            'emit "visible"; when (false) { emit len(input()); read_text("missing.txt"); } '
+            'fn unused() { fail("not called"); }'
         )
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "incomplete.lwt"
-            for source, marker in cases:
-                path.write_text(source, encoding="utf-8")
-                with self.subTest(source=source):
-                    result = run_lwt(str(path))
-                    self.assertEqual(result.returncode, 1)
-                    self.assertEqual(result.stdout, b"")
-                    self.assertEqual(
-                        result.stderr.decode("utf-8"),
-                        f"{path}:1:{source.index(marker) + 1}: Incomplete: "
-                        "runtime support for this syntax is not implemented yet\n",
-                    )
-                    self.assertNotIn(b"Traceback", result.stderr)
+        path, result = run_source(source, input_bytes=b"\xff\n")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"visible\n")
+        self.assertEqual(result.stderr, b"")
 
     def test_when_executes_only_the_selected_branch(self) -> None:
         source = (
@@ -741,32 +744,25 @@ class S5FunctionCliTests(unittest.TestCase):
         self.assertEqual(result.stdout, b"42\nPerson{}\n")
         self.assertEqual(result.stderr, b"")
 
-    def test_unimplemented_construct_in_uninvoked_function_prevents_execution(self) -> None:
+    def test_s7_builtin_in_uninvoked_function_has_no_effect(self) -> None:
         source = 'emit "hidden"; fn unused() { emit len(input()); }'
         path, result = run_source(source, input_bytes=b"\xff")
-        self.assertEqual(result.returncode, 1)
-        self.assertEqual(result.stdout, b"")
-        self.assertIn(b"Incomplete", result.stderr)
-        self.assertNotIn(b"valid UTF-8", result.stderr)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"hidden\n")
+        self.assertEqual(result.stderr, b"")
 
-    def test_unimplemented_builtins_report_incomplete_not_undefined_function(self) -> None:
-        for name in (
-            "args",
-            "read_text",
-            "len",
-            "split",
-            "trim",
-            "to_int",
-            "str",
-            "fail",
-        ):
-            source = f'emit "hidden"; {name}();'
-            path, result = run_source(source)
-            with self.subTest(name=name):
-                self.assertEqual(result.returncode, 1)
-                self.assertEqual(result.stdout, b"")
-                self.assertIn(b"Incomplete", result.stderr)
-                self.assertNotIn(b"undefined function", result.stderr)
+    def test_builtins_are_reserved_and_resolve_before_argument_evaluation(self) -> None:
+        source = 'emit "before"; absent(input());'
+        path, result = run_source(source, input_bytes=b"\xff\n")
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, b"before\n")
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:1:{source.index('absent') + 1}: RuntimeError: "
+            "undefined function 'absent'\n",
+        )
+        self.assertNotIn(b"valid UTF-8", result.stderr)
+        self.assertNotIn(b"Traceback", result.stderr)
 
     def test_s6_array_index_and_field_access_are_runtime_checked_at_access_tokens(self) -> None:
         cases = (
@@ -1172,24 +1168,17 @@ class S6CollectionsCliTests(unittest.TestCase):
         source = "each (item in 1) { emit item; }"
         self.assert_runtime_error_at(source, "each", "each requires an array")
 
-    def test_s7_builtins_preflight_even_when_unselected_or_uninvoked(self) -> None:
+    def test_s7_builtins_run_only_when_execution_reaches_the_call(self) -> None:
         cases = (
-            ('emit "hidden"; when (false) { str(input()); }', "str"),
-            ('emit "hidden"; fn unused() { let value = trim(input()); }', "trim"),
-            ('emit "hidden"; each (item in [1]) { emit len([item]); }', "len"),
+            ('when (false) { fail("unselected"); } emit "selected";', "selected\n"),
+            ('fn unused() { fail("uninvoked"); } emit "selected";', "selected\n"),
         )
-        for source, marker in cases:
-            path, result = run_source(source, input_bytes=b"\xff\n")
+        for source, expected_stdout in cases:
+            path, result = run_source(source)
             with self.subTest(source=source):
-                self.assertEqual(result.returncode, 1)
-                self.assertEqual(result.stdout, b"")
-                self.assertEqual(
-                    result.stderr.decode("utf-8"),
-                    f"{path}:1:{source.index(marker) + 1}: Incomplete: "
-                    "runtime support for this syntax is not implemented yet\n",
-                )
-                self.assertNotIn(b"valid UTF-8", result.stderr)
-                self.assertNotIn(b"Traceback", result.stderr)
+                self.assertEqual(result.returncode, 0)
+                self.assertEqual(result.stdout, expected_stdout.encode("utf-8"))
+                self.assertEqual(result.stderr, b"")
 
     def test_unknown_record_in_unselected_branch_is_not_pre_resolved(self) -> None:
         source = 'when (false) { emit Missing{value: 1}; } emit "ok";'
@@ -1197,6 +1186,321 @@ class S6CollectionsCliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout, b"ok\n")
         self.assertEqual(result.stderr, b"")
+
+
+class S7BuiltinCliTests(unittest.TestCase):
+    def assert_runtime_error_at(
+        self,
+        source: str,
+        marker: str,
+        message: str,
+        *,
+        stdout: bytes = b"",
+        input_bytes: bytes = b"",
+        cwd: str | Path | None = None,
+        program_args: tuple[str, ...] = (),
+    ) -> None:
+        path, result = run_source(
+            source,
+            input_bytes=input_bytes,
+            cwd=cwd,
+            program_args=program_args,
+        )
+        offset = source.index(marker)
+        prefix = source[:offset]
+        line = prefix.count("\n") + 1
+        column = len(prefix.rsplit("\n", 1)[-1]) + 1
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, stdout)
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:{line}:{column}: RuntimeError: {message}\n",
+        )
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_args_empty_vector_preserves_program_argument_boundaries_and_is_fresh(self) -> None:
+        _, empty = run_source("emit args();")
+        self.assertEqual((empty.returncode, empty.stdout, empty.stderr), (0, b"[]\n", b""))
+
+        source = 'let first = args(); push(first, "changed"); emit args(); emit first;'
+        _, result = run_source(
+            source,
+            program_args=("plain", "", "two words", "雪", "--"),
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(
+            result.stdout,
+            b'["plain", "", "two words", "\xe9\x9b\xaa", "--"]\n'
+            b'["plain", "", "two words", "\xe9\x9b\xaa", "--", "changed"]\n',
+        )
+        self.assertEqual(result.stderr, b"")
+
+    def test_text_tools_example_runs_through_public_cli_with_program_arguments(self) -> None:
+        result = run_lwt(
+            "examples/text_tools.lwt",
+            "--",
+            "examples/fixtures/text_tools.txt",
+            "preview",
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b'2\n[12, "apple", 5]\n[7, "pear", 4]\n')
+        self.assertEqual(result.stderr, b"")
+
+    def test_read_text_utf8_bom_newline_and_empty_file_cases(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            cases = (
+                (b"", b"\n"),
+                ("雪\nline".encode("utf-8"), "雪\nline\n".encode("utf-8")),
+                (b"last line", b"last line\n"),
+                (b"\xef\xbb\xbfbody", b"body\n"),
+                (b"\xef\xbb\xbf\xef\xbb\xbfbody", b"\xef\xbb\xbfbody\n"),
+                (b"a\r\nb\rc\nd\r", b"a\nb\nc\nd\n\n"),
+            )
+            path = root / "data.txt"
+            source = 'emit read_text("data.txt");'
+            for contents, expected in cases:
+                path.write_bytes(contents)
+                _, result = run_source(source, cwd=root)
+                with self.subTest(contents=contents):
+                    self.assertEqual(result.returncode, 0)
+                    self.assertEqual(result.stdout, expected)
+                    self.assertEqual(result.stderr, b"")
+
+    def test_read_text_uses_process_cwd_not_source_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as working_directory, tempfile.TemporaryDirectory() as source_directory:
+            Path(working_directory, "relative.txt").write_text("cwd", encoding="utf-8")
+            Path(source_directory, "relative.txt").write_text("source", encoding="utf-8")
+            source_path = Path(source_directory, "program.lwt")
+            source_path.write_text('emit read_text("relative.txt");', encoding="utf-8")
+            result = run_lwt(str(source_path), cwd=working_directory)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"cwd\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_read_text_data_failures_are_runtime_errors_but_source_failures_remain_file_errors(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "directory").mkdir()
+            (root / "invalid.txt").write_bytes(b"\xff")
+            cases = (
+                ('read_text("missing.txt");', "could not read text file"),
+                ('read_text("directory");', "could not read text file"),
+                ('read_text(input());', "could not read text file"),
+                ('read_text("invalid.txt");', "text file is not valid UTF-8"),
+            )
+            for expression, message in cases:
+                source = f"{expression}"
+                self.assert_runtime_error_at(
+                    source,
+                    "read_text",
+                    message,
+                    input_bytes=b"bad\x00path\n",
+                    cwd=root,
+                )
+
+        with tempfile.TemporaryDirectory() as directory:
+            missing_source = Path(directory, "missing.lwt")
+            result = run_lwt(str(missing_source))
+        self.assertEqual(result.returncode, 4)
+        self.assertEqual(result.stdout, b"")
+        self.assertEqual(result.stderr, b"lwt: FileError: cannot read source file\n")
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_len_counts_unicode_codepoints_and_array_elements(self) -> None:
+        source = 'emit len(""); emit len("A😀é"); emit len([]); emit len([null, 1, "x"]);'
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"0\n4\n0\n3\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_len_rejects_non_string_non_array_values_at_call(self) -> None:
+        for value in ("1", "true", "null", 'R{}'):
+            source = f"record R {{}}; emit len({value});"
+            self.assert_runtime_error_at(source, "len", "len expects a string or array")
+
+    def test_split_preserves_empty_fields_and_uses_literal_nonoverlapping_matches(self) -> None:
+        source = (
+            'emit split("", ","); emit split("abc", "x"); '
+            'emit split(",a,,b,", ","); emit split("aaa", "aa"); '
+            'emit split("a--b----c", "--"); '
+            'let fields = split("x,y", ","); '
+            'each (field in fields) { emit len(field); } emit fields[1];'
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(
+            result.stdout,
+            b'[""]\n["abc"]\n["", "a", "", "b", ""]\n["", "a"]\n'
+            b'["a", "b", "", "c"]\n1\n1\ny\n',
+        )
+        self.assertEqual(result.stderr, b"")
+
+    def test_split_rejects_empty_separator_and_wrong_types_at_call(self) -> None:
+        self.assert_runtime_error_at(
+            'split("x", "");', "split", "split separator must not be empty"
+        )
+        self.assert_runtime_error_at(
+            'split("x", 1);', "split", "split expects two strings"
+        )
+
+    def test_trim_removes_exact_ascii_whitespace_and_preserves_other_unicode_space(self) -> None:
+        source = 'emit trim(input() + "\\n"); emit trim(input()); emit trim(input());'
+        _, result = run_source(
+            source,
+            input_bytes=(
+                b" \t\r\v\fco re \t\r\v\f\n"
+                b"\xc2\xa0wide\xe3\x80\x80\n"
+                b" \t\r\v\f\n"
+            ),
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"co re\n\xc2\xa0wide\xe3\x80\x80\n\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_trim_rejects_non_string_values(self) -> None:
+        self.assert_runtime_error_at("trim(1);", "trim", "trim expects a string")
+
+    def test_to_int_accepts_strict_ascii_decimal_and_arbitrary_precision(self) -> None:
+        digits = "9" * 6000
+        source = (
+            'emit to_int("42"); emit to_int("-42"); emit to_int("00042"); '
+            'emit to_int("-000"); '
+            f'emit len(str(to_int("{digits}"))); emit str(to_int("-{digits}"));'
+        )
+        _, result = run_source(source)
+        expected = f"42\n-42\n42\n0\n6000\n-{digits}\n".encode("ascii")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, expected)
+        self.assertEqual(result.stderr, b"")
+
+    def test_to_int_rejects_noncanonical_or_non_ascii_decimal_text(self) -> None:
+        cases = (
+            'to_int("");',
+            'to_int("-");',
+            'to_int("+1");',
+            'to_int(" 1");',
+            'to_int("1 ");',
+            'to_int("1 2");',
+            'to_int("1.0");',
+            'to_int("1_0");',
+            'to_int("١");',
+        )
+        for source in cases:
+            with self.subTest(source=source):
+                self.assert_runtime_error_at(
+                    source, "to_int", "to_int expects text matching -?[0-9]+"
+                )
+        self.assert_runtime_error_at("to_int(true);", "to_int", "to_int expects a string")
+
+    def test_str_matches_emit_for_scalars_composites_escaping_and_cycles(self) -> None:
+        source = (
+            r'let escaped = ["quote: \" slash: \\ line:\n tab:\t"]; '
+            'emit str("plain"); emit str(42); emit str(true); emit str(null); '
+            'emit str(escaped); emit escaped; '
+            'let child = [1]; emit str([child, child]); '
+            'let cycle = []; push(cycle, cycle); emit str(cycle); '
+            'let left = []; let right = []; push(left, right); push(right, left); '
+            'emit str(left); '
+            'record Node { next }; let node = Node{next: null}; '
+            'node.next = node; emit str(node);'
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        lines = result.stdout.splitlines()
+        self.assertEqual(lines[:4], [b"plain", b"42", b"true", b"null"])
+        self.assertEqual(lines[4], lines[5])
+        self.assertEqual(
+            lines[6:],
+            [b"[[1], [1]]", b"[<cycle>]", b"[[<cycle>]]", b"Node{next: <cycle>}"],
+        )
+        self.assertEqual(result.stderr, b"")
+
+    def test_str_handles_large_integer_and_returns_ordinary_composable_string(self) -> None:
+        digits = "8" * 6000
+        source = (
+            f'let rendered = str(to_int("{digits}")); '
+            'emit len(rendered); emit rendered == rendered; emit "value=" + str(12);'
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, f"6000\ntrue\nvalue=12\n".encode("ascii"))
+        self.assertEqual(result.stderr, b"")
+
+    def test_str_control_escaping_matches_emit_for_all_ascii_control_bytes(self) -> None:
+        source = 'let controls = [input()]; emit str(controls); emit controls;'
+        _, result = run_source(source, input_bytes=b"\x00\r\x1f\x7f\xe9\x9b\xaa\n")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(
+            result.stdout,
+            b'["\\u0000\\r\\u001F\\u007F\xe9\x9b\xaa"]\n'
+            b'["\\u0000\\r\\u001F\\u007F\xe9\x9b\xaa"]\n',
+        )
+        self.assertEqual(result.stderr, b"")
+
+    def test_fail_preserves_prior_output_escapes_diagnostic_and_has_no_traceback(self) -> None:
+        source = 'emit "before"; fail(input() + "\\nlast");'
+        self.assert_runtime_error_at(
+            source,
+            "fail",
+            "first\\rinside\\nlast",
+            stdout=b"before\n",
+            input_bytes=b"first\rinside\n",
+        )
+        self.assert_runtime_error_at(
+            "fail(1);", "fail", "fail expects a string message"
+        )
+        self.assert_runtime_error_at("fail(\"\");", "fail", "")
+
+    def test_all_builtin_arity_and_type_failures_point_to_call_name(self) -> None:
+        cases = (
+            ('args(1);', "args", "args expects 0 arguments"),
+            ('read_text();', "read_text", "read_text expects 1 argument"),
+            ('read_text(1);', "read_text", "read_text expects a string path"),
+            ('len();', "len", "len expects 1 argument"),
+            ('split("x");', "split", "split expects 2 arguments"),
+            ('split(1, "x");', "split", "split expects two strings"),
+            ('trim(1);', "trim", "trim expects a string"),
+            ('to_int(1);', "to_int", "to_int expects a string"),
+            ('str();', "str", "str expects 1 argument"),
+            ('fail();', "fail", "fail expects 1 argument"),
+            ('fail(1);', "fail", "fail expects a string message"),
+        )
+        for source, marker, message in cases:
+            with self.subTest(source=source):
+                self.assert_runtime_error_at(source, marker, message)
+
+    def test_all_call_arguments_run_left_to_right_before_builtin_arity_or_type_checks(self) -> None:
+        source = (
+            'fn mark(value) { emit value; return value; } '
+            'len(mark(1), mark(2));'
+        )
+        self.assert_runtime_error_at(
+            source,
+            "len",
+            "len expects 1 argument",
+            stdout=b"1\n2\n",
+        )
+        source = 'fn mark(value) { emit value; return value; } len(mark(1));'
+        self.assert_runtime_error_at(
+            source,
+            "len",
+            "len expects a string or array",
+            stdout=b"1\n",
+        )
+
+    def test_argument_failure_stops_later_arguments_and_builtin_operation(self) -> None:
+        source = (
+            'fn broken() { emit "first"; return 1 / 0; } '
+            'fn later() { emit "later"; return "text"; } '
+            'len(broken(), later());'
+        )
+        self.assert_runtime_error_at(
+            source,
+            "/",
+            "division by zero",
+            stdout=b"first\n",
+        )
 
 
 if __name__ == "__main__":

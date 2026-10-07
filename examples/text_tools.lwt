@@ -1,0 +1,10 @@
+# Run from the repository root with a data path after --.
+let arguments = args();
+emit len(arguments);
+let lines = split(trim(read_text(arguments[0])), "\n");
+each (line in lines) {
+    let columns = split(line, "|");
+    let quantity = to_int(trim(columns[0]));
+    let item = trim(columns[1]);
+    emit str([quantity, item, len(item)]);
+}

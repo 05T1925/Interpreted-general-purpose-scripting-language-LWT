@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S6 已审查并合入本地 `main`；S5/S6 尚未推送到 `origin`。**`origin/main` 仍为 S4；本地 `main` 已含 S5、S6 及审查文档提交。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S6 已审查并合入本地 `main`；S7 已在 `stage/s07-builtins-cli-integration` 完成并提交，等待主窗口审查，尚未合入 `main`。**本地 `main` 比 `origin/main` 领先 7 个提交；`origin/main` 仍为 S4。阶段分支不推送。
 
 ## 阅读入口
 
@@ -11,7 +11,7 @@
 5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已将两项审查澄清并入正文。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 
-运行 lexer、parser、runtime 与 CLI 阶段性测试。2026-10-07 在 Python 3.13.7 上，S6 阶段分支和主窗口复跑的全套 137 项 unittest 均通过。这些不是最终黑盒测试集：
+运行 lexer、parser、runtime 与 CLI 阶段性测试。2026-10-07 在 Python 3.13.7 上，S7 阶段分支全套 157 项 unittest 均通过。这些不是最终黑盒测试集：
 
 ```powershell
 python -m unittest discover -s tests -v
@@ -29,6 +29,7 @@ python -m lwt examples/basic_io.lwt
 python -m lwt examples/control_flow.lwt
 python -m lwt examples/functions.lwt
 python -m lwt examples/collections.lwt
+python -m lwt examples/text_tools.lwt -- examples/fixtures/text_tools.txt preview
 ```
 
 `control_flow.lwt` 的实际输出是 `0\n-1\n2\n-3\n`；`functions.lwt` 的实际输出是 `120\n`。`collections.lwt` 在本阶段实测输出如下，展示 `each` 进入时保存浅快照：
@@ -40,4 +41,12 @@ review
 [Task{name: "draft", done: true}, Task{name: "replacement", done: false}, Task{name: "late", done: false}]
 ```
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示。`args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()` 仍在执行前以阶段性 `Incomplete`/1 拒绝，且不产生部分 stdout；它们属于 S7。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/文件错误返回 4。临时代码 1 不是最终语言行为。S7 尚未开始。
+`text_tools.lwt` 从仓库根目录运行；`read_text` 的相对路径也以进程工作目录为基准。`args()` 收到数据文件路径和 `preview` 两个参数，stdout 为：
+
+```text
+2
+[12, "apple", 5]
+[7, "pear", 4]
+```
+
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S7 尚待主窗口审查；完整黑盒测试集和 CI 属于 S8。

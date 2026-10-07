@@ -1,4 +1,4 @@
-"""Command-line argument handling and the currently supported runtime subset."""
+"""Command-line argument handling and the public LWT interpreter entry point."""
 
 from __future__ import annotations
 
@@ -58,7 +58,7 @@ def _read_source(source_path: str) -> str:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Read, lex, parse, and execute the currently supported LWT subset."""
+    """Read, lex, parse, and execute one LWT source file."""
 
     _configure_standard_streams()
     arguments = list(sys.argv[1:] if argv is None else argv)
@@ -67,8 +67,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         parsed = parse_cli_args(arguments)
         source_path = parsed.source_path
-        # Program arguments remain reserved for a later args() implementation.
-        _program_args = parsed.program_args
         source_text = _read_source(source_path)
         tokens = scan(source_text)
         program = parse(tokens)
@@ -77,7 +75,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return error.exit_code
 
     try:
-        execute(program, sys.stdin.buffer, sys.stdout)
+        execute(program, sys.stdin.buffer, sys.stdout, parsed.program_args)
     except LwtError as error:
         sys.stderr.write(format_diagnostic(error, source_path) + "\n")
         return error.exit_code

@@ -1,0 +1,2 @@
+  12 |  apple
+7 | pear

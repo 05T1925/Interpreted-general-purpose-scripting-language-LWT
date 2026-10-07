@@ -1,12 +1,9 @@
-"""S4-S6 tree-walk runtime for the currently supported LWT language subset.
-
-Unsupported but valid syntax is detected before execution so it cannot produce
-partial output.
-"""
+"""Tree-walk runtime for LWT 0.1."""
 
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 from typing import BinaryIO, NoReturn, TextIO
 
 from .ast_nodes import (
@@ -90,7 +87,13 @@ class _RecordValue:
 class _RuntimeContext:
     """Per-program tables and I/O streams shared by nested function calls."""
 
-    __slots__ = ("input_stream", "output_stream", "functions", "record_types")
+    __slots__ = (
+        "input_stream",
+        "output_stream",
+        "program_args",
+        "functions",
+        "record_types",
+    )
 
     def __init__(
         self,
@@ -98,9 +101,11 @@ class _RuntimeContext:
         output_stream: TextIO,
         functions: dict[str, FunctionDeclaration],
         record_types: dict[str, tuple[str, ...]],
+        program_args: tuple[str, ...] = (),
     ) -> None:
         self.input_stream = input_stream
         self.output_stream = output_stream
+        self.program_args = program_args
         self.functions = functions
         self.record_types = record_types
 
@@ -161,6 +166,7 @@ def execute(
     program: Program,
     input_stream: BinaryIO | None = None,
     output_stream: TextIO | None = None,
+    program_args: tuple[str, ...] = (),
 ) -> None:
     """Execute a supported LWT program or raise a located LWT error.
 
@@ -211,7 +217,7 @@ def execute(
             )
 
         runtime = _RuntimeContext(
-            input_stream, output_stream, functions, record_types
+            input_stream, output_stream, functions, record_types, program_args
         )
         environment = Environment()
         for item in program.items:
@@ -313,11 +319,6 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
             return expression.target.location
         return _unsupported_expression(expression.value)
     if isinstance(expression, CallExpression):
-        if (
-            expression.callee.name in _BUILTIN_NAMES
-            and expression.callee.name not in {"input", "push"}
-        ):
-            return expression.location
         for argument in expression.arguments:
             location = _unsupported_expression(argument)
             if location is not None:
@@ -570,8 +571,9 @@ def _evaluate(
             array.append(value)
             return None
         if is_builtin:
-            # The whole-program scan rejects S7 builtins before execution.
-            raise AssertionError("unsupported builtin call passed to evaluator")
+            return _invoke_builtin(
+                name, arguments, expression.callee.location, runtime
+            )
 
         assert declaration is not None
         if len(arguments) != len(declaration.parameters):
@@ -605,6 +607,98 @@ def _checked_array_index(
     if index < 0 or index >= len(receiver):
         _runtime_error("array index is out of range", location)
     return index
+
+
+def _invoke_builtin(
+    name: str,
+    arguments: list[object],
+    location: SourceLocation,
+    runtime: _RuntimeContext,
+) -> object:
+    """Apply a built-in after all of its arguments have been evaluated."""
+
+    if name == "args":
+        if arguments:
+            _runtime_error("args expects 0 arguments", location)
+        # Each call owns a distinct mutable LWT array.
+        return list(runtime.program_args)
+
+    if name == "read_text":
+        if len(arguments) != 1:
+            _runtime_error("read_text expects 1 argument", location)
+        path = arguments[0]
+        if type(path) is not str:
+            _runtime_error("read_text expects a string path", location)
+        try:
+            contents = Path(path).read_bytes()
+        except (OSError, ValueError):
+            _runtime_error("could not read text file", location)
+        try:
+            text = contents.decode("utf-8", errors="strict")
+        except UnicodeDecodeError:
+            _runtime_error("text file is not valid UTF-8", location)
+        if text.startswith("\ufeff"):
+            text = text[1:]
+        return text.replace("\r\n", "\n").replace("\r", "\n")
+
+    if name == "len":
+        if len(arguments) != 1:
+            _runtime_error("len expects 1 argument", location)
+        value = arguments[0]
+        if type(value) is str or type(value) is list:
+            return len(value)
+        _runtime_error("len expects a string or array", location)
+
+    if name == "split":
+        if len(arguments) != 2:
+            _runtime_error("split expects 2 arguments", location)
+        text, separator = arguments
+        if type(text) is not str or type(separator) is not str:
+            _runtime_error("split expects two strings", location)
+        if separator == "":
+            _runtime_error("split separator must not be empty", location)
+        # Python's explicit-separator split is literal, left-to-right,
+        # non-overlapping, and preserves leading/trailing empty fields.
+        return text.split(separator)
+
+    if name == "trim":
+        if len(arguments) != 1:
+            _runtime_error("trim expects 1 argument", location)
+        text = arguments[0]
+        if type(text) is not str:
+            _runtime_error("trim expects a string", location)
+        return text.strip(" \t\n\r\v\f")
+
+    if name == "to_int":
+        if len(arguments) != 1:
+            _runtime_error("to_int expects 1 argument", location)
+        text = arguments[0]
+        if type(text) is not str:
+            _runtime_error("to_int expects a string", location)
+        negative = text.startswith("-")
+        digits = text[1:] if negative else text
+        if not digits or any(character < "0" or character > "9" for character in digits):
+            _runtime_error("to_int expects text matching -?[0-9]+", location)
+        value = parse_decimal_integer(digits)
+        return -value if negative else value
+
+    if name == "str":
+        if len(arguments) != 1:
+            _runtime_error("str expects 1 argument", location)
+        try:
+            return _display_value(arguments[0])
+        except RecursionError:
+            _runtime_error("host recursion limit reached while displaying value", location)
+
+    if name == "fail":
+        if len(arguments) != 1:
+            _runtime_error("fail expects 1 argument", location)
+        message = arguments[0]
+        if type(message) is not str:
+            _runtime_error("fail expects a string message", location)
+        _runtime_error(message, location)
+
+    raise AssertionError(f"unknown built-in function: {name!r}")
 
 
 def _construct_record(
