@@ -74,3 +74,23 @@ python tools/run_app_concurrency.py
 工具用同一个 [`fixtures/concurrency.log`](fixtures/concurrency.log)、同一命令和当前应用文件，分别并发启动 1、2、4 个独立 `python -m lwt` 操作系统进程；每组先做 warm-up，再进行 5 个计时试次，逐字节核对 stdout、空 stderr 和退出码。Python 线程池只负责同时调度子进程，**这不是 LWT 线程、语言级并发或并行加速结论**。原始数据和解释见 [`../docs/app-concurrency.md`](../docs/app-concurrency.md) 与 [`../reports/app-concurrency.json`](../reports/app-concurrency.json)。
 
 固定 fixture 的完整行为通过 `tests/test_app.py` 经公开 CLI 测试；该应用测试不加入 S8 的 194 项语言黑盒覆盖矩阵。
+
+## 图形化小游戏（S15）
+
+在具备桌面显示能力且 Python 包含 Tkinter 的环境中，从仓库根目录启动：
+
+```powershell
+python app/log_detective.py
+```
+
+也可以从其他当前工作目录使用入口脚本的绝对路径启动。游戏默认读取 [`fixtures/sample.log`](fixtures/sample.log)，提供五道 `level`、`keyword` 和组合过滤题；玩家输入匹配记录数，可按 Enter 提交，查看正误反馈、当前进度和最终得分。选择日志文件后会将完整路径作为单独参数传给 LWT CLI。游戏内“查看完整 LWT 报告”显示未过滤 CLI 的完整标准输出。
+
+Python/Tkinter 负责窗口、题面、会话、得分和展示；日志读取、记录解析、过滤、统计与正确答案仍由 `log_report.lwt` 通过 `python -m lwt` 完成。GUI 调用使用当前 Python、argv 参数列表、`shell=False`、UTF-8 和有限超时；后台线程只等待 CLI，Tk 控件更新限于主线程。GUI 不改变 LWT 的语言能力或 CLI 契约。
+
+Tkinter 是 Python 标准 GUI 接口，但可能作为可选模块缺省；先检查 `python -m tkinter` 并确认有可用桌面。没有 Tkinter 或桌面时继续使用上面的 CLI；无需安装第三方 GUI 依赖。运行无头逻辑及 CLI 集成测试：
+
+```powershell
+python -m unittest discover -s tests -p "test_log_detective.py" -v
+```
+
+设计边界、实测观察、自动测试和未验证事项见 [`../docs/s15-app-gui.md`](../docs/s15-app-gui.md)。

@@ -63,3 +63,52 @@
 - 当前仅在 Windows 11 / Python 3.13.7 运行；没有在 Linux 或 Python 3.10 运行本应用。S8 既有远端 Actions 未触发状态不因本阶段而改变。
 - 并发数据对固定提交、固定输入和本机环境有效；OS 文件缓存、后台负载及应用一次性读全文件限制仍适用。输入没有被应用修改；不测试其他写进程同时改写文件。
 - S10 实现和测试完成，**等待主窗口审查**；本记录不预写审查通过。阶段分支未推送、未合入 `main`，S11 未开始。
+
+## S15｜日志侦探 GUI 与 CLI 集成（2026-10-07）
+
+### 接收任务和范围判断
+
+- **实际任务：** 用户派发 S15，要求在保留 S10 LWT 日志分析器和既有证据的情况下，增加可实际交互的 Python/Tkinter 桌面小游戏；题目统计必须来自公开 LWT CLI。另要求无头自动测试、Tk 可用时手动验收、同步阶段文档并按代码/测试/文档分次提交。
+- **阶段基线：** 本地 `main` `f6ef8c62737c91a18b793c12658804cba7fca810`，工作区初始干净；从该基线创建 `stage/s15-log-detective-gui`。开工时远端跟踪值和实时 `git ls-remote origin refs/heads/main` 为 `de608f7fbf50946715d370df014657169eb8f26d`，不作为分支基线。
+- **保留的契约：** `app/log_report.lwt` 246 行有效 LWT；既有 CLI 默认和 AND 过滤输出；25 项 `tests/test_app.py`；固定并发输入及其历史 raw/Markdown；不改运行时、正式语言规范、黑盒矩阵和 S11 性能 raw。课程要求的 ≥200 行 LWT 应用仍是应用主体，GUI 是宿主端体验增强。
+- **环境事实：** Windows CPython 3.13.7；`tkinter` 可导入，Tk 8.6。`python -m tkinter` 诊断窗实际显示 Tcl/Tk 8.6.15 并通过 Quit 关闭。Tkinter 可为可选模块，不能推断所有 Python 安装都提供 GUI。
+
+### 设计选择和实际迭代
+
+1. 将模块分成无 Tk 的 `app/log_detective_core.py`、Tk 视图 `app/log_detective_ui.py` 和启动入口 `app/log_detective.py`。根路径由 `__file__` 定位；入口路径可以从仓库外以绝对路径启动。
+2. 五道默认题覆盖 INFO、WARN、`retry` 关键词、ERROR 和 `WARN AND retry`。每题调用 `sys.executable -m lwt ...`，使用 argv 列表、`shell=False`、仓库根 `cwd`、UTF-8 和 20 秒 timeout。Python 只从完整 LWT 报告严格读取且只接受唯一一行 `Matched records: N`；不读/拆分日志、不计算答案。
+3. GUI 查询放入后台线程，通过 `queue.Queue` 返回结果，窗口控件只在 Tk 主线程更新；入口导入不创建根窗口。答案支持 Enter；题号、进度、分数、正误文字、正确答案、最终得分和重开均有明确状态。
+4. 报告解析拒绝缺失、重复、负数、非十进制字段；捕获 Python 十进制整数位数限制并转成可读分析器错误。进程超时、启动失败、无效参数、CLI 非零退出和意外报告格式也转成 `AnalyzerError`。界面捕获可读错误，仍可重开或另选日志。
+5. 早期集成测试曾错误假设报告会回显过滤命令；实际固定 stdout 只含统计内容，没有参数回显。我依据 S10 CLI 契约把断言改为核对 `WARN|1` 和真实示例记录后重跑通过，没有修改 LWT 程序。
+6. 自查时发现报告子进程结束后未重渲染答题按钮状态，且失败查询时提交按钮可能提前启用。修正为查询结果成功后才允许提交，并在完整报告窗口打开后恢复当前游戏控件；修复单独提交，避免把此状态问题留给主窗口。
+7. 桌面窗口启动并显示。另从临时目录以绝对入口路径启动了第二个窗口，窗口成功创建；其他窗口遮挡了默认路径完整内容。开始时观察到默认样例与 0/5 起始画面；后续观察到第 4/5 题、答错文字、正确值 2、当前输入 6、得分 0、下一题按钮，以及“挑战完成”结果页。操作期间计算机使用工具报告桌面用户输入，无法把后续点击/输入归因于本执行窗口；因此不将正确作答、报告窗口、重开、自选文件、错误恢复、键盘和缩放的完整人工流程记作已通过。该限制在 [`s15-app-gui.md`](s15-app-gui.md) 中保留，供主窗口复核。
+8. 没有实施独立 Agent 盲测或把自动路由说成触发；也没有独立主窗口代码审查。本记录只含执行窗口自查和实际命令证据。
+
+### 提交
+
+| 顺序 | 提交 | 内容 |
+|---:|---|---|
+| 1 | `b8cb5604ba5e8968b099b9b42e52f90fc74ac573` | 桌面启动入口、纯查询/报告/游戏状态逻辑和 Tkinter UI。 |
+| 2 | `2c49b356bfc34c3f56ff6b2a22705127dddafa2b` | 11 项无头单元及真实公开 CLI 集成测试。 |
+| 3 | `5fd6f399814577b5d180905007fb7059ac73cd62` | 复核后修复完整报告完成时控件状态恢复和查询前答案按钮状态。 |
+| 4 | 文档提交 | 本开发记录、S15 报告以及 README、project、总体方案、详细规划和路线图更新；文档提交的最终 SHA 由执行报告给出。 |
+
+### 实际命令和结果
+
+| 命令/检查 | 结果 |
+|---|---|
+| `python --version` | Python 3.13.7，退出码 0。 |
+| `python tools/check_project_integrity.py` | 退出码 0；194 cases、287 matrix links、194 referenced cases。 |
+| `python tools/run_tests.py` | 退出码 0；语言黑盒 194/194 通过。 |
+| `python -m unittest discover -s tests -q` | 退出码 0；230 项通过。 |
+| `python -m unittest discover -s tests -p "test_app.py" -v` | 退出码 0；原 S10 应用测试 25 项通过。 |
+| `python -m unittest discover -s tests -p "test_log_detective.py" -v` | 退出码 0；11 项通过，含默认/AND/Unicode 路径真实 CLI 集成、状态机及错误处理。 |
+| `python -m compileall -q lwt tests tools bench app` | 退出码 0。 |
+| `python tools/count_lwt_lines.py app/log_report.lwt` | 退出码 0；有效 LWT 行数 246。 |
+| `git diff --check` / `git diff --check main...HEAD` | 退出码均为 0；没有空白错误。 |
+| Markdown 本地链接与代码围栏 | 19 个 Markdown 文件、426 个本地链接；代码围栏平衡，检查通过。 |
+| 默认 CLI 示例 | 退出码 0，stderr 空；6 条匹配、6 条有效记录、1 条坏记录，与已提交期望输出契约一致。 |
+| `--level WARN --keyword retry --top 2` CLI 示例 | 退出码 0，stderr 空；1 条匹配，`WARN|1`、`cache|1` 和 `retry scheduled` 样例。 |
+| `python tools/run_app_concurrency.py` | 在临时一次性 worktree 的最终代码提交 `5fd6f399814577b5d180905007fb7059ac73cd62` 中执行以避免覆盖 S10 已提交 raw；退出码 0。Warm-up 成功，1/2/4 进程各 5 轮、共 35 个子进程；每个 stdout 与 warm-up 字节相同，所有 return code 为 0、stderr 为空，输入 SHA-256 前后未变（`9db070518d4bfa375e62eca0000e84835432e03e4156778b6c204a7a50321214`）。批次毫秒：1 `[187.911, 172.352, 180.338, 168.139, 195.441]`，2 `[192.580, 200.891, 183.362, 181.600, 181.868]`，4 `[190.779, 206.275, 192.049, 192.046, 199.309]`。临时 worktree 中生成的 raw 已随目录删除，原始 S10 报告文件未改；不据此作性能结论。 |
+
+正式 S11 `bench/results.json` 未重新运行或改写。Python 3.10、远端 Actions 和完整可归因的人工 GUI 操作轨迹尚未验证；Python 3.10、远端 CI、新克隆、PPT 和最终演示交由 S12。S15 没有合并或推送，当前结论为**实施完成，等待主窗口审查**。

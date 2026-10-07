@@ -22,7 +22,7 @@
 2. **语言范围：** 整数、字符串、布尔、`null`、数组、命名 `record`、输入输出、条件与循环、函数及递归。以 `record`、`when/otherwise`、`each`、`emit` 的组合形成有辨识度的 LWT 语法。只实现支撑作业和应用所需的少量内置函数。
 3. **测试：** 所有被测程序是 `.lwt`，Python 驱动仅通过公开 CLI 注入输入、比较 stdout/stderr/退出码。覆盖以“规范条款 → 正常/边界/错误用例”矩阵为准，70 个以上独立用例是目标，不是替代覆盖率的指标。[Python `subprocess.run`](https://docs.python.org/3/library/subprocess.html)提供进程输出捕获与超时机制。
 4. **性能：** 至少两组成对 LWT/Python 脚本，使用相同算法、输入规模与结果校验。每次启动新进程测端到端耗时，保存多次原始数据并报告中位数、最小值、波动和时间比；同时说明进程启动与解析成本。[Python 计时文档](https://docs.python.org/3/library/timeit.html)提醒重复测量及环境噪声的影响。
-5. **Agent 应用：** 保留 S10 的只读 LWT 命令行日志分析器作为应用核心，覆盖解析、过滤、统计、排行、坏记录处理与 Unicode。S15 计划在它外层增加 Python 标准库 Tkinter 图形界面和日志分析小游戏；每次答题的正确统计必须由公开 LWT CLI 计算，不能在 Python 界面中复制日志解析规则。原有 stdout 契约、≥200 行有效 LWT 主体、并发读取脚本和原始证据继续保留；界面工作线程只负责避免窗口阻塞，不代表 LWT 语言支持线程。
+5. **Agent 应用：** 保留 S10 的只读 LWT 命令行日志分析器作为应用核心，覆盖解析、过滤、统计、排行、坏记录处理与 Unicode。S15 已在其外层增加 Python 标准库 Tkinter 图形界面和日志侦探小游戏；每次答题的正确统计由公开 LWT CLI 计算，Python 界面不复制日志解析规则。原有 stdout 契约、246 行有效 LWT 主体、并发读取脚本和原始证据继续保留；界面工作线程只负责避免窗口阻塞，不代表 LWT 语言支持线程。S15 当前等待主窗口审查。
 6. **文档与历史：** 语法规范是实现行为的唯一权威说明；开发指南面向使用者；根目录 `project.md` 面向 Agent 复用；`AGENTS.md` 提醒 Agent 先读该文件。小步提交、测试和审查先于提交；新克隆仓库能按 README 复现。GitHub Actions 在一键测试稳定后接入同一命令。[官方 GitHub Python CI 指南](https://docs.github.com/en/actions/tutorials/build-and-test-code/python)建议显式设置 Python 版本。
 
 ## 三、优先级和阶段门槛
@@ -76,4 +76,4 @@ S13 是进入 P6/S12 前的全面审计；S14 接续 S13 风险登记，完成�
 
 远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，合并其仅含 README 的初始提交与本地规划提交，并正常推送 `main`；后续同步状态以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
 
-**S0–S11、S13、S14 已通过主窗口审查并合入本地 `main`；当前下一阶段为 S15，S12 按用户要求仍是最后收尾阶段。**S14 的独立复核在 Windows Python 3.13.7 上通过 219 项 unittest、194/194 黑盒、项目完整性检查、compileall 和 246 行 LWT 应用计数；执行报告另记录 WSL Ubuntu 24.04 / Python 3.12.3 同样通过。S14 实现及证据见[`docs/s14-improvements.md`](docs/s14-improvements.md)，代码提交 `9361f37`、最终阶段提交 `f2dda1f`。Python 3.10 与远端 Actions 仍待 S12；远端同步状态以 S12 届时的实时查询为准。S15 将保持现有 LWT CLI 应用与课程证据完整，增加由 LWT CLI 提供分析结果的 Tkinter 交互小游戏；具体实施和验收边界见[阶段路线图](阶段执行与审查路线图.md)。
+**S0–S11、S13、S14 已通过主窗口审查并合入本地 `main`；S15 实施已完成、等待主窗口审查；S12 按用户要求仍是最后收尾阶段且未开始。**S14 的独立复核在 Windows Python 3.13.7 上通过 219 项 unittest、194/194 黑盒、项目完整性检查、compileall 和 246 行 LWT 应用计数；执行报告另记录 WSL Ubuntu 24.04 / Python 3.12.3 同样通过。S14 实现及证据见[`docs/s14-improvements.md`](docs/s14-improvements.md)，代码提交 `9361f37`、最终阶段提交 `f2dda1f`。Python 3.10 与远端 Actions 仍待 S12；远端同步状态以 S12 届时的实时查询为准。S15 的 GUI、玩法、LWT/Python 边界和验证记录见 [`docs/s15-app-gui.md`](docs/s15-app-gui.md)；S12 仍负责全新克隆验收、Python 3.10/远端 CI、PPT、最终演示和远端同步。
