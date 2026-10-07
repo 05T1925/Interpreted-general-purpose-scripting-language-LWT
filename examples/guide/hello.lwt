@@ -1,0 +1,5 @@
+# A complete first program: comments, values, variables, expressions, and output.
+let name = "LWT";
+let answer = 6 * 7;
+emit "hello, " + name;
+emit answer;
