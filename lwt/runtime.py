@@ -1,4 +1,4 @@
-"""S4/S5 runtime for the currently supported LWT language subset.
+"""S4-S6 tree-walk runtime for the currently supported LWT language subset.
 
 Unsupported but valid syntax is detected before execution so it cannot produce
 partial output.
@@ -73,6 +73,38 @@ class _ReturnSignal(Exception):
         self.value = value
 
 
+class _RecordValue:
+    """A mutable record instance whose equality is object identity."""
+
+    __slots__ = ("type_name", "field_names", "fields")
+
+    def __init__(
+        self, type_name: str, field_names: tuple[str, ...], fields: dict[str, object]
+    ) -> None:
+        self.type_name = type_name
+        self.field_names = field_names
+        # Insert in declaration order so display is deterministic.
+        self.fields = {name: fields[name] for name in field_names}
+
+
+class _RuntimeContext:
+    """Per-program tables and I/O streams shared by nested function calls."""
+
+    __slots__ = ("input_stream", "output_stream", "functions", "record_types")
+
+    def __init__(
+        self,
+        input_stream: BinaryIO,
+        output_stream: TextIO,
+        functions: dict[str, FunctionDeclaration],
+        record_types: dict[str, tuple[str, ...]],
+    ) -> None:
+        self.input_stream = input_stream
+        self.output_stream = output_stream
+        self.functions = functions
+        self.record_types = record_types
+
+
 class Environment:
     """A lexical variable scope with an optional parent scope."""
 
@@ -132,8 +164,8 @@ def execute(
 ) -> None:
     """Execute a supported LWT program or raise a located LWT error.
 
-    Function registration and the whole-program capability scan happen before
-    any evaluation or output.
+    Function and record registration plus the whole-program capability scan
+    happen before any evaluation or output.
     ``input_stream`` is binary so LF and CRLF handling is independent of host
     text-mode newline conversion.
     """
@@ -145,21 +177,29 @@ def execute(
 
     try:
         functions: dict[str, FunctionDeclaration] = {}
+        record_types: dict[str, tuple[str, ...]] = {}
         for item in program.items:
-            if not isinstance(item, FunctionDeclaration):
-                continue
-            name = item.name.name
-            if name in _BUILTIN_NAMES:
-                _runtime_error(
-                    f"function name {name!r} conflicts with a built-in",
-                    item.name.location,
-                )
-            if name in functions:
-                _runtime_error(
-                    f"duplicate function declaration {name!r}",
-                    item.name.location,
-                )
-            functions[name] = item
+            if isinstance(item, FunctionDeclaration):
+                name = item.name.name
+                if name in _BUILTIN_NAMES:
+                    _runtime_error(
+                        f"function name {name!r} conflicts with a built-in",
+                        item.name.location,
+                    )
+                if name in functions:
+                    _runtime_error(
+                        f"duplicate function declaration {name!r}",
+                        item.name.location,
+                    )
+                functions[name] = item
+            elif isinstance(item, RecordDeclaration):
+                name = item.name.name
+                if name in record_types:
+                    _runtime_error(
+                        f"duplicate record declaration {name!r}",
+                        item.name.location,
+                    )
+                record_types[name] = tuple(field.name for field in item.fields)
 
         unsupported = _first_unsupported(program)
         if unsupported is not None:
@@ -170,13 +210,14 @@ def execute(
                 unsupported,
             )
 
+        runtime = _RuntimeContext(
+            input_stream, output_stream, functions, record_types
+        )
         environment = Environment()
         for item in program.items:
-            if isinstance(item, FunctionDeclaration):
+            if isinstance(item, (FunctionDeclaration, RecordDeclaration)):
                 continue
-            _execute_statement(
-                item, environment, input_stream, output_stream, functions
-            )
+            _execute_statement(item, environment, runtime)
     except RecursionError:
         # Report the host limit as a runtime failure without imposing a fixed
         # language-level depth limit or leaking a Python traceback.
@@ -199,6 +240,8 @@ def _first_unsupported(program: Program) -> SourceLocation | None:
 def _unsupported_statement(statement: object) -> SourceLocation | None:
     if isinstance(statement, FunctionDeclaration):
         return _unsupported_statement(statement.body)
+    if isinstance(statement, RecordDeclaration):
+        return None
     if isinstance(statement, LetStatement):
         return _unsupported_expression(statement.initializer)
     if isinstance(statement, ReturnStatement):
@@ -232,14 +275,10 @@ def _unsupported_statement(statement: object) -> SourceLocation | None:
         return _unsupported_expression(statement.condition) or _unsupported_statement(
             statement.body
         )
-    if isinstance(
-        statement,
-        (
-            RecordDeclaration,
-            EachStatement,
-        ),
-    ):
-        return statement.location
+    if isinstance(statement, EachStatement):
+        return _unsupported_expression(statement.iterable) or _unsupported_statement(
+            statement.body
+        )
     # A future AST node remains unsupported until this checker explicitly
     # admits it.
     return getattr(statement, "location", SourceLocation(1, 1))
@@ -257,13 +296,26 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
             expression.right
         )
     if isinstance(expression, AssignmentExpression):
-        if not isinstance(expression.target, VariableExpression):
+        if isinstance(expression.target, VariableExpression):
+            pass
+        elif isinstance(expression.target, IndexExpression):
+            return (
+                _unsupported_expression(expression.target.object)
+                or _unsupported_expression(expression.target.index)
+                or _unsupported_expression(expression.value)
+            )
+        elif isinstance(expression.target, FieldExpression):
+            return (
+                _unsupported_expression(expression.target.object)
+                or _unsupported_expression(expression.value)
+            )
+        else:
             return expression.target.location
         return _unsupported_expression(expression.value)
     if isinstance(expression, CallExpression):
         if (
             expression.callee.name in _BUILTIN_NAMES
-            and expression.callee.name != "input"
+            and expression.callee.name not in {"input", "push"}
         ):
             return expression.location
         for argument in expression.arguments:
@@ -271,20 +323,29 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
             if location is not None:
                 return location
         return None
-    if isinstance(
-        expression,
-        (ArrayExpression, RecordConstructionExpression, IndexExpression, FieldExpression),
-    ):
-        return expression.location
+    if isinstance(expression, ArrayExpression):
+        for element in expression.elements:
+            location = _unsupported_expression(element)
+            if location is not None:
+                return location
+        return None
+    if isinstance(expression, RecordConstructionExpression):
+        for field in expression.fields:
+            location = _unsupported_expression(field.value)
+            if location is not None:
+                return location
+        return None
+    if isinstance(expression, IndexExpression):
+        return _unsupported_expression(expression.object) or _unsupported_expression(
+            expression.index
+        )
+    if isinstance(expression, FieldExpression):
+        return _unsupported_expression(expression.object)
     return expression.location
 
 
 def _execute_statement(
-    statement: Statement,
-    environment: Environment,
-    input_stream: BinaryIO,
-    output_stream: TextIO,
-    functions: dict[str, FunctionDeclaration],
+    statement: Statement, environment: Environment, runtime: _RuntimeContext
 ) -> None:
     if isinstance(statement, LetStatement):
         name = statement.name.name
@@ -293,88 +354,78 @@ def _execute_statement(
                 f"variable {name!r} is already declared in this scope",
                 statement.name.location,
             )
-        value = _evaluate(
-            statement.initializer, environment, input_stream, output_stream, functions
-        )
+        value = _evaluate(statement.initializer, environment, runtime)
         environment.values[name] = value
         return
 
     if isinstance(statement, ReturnStatement):
         value = (
-            _evaluate(statement.value, environment, input_stream, output_stream, functions)
+            _evaluate(statement.value, environment, runtime)
             if statement.value is not None
             else None
         )
         raise _ReturnSignal(value)
 
     if isinstance(statement, EmitStatement):
-        value = _evaluate(statement.value, environment, input_stream, output_stream, functions)
-        output_stream.write(_display_scalar(value) + "\n")
+        value = _evaluate(statement.value, environment, runtime)
+        try:
+            rendered = _display_value(value)
+        except RecursionError:
+            _runtime_error("host recursion limit reached while displaying value", statement.location)
+        # Render fully before writing so a failed formatter cannot emit a partial line.
+        runtime.output_stream.write(rendered + "\n")
         return
 
     if isinstance(statement, ExpressionStatement):
-        _evaluate(statement.expression, environment, input_stream, output_stream, functions)
+        _evaluate(statement.expression, environment, runtime)
         return
 
     if isinstance(statement, Block):
         nested = Environment(environment)
         for child in statement.statements:
-            _execute_statement(child, nested, input_stream, output_stream, functions)
+            _execute_statement(child, nested, runtime)
         return
 
     if isinstance(statement, WhenStatement):
-        condition = _evaluate(
-            statement.condition, environment, input_stream, output_stream, functions
-        )
+        condition = _evaluate(statement.condition, environment, runtime)
         if type(condition) is not bool:
             _runtime_error("when condition must be a boolean", statement.location)
         if condition:
-            _execute_statement(
-                statement.then_branch,
-                environment,
-                input_stream,
-                output_stream,
-                functions,
-            )
+            _execute_statement(statement.then_branch, environment, runtime)
         elif statement.otherwise_branch is not None:
-            _execute_statement(
-                statement.otherwise_branch,
-                environment,
-                input_stream,
-                output_stream,
-                functions,
-            )
+            _execute_statement(statement.otherwise_branch, environment, runtime)
         return
 
     if isinstance(statement, WhileStatement):
         while True:
-            condition = _evaluate(
-                statement.condition,
-                environment,
-                input_stream,
-                output_stream,
-                functions,
-            )
+            condition = _evaluate(statement.condition, environment, runtime)
             if type(condition) is not bool:
                 _runtime_error("while condition must be a boolean", statement.location)
             if not condition:
                 return
-            # Executing the Block creates a new child environment on every
-            # iteration, so bindings from the prior iteration are discarded.
-            _execute_statement(
-                statement.body, environment, input_stream, output_stream, functions
-            )
+            # The Block creates a fresh child environment on each iteration.
+            _execute_statement(statement.body, environment, runtime)
 
-    # The capability scan must reject every other statement before execution.
+    if isinstance(statement, EachStatement):
+        iterable = _evaluate(statement.iterable, environment, runtime)
+        if type(iterable) is not list:
+            _runtime_error("each requires an array", statement.location)
+        snapshot = list(iterable)
+        for value in snapshot:
+            iteration_scope = Environment(environment)
+            # The loop binding intentionally shadows an outer binding.
+            iteration_scope.values[statement.variable.name] = value
+            # The body Block creates a second scope nested under the iteration scope.
+            _execute_statement(statement.body, iteration_scope, runtime)
+        return
+
+    # Top-level record declarations are registered before execution and skipped
+    # by execute(); all remaining syntax must have passed the capability scan.
     raise AssertionError(f"unsupported statement passed to evaluator: {type(statement)!r}")
 
 
 def _evaluate(
-    expression: Expression,
-    environment: Environment,
-    input_stream: BinaryIO,
-    output_stream: TextIO,
-    functions: dict[str, FunctionDeclaration],
+    expression: Expression, environment: Environment, runtime: _RuntimeContext
 ) -> object:
     if isinstance(expression, LiteralExpression):
         if expression.kind is TokenKind.INT:
@@ -390,27 +441,74 @@ def _evaluate(
             )
         return binding.values[expression.name.name]
 
-    if isinstance(expression, AssignmentExpression):
-        # The whole-program scan admits only simple variable targets.
-        if not isinstance(expression.target, VariableExpression):
-            raise AssertionError("unsupported assignment target passed to evaluator")
-        identifier = expression.target.name
-        binding = environment.resolve(identifier.name)
-        if binding is None:
+    if isinstance(expression, ArrayExpression):
+        # A list comprehension evaluates each element exactly once, left-to-right.
+        return [_evaluate(element, environment, runtime) for element in expression.elements]
+
+    if isinstance(expression, RecordConstructionExpression):
+        return _construct_record(expression, environment, runtime)
+
+    if isinstance(expression, IndexExpression):
+        receiver = _evaluate(expression.object, environment, runtime)
+        index = _evaluate(expression.index, environment, runtime)
+        checked_index = _checked_array_index(receiver, index, expression.access_location)
+        return receiver[checked_index]
+
+    if isinstance(expression, FieldExpression):
+        receiver = _evaluate(expression.object, environment, runtime)
+        if not isinstance(receiver, _RecordValue):
+            _runtime_error("field access requires a record", expression.access_location)
+        field_name = expression.field.name
+        if field_name not in receiver.fields:
             _runtime_error(
-                f"undefined variable {identifier.name!r}",
-                expression.operator_location,
+                f"record {receiver.type_name!r} has no field {field_name!r}",
+                expression.access_location,
             )
-        value = _evaluate(
-            expression.value, environment, input_stream, output_stream, functions
-        )
-        binding.values[identifier.name] = value
-        return value
+        return receiver.fields[field_name]
+
+    if isinstance(expression, AssignmentExpression):
+        target = expression.target
+        if isinstance(target, VariableExpression):
+            identifier = target.name
+            binding = environment.resolve(identifier.name)
+            if binding is None:
+                # Preserve the S4/S5 assignment diagnostic location.
+                _runtime_error(
+                    f"undefined variable {identifier.name!r}",
+                    expression.operator_location,
+                )
+            value = _evaluate(expression.value, environment, runtime)
+            binding.values[identifier.name] = value
+            return value
+
+        if isinstance(target, IndexExpression):
+            receiver = _evaluate(target.object, environment, runtime)
+            index = _evaluate(target.index, environment, runtime)
+            checked_index = _checked_array_index(
+                receiver, index, target.access_location
+            )
+            value = _evaluate(expression.value, environment, runtime)
+            receiver[checked_index] = value
+            return value
+
+        if isinstance(target, FieldExpression):
+            receiver = _evaluate(target.object, environment, runtime)
+            if not isinstance(receiver, _RecordValue):
+                _runtime_error("field assignment requires a record", target.access_location)
+            field_name = target.field.name
+            if field_name not in receiver.fields:
+                _runtime_error(
+                    f"record {receiver.type_name!r} has no field {field_name!r}",
+                    target.access_location,
+                )
+            value = _evaluate(expression.value, environment, runtime)
+            receiver.fields[field_name] = value
+            return value
+
+        raise AssertionError("parser admitted an invalid assignment target")
 
     if isinstance(expression, UnaryExpression):
-        value = _evaluate(
-            expression.operand, environment, input_stream, output_stream, functions
-        )
+        value = _evaluate(expression.operand, environment, runtime)
         if expression.operator is TokenKind.MINUS:
             if type(value) is not int:
                 _runtime_error("unary '-' requires an integer", expression.location)
@@ -422,15 +520,13 @@ def _evaluate(
         raise AssertionError(f"unknown unary operator: {expression.operator!r}")
 
     if isinstance(expression, BinaryExpression):
-        left = _evaluate(expression.left, environment, input_stream, output_stream, functions)
+        left = _evaluate(expression.left, environment, runtime)
         if expression.operator is TokenKind.AND:
             if type(left) is not bool:
                 _runtime_error("'and' requires boolean operands", expression.operator_location)
             if not left:
                 return False
-            right = _evaluate(
-                expression.right, environment, input_stream, output_stream, functions
-            )
+            right = _evaluate(expression.right, environment, runtime)
             if type(right) is not bool:
                 _runtime_error("'and' requires boolean operands", expression.operator_location)
             return right
@@ -439,43 +535,45 @@ def _evaluate(
                 _runtime_error("'or' requires boolean operands", expression.operator_location)
             if left:
                 return True
-            right = _evaluate(
-                expression.right, environment, input_stream, output_stream, functions
-            )
+            right = _evaluate(expression.right, environment, runtime)
             if type(right) is not bool:
                 _runtime_error("'or' requires boolean operands", expression.operator_location)
             return right
 
         # Every non-short-circuit binary operation evaluates left then right.
-        right = _evaluate(
-            expression.right, environment, input_stream, output_stream, functions
-        )
+        right = _evaluate(expression.right, environment, runtime)
         return _evaluate_binary(expression, left, right)
 
     if isinstance(expression, CallExpression):
         name = expression.callee.name
-        if name == "input":
-            arguments = [
-                _evaluate(argument, environment, input_stream, output_stream, functions)
-                for argument in expression.arguments
-            ]
-            if arguments:
-                _runtime_error(
-                    "input expects 0 arguments", expression.callee.location
-                )
-            return _read_input_line(input_stream, expression.callee.location)
-        if name in _BUILTIN_NAMES:
-            # Unimplemented builtins are rejected by the preflight scan.
-            raise AssertionError("unsupported builtin call passed to evaluator")
-
-        declaration = functions.get(name)
-        if declaration is None:
+        is_builtin = name in _BUILTIN_NAMES
+        declaration = None if is_builtin else runtime.functions.get(name)
+        if not is_builtin and declaration is None:
             _runtime_error(f"undefined function {name!r}", expression.callee.location)
 
+        # Both user and built-in calls evaluate all arguments left-to-right
+        # before checking arity, once the callee has been found.
         arguments = [
-            _evaluate(argument, environment, input_stream, output_stream, functions)
+            _evaluate(argument, environment, runtime)
             for argument in expression.arguments
         ]
+        if name == "input":
+            if arguments:
+                _runtime_error("input expects 0 arguments", expression.callee.location)
+            return _read_input_line(runtime.input_stream, expression.callee.location)
+        if name == "push":
+            if len(arguments) != 2:
+                _runtime_error("push expects 2 arguments", expression.callee.location)
+            array, value = arguments
+            if type(array) is not list:
+                _runtime_error("push first argument must be an array", expression.callee.location)
+            array.append(value)
+            return None
+        if is_builtin:
+            # The whole-program scan rejects S7 builtins before execution.
+            raise AssertionError("unsupported builtin call passed to evaluator")
+
+        assert declaration is not None
         if len(arguments) != len(declaration.parameters):
             _runtime_error(
                 f"function {name!r} expects {len(declaration.parameters)} arguments, "
@@ -487,9 +585,7 @@ def _evaluate(
                 declaration,
                 arguments,
                 environment.global_scope(),
-                input_stream,
-                output_stream,
-                functions=functions,
+                runtime,
             )
         except RecursionError:
             _runtime_error("host recursion limit reached", expression.callee.location)
@@ -498,13 +594,65 @@ def _evaluate(
     raise AssertionError(f"unsupported expression passed to evaluator: {type(expression)!r}")
 
 
+def _checked_array_index(
+    receiver: object, index: object, location: SourceLocation
+) -> int:
+    # Check in this order to keep diagnostics stable when several values are bad.
+    if type(receiver) is not list:
+        _runtime_error("indexing requires an array", location)
+    if type(index) is not int:
+        _runtime_error("array index must be an integer", location)
+    if index < 0 or index >= len(receiver):
+        _runtime_error("array index is out of range", location)
+    return index
+
+
+def _construct_record(
+    expression: RecordConstructionExpression,
+    environment: Environment,
+    runtime: _RuntimeContext,
+) -> _RecordValue:
+    type_name = expression.type_name.name
+    declared_fields = runtime.record_types.get(type_name)
+    if declared_fields is None:
+        _runtime_error(f"undefined record type {type_name!r}", expression.type_name.location)
+
+    supplied_names = [field.name.name for field in expression.fields]
+    seen: set[str] = set()
+    for name in supplied_names:
+        if name in seen:
+            _runtime_error(
+                f"record construction for {type_name!r} repeats field {name!r}",
+                expression.type_name.location,
+            )
+        seen.add(name)
+
+    declared_set = set(declared_fields)
+    for name in supplied_names:
+        if name not in declared_set:
+            _runtime_error(
+                f"record type {type_name!r} has no field {name!r}",
+                expression.type_name.location,
+            )
+    missing = [name for name in declared_fields if name not in seen]
+    if missing:
+        _runtime_error(
+            f"record construction for {type_name!r} is missing field {missing[0]!r}",
+            expression.type_name.location,
+        )
+
+    # Field expressions run only after the complete field set is validated.
+    values: dict[str, object] = {}
+    for field in expression.fields:
+        values[field.name.name] = _evaluate(field.value, environment, runtime)
+    return _RecordValue(type_name, declared_fields, values)
+
+
 def _invoke_user_function(
     declaration: FunctionDeclaration,
     arguments: list[object],
     global_environment: Environment,
-    input_stream: BinaryIO,
-    output_stream: TextIO,
-    functions: dict[str, FunctionDeclaration],
+    runtime: _RuntimeContext,
 ) -> object:
     """Run a function with a fresh activation whose parent is always global."""
 
@@ -516,9 +664,7 @@ def _invoke_user_function(
         # The function's outer body shares its scope with the parameters.
         # Nested Block statements create child scopes in _execute_statement.
         for statement in declaration.body.statements:
-            _execute_statement(
-                statement, activation, input_stream, output_stream, functions
-            )
+            _execute_statement(statement, activation, runtime)
     except _ReturnSignal as returned:
         return returned.value
     return None
@@ -530,10 +676,17 @@ def _evaluate_binary(
     operator = expression.operator
     location = expression.operator_location
 
-    if operator is TokenKind.EQUAL_EQUAL:
-        return type(left) is type(right) and left == right
-    if operator is TokenKind.BANG_EQUAL:
-        return not (type(left) is type(right) and left == right)
+    if operator in {TokenKind.EQUAL_EQUAL, TokenKind.BANG_EQUAL}:
+        if type(left) is not type(right):
+            equal = False
+        elif type(left) in {int, str, bool} or left is None:
+            equal = left == right
+        elif type(left) is list or isinstance(left, _RecordValue):
+            # Never invoke Python's recursive container/record equality.
+            equal = left is right
+        else:
+            raise AssertionError(f"unknown LWT value in equality: {type(left)!r}")
+        return equal if operator is TokenKind.EQUAL_EQUAL else not equal
 
     if operator is TokenKind.PLUS:
         if type(left) is int and type(right) is int:
@@ -605,16 +758,68 @@ def _read_input_line(input_stream: BinaryIO, location: SourceLocation) -> str | 
         _runtime_error("standard input is not valid UTF-8", location)
 
 
-def _display_scalar(value: object) -> str:
+def _display_value(value: object) -> str:
+    """Return a complete, deterministic emit representation of any LWT value."""
+
+    return _format_value(value, set(), nested=False)
+
+
+def _format_value(value: object, active: set[int], nested: bool) -> str:
     if type(value) is int:
         return format_decimal_integer(value)
     if type(value) is str:
-        return value
+        return _quote_string(value) if nested else value
     if type(value) is bool:
         return "true" if value else "false"
     if value is None:
         return "null"
-    raise AssertionError(f"non-scalar value reached S4 emit: {type(value)!r}")
+    if type(value) is list:
+        identity = id(value)
+        if identity in active:
+            return "<cycle>"
+        active.add(identity)
+        try:
+            return "[" + ", ".join(
+                _format_value(element, active, nested=True) for element in value
+            ) + "]"
+        finally:
+            active.remove(identity)
+    if isinstance(value, _RecordValue):
+        identity = id(value)
+        if identity in active:
+            return "<cycle>"
+        active.add(identity)
+        try:
+            fields = ", ".join(
+                f"{name}: {_format_value(value.fields[name], active, nested=True)}"
+                for name in value.field_names
+            )
+            return f"{value.type_name}{{{fields}}}"
+        finally:
+            active.remove(identity)
+    raise AssertionError(f"unknown LWT value in display: {type(value)!r}")
+
+
+def _quote_string(value: str) -> str:
+    escaped: list[str] = ['"']
+    for character in value:
+        codepoint = ord(character)
+        if character == '"':
+            escaped.append('\\"')
+        elif character == "\\":
+            escaped.append("\\\\")
+        elif character == "\n":
+            escaped.append("\\n")
+        elif character == "\r":
+            escaped.append("\\r")
+        elif character == "\t":
+            escaped.append("\\t")
+        elif codepoint < 0x20 or codepoint == 0x7F:
+            escaped.append(f"\\u{codepoint:04X}")
+        else:
+            escaped.append(character)
+    escaped.append('"')
+    return "".join(escaped)
 
 
 def _runtime_error(message: str, location: SourceLocation) -> NoReturn:

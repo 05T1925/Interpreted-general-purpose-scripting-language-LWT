@@ -1,12 +1,20 @@
 from __future__ import annotations
 
-from io import StringIO
+from io import BytesIO, StringIO
 import unittest
 
 from lwt.errors import LwtError, SourceLocation
 from lwt.lexer import scan
 from lwt.parser import parse
-from lwt.runtime import execute, format_decimal_integer, parse_decimal_integer
+from lwt.runtime import (
+    Environment,
+    _RecordValue,
+    _RuntimeContext,
+    _evaluate,
+    execute,
+    format_decimal_integer,
+    parse_decimal_integer,
+)
 
 
 class IntegerConversionTests(unittest.TestCase):
@@ -35,6 +43,48 @@ class InputErrorTests(unittest.TestCase):
         self.assertEqual(caught.exception.location, SourceLocation(1, 6))
         self.assertEqual(caught.exception.message, "could not read standard input")
         self.assertEqual(output.getvalue(), "")
+
+
+class CompositeMutationFailureTests(unittest.TestCase):
+    def make_context(self) -> _RuntimeContext:
+        return _RuntimeContext(BytesIO(), StringIO(), {}, {})
+
+    def evaluate_expression(self, source: str, environment: Environment) -> None:
+        statement = parse(scan(source)).items[0]
+        _evaluate(statement.expression, environment, self.make_context())  # type: ignore[attr-defined]
+
+    def test_failed_index_assignment_rhs_does_not_write_target(self) -> None:
+        environment = Environment()
+        values = [7]
+        environment.values["values"] = values
+
+        with self.assertRaises(LwtError) as caught:
+            self.evaluate_expression("values[0] = 1 / 0;", environment)
+
+        self.assertEqual(caught.exception.category, "RuntimeError")
+        self.assertEqual(values, [7])
+
+    def test_failed_field_assignment_rhs_does_not_write_target(self) -> None:
+        environment = Environment()
+        record = _RecordValue("Cell", ("value",), {"value": 7})
+        environment.values["cell"] = record
+
+        with self.assertRaises(LwtError) as caught:
+            self.evaluate_expression("cell.value = 1 / 0;", environment)
+
+        self.assertEqual(caught.exception.category, "RuntimeError")
+        self.assertEqual(record.fields["value"], 7)
+
+    def test_failed_push_argument_does_not_append(self) -> None:
+        environment = Environment()
+        values = [7]
+        environment.values["values"] = values
+
+        with self.assertRaises(LwtError) as caught:
+            self.evaluate_expression("push(values, 1 / 0);", environment)
+
+        self.assertEqual(caught.exception.category, "RuntimeError")
+        self.assertEqual(values, [7])
 
 
 if __name__ == "__main__":

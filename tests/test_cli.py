@@ -362,8 +362,8 @@ class CliProcessTests(unittest.TestCase):
     def test_unimplemented_valid_syntax_is_rejected_before_any_output(self) -> None:
         cases = (
             ('emit "hidden"; len("value");', "len"),
-            ('emit "hidden"; emit [1, 2];', "["),
-            ('emit "hidden"; when (true) { each (x in [1]) { emit x; } }', "each"),
+            ('emit "hidden"; when (false) { str([1]); }', "str"),
+            ('emit "hidden"; fn unused() { fail("stop"); }', "fail"),
         )
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "incomplete.lwt"
@@ -734,13 +734,12 @@ class S5FunctionCliTests(unittest.TestCase):
         )
         self.assertNotIn(b"Traceback", result.stderr)
 
-    def test_record_name_shares_no_function_namespace_but_remains_incomplete(self) -> None:
-        source = 'fn Person() {} emit "hidden"; record Person {};'
+    def test_record_name_shares_no_function_namespace_and_record_executes(self) -> None:
+        source = 'record Person {}; fn Person() { return 42; } emit Person(); emit Person{};'
         path, result = run_source(source)
-        self.assertEqual(result.returncode, 1)
-        self.assertEqual(result.stdout, b"")
-        self.assertIn(b"Incomplete", result.stderr)
-        self.assertNotIn(b"duplicate function", result.stderr)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"42\nPerson{}\n")
+        self.assertEqual(result.stderr, b"")
 
     def test_unimplemented_construct_in_uninvoked_function_prevents_execution(self) -> None:
         source = 'emit "hidden"; fn unused() { emit len(input()); }'
@@ -759,7 +758,6 @@ class S5FunctionCliTests(unittest.TestCase):
             "trim",
             "to_int",
             "str",
-            "push",
             "fail",
         ):
             source = f'emit "hidden"; {name}();'
@@ -770,13 +768,418 @@ class S5FunctionCliTests(unittest.TestCase):
                 self.assertIn(b"Incomplete", result.stderr)
                 self.assertNotIn(b"undefined function", result.stderr)
 
-    def test_array_index_and_field_access_remain_incomplete(self) -> None:
+    def test_s6_array_index_and_field_access_are_runtime_checked_at_access_tokens(self) -> None:
         cases = (
-            ('emit "hidden"; emit [1][0];', "[1]"),
-            ('fn get() { return 1; } emit "hidden"; emit get().field;', "get().field"),
+            ("emit [1][2];", "[2]", "array index is out of range"),
+            ("let n = 1; emit n.field;", ".field", "field access requires a record"),
+        )
+        for source, marker, message in cases:
+            path, result = run_source(source)
+            with self.subTest(source=source):
+                self.assertEqual(result.returncode, 3)
+                self.assertEqual(result.stdout, b"")
+                self.assertEqual(
+                    result.stderr.decode("utf-8"),
+                    f"{path}:1:{source.index(marker) + 1}: RuntimeError: {message}\n",
+                )
+
+
+class S6CollectionsCliTests(unittest.TestCase):
+    def assert_runtime_error_at(
+        self,
+        source: str,
+        marker: str,
+        message: str,
+        *,
+        stdout: bytes = b"",
+        input_bytes: bytes = b"",
+        occurrence: int = 0,
+    ) -> None:
+        path, result = run_source(source, input_bytes=input_bytes)
+        offset = -1
+        search_from = 0
+        for _ in range(occurrence + 1):
+            offset = source.index(marker, search_from)
+            search_from = offset + len(marker)
+        prefix = source[:offset]
+        line = prefix.count("\n") + 1
+        column = len(prefix.rsplit("\n", 1)[-1]) + 1
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stdout, stdout)
+        self.assertEqual(
+            result.stderr.decode("utf-8"),
+            f"{path}:{line}:{column}: RuntimeError: {message}\n",
+        )
+        self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_array_literals_are_fresh_nested_and_evaluated_left_to_right(self) -> None:
+        source = (
+            "fn value(n) { emit n; return n; } "
+            "let values = [value(1), [value(2), value(3)]]; "
+            "emit values; emit []; emit values[1][0];"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"1\n2\n3\n[1, [2, 3]]\n[]\n2\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_array_index_zero_last_and_assignment_expression_value(self) -> None:
+        source = "let values = [4, 5, 6]; emit values[0]; emit values[2]; emit values[1] = 9; emit values;"
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"4\n6\n9\n[4, 9, 6]\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_invalid_array_indexes_and_receiver_use_access_location(self) -> None:
+        cases = (
+            ("emit [1][-1];", "[-1]", "array index is out of range"),
+            ("emit [1][1];", "[1]", "array index is out of range", 1),
+            ("emit [1][true];", "[true]", "array index must be an integer"),
+            ("let n = 1; emit n[0];", "[0]", "indexing requires an array"),
+        )
+        for case in cases:
+            source, marker, message, *which = case
+            with self.subTest(source=source):
+                self.assert_runtime_error_at(
+                    source, marker, message, occurrence=which[0] if which else 0
+                )
+
+    def test_index_receiver_and_index_expressions_are_each_evaluated_once_in_order(self) -> None:
+        source = (
+            'let events = ""; let values = [0]; '
+            'fn receiver() { events = events + "r"; return values; } '
+            'fn index() { events = events + "i"; return 0; } '
+            'fn rhs() { events = events + "v"; return 7; } '
+            "emit receiver()[index()] = rhs(); emit events; emit values;"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"7\nriv\n[7]\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_invalid_index_assignment_does_not_evaluate_rhs(self) -> None:
+        source = "let values = []; emit values[-1] = input();"
+        self.assert_runtime_error_at(
+            source,
+            "[-1]",
+            "array index is out of range",
+            input_bytes=b"\xff\n",
+        )
+
+    def test_non_array_index_still_evaluates_index_before_type_validation(self) -> None:
+        source = 'fn index() { emit "index"; return 0; } let n = 1; emit n[index()];'
+        self.assert_runtime_error_at(
+            source,
+            "[index()]",
+            "indexing requires an array",
+            stdout=b"index\n",
+        )
+
+    def test_arrays_alias_mutably_but_compare_by_identity(self) -> None:
+        source = (
+            "let first = [1]; let alias = first; let second = [1]; "
+            "emit first == alias; emit first == second; emit first != second; "
+            "alias[0] = 8; emit first; emit alias; emit [1] == [1];"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"true\nfalse\ntrue\n[8]\n[8]\nfalse\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_push_mutates_alias_returns_null_and_checks_arguments_at_call(self) -> None:
+        source = (
+            'let values = [1]; let alias = values; '
+            "emit push(values, 2); emit alias; emit values == alias;"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"null\n[1, 2]\ntrue\n")
+        self.assertEqual(result.stderr, b"")
+
+        self.assert_runtime_error_at(
+            'push(1, 2);', "push", "push first argument must be an array"
+        )
+        self.assert_runtime_error_at("push([], 1, 2);", "push", "push expects 2 arguments")
+
+    def test_push_evaluates_arguments_left_to_right_before_arity_check(self) -> None:
+        source = 'fn mark(n) { emit n; return n; } push(mark(1), mark(2), mark(3));'
+        self.assert_runtime_error_at(
+            source,
+            "push",
+            "push expects 2 arguments",
+            stdout=b"1\n2\n3\n",
+        )
+
+    def test_array_reference_is_shared_through_function_parameters(self) -> None:
+        source = (
+            "fn append(items) { push(items, 9); } "
+            "let values = [1]; append(values); emit values;"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"[1, 9]\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_record_types_are_preregistered_and_namespaces_are_independent(self) -> None:
+        source = (
+            "emit Thing{value: 3}; record Thing { value }; "
+            "fn Thing() { return 9; } let Thing = Thing{value: 4}; "
+            "emit Thing.value; emit Thing();"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"Thing{value: 3}\n4\n9\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_duplicate_record_is_reported_before_top_level_output(self) -> None:
+        source = 'emit "hidden"; record Data {}; record Data {};'
+        self.assert_runtime_error_at(
+            source,
+            "Data",
+            "duplicate record declaration 'Data'",
+            occurrence=1,
+        )
+
+    def test_record_constructor_evaluates_in_source_order_and_displays_declaration_order(self) -> None:
+        source = (
+            "record Pair { first, second }; record Empty {}; "
+            "fn value(n) { emit n; return n; } "
+            'emit Pair{second: value("B"), first: value("A")}; emit Empty{};'
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b'B\nA\nPair{first: "A", second: "B"}\nEmpty{}\n')
+        self.assertEqual(result.stderr, b"")
+
+    def test_unknown_record_type_is_checked_before_field_expressions(self) -> None:
+        source = 'fn side() { emit "field"; return 1; } emit Missing{value: side()};'
+        self.assert_runtime_error_at(
+            source,
+            "Missing",
+            "undefined record type 'Missing'",
+        )
+
+    def test_record_constructor_validates_duplicate_missing_and_extra_fields_first(self) -> None:
+        cases = (
+            (
+                'record R {a, b}; fn side() { emit "field"; return 1; } '
+                "emit R{a: side(), a: side()};",
+                "R{",
+                "record construction for 'R' repeats field 'a'",
+            ),
+            (
+                'record R {a, b}; fn side() { emit "field"; return 1; } '
+                "emit R{a: side()};",
+                "R{",
+                "record construction for 'R' is missing field 'b'",
+            ),
+            (
+                'record R {a}; fn side() { emit "field"; return 1; } '
+                "emit R{a: side(), extra: side()};",
+                "R{",
+                "record type 'R' has no field 'extra'",
+            ),
+        )
+        for source, marker, message in cases:
+            with self.subTest(source=source):
+                self.assert_runtime_error_at(source, marker, message)
+
+    def test_record_constructor_stops_at_first_failing_field_expression(self) -> None:
+        source = (
+            "record R {first, second, third}; "
+            'fn first() { emit "first"; return 1; } '
+            'fn broken() { emit "broken"; return 1 / 0; } '
+            'fn last() { emit "last"; return 3; } '
+            "emit R{first: first(), second: broken(), third: last()};"
+        )
+        self.assert_runtime_error_at(
+            source,
+            "/",
+            "division by zero",
+            stdout=b"first\nbroken\n",
+        )
+
+    def test_record_field_read_write_alias_and_identity_equality(self) -> None:
+        source = (
+            "record Node {value, next}; "
+            "let node = Node{value: 1, next: null}; let alias = node; "
+            "let other = Node{value: 1, next: null}; "
+            "emit node == alias; emit node == other; "
+            "emit alias.value = 5; emit node.value; emit node;"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(
+            result.stdout,
+            b"true\nfalse\n5\n5\nNode{value: 5, next: null}\n",
+        )
+        self.assertEqual(result.stderr, b"")
+
+    def test_record_field_errors_and_assignment_validate_before_rhs(self) -> None:
+        self.assert_runtime_error_at(
+            "let value = 1; emit value.missing;",
+            ".missing",
+            "field access requires a record",
+        )
+        self.assert_runtime_error_at(
+            'record R {known}; let value = R{known: 1}; emit value.missing;',
+            ".missing",
+            "record 'R' has no field 'missing'",
+        )
+        self.assert_runtime_error_at(
+            "let value = 1; value.field = input();",
+            ".field",
+            "field assignment requires a record",
+            input_bytes=b"\xff\n",
+        )
+        self.assert_runtime_error_at(
+            'record R {known}; let value = R{known: 1}; value.missing = input();',
+            ".missing",
+            "record 'R' has no field 'missing'",
+            input_bytes=b"\xff\n",
+        )
+
+    def test_record_field_assignment_returns_value_and_receiver_runs_once(self) -> None:
+        source = (
+            "record R {value}; let calls = 0; let rec = R{value: 0}; "
+            "fn receiver() { calls = calls + 1; return rec; } "
+            "emit receiver().value = 7; emit calls; emit rec;"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"7\n1\nR{value: 7}\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_each_empty_array_expression_once_and_iteration_scope(self) -> None:
+        source = (
+            "let calls = 0; let item = 99; "
+            "fn values() { calls = calls + 1; return [3, 4]; } "
+            "each (item in []) { emit 0; } "
+            "each (item in values()) { let local = item; emit local; item = 8; } "
+            "emit calls; emit item;"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"3\n4\n1\n99\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_assigning_each_variable_does_not_replace_source_elements(self) -> None:
+        source = "let values = [1, 2]; each (item in values) { item = 9; } emit values;"
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"[1, 2]\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_each_variable_does_not_leak_after_loop(self) -> None:
+        source = "each (item in [1]) { emit item; } emit item;"
+        self.assert_runtime_error_at(
+            source,
+            "item;",
+            "undefined variable 'item'",
+            stdout=b"1\n",
+            occurrence=1,
+        )
+
+    def test_each_uses_shallow_snapshot_for_appends_and_replacements(self) -> None:
+        source = (
+            "let values = [1, 2, 3]; let turn = 0; "
+            "each (item in values) { emit item; turn = turn + 1; "
+            "when (turn == 1) { values[1] = 20; push(values, 4); } } "
+            "emit values;"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"1\n2\n3\n[1, 20, 3, 4]\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_each_snapshot_keeps_references_to_mutable_nested_values(self) -> None:
+        source = (
+            "let child = [0]; let values = [child, child]; "
+            "each (item in values) { when (item[0] == 0) { item[0] = 1; } "
+            "otherwise { emit item[0]; } }"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"1\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_return_propagates_through_each(self) -> None:
+        source = (
+            "fn find() { each (item in [1, 2, 3]) { "
+            "when (item == 2) { return item; } } return 0; } emit find();"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"2\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_mixed_scalar_and_compound_equality_is_strict_and_cycle_safe(self) -> None:
+        source = (
+            "let first = []; let second = []; push(first, first); push(second, second); "
+            "record R {value}; let record_value = R{value: first}; "
+            "emit true == 1; emit 1 == \"1\"; emit null == null; "
+            "emit first == second; emit first == first; emit record_value == first;"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"false\nfalse\ntrue\nfalse\ntrue\nfalse\n")
+        self.assertEqual(result.stderr, b"")
+
+    def test_composite_display_handles_cycles_and_shared_children(self) -> None:
+        source = (
+            "record Node {next}; let node = Node{next: null}; node.next = node; "
+            "let cycle = []; push(cycle, cycle); "
+            "let child = [1]; let shared = [child, child]; "
+            "let left = []; let right = []; push(left, right); push(right, left); "
+            "emit cycle; emit node; emit shared; emit left;"
+        )
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(
+            result.stdout,
+            b"[<cycle>]\nNode{next: <cycle>}\n[[1], [1]]\n[[<cycle>]]\n",
+        )
+        self.assertEqual(result.stderr, b"")
+
+    def test_nested_string_display_escapes_controls_and_preserves_unicode(self) -> None:
+        source = 'emit ["quote: \\" slash: \\\\ line:\\n tab:\\t", input()];'
+        _, result = run_source(source, input_bytes=b"\x00\r\x1f\x7f\xe9\x9b\xaa\n")
+        self.assertEqual(result.returncode, 0)
+        expected = '["quote: \\" slash: \\\\ line:\\n tab:\\t", "\\u0000\\r\\u001F\\u007F雪"]\n'
+        self.assertEqual(result.stdout, expected.encode("utf-8"))
+        self.assertEqual(result.stderr, b"")
+
+    def test_large_integer_inside_array_uses_safe_decimal_formatting(self) -> None:
+        digits = "9" * 6000
+        _, result = run_source(f"emit [{digits}, -{digits}];")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, f"[{digits}, -{digits}]\n".encode("ascii"))
+        self.assertEqual(result.stderr, b"")
+
+    def test_formatter_host_recursion_failure_is_runtime_error_without_partial_line(self) -> None:
+        source = (
+            "let value = []; let count = 0; "
+            "while (count < 1400) { value = [value]; count = count + 1; } "
+            "emit value;"
+        )
+        self.assert_runtime_error_at(
+            source,
+            "emit value",
+            "host recursion limit reached while displaying value",
+        )
+
+    def test_each_requires_array_at_keyword_location(self) -> None:
+        source = "each (item in 1) { emit item; }"
+        self.assert_runtime_error_at(source, "each", "each requires an array")
+
+    def test_s7_builtins_preflight_even_when_unselected_or_uninvoked(self) -> None:
+        cases = (
+            ('emit "hidden"; when (false) { str(input()); }', "str"),
+            ('emit "hidden"; fn unused() { let value = trim(input()); }', "trim"),
+            ('emit "hidden"; each (item in [1]) { emit len([item]); }', "len"),
         )
         for source, marker in cases:
-            path, result = run_source(source)
+            path, result = run_source(source, input_bytes=b"\xff\n")
             with self.subTest(source=source):
                 self.assertEqual(result.returncode, 1)
                 self.assertEqual(result.stdout, b"")
@@ -785,6 +1188,15 @@ class S5FunctionCliTests(unittest.TestCase):
                     f"{path}:1:{source.index(marker) + 1}: Incomplete: "
                     "runtime support for this syntax is not implemented yet\n",
                 )
+                self.assertNotIn(b"valid UTF-8", result.stderr)
+                self.assertNotIn(b"Traceback", result.stderr)
+
+    def test_unknown_record_in_unselected_branch_is_not_pre_resolved(self) -> None:
+        source = 'when (false) { emit Missing{value: 1}; } emit "ok";'
+        _, result = run_source(source)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"ok\n")
+        self.assertEqual(result.stderr, b"")
 
 
 if __name__ == "__main__":
