@@ -379,7 +379,9 @@ def render_report(results: dict[str, Any]) -> str:
         "",
         "## 目的与工作负载",
         "",
-        "本实验响应课程“使用 LWT 脚本进行性能测试，并与相同功能 Python 脚本比较”的要求。`arithmetic` 逐项累加 1 到 N；`array_scan` 用第一遍循环构造 `(i*17+3)%1009` 数组，再用第二遍循环计算元素总和及 `%97==0` 的数量。两侧使用相同正整数 N、显式循环和一行十进制输出；Python 被测脚本没有用 `sum`、推导式或生成器替代循环。runner 在计时外另行计算预期值，并要求 LWT、Python 输出字节分别匹配预期且彼此相同。",
+        "本实验响应课程“使用 LWT 脚本进行性能测试，并与相同功能 Python 脚本比较”的要求。`arithmetic` 逐项累加 1 到 N；`array_scan` 用第一遍循环构造 `(i*17+3)%1009` 数组，再用第二遍循环计算元素总和及 `%97==0` 的数量。两侧使用相同正整数 N、显式循环和一行十进制输出：前者为 `N|sum\\n`，后者为 `N|sum|hits\\n`。Python 被测脚本没有用 `sum`、推导式或生成器替代循环。runner 在计时外另行计算预期值，并要求 LWT、Python 输出字节分别匹配预期且彼此相同。",
+        "",
+        "按规模 N 传参的命令形式为 `python -m lwt bench/arithmetic.lwt -- N` / `python bench/arithmetic.py N`，以及 `python -m lwt bench/array_scan.lwt -- N` / `python bench/array_scan.py N`。raw JSON 为每个实际子进程保存含当前 `sys.executable` 的完整 argv 和固定仓库根目录 cwd。",
         "",
         "## 协议",
         "",
@@ -443,6 +445,17 @@ def render_report(results: dict[str, Any]) -> str:
             sections.append(
                 f"| {item['benchmark']} | {item['size']} | {item['pairs']} | {ms(lwt['median_ns'])} | {ms(lwt['min_ns'])} | {ms(lwt['max_ns'])} | {ms(lwt['range_ns'])} | {ms(py['median_ns'])} | {ms(py['min_ns'])} | {ms(py['max_ns'])} | {ms(py['range_ns'])} | {item['ratio']:.3f} |"
             )
+        by_benchmark = {
+            benchmark_name: [item for item in summaries if item["benchmark"] == benchmark_name]
+            for benchmark_name in BENCHMARKS
+        }
+        for benchmark_name, items in by_benchmark.items():
+            if len(items) >= 2:
+                first = min(items, key=lambda item: item["size"])
+                last = max(items, key=lambda item: item["size"])
+                sections.append(
+                    f"在 run `{run['run_id']}` 的 {benchmark_name} 样本中，N 从 {first['size']} 增至 {last['size']} 时，LWT median 为 {ms(first['lwt']['median_ns'])}→{ms(last['lwt']['median_ns'])} ms，Python median 为 {ms(first['python']['median_ns'])}→{ms(last['python']['median_ns'])} ms，中位数比值为 {first['ratio']:.3f}→{last['ratio']:.3f}。这只描述本机的端到端样本；进程启动和导入/解析成本占比可能遮蔽循环本身的变化，不能据此推断纯运行时倍率。"
+                )
     if not found:
         sections.append("| 尚无有效正式运行 | — | — | — | — | — | — | — | — | — | — | — |")
     sections.extend(["", "## 运行身份与原始数据", ""])

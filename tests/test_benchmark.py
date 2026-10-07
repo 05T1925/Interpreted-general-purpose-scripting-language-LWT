@@ -128,6 +128,7 @@ class BenchmarkReportTests(unittest.TestCase):
         self.assertIn("run-test-01", report)
         self.assertIn("abc123", report)
         self.assertIn("2026-10-07T00:00:00.000000Z", report)
+        self.assertIn("python -m lwt bench/arithmetic.lwt -- N", report)
         self.assertIn("bench/results.json", report)
         self.assertIn("正式样本 `0` 条", report)
         self.assertIn("无效正式运行", report)
