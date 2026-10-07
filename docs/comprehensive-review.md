@@ -62,7 +62,7 @@
 
 ## 5. S11 性能报告与原始数据独立复算
 
-本轮没有重新计时，也没有更改 [`bench/results.json`](../bench/results.json)。用独立只读脚本解析 JSON（未调用 benchmark 的统计函数）完成以下复核：对每个 warm-up/trial 的 stdout、stderr、expected stdout 分别 Base64 解码，核对长度及 SHA-256；重算 expected-output 标记；按 pair ID 关联 LWT/Python attempts，验证输出相同、独立期望相符、`valid` 标记与两个 attempts 一致；最后以 pair-linked elapsed ns 重新计算六组 median/min/max/range/ratio。全部校验通过。
+本轮没有重新计时，也没有更改 [`bench/results.json`](../bench/results.json)。用独立只读脚本解析 JSON（未调用 benchmark 的统计函数）完成以下复核：对每个 warm-up/trial 的 stdout、stderr、expected stdout 分别 Base64 解码，核对长度及 SHA-256；重算 expected-output 标记；按 pair ID 关联 LWT/Python attempts，验证输出相同、独立期望相符、`valid` 标记与两个 attempts 一致；最后以 pair-linked elapsed ns 重新计算六组 median/min/max/range/ratio。另用不同算法复算独立预期值：arithmetic 使用求和闭式，array_scan 使用列表生成后以 `sum`/谓词计数，并将六个规模/负载组合与全部 120 条 formal `expected_stdout` 和实际 stdout 比较。全部校验通过。
 
 | Run | 类型/状态 | warm-up | 计时 attempts | 配对 | failures / invalid pairs / errors | 纳入正式统计 |
 |---|---|---:|---:|---:|---:|---|
@@ -101,7 +101,7 @@
 
 ### 文档及命令静态检查
 
-- 扫描仓库 16 份 Markdown：390 个相对本地链接均存在，没有奇数个三反引号围栏。
+- 扫描仓库 17 份 Markdown：401 个相对本地链接均存在，没有奇数个三反引号围栏。
 - `docs/test-matrix.md` 有 63 条规则行；矩阵引用的 `.lwt` 用例均存在。测试目录 194 对 `.lwt`/`.json` 无孤立文件，JSON ID 均唯一。
 - 本轮运行四个指南/功能示例及两个应用 CLI 命令，成功输出与 README/开发指南/应用说明中声明的结果相符。
 - 已执行远端只读查询；没有 fetch、push、merge、reset、rebase 或清理操作。`origin/main` 的实时 SHA 与本地跟踪引用相同。
@@ -150,7 +150,7 @@
 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log --level WARN --keyword retry --top 2` | exit 0；1 条匹配记录，level/module/示例与应用说明一致 |
 | 上述 `python tools/run_tests.py`、全量 unittest、compileall，以显式 CPython 3.11.16 可执行文件运行 | 三项均 exit 0；194/194、211 tests OK、compileall 成功 |
 | 独立只读 Python 脚本审计 `bench/results.json` | exit 0；3 个 run 的所有输出 hash/长度、expected、pair 标记与 formal 六组统计校验通过；没有写 JSON/报告 |
-| Markdown/link/fence/case inventory 检查脚本 | exit 0；16 文件、390 个有效本地链接、63 规则、194 唯一 ID/文件对，0 断链、孤立用例或奇数代码围栏 |
+| Markdown/link/fence/case inventory 检查脚本 | exit 0；17 文件、401 个有效本地链接、63 规则、194 唯一 ID/文件对，0 断链、孤立用例或奇数代码围栏 |
 | WSL `python3 -m lwt examples/collections.lwt` | exit 1；环境是 Python 3.8.10，低于项目 3.10 下限；启动于 `dataclass(slots=...)`，只记录为环境限制，不计支持矩阵验证 |
 | `git ls-remote origin refs/heads/main` | 成功只读返回 `de608f7fbf50946715d370df014657169eb8f26d` |
 
