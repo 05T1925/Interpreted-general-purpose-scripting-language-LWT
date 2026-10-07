@@ -168,6 +168,7 @@ def markdown_report(data: dict[str, object]) -> str:
         f"- 应用源 SHA-256：`{data['app_source_sha256']}`",
         f"- 固定输入：`{input_info['path']}` ({input_info['byte_length']} bytes)",
         f"- 输入 SHA-256：`{input_info['sha256']}`",
+        f"- 试验后输入 SHA-256：`{input_info['sha256_after_trials']}`（期间未改变：`{input_info['unchanged_during_trials']}`）",
         f"- 命令：`{sys.executable} -m lwt app/log_report.lwt -- app/fixtures/concurrency.log`",
         f"- 单进程 warm-up：return code `{data['warmup']['return_code']}`，stderr bytes `{data['warmup']['stderr']['byte_length']}`，作为逐字比较基准。",
         "",
@@ -247,6 +248,11 @@ def main() -> int:
             }
         )
 
+    input_sha256_after = sha256(INPUT.read_bytes())
+    input_unchanged = input_sha256_after == sha256(input_bytes)
+    if not input_unchanged:
+        errors.append("fixed concurrency input changed while trials were running")
+
     data: dict[str, object] = {
         "schema_version": 1,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -264,6 +270,8 @@ def main() -> int:
             "path": "app/fixtures/concurrency.log",
             "byte_length": len(input_bytes),
             "sha256": sha256(input_bytes),
+            "sha256_after_trials": input_sha256_after,
+            "unchanged_during_trials": input_unchanged,
         },
         "environment": {
             "python": sys.version,
