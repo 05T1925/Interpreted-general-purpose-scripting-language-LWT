@@ -435,7 +435,7 @@ def render_report(results: dict[str, Any]) -> str:
     for run in formal_runs:
         summaries = formal_summaries(run)
         if run.get("status") != "valid":
-            sections.extend([f"", f"**无效正式运行** `{run['run_id']}`（Git `{run['git']['commit_sha']}`）：{run.get('failure_count', 0)} 个失败/不匹配尝试。此运行完整保留于原始 JSON，不纳入有效统计。"])
+            sections.extend([f"", f"**无效正式运行** `{run['run_id']}`（Git `{run['git']['commit_sha']}`）：{run.get('failure_count', 0)} 个失败或输出不符的子进程，{run.get('invalid_pair_count', 0)} 个无效配对。此运行完整保留于原始 JSON，不纳入有效统计。"])
         if not summaries:
             continue
         found = True
@@ -529,6 +529,7 @@ def create_run(mode: str, sizes: tuple[int, ...], repeats: int, seed: int, timeo
         "pairs": [],
         "errors": [],
         "failure_count": 0,
+        "invalid_pair_count": 0,
     }
 
 
@@ -538,8 +539,11 @@ def update_run_status(run: dict[str, Any]) -> None:
         if not item["verification"]["passed"]
     ]
     failed_pairs = [item for item in run["pairs"] if not item["valid"]]
-    run["failure_count"] = len(failed_attempts) + len(failed_pairs)
-    if run["failure_count"]:
+    # A failed child often makes its pair invalid too. Keep these as separate
+    # counts so one failed process is not counted twice as two failures.
+    run["failure_count"] = len(failed_attempts)
+    run["invalid_pair_count"] = len(failed_pairs)
+    if run["failure_count"] or run["invalid_pair_count"]:
         run["status"] = "invalid"
     elif run.get("finished_at_utc") is None:
         run["status"] = "running"
@@ -658,7 +662,8 @@ def main(argv: list[str] | None = None) -> int:
     failed = run["failure_count"]
     print(
         f"run_id={run['run_id']} mode={mode} attempts={attempt_total} "
-        f"passed_attempts={passed} failures={failed} status={run['status']}\n"
+        f"passed_attempts={passed} failed_attempts={failed} "
+        f"invalid_pairs={run['invalid_pair_count']} status={run['status']}\n"
         f"raw={RESULTS_PATH}\nreport={REPORT_PATH}"
     )
     if failed:

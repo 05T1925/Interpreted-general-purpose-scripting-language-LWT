@@ -77,6 +77,27 @@ class BenchmarkValidationTests(unittest.TestCase):
         self.assertEqual(len(first), 8)
         self.assertTrue(all(set(block["language_order"]) == {"lwt", "python"} for block in first))
 
+    def test_failed_attempt_and_invalid_pair_are_counted_separately(self):
+        lwt_attempt = attempt("lwt-1", b"3|6\n")
+        python_attempt = attempt("python-1", b"3|7\n")
+        pair = benchmark.make_pair_record(
+            "pair-0001", "arithmetic", 3, 1,
+            {"lwt": lwt_attempt, "python": python_attempt},
+            b"3|6\n",
+        )
+        run = {
+            "warmups": [],
+            "trials": [lwt_attempt, python_attempt],
+            "pairs": [pair],
+            "finished_at_utc": "2026-10-07T00:00:00Z",
+        }
+
+        benchmark.update_run_status(run)
+
+        self.assertEqual(run["status"], "invalid")
+        self.assertEqual(run["failure_count"], 1)
+        self.assertEqual(run["invalid_pair_count"], 1)
+
 
 class BenchmarkReportTests(unittest.TestCase):
     def test_attempt_preserves_time_command_and_output_evidence(self):
