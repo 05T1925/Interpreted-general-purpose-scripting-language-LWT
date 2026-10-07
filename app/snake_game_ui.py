@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from app.snake_game_core import Direction, GameStatus, SnakeGame, TickResult
+from app.ui_theme import COLORS, apply_theme, system_font
 
 
 TICK_MILLISECONDS = 140
@@ -20,32 +21,45 @@ class SnakeGameApp:
         self._after_id: str | None = None
 
         root.title("LWT 贪吃蛇")
-        root.geometry("760x650")
+        root.geometry("820x700")
         root.minsize(480, 440)
+        apply_theme(root)
         root.columnconfigure(0, weight=1)
         root.rowconfigure(1, weight=1)
 
-        heading = ttk.Frame(root, padding=(14, 12, 14, 6))
+        heading = ttk.Frame(root, padding=(20, 16, 20, 8))
         heading.grid(row=0, column=0, sticky="ew")
         heading.columnconfigure(0, weight=1)
-        ttk.Label(heading, text="贪吃蛇", font=("Microsoft YaHei UI", 20, "bold")).grid(
+        ttk.Label(heading, text="贪吃蛇", style="Title.TLabel").grid(
             row=0, column=0, sticky="w"
         )
         self.score_var = tk.StringVar(value="得分：0")
-        ttk.Label(heading, textvariable=self.score_var, font=("Microsoft YaHei UI", 13)).grid(
+        ttk.Label(heading, textvariable=self.score_var, style="Score.TLabel").grid(
             row=0, column=1, sticky="e"
         )
+        ttk.Label(
+            heading,
+            text="吃到食物得 10 分；撞墙或撞到自己时本局结束。",
+            style="Subtitle.TLabel",
+        ).grid(row=1, column=0, columnspan=2, sticky="w", pady=(3, 0))
 
-        self.canvas = tk.Canvas(root, background="#f4f7f2", highlightthickness=0)
+        self.canvas = tk.Canvas(
+            root,
+            background=COLORS["surface_alt"],
+            highlightthickness=1,
+            highlightbackground=COLORS["border"],
+        )
         self.canvas.grid(row=1, column=0, sticky="nsew", padx=14, pady=6)
         self.canvas.bind("<Configure>", lambda _event: self._draw())
 
-        footer = ttk.Frame(root, padding=(14, 6, 14, 12))
+        footer = ttk.Frame(root, padding=(20, 8, 20, 16))
         footer.grid(row=2, column=0, sticky="ew")
-        footer.columnconfigure(1, weight=1)
+        footer.columnconfigure(0, weight=1)
         controls = ttk.Frame(footer)
         controls.grid(row=0, column=0, sticky="w")
-        self.start_button = ttk.Button(controls, text="开始游戏", command=self._start_or_resume)
+        self.start_button = ttk.Button(
+            controls, text="开始游戏", style="Primary.TButton", command=self._start_or_resume
+        )
         self.start_button.pack(side="left")
         self.pause_button = ttk.Button(
             controls, text="暂停", command=self._toggle_pause, state="disabled"
@@ -53,28 +67,37 @@ class SnakeGameApp:
         self.pause_button.pack(side="left", padx=(7, 0))
         ttk.Button(controls, text="重新开始", command=self._restart).pack(side="left", padx=(7, 0))
 
-        help_text = "方向键 / WASD：移动　Space：开始/暂停/继续　R：重新开始\n窗口失焦会自动暂停；回到窗口后按 Space 或“继续”。"
-        ttk.Label(footer, text=help_text, justify="right", wraplength=420).grid(
-            row=0, column=1, sticky="e", padx=(12, 0)
+        help_text = (
+            "方向键 / WASD：移动　Space：开始、暂停或继续　R：重新开始\n"
+            "方向键在按钮获得焦点时仍控制蛇；窗口失焦会自动暂停。"
         )
+        self.help_label = ttk.Label(
+            footer,
+            text=help_text,
+            style="Subtitle.TLabel",
+            justify="left",
+            wraplength=760,
+        )
+        self.help_label.grid(row=1, column=0, sticky="ew", pady=(9, 0))
         self.status_var = tk.StringVar(value="准备开始")
-        ttk.Label(footer, textvariable=self.status_var).grid(row=1, column=0, columnspan=2, sticky="w", pady=(7, 0))
+        self.status_label = ttk.Label(footer, textvariable=self.status_var, style="Status.TLabel")
+        self.status_label.grid(row=0, column=1, sticky="e", padx=(12, 0))
 
         root.bind_all("<KeyPress>", self._on_key, add="+")
         root.bind_all("<FocusOut>", self._on_focus_out, add="+")
+        root.bind("<Configure>", self._on_resize, add="+")
         root.protocol("WM_DELETE_WINDOW", self._close)
         self._draw()
         self._sync_controls()
 
     def _start_or_resume(self) -> None:
-        if self.game.status is GameStatus.READY:
-            self.game.start()
-        elif self.game.status is GameStatus.PAUSED:
-            self.game.resume()
-        elif self.game.status in {GameStatus.GAME_OVER, GameStatus.WON}:
-            self.game.restart()
+        self.game.activate_primary_action()
         self._sync_controls()
         self._schedule_tick()
+
+    def _on_resize(self, event: tk.Event[tk.Misc]) -> None:
+        if event.widget is self.root:
+            self.help_label.configure(wraplength=max(240, int(event.width) - 48))
 
     def _toggle_pause(self) -> None:
         if self.game.status is GameStatus.READY:
@@ -169,6 +192,11 @@ class SnakeGameApp:
         }
         status, start_text, start_state, pause_state = labels[self.game.status]
         self.status_var.set(status)
+        status_style = {
+            GameStatus.GAME_OVER: "StatusError.TLabel",
+            GameStatus.WON: "StatusSuccess.TLabel",
+        }.get(self.game.status, "Status.TLabel")
+        self.status_label.configure(style=status_style)
         self.start_button.configure(text=start_text, state=start_state)
         self.pause_button.configure(
             text="暂停" if self.game.status is GameStatus.RUNNING else "继续",
@@ -187,17 +215,34 @@ class SnakeGameApp:
         top = (height - board_height) // 2
         right = left + board_width
         bottom = top + board_height
-        self.canvas.create_rectangle(left, top, right, bottom, fill="#e7eee3", outline="#82927e", width=2)
-        for x in range(1, self.game.width):
-            px = left + x * cell
-            self.canvas.create_line(px, top, px, bottom, fill="#d8e1d3")
-        for y in range(1, self.game.height):
-            py = top + y * cell
-            self.canvas.create_line(left, py, right, py, fill="#d8e1d3")
+        self.canvas.create_rectangle(
+            left,
+            top,
+            right,
+            bottom,
+            fill=COLORS["green_soft"],
+            outline=COLORS["green_dark"],
+            width=2,
+        )
+        if cell >= 12:
+            for x in range(1, self.game.width):
+                px = left + x * cell
+                self.canvas.create_line(px, top, px, bottom, fill=COLORS["grid"])
+            for y in range(1, self.game.height):
+                py = top + y * cell
+                self.canvas.create_line(left, py, right, py, fill=COLORS["grid"])
         if self.game.food is not None:
-            self._draw_cell(self.game.food, left, top, cell, inset=max(2, cell // 5), color="#d84a45", oval=True)
+            self._draw_cell(
+                self.game.food,
+                left,
+                top,
+                cell,
+                inset=max(2, cell // 5),
+                color=COLORS["food"],
+                oval=True,
+            )
         for index, point in reversed(list(enumerate(self.game.snake))):
-            color = "#1d7758" if index else "#11543e"
+            color = COLORS["green"] if index else COLORS["green_dark"]
             self._draw_cell(point, left, top, cell, inset=max(1, cell // 12), color=color)
         if self.game.status in {GameStatus.READY, GameStatus.PAUSED, GameStatus.GAME_OVER, GameStatus.WON}:
             overlays = {
@@ -208,14 +253,28 @@ class SnakeGameApp:
             }
             center_x = left + board_width / 2
             center_y = top + board_height / 2
-            self.canvas.create_rectangle(
-                center_x - 180, center_y - 23, center_x + 180, center_y + 23,
-                fill="#ffffff", outline="#82927e", stipple="gray50",
+            text_id = self.canvas.create_text(
+                center_x,
+                center_y,
+                text=overlays[self.game.status],
+                fill=COLORS["text"],
+                font=system_font(self.root, 12, "bold"),
+                width=max(100, min(board_width - 28, width - 36)),
+                justify="center",
             )
-            self.canvas.create_text(
-                center_x, center_y, text=overlays[self.game.status],
-                fill="#183b2e", font=("Microsoft YaHei UI", 13, "bold"),
-            )
+            bounds = self.canvas.bbox(text_id)
+            if bounds is not None:
+                x1, y1, x2, y2 = bounds
+                backdrop = self.canvas.create_rectangle(
+                    x1 - 14,
+                    y1 - 10,
+                    x2 + 14,
+                    y2 + 10,
+                    fill=COLORS["surface"],
+                    outline=COLORS["border"],
+                    width=2,
+                )
+                self.canvas.tag_lower(backdrop, text_id)
 
     def _draw_cell(
         self,

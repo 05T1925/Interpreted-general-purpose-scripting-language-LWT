@@ -107,6 +107,18 @@ class SnakeGame:
         self.status = GameStatus.RUNNING
         return True
 
+    def activate_primary_action(self) -> bool:
+        """Apply the action shown by the main start/resume/replay button."""
+
+        if self.status is GameStatus.READY:
+            return self.start()
+        if self.status is GameStatus.PAUSED:
+            return self.resume()
+        if self.status in {GameStatus.GAME_OVER, GameStatus.WON}:
+            self.restart()
+            return self.start()
+        return False
+
     def on_focus_lost(self) -> bool:
         """Pause after the window loses focus; the UI asks the model to resume."""
         return self.pause()

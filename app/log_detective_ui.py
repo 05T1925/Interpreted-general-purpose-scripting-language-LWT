@@ -19,6 +19,7 @@ from app.log_detective_core import (
     analyze_question,
     full_report,
 )
+from app.ui_theme import COLORS, apply_theme, system_font
 
 
 @dataclass(frozen=True)
@@ -51,58 +52,77 @@ class LogDetectiveApp:
         self.results: dict[int, AnalysisResult] = {}
         self.messages: queue.Queue[_WorkerResult] = queue.Queue()
         self.busy = False
+        self._closing = False
+        self._poll_id: str | None = None
 
         root.title("LWT 日志侦探")
-        root.geometry("860x620")
-        root.minsize(700, 500)
+        root.geometry("920x680")
+        root.minsize(640, 500)
+        apply_theme(root)
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
 
-        outer = ttk.Frame(root, padding=18)
+        outer = ttk.Frame(root, padding=(22, 18))
         outer.grid(row=0, column=0, sticky="nsew")
         outer.columnconfigure(0, weight=1)
         outer.rowconfigure(3, weight=1)
 
-        ttk.Label(outer, text="LWT 日志侦探", font=("Microsoft YaHei UI", 20, "bold")).grid(
+        ttk.Label(outer, text="LWT 日志侦探", style="Title.TLabel").grid(
             row=0, column=0, sticky="w"
         )
-        ttk.Label(
+        self.description_label = ttk.Label(
             outer,
             text="根据 LWT 日志分析器的真实结果回答问题。每题统计由 app/log_report.lwt 计算。",
-            wraplength=790,
-        ).grid(row=1, column=0, sticky="w", pady=(5, 14))
+            style="Subtitle.TLabel",
+            wraplength=760,
+        )
+        self.description_label.grid(row=1, column=0, sticky="w", pady=(5, 14))
 
-        file_row = ttk.Frame(outer)
+        file_row = ttk.Frame(outer, padding=12, style="Card.TFrame")
         file_row.grid(row=2, column=0, sticky="ew", pady=(0, 14))
         file_row.columnconfigure(1, weight=1)
-        ttk.Label(file_row, text="当前日志：").grid(row=0, column=0, sticky="w")
+        ttk.Label(file_row, text="当前日志", style="CardHeading.TLabel").grid(
+            row=0, column=0, sticky="nw", padx=(0, 10)
+        )
         self.path_var = tk.StringVar(value=str(self.log_path))
-        ttk.Label(file_row, textvariable=self.path_var, anchor="w").grid(
-            row=0, column=1, sticky="ew", padx=(4, 10)
+        self.path_label = ttk.Label(
+            file_row,
+            textvariable=self.path_var,
+            style="Card.TLabel",
+            anchor="w",
+            justify="left",
+            wraplength=520,
+        )
+        self.path_label.grid(
+            row=0, column=1, sticky="ew", padx=(0, 10)
         )
         self.choose_button = ttk.Button(file_row, text="选择日志文件…", command=self.choose_file)
         self.choose_button.grid(row=0, column=2, sticky="e")
 
-        self.content = ttk.Frame(outer, padding=18, relief="groove")
+        self.content = ttk.Frame(outer, padding=20, style="Card.TFrame")
         self.content.grid(row=3, column=0, sticky="nsew")
         self.content.columnconfigure(0, weight=1)
         self.content.rowconfigure(2, weight=1)
         self.progress_var = tk.StringVar(value=f"第 0/{self.session.question_count} 题　得分：0")
-        ttk.Label(self.content, textvariable=self.progress_var, font=("Microsoft YaHei UI", 11)).grid(
+        ttk.Label(self.content, textvariable=self.progress_var, style="CardHeading.TLabel").grid(
             row=0, column=0, sticky="w"
         )
         self.question_var = tk.StringVar(value="准备好后开始游戏。")
         self.question_label = ttk.Label(
             self.content,
             textvariable=self.question_var,
-            font=("Microsoft YaHei UI", 16),
-            wraplength=740,
+            style="Question.TLabel",
+            wraplength=700,
             justify="left",
         )
-        self.question_label.grid(row=1, column=0, sticky="nw", pady=(26, 12))
+        self.question_label.grid(row=1, column=0, sticky="nw", pady=(22, 12))
         self.feedback_var = tk.StringVar(value="")
         self.feedback_label = ttk.Label(
-            self.content, textvariable=self.feedback_var, font=("Microsoft YaHei UI", 12), wraplength=740
+            self.content,
+            textvariable=self.feedback_var,
+            style="Muted.TLabel",
+            wraplength=700,
+            justify="left",
         )
         self.feedback_label.grid(row=2, column=0, sticky="nw")
 
@@ -112,23 +132,52 @@ class LogDetectiveApp:
         self.answer_var = tk.StringVar()
         self.answer_entry = ttk.Entry(answer_row, textvariable=self.answer_var, width=18)
         self.answer_entry.grid(row=0, column=1, sticky="w", padx=(5, 10))
-        self.submit_button = ttk.Button(answer_row, text="提交答案", command=self.submit_answer)
+        self.submit_button = ttk.Button(
+            answer_row, text="提交答案", style="Primary.TButton", command=self.submit_answer
+        )
         self.submit_button.grid(row=0, column=2, sticky="w")
-        self.answer_entry.bind("<Return>", lambda _event: self.submit_answer())
+        self.answer_entry.bind("<Return>", self._submit_on_enter)
 
         actions = ttk.Frame(outer)
         actions.grid(row=4, column=0, sticky="ew", pady=(14, 0))
-        self.start_button = ttk.Button(actions, text="开始游戏", command=self.start_game)
+        self.start_button = ttk.Button(
+            actions, text="开始游戏", style="Primary.TButton", command=self.start_game
+        )
         self.start_button.pack(side="left")
         self.next_button = ttk.Button(actions, text="下一题", command=self.next_question, state="disabled")
         self.next_button.pack(side="left", padx=(8, 0))
         self.report_button = ttk.Button(actions, text="查看完整 LWT 报告", command=self.show_full_report)
         self.report_button.pack(side="left", padx=(8, 0))
         self.status_var = tk.StringVar(value="就绪")
-        ttk.Label(actions, textvariable=self.status_var).pack(side="right")
+        self.status_label = ttk.Label(actions, textvariable=self.status_var, style="Status.TLabel")
+        self.status_label.pack(side="right")
 
-        self.root.after(60, self._drain_messages)
+        root.bind("<Configure>", self._on_resize, add="+")
+        root.protocol("WM_DELETE_WINDOW", self._on_close)
+        self._poll_id = self.root.after(60, self._drain_messages)
         self._render_state()
+
+    def _on_resize(self, event: tk.Event[tk.Misc]) -> None:
+        if event.widget is not self.root:
+            return
+        available = max(280, int(event.width) - 96)
+        self.description_label.configure(wraplength=available)
+        self.question_label.configure(wraplength=available)
+        self.feedback_label.configure(wraplength=available)
+        self.path_label.configure(wraplength=max(220, int(event.width) - 350))
+
+    def _set_feedback(self, message: str, tone: str = "muted") -> None:
+        styles = {"muted": "Muted.TLabel", "success": "Success.TLabel", "error": "Error.TLabel"}
+        self.feedback_var.set(message)
+        self.feedback_label.configure(style=styles[tone])
+
+    def _set_status(self, message: str, *, error: bool = False) -> None:
+        self.status_var.set(message)
+        self.status_label.configure(style="StatusError.TLabel" if error else "Status.TLabel")
+
+    def _submit_on_enter(self, _event: tk.Event[tk.Misc]) -> str:
+        self.submit_answer()
+        return "break"
 
     def _set_busy(self, busy: bool) -> None:
         self.busy = busy
@@ -139,7 +188,7 @@ class LogDetectiveApp:
         if busy:
             self.submit_button.configure(state="disabled")
             self.next_button.configure(state="disabled")
-        self.status_var.set("正在运行 LWT 分析器…" if busy else "就绪")
+        self._set_status("正在运行 LWT 分析器…" if busy else "就绪")
 
     def _run_worker(self, action: str, callback: Callable[[], object]) -> None:
         if self.busy:
@@ -155,31 +204,41 @@ class LogDetectiveApp:
         threading.Thread(target=work, name=f"lwt-{action}", daemon=True).start()
 
     def _drain_messages(self) -> None:
+        if self._closing:
+            return
         try:
             while True:
                 result = self.messages.get_nowait()
                 self._set_busy(False)
                 if result.error is not None:
                     if result.action == "question":
-                        self.feedback_var.set(
-                            f"本题查询失败。{result.error} 请重新开始或选择其他日志。"
+                        self._set_feedback(
+                            f"本题查询失败。{result.error} 请重新开始或选择其他日志。", "error"
                         )
+                    self._set_status("查询失败；可重新开始或选择日志", error=True)
                     messagebox.showerror("LWT 分析失败", str(result.error), parent=self.root)
                     self._render_state()
                     continue
                 if result.action == "question":
                     index, analysis = result.value  # type: ignore[misc]
                     self.results[index] = analysis
-                    self.feedback_var.set("本题统计已由 LWT CLI 生成，请输入 Matched records 数值。")
+                    self._set_feedback(
+                        "本题统计已由 LWT CLI 生成，请输入 Matched records 数值。"
+                    )
+                    self._set_status("查询完成 · 请提交答案")
                     self._render_state()
                     self.answer_entry.focus_set()
                 elif result.action == "report":
                     self._open_report(str(result.value))
+                    self._set_status("完整报告已打开")
                     self._render_state()
         except queue.Empty:
             pass
-        if self.root.winfo_exists():
-            self.root.after(60, self._drain_messages)
+        if not self._closing:
+            try:
+                self._poll_id = self.root.after(60, self._drain_messages)
+            except tk.TclError:
+                self._closing = True
 
     def _render_state(self) -> None:
         self.progress_var.set(
@@ -188,7 +247,9 @@ class LogDetectiveApp:
         )
         if self.session.finished:
             self.question_var.set("挑战完成！")
-            self.feedback_var.set(f"最终得分：{self.session.score}/{self.session.question_count}")
+            self._set_feedback(
+                f"最终得分：{self.session.score}/{self.session.question_count}", "success"
+            )
             self.answer_entry.configure(state="disabled")
             self.submit_button.configure(state="disabled")
             self.next_button.configure(text="下一题", state="disabled")
@@ -196,7 +257,7 @@ class LogDetectiveApp:
             return
         if not self.session.started:
             self.question_var.set("准备好后开始游戏。")
-            self.feedback_var.set("回答五道基于真实日志查询的问题，查看完整报告可随时核对分析器输出。")
+            self._set_feedback("回答五道基于真实日志查询的问题；完整报告可随时核对分析器输出。")
             self.answer_entry.configure(state="normal")
             self.answer_var.set("")
             self.submit_button.configure(state="disabled")
@@ -218,7 +279,7 @@ class LogDetectiveApp:
     def _load_current_question(self) -> None:
         index = self.session.index
         question = self.session.current_question
-        self.feedback_var.set("正在查询所选日志…")
+        self._set_feedback("正在查询所选日志…")
         self.answer_var.set("")
         self._render_state()
         self._run_worker(
@@ -253,10 +314,11 @@ class LogDetectiveApp:
             return
         correct = self.session.submit(answer, analysis.matched_records)
         if correct:
-            self.feedback_var.set(f"回答正确！匹配记录数为 {analysis.matched_records}。")
+            self._set_feedback(f"回答正确！匹配记录数为 {analysis.matched_records}。", "success")
         else:
-            self.feedback_var.set(
-                f"回答错误。正确答案是 {analysis.matched_records}。该数值来自 LWT 分析报告。"
+            self._set_feedback(
+                f"回答错误。正确答案是 {analysis.matched_records}。该数值来自 LWT 分析报告。",
+                "error",
             )
         self._render_state()
 
@@ -281,7 +343,7 @@ class LogDetectiveApp:
         self.path_var.set(str(self.log_path))
         self.session = GameSession()
         self.results.clear()
-        self.feedback_var.set("已选择新日志。开始游戏后将由 LWT 分析该文件。")
+        self._set_feedback("已选择新日志。开始游戏后将由 LWT 分析该文件。", "success")
         self._render_state()
 
     def show_full_report(self) -> None:
@@ -290,15 +352,36 @@ class LogDetectiveApp:
     def _open_report(self, report: str) -> None:
         window = tk.Toplevel(self.root)
         window.title("LWT 完整分析报告")
-        window.geometry("780x560")
-        window.minsize(500, 350)
+        window.geometry("800x580")
+        window.minsize(460, 300)
         frame = ttk.Frame(window, padding=10)
         frame.pack(fill="both", expand=True)
-        ttk.Label(frame, text="以下内容为 `python -m lwt` 的完整标准输出：").pack(anchor="w", pady=(0, 8))
-        text = ScrolledText(frame, wrap="none", font=("Consolas", 10))
+        ttk.Label(
+            frame,
+            text="以下内容为 `python -m lwt` 的完整标准输出：",
+            style="Subtitle.TLabel",
+        ).pack(anchor="w", pady=(0, 8))
+        text = ScrolledText(
+            frame,
+            wrap="none",
+            font=system_font(self.root, 10),
+            background=COLORS["surface"],
+            foreground=COLORS["text"],
+            insertbackground=COLORS["green_dark"],
+        )
         text.pack(fill="both", expand=True)
         text.insert("1.0", report)
         text.configure(state="disabled")
+
+    def _on_close(self) -> None:
+        self._closing = True
+        if self._poll_id is not None:
+            try:
+                self.root.after_cancel(self._poll_id)
+            except tk.TclError:
+                pass
+            self._poll_id = None
+        self.root.destroy()
 
 
 def launch() -> None:
