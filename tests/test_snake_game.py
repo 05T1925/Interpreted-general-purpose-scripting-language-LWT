@@ -118,6 +118,30 @@ class SnakeGameTests(unittest.TestCase):
         self.assertIsNone(game.food)
         self.assertEqual(game.score, 10)
 
+    def test_primary_action_replays_after_game_over_and_starts_immediately(self) -> None:
+        game = SnakeGame(width=4, height=2, rng=FixedIndex())
+        game.start()
+        self.assertEqual(game.step(), TickResult.MOVED)
+        self.assertEqual(game.step(), TickResult.WALL_COLLISION)
+        self.assertEqual(game.status, GameStatus.GAME_OVER)
+
+        self.assertTrue(game.activate_primary_action())
+        self.assertEqual(game.status, GameStatus.RUNNING)
+        self.assertEqual(game.score, 0)
+        self.assertEqual(len(game.snake), 3)
+
+    def test_primary_action_replays_after_a_win_and_starts_immediately(self) -> None:
+        game = SnakeGame(width=4, height=1, rng=FixedIndex())
+        game.start()
+        self.assertEqual(game.step(), TickResult.WON)
+        self.assertEqual(game.status, GameStatus.WON)
+        self.assertEqual(game.score, 10)
+
+        self.assertTrue(game.activate_primary_action())
+        self.assertEqual(game.status, GameStatus.RUNNING)
+        self.assertEqual(game.score, 0)
+        self.assertEqual(len(game.snake), 3)
+
     def test_core_import_does_not_import_tkinter_or_create_a_window(self) -> None:
         result = subprocess.run(
             [
