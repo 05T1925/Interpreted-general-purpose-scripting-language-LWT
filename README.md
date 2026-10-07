@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S8 已审查并合入本地 `main`；S9 指南、Skill 与盲测草案已提交到 `stage/s09-agent-guide-blind-test`，等待主窗口审查。**本地 `main` 比 `origin/main` 领先 12 个提交；`origin/main` 仍为 S4，本地阶段进度尚未推送。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。**S1–S9 已审查并合入本地 `main`；S9 合入提交为 `165451a`。**本地 `main` 比 `origin/main` 领先 16 个提交；`origin/main` 仍为 S4，本地阶段进度尚未推送。
 
 ## 阅读入口
 
@@ -68,4 +68,4 @@ review
 [7, "pear", 4]
 ```
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 已审查通过并合入本地 `main`，包含逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流。S9 指南、Skill 和三项独立盲测已在阶段分支提交，等待主窗口审查；S10 及以后尚未开始。
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 已审查通过并合入本地 `main`，包含逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流。S9 开发指南、仓库 Skill 和三项独立盲测已审查通过并合入本地 `main`；Skill 自动路由仍不可观测。S10 尚待派发，尚未开始完整应用。

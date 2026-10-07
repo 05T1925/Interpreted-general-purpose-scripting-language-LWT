@@ -63,10 +63,10 @@
 | `阶段执行与审查路线图.md` | 两窗口职责、S 阶段的交付、报告和复审门槛 | 派发顺序或阶段验收方法变化时 |
 | `project.md` | Agent 启动上下文、当前状态、下一个任务和证据索引 | 每次阶段状态或关键决策变化后 |
 | `docs/language-spec.md`（S1/S2 澄清已审查并合入 `main`） | LWT 语法与运行时行为的正式规范 | 每次语言行为变化时与测试同提交；parser/runtime 仍未实现 |
-| `docs/developer-guide.md`（S9 阶段草案，待审查） | 人和 Agent 的实际编码手册 | 语法/CLI/内置函数变化时 |
+| `docs/developer-guide.md`（S9 主窗口审查通过） | 人和 Agent 的实际编码手册 | 语法/CLI/内置函数变化时 |
 | `AGENTS.md` | 自动发现的项目入口，指向 `project.md` | 仓库工作约定变化时 |
 
-官方 OpenAI Docs 说明 Codex 会读取项目中的 `AGENTS.md`，而独立的 `project.md` 需要在其中显式指向：[AGENTS.md 指南](https://learn.chatgpt.com/docs/agent-configuration/agents-md)。S9 已在阶段分支新增仓库级 `.agents/skills/lwt-app/SKILL.md`，采用名称、适用描述和操作步骤；其内容和触发边界待主窗口审查。
+官方 OpenAI Docs 说明 Codex 会读取项目中的 `AGENTS.md`，而独立的 `project.md` 需要在其中显式指向：[AGENTS.md 指南](https://learn.chatgpt.com/docs/agent-configuration/agents-md)。S9 已新增并审查通过仓库级 `.agents/skills/lwt-app/SKILL.md`，采用名称、适用描述和操作步骤；三个独立 Agent 上下文通过数组去重、record 统计和文本筛选盲测。平台没有自动 Skill 路由事件，因此未声称隐式触发已验证。
 
 ## 六、资料、边界与当前状态
 
@@ -74,4 +74,4 @@
 
 远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，合并其仅含 README 的初始提交与本地规划提交，并正常推送 `main`；后续同步状态以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
 
-**S1–S8 已完成主窗口审查并合入本地 `main`；S7 提交为 `4f11b80`，S8 阶段提交为 `e2c5f2b`，空用例集保护补强提交为 `8789408`，尚未推送。S9 已在 `stage/s09-agent-guide-blind-test` 完成草案并提交，等待主窗口审查，尚未合入或推送。**S6 的数组、索引/赋值/别名、`push`、record 预登记/构造/字段读写、`each` 浅快照、复合值身份相等和循环安全显示，由 137 项阶段性 unittest、`compileall` 与 collections CLI 示例验证。S7 接通 CLI 程序参数并实现八个内置函数；Python 3.13.7 上主窗口复跑全套阶段性测试 157 项通过。S8 提供 194 项黑盒测试（189 项执行 LWT 源文件、5 项 CLI override）、63 条逐条规范矩阵记录、标准库 runner 和四格 GitHub Actions。执行窗口在 Windows Python 3.11.16、3.13.7 各运行黑盒 194/194；主窗口增加空测试集必须失败的保护后，在 Python 3.13.7 复跑黑盒 194/194、unittest 174 项、compileall、diff 和从临时目录启动，均通过。覆盖矩阵引用和用例 ID 完整核查通过。S5–S8 尚未推送，`origin/main` 仍处 S4；远端 Actions 尚未触发，Linux/Python 3.10 未验证。S9 新增开发指南、仓库 Skill、hello 入门示例和三道由独立 Agent 完成的盲测；Agent 首次运行与执行窗口复跑均符合预期，记录见 `docs/agent-blind-test.md`。Skill 自动路由当前不可观测，故没有声称自动路由实测通过。S9 待审查；S10 完整 Agent 应用、性能报告和 PPT 仍属后续阶段，尚未开始。外部资料支持方法选择，LWT 的语法、应用边界和阶段门槛以正式规范为准。
+**S1–S9 已完成主窗口审查并合入本地 `main`；S7 提交为 `4f11b80`，S8 阶段提交为 `e2c5f2b`，空用例集保护补强提交为 `8789408`，S9 阶段提交为 `165451a5ff2b6f7febba69514bb3a5095fba3b09`；尚未推送。**S6 的数组、索引/赋值/别名、`push`、record 预登记/构造/字段读写、`each` 浅快照、复合值身份相等和循环安全显示，由 137 项阶段性 unittest、`compileall` 与 collections CLI 示例验证。S7 接通 CLI 程序参数并实现八个内置函数；Python 3.13.7 上主窗口复跑全套阶段性测试 157 项通过。S8 提供 194 项黑盒测试（189 项执行 LWT 源文件、5 项 CLI override）、63 条逐条规范矩阵记录、标准库 runner 和四格 GitHub Actions；主窗口复跑黑盒 194/194、unittest 174 项、compileall、diff 和从临时目录启动，均通过。S9 开发指南、仓库 Skill、入门示例和三道独立 Agent 盲测通过主窗口审查；主窗口实测输出与记录一致。Skill 自动路由当前不可观测，未声称自动触发实测通过。S5–S9 本地进度尚未推送，`origin/main` 仍处 S4；远端 Actions 尚未触发，Linux/Python 3.10 未验证。S10 只读日志分析器与并发读取验收提示语已准备，尚未开始；性能报告和 PPT 仍待后续阶段。外部资料支持方法选择，LWT 的语法、应用边界和阶段门槛以正式规范为准。
