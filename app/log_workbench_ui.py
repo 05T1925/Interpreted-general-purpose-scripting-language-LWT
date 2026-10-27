@@ -91,7 +91,7 @@ class WorkbenchPanel(ttk.Frame):
         self.level_var = tk.StringVar()
         self.keyword_var = tk.StringVar()
         self.top_var = tk.StringVar(value="5")
-        self.source_var = tk.StringVar(value="数据由 LWT 程序计算 · Python 仅展示")
+        self.source_var = tk.StringVar(value="数据由 LWT 程序计算 · Python 负责调用、校验与展示")
         self.condition_var = tk.StringVar(value="设置条件后点击“运行 LWT 查询”。")
         self.status_var = tk.StringVar(value="尚未查询")
         self.metrics = [tk.StringVar(value="—") for _ in range(4)]
