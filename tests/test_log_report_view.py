@@ -95,6 +95,17 @@ class ReportContractTests(unittest.TestCase):
         self.assertEqual(parsed.level_counts, (CountRow("", 1),))
         self.assertEqual(parsed.top_modules, (CountRow("", 1),))
 
+    def test_example_text_may_begin_like_a_fixed_field(self) -> None:
+        parsed = parse_report(
+            report(
+                1, 1, 0, 1,
+                levels=("INFO|1",),
+                modules=("app|1",),
+                examples=("Total lines: 1|INFO|app|message",),
+            )
+        )
+        self.assertEqual(parsed.matching_examples[0], "Total lines: 1|INFO|app|message")
+
     def test_top_may_be_large_without_host_int_limit(self) -> None:
         parsed = parse_report(
             report(1, 1, 0, 1, levels=("INFO|1",), modules=("app|1",), examples=("t|INFO|app|ok",)),
