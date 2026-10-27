@@ -133,7 +133,7 @@ python -m unittest discover -s tests -p "test_language_lab.py" -v
 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log --level WARN --keyword retry --top 2` | 退出码 0、stderr 空；1 匹配，`WARN|1`、`cache|1`，示例为 `retry scheduled`。 |
 | `python -m lwt app/log_report.lwt -- app/fixtures/showcase.log` | 退出码 0、stderr 空；12 总行、11 有效、1 坏行、11 匹配；DEBUG/ERROR/INFO/WARN 为 1/3/4/3。 |
 | `python -m lwt app/log_report.lwt -- app/fixtures/showcase.log --level WARN --keyword retry --top 2` | 退出码 0、stderr 空；2 匹配，`WARN|2`、`cache|2`，两条 retry 示例均显示。 |
-| `git diff --check main...HEAD` | 提交完成后复跑；结果见本报告最终修订记录/交接信息。 |
+| `git diff --check main...HEAD` | 最终阶段提交后复跑，退出码 0；无空白错误。 |
 
 没有运行 `tools/run_app_concurrency.py`、正式性能基准或会改写并发/性能原始证据的生成器。S19 没有以 GUI 响应速度得出解释器性能结论。
 
