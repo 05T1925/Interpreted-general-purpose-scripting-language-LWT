@@ -1,0 +1,2 @@
+# S19 teaching example: a runtime diagnostic with a stable operator location.
+emit 1 / 0;
