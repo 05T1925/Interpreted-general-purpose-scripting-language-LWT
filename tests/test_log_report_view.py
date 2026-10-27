@@ -149,11 +149,13 @@ class ReportContractTests(unittest.TestCase):
     def test_rejects_missing_duplicate_or_out_of_order_structure(self) -> None:
         good = report(1, 1, 0, 1, levels=("INFO|1",), modules=("app|1",), examples=("t|INFO|app|ok",))
         variants = (
+            "",
             good.replace("Valid records: 1\n", ""),
             good.replace("Valid records: 1\n", "Valid records: 1\nValid records: 1\n"),
             good.replace("Level counts:\nINFO|1\nTop modules:", "Top modules:\nINFO|1\nLevel counts:"),
             good.replace("Top modules:\n", "Top modules:\nTop modules:\n"),
             good.removesuffix("\n"),
+            good + "\n",
         )
         for broken in variants:
             with self.subTest(broken=broken), self.assertRaises(AnalyzerError):
