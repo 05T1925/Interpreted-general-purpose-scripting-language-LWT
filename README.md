@@ -1,13 +1,13 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S21 已通过主窗口审查并合入本地 `main`；S21 带桌面 GUI 未验证遗留通过，A/B/C 实际交互需在最终演示前的可控桌面预检。S12 是最后阶段，负责新克隆、CI/Python 兼容性、PPT、演示和交付，尚未开始。状态见 [`project.md`](project.md)、[S21 主窗口复核](docs/s21-main-review.md)、[S21 验收报告](docs/s21-gui-acceptance.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S21 已通过主窗口审查并合入本地 `main`；S21 带桌面 GUI 未验证遗留通过。新增 S22 计划，通过真实 Tk 控件与合成事件建立可重复的 GUI 集成回归，S12 仍为最后交付阶段，待 S22 审查后进行新克隆、CI/Python 兼容性、PPT、演示和交付。S12 现场仍需区分合成事件证据与人工桌面验收。状态见 [`project.md`](project.md)、[S21 主窗口复核](docs/s21-main-review.md)、[S22 GUI 回归计划](docs/s22-gui-regression-plan.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；当前下一步为最终收尾 S12。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；当前下一步为 S22 GUI 集成回归，随后进入最终收尾 S12。
 5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已将两项审查澄清并入正文。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
@@ -32,7 +32,8 @@
 26. [S21 GUI 验收规划](docs/s21-gui-acceptance-plan.md)：现有应用的桌面手测、缺陷闭环与范围边界。
 27. [S21 GUI 验收报告](docs/s21-gui-acceptance.md)：本轮桌面遮挡事实、A/B/C 未验证矩阵、只读复核和保护文件结果。
 28. [S21 主窗口复核](docs/s21-main-review.md)：独立复核、合入状态、未验证项及 S12 交接。
-29. [S12 最终交付规划](docs/s12-final-delivery-plan.md)：评分项证据映射、新克隆/CI、GUI 预检、PPT 与答辩收尾。
+29. [S22 GUI 集成回归计划](docs/s22-gui-regression-plan.md)：以真实 Tk 控件和隔离事件循环补齐交互回归，不把合成事件当作人工 GUI 验收。
+30. [S12 最终交付规划](docs/s12-final-delivery-plan.md)：评分项证据映射、新克隆/CI、GUI 预检、PPT 与答辩收尾。
 
 运行仓库结构完整性检查：
 
