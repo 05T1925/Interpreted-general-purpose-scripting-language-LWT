@@ -88,6 +88,8 @@ def _rows(lines: list[str], section: str) -> tuple[CountRow, ...]:
         name, separator, count_text = line.rpartition("|")
         if not separator:
             raise AnalyzerError(f"LWT 报告的 {section} 项缺少 | 计数分隔符。")
+        if "|" in name:
+            raise AnalyzerError(f"LWT 报告的 {section} 项包含多余的 | 分隔符。")
         count = _number(count_text, section)
         if count == 0:
             raise AnalyzerError(f"LWT 报告的 {section} 项计数必须大于 0。")
