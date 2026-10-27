@@ -15,6 +15,7 @@ from app.language_lab_core import (
     LabResult,
     LabSession,
     LanguageLabError,
+    describe_outcome,
     load_source,
     run_example,
 )
@@ -34,11 +35,14 @@ class LanguageLabApp:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.session = LabSession()
+        self.session.select(EXAMPLES[0].id)
         self.messages: queue.Queue[_LabMessage] = queue.Queue()
         self.busy = False
         self.closing = False
+        self.source_error: str | None = None
         self.poll_id: str | None = None
         self.examples_by_title = {example.title: example for example in EXAMPLES}
+        self.prediction_buttons: list[ttk.Radiobutton] = []
 
         root.title("LWT 语义实验室（Python 教学前端）")
         root.geometry("1120x760")
@@ -80,13 +84,12 @@ class LanguageLabApp:
             state="readonly",
         )
         self.example_picker.grid(row=0, column=1, sticky="ew", padx=(0, 8))
-        self.run_button = ttk.Button(
+        self.reset_button = ttk.Button(
             controls,
-            text="运行此示例",
-            style="Primary.TButton",
-            command=self.run_selected,
+            text="重新预测",
+            command=self.reset_lesson,
         )
-        self.run_button.grid(row=0, column=2, sticky="e")
+        self.reset_button.grid(row=0, column=2, sticky="e")
         self.status_var = tk.StringVar(value="先观察提示，再运行 LWT 程序。")
         self.status_label = ttk.Label(
             controls, textvariable=self.status_var, style="Status.TLabel"
@@ -119,6 +122,54 @@ class LanguageLabApp:
             wraplength=900,
             justify="left",
         ).grid(row=1, column=1, sticky="ew", pady=(5, 0))
+
+        ttk.Separator(prompt_card).grid(row=2, column=0, columnspan=2, sticky="ew", pady=8)
+        ttk.Label(prompt_card, text="先预测", style="CardHeading.TLabel").grid(
+            row=3, column=0, sticky="nw", padx=(0, 10)
+        )
+        self.question_var = tk.StringVar()
+        ttk.Label(
+            prompt_card,
+            textvariable=self.question_var,
+            style="Card.TLabel",
+            wraplength=900,
+            justify="left",
+        ).grid(row=3, column=1, sticky="ew")
+        self.prediction_var = tk.StringVar(value="")
+        self.options_frame = ttk.Frame(prompt_card, style="Card.TFrame")
+        self.options_frame.grid(row=4, column=1, sticky="ew", pady=(4, 2))
+        self.submit_button = ttk.Button(
+            prompt_card,
+            text="提交预测",
+            command=self.submit_prediction,
+        )
+        self.submit_button.grid(row=5, column=1, sticky="w", pady=(4, 0))
+        self.submit_button.bind("<Return>", self._submit_on_return)
+        self.run_button = ttk.Button(
+            prompt_card,
+            text="运行 LWT 示例",
+            style="Primary.TButton",
+            command=self.run_selected,
+        )
+        self.run_button.grid(row=5, column=1, sticky="w", padx=(92, 0), pady=(4, 0))
+        self.run_button.bind("<Return>", self._run_on_return)
+        self.prediction_feedback_var = tk.StringVar(value="")
+        self.prediction_feedback_label = ttk.Label(
+            prompt_card,
+            textvariable=self.prediction_feedback_var,
+            style="CardHeading.TLabel",
+            wraplength=900,
+            justify="left",
+        )
+        self.prediction_feedback_label.grid(row=6, column=1, sticky="ew", pady=(4, 0))
+        self.explanation_var = tk.StringVar(value="")
+        ttk.Label(
+            prompt_card,
+            textvariable=self.explanation_var,
+            style="Card.TLabel",
+            wraplength=900,
+            justify="left",
+        ).grid(row=7, column=1, sticky="ew", pady=(3, 0))
 
         panes = ttk.Panedwindow(outer, orient="horizontal")
         panes.grid(row=4, column=0, sticky="nsew")
@@ -166,6 +217,7 @@ class LanguageLabApp:
 
         self.root.protocol("WM_DELETE_WINDOW", self.close)
         self._show_selected_source()
+        self._refresh_quiz_controls()
         self.poll_id = self.root.after(60, self._drain_messages)
 
     def _text_area(self, parent: tk.Misc, *, wrap: str, height: int = 10) -> ScrolledText:
@@ -194,29 +246,49 @@ class LanguageLabApp:
         example_id = self._selected_example_id()
         self.session.select(example_id)
         self._show_selected_source()
+        self._refresh_quiz_controls()
 
     def _show_selected_source(self) -> None:
         example_id = self._selected_example_id()
+        self.source_error = None
         self._set_text(self.source_text, "")
         self._set_text(self.details_text, "")
         self._set_text(self.stdout_text, "")
         self._set_text(self.stderr_text, "")
+        self.prediction_var.set("")
+        self.prediction_feedback_var.set("")
+        self.explanation_var.set("")
+        for button in self.prediction_buttons:
+            button.destroy()
+        self.prediction_buttons.clear()
         if example_id is None:
             self.spec_var.set("")
             self.observation_var.set("")
+            self.question_var.set("")
             self._set_status("请从固定示例清单中选择主题。", error=True)
             return
-        try:
-            example, source = load_source(example_id)
-        except LanguageLabError as error:
-            self.spec_var.set("")
-            self.observation_var.set("")
-            self._set_status(str(error), error=True)
-            return
-        self._set_text(self.source_text, source)
+        example = next(item for item in EXAMPLES if item.id == example_id)
         self.spec_var.set(example.spec_reference)
         self.observation_var.set(example.observation)
-        self._set_status("源码来自固定示例；运行后显示 LWT CLI 的原始结果。")
+        self.question_var.set(example.prediction.prompt)
+        for row, option in enumerate(example.prediction.options):
+            button = ttk.Radiobutton(
+                self.options_frame,
+                text=option,
+                value=option,
+                variable=self.prediction_var,
+                command=lambda value=option: self._choose_prediction(value),
+            )
+            button.grid(row=row, column=0, sticky="w", pady=1)
+            self.prediction_buttons.append(button)
+        try:
+            _, source = load_source(example_id)
+        except LanguageLabError as error:
+            self.source_error = str(error)
+            self._set_status(self.source_error, error=True)
+            return
+        self._set_text(self.source_text, source)
+        self._refresh_quiz_controls()
 
     def _set_status(self, message: str, *, error: bool = False) -> None:
         self.status_var.set(message)
@@ -224,9 +296,81 @@ class LanguageLabApp:
 
     def _set_busy(self, busy: bool) -> None:
         self.busy = busy
-        self.example_picker.configure(state="disabled" if busy else "readonly")
-        self.run_button.configure(state="disabled" if busy else "normal")
-        self._set_status("LWT 示例运行中…" if busy else "运行结束，可选择其他主题或重试。")
+        self._refresh_quiz_controls()
+
+    def _submit_on_return(self, _event: tk.Event[tk.Misc]) -> str:
+        self.submit_prediction()
+        return "break"
+
+    def _run_on_return(self, _event: tk.Event[tk.Misc]) -> str:
+        self.run_selected()
+        return "break"
+
+    def _choose_prediction(self, option: str) -> None:
+        try:
+            self.session.choose_prediction(option)
+        except LanguageLabError as error:
+            self._set_status(str(error), error=True)
+            return
+        self._refresh_quiz_controls()
+
+    def submit_prediction(self) -> None:
+        if self.closing or self.busy:
+            return
+        try:
+            self.session.submit_prediction()
+        except LanguageLabError as error:
+            self._set_status(str(error), error=True)
+            return
+        self.prediction_feedback_var.set("预测已记录；运行 LWT 示例后揭晓答案与解释。")
+        self.explanation_var.set("")
+        self._refresh_quiz_controls()
+
+    def reset_lesson(self) -> None:
+        if self.closing or self.busy:
+            return
+        try:
+            self.session.reset_lesson()
+        except LanguageLabError as error:
+            self._set_status(str(error), error=True)
+            return
+        self._show_selected_source()
+        self._refresh_quiz_controls()
+
+    def _refresh_quiz_controls(self) -> None:
+        if self.closing:
+            return
+        submitted = self.session.prediction_submitted
+        has_result = self.session.result is not None or self.session.error is not None
+        self.example_picker.configure(state="disabled" if self.busy else "readonly")
+        for button in self.prediction_buttons:
+            button.configure(state="disabled" if self.busy or submitted else "normal")
+        self.submit_button.configure(
+            state=(
+                "normal"
+                if not self.busy and not submitted and self.session.prediction_choice is not None
+                else "disabled"
+            )
+        )
+        self.run_button.configure(
+            state="normal" if not self.busy and submitted and not has_result else "disabled"
+        )
+        self.reset_button.configure(state="disabled" if self.busy else "normal")
+
+        if self.busy:
+            self._set_status("运行中：正在等待 LWT CLI。")
+        elif self.source_error is not None:
+            self._set_status(self.source_error, error=True)
+        elif self.session.error is not None:
+            self._set_status("运行失败：重置本例并重新预测后可重试。", error=True)
+        elif self.session.result is not None:
+            self._set_status("运行完成；请分别查看预测反馈和 CLI 契约核对。")
+        elif submitted:
+            self._set_status("已答：预测已提交，运行后揭晓。")
+        elif self.session.prediction_choice is not None:
+            self._set_status("未答完：已选一个选项，请提交预测。")
+        else:
+            self._set_status("未答：选择预测并提交后，才能运行 LWT 示例。")
 
     def run_selected(self) -> None:
         if self.closing or self.busy:
@@ -260,20 +404,27 @@ class LanguageLabApp:
         argv = json.dumps(list(result.command), ensure_ascii=False)
         arguments = json.dumps(list(example.program_args), ensure_ascii=False)
         stdin = json.dumps(result.stdin_text, ensure_ascii=False)
-        outcome = "符合记录预期" if result.expectation_met else "与记录预期不同"
+        outcome = describe_outcome(result)
+        choice = self.session.prediction_choice or "未选择"
+        prediction_correct = self.session.prediction_correct is True
+        prediction_mark = "预测正确" if prediction_correct else "预测不正确"
         details = (
             f"命令 argv：{argv}\n"
             f"工作目录：{result.working_directory}\n"
             f"-- 后程序参数：{arguments}\n"
             f"stdin：{stdin}\n"
             f"退出码：{result.returncode}\n"
-            f"核对：{outcome}"
+            f"CLI 结果：{outcome}"
         )
         self._set_text(self.details_text, details)
         self._set_text(self.stdout_text, result.stdout)
         self._set_text(self.stderr_text, result.stderr)
+        self.prediction_feedback_var.set(
+            f"你的预测：{choice}。{prediction_mark}；固定教学答案：{example.prediction.correct_option}。"
+        )
+        self.explanation_var.set(example.prediction.explanation)
         self._set_status(
-            f"{outcome} · exit {result.returncode}",
+            f"LWT CLI {outcome} · exit {result.returncode}；{prediction_mark}",
             error=not result.expectation_met,
         )
 
@@ -292,7 +443,18 @@ class LanguageLabApp:
                 if message.error is not None:
                     self._set_text(self.details_text, "CLI 未产生结果；已保留重试入口。")
                     self._set_text(self.stderr_text, message.error)
-                    self._set_status(message.error, error=True)
+                    example = next(
+                        item for item in EXAMPLES if item.id == self.session.selected_id
+                    )
+                    choice = self.session.prediction_choice or "未选择"
+                    correct = self.session.prediction_correct is True
+                    self.prediction_feedback_var.set(
+                        f"你的预测：{choice}。"
+                        f"{'预测正确' if correct else '预测不正确'}；"
+                        f"固定教学答案：{example.prediction.correct_option}。"
+                    )
+                    self.explanation_var.set(example.prediction.explanation)
+                    self._set_status(f"{message.error}；重置本例后可重试。", error=True)
                 elif message.result is not None:
                     self._render_result(message.result)
         except queue.Empty:
@@ -307,7 +469,7 @@ class LanguageLabApp:
         if self.closing:
             return
         self.closing = True
-        self.session.select(None)
+        self.session.close()
         if self.poll_id is not None:
             try:
                 self.root.after_cancel(self.poll_id)
