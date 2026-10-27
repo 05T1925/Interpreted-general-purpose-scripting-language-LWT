@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S18 已通过主窗口审查并合入本地 `main`；S18 带一项合法 Unicode 报告边界遗留，S19 已规划先修复再增强语言展示；S12 仍是最后收尾。新克隆验收、Python 3.10/远端 CI、PPT、最终演示和交付仍未开始。状态见 [`project.md`](project.md)、[S18 主窗口复核](docs/s18-main-review.md)、[S19 规划](docs/s19-optimization-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S18 已通过主窗口审查并合入本地 `main`；S19 在独立阶段分支实施完成、等待主窗口审查；S12 仍是最后收尾。新克隆验收、Python 3.10/远端 CI、PPT、最终演示和交付仍未开始。状态见 [`project.md`](project.md)、[S19 工作报告](docs/s19-language-lab.md)和[阶段路线图](阶段执行与审查路线图.md)。
 
 ## 阅读入口
 
@@ -23,7 +23,8 @@
 17. [S17 主窗口复核](docs/s17-main-review.md)：独立回归、实际桌面交互与剩余边界。
 18. [S18 优化规划](docs/s18-optimization-plan.md)：LWT 驱动分析工作台与评分证据增强方向。
 19. [S18 主窗口复核](docs/s18-main-review.md)：独立检查、合法 Unicode 边界复现与遗留责任。
-20. [S19 优化规划](docs/s19-optimization-plan.md)：先修报告边界，再建设精选 LWT 语义实验室。
+20. [S19 优化规划](docs/s19-optimization-plan.md)：阶段目标、范围边界、验收门槛和当前遗留项。
+21. [S19 语言实验室工作报告](docs/s19-language-lab.md)：报告拆行修复、语义示例、测试与桌面验收边界。
 
 运行仓库结构完整性检查：
 
@@ -117,6 +118,10 @@ S18 增加“分析工作台”选项卡：可选择日志、输入 Level/Keywor
 
 S15–S18 已通过主窗口审查并合入本地 `main`。S17 主窗口实际操作了两款 GUI 的主路径；S18 的新增操作和剩余边界按“实际点击/无头测试/未验证”分别记录在[阶段报告](docs/s18-workbench.md)，新发现的 Unicode 边界见[主窗口复核](docs/s18-main-review.md)。
 
+### S19 LWT 语义实验室
+
+从仓库根运行 `python -m app.language_lab`。只读 Python/Tkinter 前端展示固定白名单 LWT 示例，并把程序交给 `python -m lwt` 真实执行；可查看完整源码、语言规范章节、观察点、argv/工作目录/stdin、stdout、stderr、退出码和预期核对状态。它不是第二个 LWT 应用，课程 Agent 应用仍为 `app/log_report.lwt`。示例 CLI 后退方案和证据见 [S19 工作报告](docs/s19-language-lab.md)；无头定向测试为 `python -m unittest discover -s tests -p "test_language_lab.py" -v`。
+
 ### S16 独立图形化贪吃蛇
 
 S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/Tkinter 附加演示，并非第二个 LWT 应用**；不会替代 `app/log_report.lwt`，也不计入课程要求的 LWT 有效代码行数。S17 为两个 GUI 提取共享主题并修复 Snake 结束态重开；S18 没有改变 Snake 规则。桌面复核状态见[S18 工作报告](docs/s18-workbench.md)。
@@ -125,7 +130,7 @@ S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/
 
 ## S11 性能实验
 
-S11–S18 已通过主窗口审查并合入本地 `main`；S19 待派发，S12 最后收尾仍未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)、[S18 主窗口复核](docs/s18-main-review.md)。
+S11–S18 已通过主窗口审查并合入本地 `main`；S19 阶段分支实施完成、等待主窗口审查，S12 最后收尾仍未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)、[S19 工作报告](docs/s19-language-lab.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
