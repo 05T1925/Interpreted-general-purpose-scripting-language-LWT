@@ -99,7 +99,9 @@ S20 只修改语义实验室入口、固定教学题目/会话状态、Tk 前端
 | `python -m unittest discover -s tests -p "test_language_lab_entry.py" -v` | 4 项入口子进程契约通过。S20 定向合计 19 项（实验室 15 + 入口 4）。 |
 | `python -m compileall -q lwt tests tools bench app` | 退出码 0，无语法编译错误。 |
 | `python tools/count_lwt_lines.py app/log_report.lwt` | `Effective LWT lines: 246`。 |
-| `git diff --check main...HEAD` | 在最终文档提交后复跑；结果写入执行窗口最终报告。 |
+| `git diff --check main...HEAD` | 文档提交后实际复跑，退出码 0，无空白错误；报告修订提交后再次复跑。 |
+
+额外 Markdown 检查扫描仓库 31 个 Markdown 文件：检查 534 个本地相对链接，0 个断链；代码围栏均闭合（0 个未闭合文件）。
 
 在汇总前另实际重跑了六个固定示例，均满足白名单预期：前五例 exit 0、stderr 空；分支 stdout `0/-1/2/-3`，递归 stdout `120`，集合 stdout 包含 `draft`/`review`/最终数组，文本/参数 stdout 含参数数 `2` 和两行处理结果，stdin 输出中文输入行；除零例 exit 3、stdout 空、stderr 为 `RuntimeError` 且位置 `2:8`。
 
