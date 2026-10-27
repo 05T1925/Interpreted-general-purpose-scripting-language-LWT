@@ -5,9 +5,11 @@ from __future__ import annotations
 from dataclasses import replace
 from pathlib import Path
 import subprocess
+import sys
 import unittest
 from unittest.mock import Mock, patch
 
+import app.language_lab as language_lab
 import app.language_lab_core as lab
 
 
@@ -99,6 +101,18 @@ class LanguageLabCliIntegrationTests(unittest.TestCase):
 
 
 class LanguageLabFailureAndStateTests(unittest.TestCase):
+    def test_missing_tkinter_is_reported_without_import_traceback(self) -> None:
+        with patch.dict(sys.modules, {"tkinter": None}):
+            with self.assertRaisesRegex(RuntimeError, "无法导入 Tkinter"):
+                language_lab.launch()
+
+    def test_tcl_initialization_failure_is_reported(self) -> None:
+        import tkinter
+
+        with patch("tkinter.Tk", side_effect=tkinter.TclError("no display")):
+            with self.assertRaisesRegex(RuntimeError, "无法创建 Tkinter"):
+                language_lab.launch()
+
     def test_timeout_and_process_start_failure_are_readable(self) -> None:
         with self.assertRaisesRegex(lab.LanguageLabError, "超过"):
             lab.run_example(

@@ -2,19 +2,22 @@
 
 from __future__ import annotations
 
-import tkinter as tk
 import sys
-
-from app.language_lab_ui import LanguageLabApp
 
 
 def launch() -> None:
     try:
+        import tkinter as tk
+    except ImportError as error:
+        raise RuntimeError("当前 Python 无法导入 Tkinter，语义实验室需要可用的 Tk 支持。") from error
+    try:
+        from app.language_lab_ui import LanguageLabApp
+
         root = tk.Tk()
+        LanguageLabApp(root)
+        root.mainloop()
     except tk.TclError as error:
         raise RuntimeError(f"无法创建 Tkinter 语义实验室窗口：{error}") from error
-    LanguageLabApp(root)
-    root.mainloop()
 
 
 if __name__ == "__main__":
