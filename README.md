@@ -1,13 +1,13 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S20 已通过主窗口审查并合入本地 `main`；S21 已完成实施并等待主窗口审查，但受桌面窗口遮挡影响，现有应用的 GUI 手动验收未能完整执行。S12 的新克隆验收、Python 3.10/远端 CI、PPT、最终演示和交付仍未开始。状态见 [`project.md`](project.md)、[S20 主窗口复核](docs/s20-main-review.md)、[S21 GUI 验收规划](docs/s21-gui-acceptance-plan.md)、[S21 GUI 验收报告](docs/s21-gui-acceptance.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S21 已通过主窗口审查并合入本地 `main`；S21 带桌面 GUI 未验证遗留通过，A/B/C 实际交互需在最终演示前的可控桌面预检。S12 是最后阶段，负责新克隆、CI/Python 兼容性、PPT、演示和交付，尚未开始。状态见 [`project.md`](project.md)、[S21 主窗口复核](docs/s21-main-review.md)、[S21 验收报告](docs/s21-gui-acceptance.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；当前顺序为 S21 主窗口审查 → 最终收尾 S12。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；当前下一步为最终收尾 S12。
 5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已将两项审查澄清并入正文。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
@@ -31,6 +31,8 @@
 25. [S20 主窗口复核](docs/s20-main-review.md)：独立回归、合并结论和未完成 GUI 实测项。
 26. [S21 GUI 验收规划](docs/s21-gui-acceptance-plan.md)：现有应用的桌面手测、缺陷闭环与范围边界。
 27. [S21 GUI 验收报告](docs/s21-gui-acceptance.md)：本轮桌面遮挡事实、A/B/C 未验证矩阵、只读复核和保护文件结果。
+28. [S21 主窗口复核](docs/s21-main-review.md)：独立复核、合入状态、未验证项及 S12 交接。
+29. [S12 最终交付规划](docs/s12-final-delivery-plan.md)：评分项证据映射、新克隆/CI、GUI 预检、PPT 与答辩收尾。
 
 运行仓库结构完整性检查：
 
@@ -136,7 +138,7 @@ S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/
 
 ## S11 性能实验
 
-S11–S20 已通过主窗口审查并合入本地 `main`；S21 实施报告已提交审查，但本轮因目标窗口被遮挡而未能完整验收。S12 最终交付仍未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)、[S20 主窗口复核](docs/s20-main-review.md)、[S21 GUI 验收规划](docs/s21-gui-acceptance-plan.md)和[S21 GUI 验收报告](docs/s21-gui-acceptance.md)。
+S11–S21 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互均受遮挡限制而未验证，详见[主窗口复核](docs/s21-main-review.md)。S12 是最终交付阶段，详见[最终交付规划](docs/s12-final-delivery-plan.md)，当前尚未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)和[S21 GUI 验收报告](docs/s21-gui-acceptance.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
@@ -154,4 +156,4 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S15–S20 应用/展示阶段已审查并合入本地 `main`。S20 修复语义实验室 Tk/Tcl 启动错误码并加入预测—运行—解释交互，已通过主窗口审查；S21 执行窗口报告已完成并等待主窗口审查，但桌面遮挡使 A/B/C GUI 操作未验证。S12 的新克隆验收、Python 3.10/远端 CI、PPT、演示和最终交付仍未开始。
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S15–S21 应用/展示阶段已审查并合入本地 `main`。S20 完成启动错误码修复和预测—运行—解释交互；S21 阶段报告与主窗口复核已记录桌面交互限制。S12 最终新克隆、Python/CI、PPT、演示和交付尚未开始，清单见 [S12 最终交付规划](docs/s12-final-delivery-plan.md)。
