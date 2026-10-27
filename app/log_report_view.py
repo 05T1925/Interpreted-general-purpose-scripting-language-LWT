@@ -113,7 +113,9 @@ def parse_report(raw: str, *, top: str = "5") -> LogReport:
         raise AnalyzerError("解析报告时的 Top 参数无效。")
     if not raw.endswith("\n"):
         raise AnalyzerError("LWT 报告缺少末尾换行，可能已截断。")
-    lines = raw.splitlines()
+    # The report protocol uses LF between logical lines.  str.splitlines()
+    # also splits legal message contents such as U+0085 and U+2028.
+    lines = raw[:-1].split("\n")
     if len(lines) < 8 or lines[0] != _HEADER:
         raise AnalyzerError("LWT 报告标题或固定字段不完整。")
 

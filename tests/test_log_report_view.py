@@ -133,6 +133,19 @@ class ReportContractTests(unittest.TestCase):
         self.assertEqual(parsed.matched_records, 1)
         self.assertEqual(parsed.top_modules, (CountRow("模块", 1),))
 
+    def test_lf_is_the_only_report_separator_for_unicode_message_content(self) -> None:
+        separators = ("\u0085", "\u2028", "\u2029", "\u000b", "\u000c")
+        message = "alpha" + "beta".join(separators) + "omega"
+        record = f"t|INFO|app|{message}"
+        with tempfile.TemporaryDirectory(prefix="lwt-s19-line-boundary-") as directory:
+            path = Path(directory) / "unicode-separators.log"
+            path.write_text(record + "\n", encoding="utf-8", newline="")
+            parsed = analyze_workbench(WorkbenchQuery.from_fields(path))
+        self.assertEqual(parsed.total_lines, 1)
+        self.assertEqual(parsed.valid_records, 1)
+        self.assertEqual(parsed.matched_records, 1)
+        self.assertEqual(parsed.matching_examples, (record,))
+
     def test_rejects_missing_duplicate_or_out_of_order_structure(self) -> None:
         good = report(1, 1, 0, 1, levels=("INFO|1",), modules=("app|1",), examples=("t|INFO|app|ok",))
         variants = (
