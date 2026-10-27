@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S17 已通过主窗口审查并合入本地 `main`；S18 已规划待执行，S12 仍是最后收尾。S17 主窗口已实际操作日志侦探的答题、计分、报告与重开，以及 Snake 的开始、暂停、撞墙和终态重开；部分 GUI 边界尚未实测。新克隆验收、Python 3.10/远端 CI、PPT、演示和最终交付仍未开始。状态见 [`project.md`](project.md)、[S17 主窗口复核](docs/s17-main-review.md)、[S18 优化规划](docs/s18-optimization-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S17 已通过主窗口审查并合入本地 `main`；S18 在独立阶段分支实施完成，等待主窗口审查；S12 仍是最后收尾。新克隆验收、Python 3.10/远端 CI、PPT、最终演示和交付仍未开始。状态见 [`project.md`](project.md)、[S18 工作报告](docs/s18-workbench.md)和[阶段路线图](阶段执行与审查路线图.md)。
 
 ## 阅读入口
 
@@ -102,7 +102,7 @@ python tools/count_lwt_lines.py app/log_report.lwt
 python tools/run_app_concurrency.py
 ```
 
-### S15 日志侦探图形化小游戏
+### S15/S18 日志侦探与交互分析工作台
 
 在支持桌面窗口和 Tkinter 的 Python 环境，从仓库根目录运行：
 
@@ -111,19 +111,19 @@ python app/log_detective.py
 python -m unittest discover -s tests -p "test_log_detective.py" -v
 ```
 
-小游戏每题通过公开 LWT CLI 获取真实报告；Python GUI 负责题面、窗口、进度和得分。无桌面环境仍可运行无头逻辑与 CLI 集成测试。入口条件、玩法和 S15 验收限制见[应用说明](app/README.md)及[S15 执行报告](docs/s15-app-gui.md)。
+S18 增加“分析工作台”选项卡：可选择日志、输入 Level/Keyword/Top，查看 LWT 生成的摘要、级别与模块图表、前三条示例和此次完整原始报告；五题挑战保留。工作台显示实际 CLI argv，图表只按报告已给计数缩放。Python GUI 负责窗口、构造参数和严格校验报告；日志读取、解析、过滤、统计与排序仍由 `app/log_report.lwt` 经公开 CLI 完成。无桌面环境仍可运行 [确定性演示日志](app/fixtures/showcase.log) 的 CLI 命令和无头测试。操作说明与约三分钟演示顺序见[应用说明](app/README.md)和[S18 展示说明](docs/s18-app-showcase.md)。
 
-S15 已通过自动化审查并合入本地 `main`。S17 当前环境中两个窗口成功创建，且系统进程报告了预期标题；但本会话没有窗口截图、点击或键盘输入能力，因此正确计分、报告窗、重开、图形文件选择/错误恢复、Enter 和缩放仍明确标为未验证。S17 重跑了对应自动化测试，并改进了主题、布局和状态反馈。
+S15–S17 已通过主窗口审查并合入本地 `main`。S17 主窗口实际操作了两款 GUI 的主路径；S18 的新增操作和剩余边界按“实际点击/无头测试/未验证”分别记录在[阶段报告](docs/s18-workbench.md)。
 
 ### S16 独立图形化贪吃蛇
 
-S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 Python/Tkinter 附加游戏，与日志侦探和 LWT 分析器分开；不会替代 `app/log_report.lwt`，也不计入课程要求的 LWT 有效代码行数。S17 为两个 GUI 提取了共享颜色和系统字体主题，调整了窗口响应式文本与棋盘提示，并修复结束态“再来一局”按钮只重置不开始的问题。新增无头回归覆盖 GAME_OVER 和 WON 两条重开路径。Snake 桌面键盘、缩放、焦点和碰撞交互仍未由人工实际操作验证；启动说明和逐项证据见[应用说明](app/README.md)、[S16 报告](docs/s16-app-review-snake.md)和[S17 报告](docs/s17-app-polish.md)。
+S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/Tkinter 附加演示，并非第二个 LWT 应用**；不会替代 `app/log_report.lwt`，也不计入课程要求的 LWT 有效代码行数。S17 为两个 GUI 提取共享主题并修复 Snake 结束态重开；S18 没有改变 Snake 规则。桌面复核状态见[S18 工作报告](docs/s18-workbench.md)。
 
 应用测试经公开 CLI 运行，不纳入 S8 的 194 项语言黑盒矩阵。并发工具使用固定输入分别同时启动 1、2、4 个独立操作系统进程，不代表 LWT 线程支持；原始逐试次结果位于[`reports/app-concurrency.json`](reports/app-concurrency.json)。
 
 ## S11 性能实验
 
-S11 已通过主窗口审查并快进合入本地 `main`，审查修正了失败进程与无效配对重复计数。S13 全项目审计、S14 质量保障升级、S15 日志侦探 GUI 和 S16 贪吃蛇均已通过审查并合入本地 `main`。S17 实施完成，待主窗口审查；S12 最后收尾仍未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)、[S15 GUI 报告](docs/s15-app-gui.md)、[S16 应用报告](docs/s16-app-review-snake.md)和[S17 应用打磨报告](docs/s17-app-polish.md)。
+S11–S17 已通过主窗口审查并合入本地 `main`；S18 实施完成，等待审查，S12 最后收尾仍未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)、[S18 工作报告](docs/s18-workbench.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
@@ -141,4 +141,4 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S9 开发指南、仓库 Skill 和三项独立盲测已审查通过，Skill 自动路由仍不可观测；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S13 综合审计和 S14 完整性门禁/权限错误回归均已通过主窗口审查并合入本地 `main`。S15 日志侦探 GUI、S16 独立贪吃蛇及 S17 界面打磨已审查通过；S17 主路径已做实际桌面操作，未实测边界仍在[主窗口复核](docs/s17-main-review.md)中。S18 已规划待执行；S12 仍未开始，负责新克隆验收、Python 3.10/远端 CI、PPT、演示和最终交付。
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S9 开发指南、仓库 Skill 和三项独立盲测已审查通过，Skill 自动路由仍不可观测；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S13 综合审计和 S14 完整性门禁/权限错误回归均已通过主窗口审查并合入本地 `main`。S15 日志侦探 GUI、S16 独立贪吃蛇及 S17 界面打磨已审查通过；S18 工作台在阶段分支实施完成、等待主窗口审查。S12 仍未开始，负责新克隆验收、Python 3.10/远端 CI、PPT、演示和最终交付。

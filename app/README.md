@@ -75,7 +75,7 @@ python tools/run_app_concurrency.py
 
 固定 fixture 的完整行为通过 `tests/test_app.py` 经公开 CLI 测试；该应用测试不加入 S8 的 194 项语言黑盒覆盖矩阵。
 
-## 图形化小游戏（S15）
+## 日志侦探：分析工作台与五题挑战（S15、S18）
 
 在具备桌面显示能力且 Python 包含 Tkinter 的环境中，从仓库根目录启动：
 
@@ -85,19 +85,31 @@ python app/log_detective.py
 
 也可以从其他当前工作目录使用入口脚本的绝对路径启动。游戏默认读取 [`fixtures/sample.log`](fixtures/sample.log)，提供五道 `level`、`keyword` 和组合过滤题；玩家输入匹配记录数，可按 Enter 提交，查看正误反馈、当前进度和最终得分。选择日志文件后会将完整路径作为单独参数传给 LWT CLI。游戏内“查看完整 LWT 报告”显示未过滤 CLI 的完整标准输出。
 
-Python/Tkinter 负责窗口、题面、会话、得分和展示；日志读取、记录解析、过滤、统计与正确答案仍由 `log_report.lwt` 通过 `python -m lwt` 完成。GUI 调用使用当前 Python、argv 参数列表、`shell=False`、UTF-8 和有限超时；后台线程只等待 CLI，Tk 控件更新限于主线程。GUI 不改变 LWT 的语言能力或 CLI 契约。
+S18 在原五题挑战之外增加“分析工作台”选项卡。它可选择日志、设置 Level、Keyword 与 Top，显示 LWT 报告给出的总览数字、级别条形图、模块排行和前三条匹配示例。点击级别统计行会填入 Level；再次点击“运行 LWT 查询”才会发出新请求。模块排行只读。当前筛选条件与实际 CLI argv 在界面可见；“查看此次原始报告”打开同一次查询的完整 stdout。改变条件会使旧结果失效，零匹配与错误均可继续查询。五题挑战、Enter 提交、计分、重开和未过滤完整报告入口保留。
+
+Python/Tkinter 负责窗口、题面、会话、得分、构造参数、校验固定报告格式与展示；日志读取、记录解析、过滤、统计、排序与正确答案仍由 `log_report.lwt` 通过 `python -m lwt` 完成。GUI 调用使用当前 Python、argv 参数列表、`shell=False`、仓库根工作目录、UTF-8 和 20 秒超时；后台线程只等待 CLI，Tk 控件更新限于主线程。GUI 不改变 LWT 的语言能力或 CLI 契约。
+
+新增确定性 UTF-8 演示日志 [`fixtures/showcase.log`](fixtures/showcase.log) 有 12 行，其中有效 11、坏行 1；包含 Unicode、多级别、多模块和两条 WARN/retry 命中：
+
+```powershell
+python -m lwt app/log_report.lwt -- app/fixtures/showcase.log
+python -m lwt app/log_report.lwt -- app/fixtures/showcase.log --level WARN --keyword retry --top 2
+```
+
+前一命令得到匹配 11，级别 DEBUG/ERROR/INFO/WARN 分别为 1/3/4/3；后一命令得到匹配 2、WARN|2、cache|2。完整演示与教师要求对应表见 [S18 展示说明](../docs/s18-app-showcase.md)；阶段实测见 [S18 工作报告](../docs/s18-workbench.md)。
 
 Tkinter 是 Python 标准 GUI 接口，但可能作为可选模块缺省；先检查 `python -m tkinter` 并确认有可用桌面。没有 Tkinter 或桌面时继续使用上面的 CLI；无需安装第三方 GUI 依赖。运行无头逻辑及 CLI 集成测试：
 
 ```powershell
 python -m unittest discover -s tests -p "test_log_detective.py" -v
+python -m unittest discover -s tests -p "test_log_report_view.py" -v
 ```
 
 设计边界、实测观察、自动测试和未验证事项见 [`../docs/s15-app-gui.md`](../docs/s15-app-gui.md)。
 
 ## 独立贪吃蛇（S16；S17 复检与界面打磨）
 
-贪吃蛇是独立的 Python/Tkinter 演示程序，不调用 LWT 日志分析器，也不计入 `app/log_report.lwt` 的课程代码行数。从仓库根目录启动：
+贪吃蛇是独立的 **Python/Tkinter 附加演示，并非第二个 LWT 应用**；不调用 LWT 日志分析器，也不计入 `app/log_report.lwt` 的课程代码行数。从仓库根目录启动：
 
 ```powershell
 python app/snake_game.py
@@ -113,4 +125,4 @@ python app/snake_game.py
 python -m unittest discover -s tests -p "test_snake_game.py" -v
 ```
 
-Tkinter 可能未随 Python 安装；若启动时报 Tk 或桌面不可用，核心测试仍可运行。S17 为两款 GUI 统一了配色、间距和系统默认字体回退；日志侦探的题面、反馈与所选路径随窗口宽度调整，Snake 棋盘缩小时收敛网格细节，结束提示按棋盘尺寸排版。当前执行环境能启动两个窗口并确认标题和正常关闭，但没有可操作窗口/输入接口，因而分数反馈、文件选择、键盘、缩放、焦点切换等真实交互仍未验证。逐项记录见 [`../docs/s17-app-polish.md`](../docs/s17-app-polish.md)；S16 的原始审计见 [`../docs/s16-app-review-snake.md`](../docs/s16-app-review-snake.md)。
+Tkinter 可能未随 Python 安装；若启动时报 Tk 或桌面不可用，核心测试仍可运行。S17 为两款 GUI 统一了配色、间距和系统默认字体回退；日志侦探的题面、反馈与所选路径随窗口宽度调整，Snake 棋盘缩小时收敛网格细节，结束提示按棋盘尺寸排版。S17 主窗口已实际操作两款 GUI 主路径；S18 工作台的实测与尚未验证项见 [阶段报告](../docs/s18-workbench.md)，S17 原有审查记录见 [主窗口复核](../docs/s17-main-review.md)。

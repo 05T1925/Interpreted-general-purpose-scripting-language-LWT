@@ -1,0 +1,12 @@
+2026-10-07T11:00:00Z|INFO|auth|用户 登录成功
+2026-10-07T11:00:01Z|WARN|cache|retry 缓存刷新
+2026-10-07T11:00:02Z|ERROR|db|连接失败
+2026-10-07T11:00:03Z|INFO|api|请求已接收
+2026-10-07T11:00:04Z|WARN|cache|retry 延迟队列
+2026-10-07T11:00:05Z|DEBUG|worker|任务启动
+bad|record
+2026-10-07T11:00:06Z|ERROR|api|retry 请求失败
+2026-10-07T11:00:07Z|INFO|auth|用户 登出
+2026-10-07T11:00:08Z|WARN|worker|等待重试
+2026-10-07T11:00:09Z|ERROR|db|连接超时
+2026-10-07T11:00:10Z|INFO|api|响应完成
