@@ -15,6 +15,14 @@ DEFAULT_TIMEOUT_SECONDS = 12
 
 
 @dataclass(frozen=True)
+class PredictionQuestion:
+    prompt: str
+    options: tuple[str, ...]
+    correct_option: str
+    explanation: str
+
+
+@dataclass(frozen=True)
 class LabExample:
     id: str
     title: str
@@ -25,6 +33,7 @@ class LabExample:
     stdin_text: str
     expected_exit_code: int
     expected_stdout: str
+    prediction: PredictionQuestion
     expected_error_category: str | None = None
     expected_location: tuple[int, int] | None = None
     expected_error_message: str | None = None
@@ -41,6 +50,15 @@ EXAMPLES: tuple[LabExample, ...] = (
         stdin_text="",
         expected_exit_code=0,
         expected_stdout="0\n-1\n2\n-3\n",
+        prediction=PredictionQuestion(
+            prompt="循环中的 emit 会按什么顺序输出？",
+            options=("0 → -1 → 2 → -3", "0 → 1 → 2 → 3", "只输出 0"),
+            correct_option="0 → -1 → 2 → -3",
+            explanation=(
+                "i 从 0 增加到 3。偶数分支输出 i，奇数分支输出 -i；"
+                "当 i 变成 4 时 while 条件为假。"
+            ),
+        ),
     ),
     LabExample(
         id="functions",
@@ -52,6 +70,15 @@ EXAMPLES: tuple[LabExample, ...] = (
         stdin_text="",
         expected_exit_code=0,
         expected_stdout="120\n",
+        prediction=PredictionQuestion(
+            prompt="factorial(5) 在函数声明之前调用，结果是什么？",
+            options=("120", "24", "声明前调用会报未定义函数"),
+            correct_option="120",
+            explanation=(
+                "顶层函数在执行语句前登记，因此可以前向调用；递归在 n <= 1 时返回 1，"
+                "factorial(5) 的结果是 120。"
+            ),
+        ),
     ),
     LabExample(
         id="collections",
@@ -69,6 +96,19 @@ EXAMPLES: tuple[LabExample, ...] = (
             "Task{name: \"replacement\", done: false}, "
             "Task{name: \"late\", done: false}]\n"
         ),
+        prediction=PredictionQuestion(
+            prompt="each 本轮会访问被替换的 review 或新追加的 late 吗？",
+            options=(
+                "访问 draft、review；不访问 replacement 或 late",
+                "访问 draft、replacement、late",
+                "只访问 draft",
+            ),
+            correct_option="访问 draft、review；不访问 replacement 或 late",
+            explanation=(
+                "each 开始时复制数组元素引用形成浅快照：之后替换数组位置不会替换快照里的引用，"
+                "追加项不进入本轮；对快照引用到的 record 修改仍然可见。"
+            ),
+        ),
     ),
     LabExample(
         id="text-cli",
@@ -80,6 +120,15 @@ EXAMPLES: tuple[LabExample, ...] = (
         stdin_text="",
         expected_exit_code=0,
         expected_stdout='2\n[12, "apple", 5]\n[7, "pear", 4]\n',
+        prediction=PredictionQuestion(
+            prompt="args() 会返回几个 -- 后的程序参数？",
+            options=("1 个", "2 个", "3 个"),
+            correct_option="2 个",
+            explanation=(
+                "分隔符后的路径和 preview 都是程序参数，所以 args() 有两个元素；"
+                "预期 stdout 第一行也就是 2。"
+            ),
+        ),
     ),
     LabExample(
         id="stdin",
@@ -91,6 +140,15 @@ EXAMPLES: tuple[LabExample, ...] = (
         stdin_text="LWT 输入演示\n",
         expected_exit_code=0,
         expected_stdout="Enter one line:\nLWT 输入演示\n",
+        prediction=PredictionQuestion(
+            prompt="input() 返回的文本会保留 stdin 行末的 LF 吗？",
+            options=("会保留 LF", "不会保留 LF", "会返回 null"),
+            correct_option="不会保留 LF",
+            explanation=(
+                "input() 去掉读入行的 LF（也处理 CRLF 行结束），返回正文字符串；"
+                "随后 emit 为正文输出一行。"
+            ),
+        ),
     ),
     LabExample(
         id="runtime-error",
@@ -102,6 +160,15 @@ EXAMPLES: tuple[LabExample, ...] = (
         stdin_text="",
         expected_exit_code=3,
         expected_stdout="",
+        prediction=PredictionQuestion(
+            prompt="除零程序的错误类别、位置和退出码是什么？",
+            options=("exit 0，无诊断", "exit 2，SyntaxError", "exit 3，RuntimeError，2:8"),
+            correct_option="exit 3，RuntimeError，2:8",
+            explanation=(
+                "除零在运行阶段失败，CLI 使用运行时错误退出码 3；除法运算符位于第 2 行第 8 列，"
+                "stderr 给出 RuntimeError 诊断，不输出 Python traceback。"
+            ),
+        ),
         expected_error_category="RuntimeError",
         expected_location=(2, 8),
         expected_error_message="division by zero",
@@ -219,6 +286,16 @@ def run_example(
     )
 
 
+def describe_outcome(result: LabResult) -> str:
+    """Name the observed CLI outcome without interpreting or recomputing it."""
+
+    if not result.expectation_met:
+        return "与记录预期不同"
+    if result.example.expected_error_category is not None:
+        return f"按预期报告 {result.example.expected_error_category}"
+    return "成功，符合 stdout 与退出码预期"
+
+
 class LabSession:
     """Track selection and reject results from an obsolete request."""
 
@@ -228,8 +305,14 @@ class LabSession:
         self.pending: int | None = None
         self.result: LabResult | None = None
         self.error: str | None = None
+        self.prediction_choice: str | None = None
+        self.prediction_submitted = False
+        self.prediction_correct: bool | None = None
+        self.closed = False
 
     def select(self, example_id: str | None) -> None:
+        if self.closed:
+            raise LanguageLabError("语义实验室会话已关闭。")
         if example_id is not None:
             get_example(example_id)
         self.revision += 1
@@ -237,12 +320,68 @@ class LabSession:
         self.pending = None
         self.result = None
         self.error = None
+        self.prediction_choice = None
+        self.prediction_submitted = False
+        self.prediction_correct = None
+
+    def choose_prediction(self, option: str) -> None:
+        if self.selected_id is None:
+            raise LanguageLabError("请先选择一个语义示例。")
+        if self.pending is not None:
+            raise LanguageLabError("示例正在运行，暂不能更改预测。")
+        if self.prediction_submitted:
+            raise LanguageLabError("预测已提交；如需重做，请重置本例。")
+        question = get_example(self.selected_id).prediction
+        if option not in question.options:
+            raise LanguageLabError("请选择本题中的一个预测选项。")
+        self.prediction_choice = option
+        self.prediction_correct = None
+
+    def submit_prediction(self) -> bool:
+        if self.selected_id is None:
+            raise LanguageLabError("请先选择一个语义示例。")
+        if self.pending is not None:
+            raise LanguageLabError("示例正在运行，暂不能提交预测。")
+        if self.prediction_submitted:
+            raise LanguageLabError("本次预测已经提交。")
+        if self.prediction_choice is None:
+            raise LanguageLabError("请先选择一个预测选项。")
+        question = get_example(self.selected_id).prediction
+        self.prediction_submitted = True
+        self.prediction_correct = self.prediction_choice == question.correct_option
+        self.result = None
+        self.error = None
+        return self.prediction_correct
+
+    def reset_lesson(self) -> None:
+        if self.closed:
+            raise LanguageLabError("语义实验室会话已关闭。")
+        if self.pending is not None:
+            raise LanguageLabError("示例正在运行，暂不能重置。")
+        self.select(self.selected_id)
+
+    def close(self) -> None:
+        self.revision += 1
+        self.selected_id = None
+        self.pending = None
+        self.result = None
+        self.error = None
+        self.prediction_choice = None
+        self.prediction_submitted = False
+        self.prediction_correct = None
+        self.closed = True
 
     def begin(self) -> int:
+        if self.closed:
+            raise LanguageLabError("语义实验室会话已关闭。")
         if self.selected_id is None:
             raise LanguageLabError("请先选择一个语义示例。")
         if self.pending is not None:
             raise LanguageLabError("当前示例正在运行。")
+        if not self.prediction_submitted:
+            raise LanguageLabError("请先提交预测，再运行示例。")
+        if self.result is not None or self.error is not None:
+            raise LanguageLabError("本例已有运行结果；重置后可以重新预测并运行。")
         self.revision += 1
         self.pending = self.revision
         self.result = None
