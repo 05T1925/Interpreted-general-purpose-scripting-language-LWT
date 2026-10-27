@@ -153,3 +153,16 @@
 - **桌面验收边界：** 启动自身窗口后发现其他应用占据/遮挡桌面，未继续向日志侦探、语义实验室或 Snake 发送点击/键盘输入；关闭了本轮启动的进程。故工作台组合查询/旧结果清除/原始报告/零匹配/文件恢复/Unicode 路径/缩放、第五题结束页及重开、Snake 按键/失焦/终态重开均没有本轮人工点击证据。详见 [S19 执行报告](s19-language-lab.md)，不把无头状态测试或窗口几何信息冒充人工验收。
 - **实际验证：** `python tools/run_tests.py` 为 194/194；项目完整性 194 cases/287 links/194 IDs；全量 unittest 268 项；S10 应用 25、报告视图 14、语义实验室 11、日志侦探 11、Snake 13 项定向测试均通过；compileall、246 行 LWT 统计、28 个 Markdown 文件/520 个本地链接/围栏检查与最终 `git diff --check main...HEAD` 均通过。默认及 WARN/retry 示例用公开 CLI 实跑。保护文件差异为空。
 - **责任与状态：** 课程 LWT 应用 `app/log_report.lwt` 保持 246 行，S10 CLI 测试保持 25 项；语言黑盒仍为 194/194。没有修改运行时、正式语言规范或语言黑盒矩阵。保护的 S10 并发和 S11 性能文件未改，且没有运行证据生成器。阶段提交与完整检查结果以 [S19 执行报告](s19-language-lab.md)为准；实施完成，等待主窗口审查。S12 未开始。
+
+## S20｜课程演示交互与 GUI 验收收口（2026-10-27）
+
+- **实际接收的任务提示：** 用户要求从已审查的本地 `main` 基线 `44f85e9b2b3a1c3c12e57f66d0adb286588ffbf6` 创建 `stage/s20-teaching-demo-acceptance`；修正 Tkinter/Tcl 启动失败退出码；将现有六个 LWT CLI 教学示例改成先预测、再运行、最后解释；尝试桌面验收并区分实操、无头测试和未验证；更新阶段文档、分层提交。明确保留 S10/S11 证据，不改 LWT 语义/运行时，不合并、推送或开始 S12。
+- **计划基线差异：** `docs/s20-optimization-plan.md` 初稿写的是 `3057df6...`，用户当前指令明确指定 `44f85e9...`；执行窗口核验后使用指定的 `main` HEAD，未用落后的 `origin/main` 覆盖。`origin/main` 实际 ref 为 `de608f7fbf50946715d370df014657169eb8f26d`，相对基线落后 69 个提交，未 fetch 或推送。
+- **Agent 实施内容：** 将入口改为 `main() -> int`；只捕获 Tk/Tcl 预期启动错误并返回 1，正常 shim 主循环退出返回 0；未预期 UI 异常保留 traceback。六个 `LabExample` 增加题目、有限选项、固定答案和解释；`LabSession` 增加选择/提交/重置/关闭、过期 revision 拒绝和预测正确性状态；Tk 前端在提交前禁用运行、运行中锁定可能改变状态的控件，并通过主线程队列更新界面。
+- **人工代码复核与修正：** 复核发现通用“符合记录预期”不足以让答辩人理解 exit 3 是正确的预期诊断；加入结果摘要，使成功例标注成功、预期错误例明确写“按预期报告 RuntimeError”，并测试该摘要。核对六例固定答案与 stdout/退出契约一致，预测正确性与实际 CLI 契约不共用一项状态。未增加任意源码、Python 解释、`eval/exec`、第三方依赖或 LWT 语法。
+- **入口证据：** 四项真实子进程测试覆盖 Tkinter 导入失败、Tcl 初始化失败、隔离成功 shim 和未预期 UI RuntimeError。前两项 stdout 为空、stderr 有诊断、非零退出且无 traceback；成功 shim 返回 0；未预期 RuntimeError 返回非零并保留 traceback。
+- **六例 CLI 结果：** 六个示例均用实际 `sys.executable -m lwt` 子进程复跑并与固定预期吻合。控制流 stdout `0/-1/2/-3`；前向递归 `120`；集合快照访问 `draft/review`，并显示更新后的 record 数组；文本/参数首行 `2`，随后两行列表；stdin 接收 `LWT 输入演示` 并按例输出；除零返回 exit 3、`:2:8: RuntimeError: division by zero`、无 Python traceback。使用 `--` 的文本例参数是 `examples/fixtures/text_tools.txt` 与 `preview`。
+- **桌面验收：** 启动了语义实验室目标窗口并取得目标窗口截图；截图显示另一应用窗口覆盖目标窗口，无法确保输入可归因。本窗口遵守任务要求，在第一次观察后没有激活、点击、键入或向其他应用切换；本轮所有 GUI 人工操作（语义实验室、分析工作台、日志侦探、Snake）均未验证。窗口启动/句柄不作为 GUI 交互通过。无头和 CLI 证据分别列在 [S20 实施报告](s20-teaching-demo.md)。
+- **可归因回归：** `python tools/run_tests.py` 194/194；完整性 194/287/194；全量 unittest 276（较 S19 的 268 增加 8）；语义实验室 15、入口 4、报告视图 14、日志侦探 11、Snake 13、S10 应用 25 均通过；compileall 通过，LWT 行数 246。每条命令及 GUI 未验证项见 [S20 实施报告](s20-teaching-demo.md)。保护的六个 S10/S11 文件相对基线无差异，没有运行会改写原始证据的生成器。
+- **分层提交：** `236c54dbe37e59e4fbc1b6e87c9302edbd125a17`（入口和入口测试）、`fea8aff2d4eab3bff61e5c607478d4f3b327c65a`（预测数据/状态与测试）、`5104a8f89b8efe4739bd6e9bb439563a6d716c2d`（Tk 交互）。阶段报告和规划/说明文档作为最后提交；最终阶段 HEAD 见本窗口交接。
+- **责任与状态：** S20 在独立阶段分支实施完成，等待主窗口审查；不声称人工 GUI 验收通过。课程 Agent 编写的完整应用仍是 `app/log_report.lwt`；语义实验室是 Python 教学前端。S12 仍未开始。

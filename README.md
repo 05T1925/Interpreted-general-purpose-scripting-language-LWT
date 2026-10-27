@@ -1,13 +1,13 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S19 已通过主窗口审查并合入本地 `main`；S20 是进入最终收尾前最后一次教学交互与 GUI 验收阶段。S12 的新克隆验收、Python 3.10/远端 CI、PPT、最终演示和交付仍未开始。状态见 [`project.md`](project.md)、[S19 主窗口复核](docs/s19-main-review.md)、[S20 优化规划](docs/s20-optimization-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S19 已通过主窗口审查并合入本地 `main`；S20 已在独立阶段分支实施，等待主窗口审查。S12 的新克隆验收、Python 3.10/远端 CI、PPT、最终演示和交付仍未开始。状态见 [`project.md`](project.md)、[S19 主窗口复核](docs/s19-main-review.md)、[S20 实施说明与报告](docs/s20-teaching-demo.md)和[阶段路线图](阶段执行与审查路线图.md)。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；当前顺序为 S19 审查通过 → S20 教学交互/GUI 收口 → 最终收尾 S12。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；当前顺序为 S20 主窗口审查 → 最终收尾 S12。
 5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已将两项审查澄清并入正文。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
@@ -27,6 +27,7 @@
 21. [S19 语言实验室工作报告](docs/s19-language-lab.md)：报告拆行修复、语义示例、测试与桌面验收边界。
 22. [S19 主窗口复核](docs/s19-main-review.md)：独立测试结果、启动失败退出码遗留及 S20 交接。
 23. [S20 优化规划](docs/s20-optimization-plan.md)：预测—运行—解释教学交互、启动契约修复与 GUI 验收收口。
+24. [S20 教学演示说明与实施报告](docs/s20-teaching-demo.md)：六例预测流程、CLI 实测、GUI 验收边界、命令结果和分支提交。
 
 运行仓库结构完整性检查：
 
@@ -120,9 +121,9 @@ S18 增加“分析工作台”选项卡：可选择日志、输入 Level/Keywor
 
 S15–S18 已通过主窗口审查并合入本地 `main`。S17 主窗口实际操作了两款 GUI 的主路径；S18 的新增操作和剩余边界按“实际点击/无头测试/未验证”分别记录在[阶段报告](docs/s18-workbench.md)，新发现的 Unicode 边界见[主窗口复核](docs/s18-main-review.md)。
 
-### S19 LWT 语义实验室
+### S19–S20 LWT 语义实验室
 
-从仓库根运行 `python -m app.language_lab`。只读 Python/Tkinter 前端展示固定白名单 LWT 示例，并把程序交给 `python -m lwt` 真实执行；可查看完整源码、语言规范章节、观察点、argv/工作目录/stdin、stdout、stderr、退出码和预期核对状态。它不是第二个 LWT 应用，课程 Agent 应用仍为 `app/log_report.lwt`。示例 CLI 后退方案和证据见 [S19 工作报告](docs/s19-language-lab.md)；无头定向测试为 `python -m unittest discover -s tests -p "test_language_lab.py" -v`。
+从仓库根运行 `python -m app.language_lab`。只读 Python/Tkinter 前端展示固定白名单 LWT 示例，并把程序交给 `python -m lwt` 真实执行。S20 加入先选答案并提交、再运行、最后对照预测反馈、实际 CLI 输出和解释的流程；预测正确性与 CLI 契约核对分开显示，预期运行时错误明确标注为诊断。Tkinter/Tcl 启动失败会写入 stderr 并返回非零退出码。它不是第二个 LWT 应用，课程 Agent 应用仍为 `app/log_report.lwt`。详见 [S20 教学演示说明与实施报告](docs/s20-teaching-demo.md)；无头定向测试分别为 `python -m unittest discover -s tests -p "test_language_lab.py" -v` 和 `python -m unittest discover -s tests -p "test_language_lab_entry.py" -v`。
 
 ### S16 独立图形化贪吃蛇
 
@@ -132,7 +133,7 @@ S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/
 
 ## S11 性能实验
 
-S11–S19 已通过主窗口审查并合入本地 `main`；S20 是最终收尾前的最后一次应用教学交互和 GUI 验收阶段。S12 最终交付仍未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)、[S19 主窗口复核](docs/s19-main-review.md)和[S20 优化规划](docs/s20-optimization-plan.md)。
+S11–S19 已通过主窗口审查并合入本地 `main`；S20 已在阶段分支完成实施，等待主窗口审查。S12 最终交付仍未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)和[S20 实施报告](docs/s20-teaching-demo.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
@@ -150,4 +151,4 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S9 开发指南、仓库 Skill 和三项独立盲测已审查通过，Skill 自动路由仍不可观测；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S13 综合审计和 S14 完整性门禁/权限错误回归均已通过主窗口审查并合入本地 `main`。S15 日志侦探 GUI、S16 独立贪吃蛇、S17 界面打磨、S18 工作台和 S19 语义实验室均已审查并合入本地 `main`；S19 的 Tkinter 不可用启动路径错误返回 0，列入 S20 修复。S20 完成后进入最终 S12，负责新克隆验收、Python 3.10/远端 CI、PPT、演示和最终交付。
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S15–S19 应用/展示阶段已审查并合入本地 `main`。S20 修复语义实验室 Tk/Tcl 启动错误码并加入预测—运行—解释交互，现等待主窗口审查；S12 的新克隆验收、Python 3.10/远端 CI、PPT、演示和最终交付仍未开始。

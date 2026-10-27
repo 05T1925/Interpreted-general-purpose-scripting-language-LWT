@@ -107,7 +107,7 @@ python -m unittest discover -s tests -p "test_log_report_view.py" -v
 
 设计边界、实测观察、自动测试和未验证事项见 [`../docs/s15-app-gui.md`](../docs/s15-app-gui.md)。
 
-## LWT 语义实验室（S19）
+## LWT 语义实验室（S19–S20）
 
 从仓库根目录运行：
 
@@ -115,15 +115,16 @@ python -m unittest discover -s tests -p "test_log_report_view.py" -v
 python -m app.language_lab
 ```
 
-实验室是 Python/Tkinter 制作的只读教学前端，并通过真实的 `sys.executable -m lwt` CLI 执行固定白名单中的示例。它展示完整 LWT 源码、对应规范章节、运行前观察点、本次 argv、工作目录、`--` 后程序参数或 stdin，以及实际 stdout、stderr 和退出码。成功样例核对精确 stdout；运行时错误样例显示预期诊断，不隐藏真实 CLI 输出。源码不可编辑，也不接受任意路径或用户程序。网络和第三方依赖均不需要。
+实验室是 Python/Tkinter 制作的只读教学前端，并通过真实的 `sys.executable -m lwt` CLI 执行固定白名单中的示例。每例先显示一道固定预测题：选择并提交后才可运行；运行后同时显示学生选项与正确性、实际 stdout/stderr/退出码，以及预测题解释。预测答案与 CLI 契约状态是两项不同结果。成功样例核对精确 stdout；预期运行时错误明确显示“按预期报告 RuntimeError”，不把诊断误标为普通成功，也不隐藏真实 CLI 输出。源码不可编辑，也不接受任意路径或用户程序。网络和第三方依赖均不需要。
 
-示例复用 `examples/control_flow.lwt`、`examples/functions.lwt`、`examples/collections.lwt`、`examples/text_tools.lwt` 与 `examples/basic_io.lwt`；错误定位使用 `examples/language_lab/division_by_zero.lwt`。无图形桌面时可直接运行示例 CLI；逐例命令和预期输出见 [`../docs/s19-language-lab.md`](../docs/s19-language-lab.md)。定向无头测试命令：
+示例复用 `examples/control_flow.lwt`、`examples/functions.lwt`、`examples/collections.lwt`、`examples/text_tools.lwt` 与 `examples/basic_io.lwt`；错误定位使用 `examples/language_lab/division_by_zero.lwt`。无图形桌面时可直接运行示例 CLI；逐例命令和预期输出见 [`../docs/s20-teaching-demo.md`](../docs/s20-teaching-demo.md)。无头定向测试：
 
 ```powershell
 python -m unittest discover -s tests -p "test_language_lab.py" -v
+python -m unittest discover -s tests -p "test_language_lab_entry.py" -v
 ```
 
-语义实验室是**Python 教学/展示前端**，不是第二个“用 LWT 编写的应用”。课程 Agent 编写的完整 LWT 应用仍是 `app/log_report.lwt`，日志读取、解析、过滤、统计和排序仍由 LWT 实现。三分钟演示顺序、示例预期和实测边界见 [`../docs/s19-language-lab.md`](../docs/s19-language-lab.md)。
+语义实验室是**Python 教学/展示前端**，通过公开 CLI 运行 LWT 示例，不是第二个“用 LWT 编写的应用”。课程 Agent 编写的完整 LWT 应用仍是 `app/log_report.lwt`，日志读取、解析、过滤、统计和排序仍由 LWT 实现。Tkinter/Tcl 缺失或启动失败时，模块入口在 stderr 给出诊断并返回非零退出码；其他未预期程序异常仍保留回溯供调试。S20 三至五分钟演示步骤、CLI 实测结果和人工 GUI 未验证项见 [`../docs/s20-teaching-demo.md`](../docs/s20-teaching-demo.md)。
 
 ## 独立贪吃蛇（S16；S17 复检与界面打磨）
 

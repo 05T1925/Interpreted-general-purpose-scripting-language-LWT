@@ -76,4 +76,4 @@ S13 是进入最终交付前的全面审计；S14 接续 S13 风险登记，完�
 
 远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，合并其仅含 README 的初始提交与本地规划提交，并正常推送 `main`；后续同步状态以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
 
-**S0–S11、S13–S19 已通过主窗口审查并合入本地 `main`；S20 待派发；S12 仍为最后收尾且未开始。** S18 工作台和 S19 语义实验室证据分别见[复核记录](docs/s18-main-review.md)、[S19 主窗口复核](docs/s19-main-review.md)及[S19 执行报告](docs/s19-language-lab.md)。S20 规划见[优化规划](docs/s20-optimization-plan.md)。Python 3.10、远端 Actions、新克隆验收、PPT、答辩演示和远端同步仍由 S12 负责。
+**S0–S11、S13–S19 已通过主窗口审查并合入本地 `main`；S20 已在阶段分支实施、等待主窗口审查；S12 仍为最后收尾且未开始。** S18 工作台和 S19 语义实验室证据见相应复核记录；S20 入口修复、预测交互和测试/GUI 验收边界见[实施报告](docs/s20-teaching-demo.md)。Python 3.10、远端 Actions、新克隆验收、PPT、答辩演示和远端同步仍由 S12 负责。
