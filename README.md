@@ -1,13 +1,13 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S17 已通过主窗口审查并合入本地 `main`；S18 在独立阶段分支实施完成，等待主窗口审查；S12 仍是最后收尾。新克隆验收、Python 3.10/远端 CI、PPT、最终演示和交付仍未开始。状态见 [`project.md`](project.md)、[S18 工作报告](docs/s18-workbench.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S18 已通过主窗口审查并合入本地 `main`；S18 带一项合法 Unicode 报告边界遗留，S19 已规划先修复再增强语言展示；S12 仍是最后收尾。新克隆验收、Python 3.10/远端 CI、PPT、最终演示和交付仍未开始。状态见 [`project.md`](project.md)、[S18 主窗口复核](docs/s18-main-review.md)、[S19 规划](docs/s19-optimization-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；当前顺序为 S17 已通过 → S18 应用增强 → 最终收尾 S12。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；当前顺序为 S18 带遗留通过 → S19 语言展示增强 → 最终收尾 S12。
 5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已将两项审查澄清并入正文。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
@@ -22,6 +22,8 @@
 16. [S17 GUI 复检与打磨报告](docs/s17-app-polish.md)：共同主题、响应式排版、Snake 结束态重开修复和逐项验收状态。
 17. [S17 主窗口复核](docs/s17-main-review.md)：独立回归、实际桌面交互与剩余边界。
 18. [S18 优化规划](docs/s18-optimization-plan.md)：LWT 驱动分析工作台与评分证据增强方向。
+19. [S18 主窗口复核](docs/s18-main-review.md)：独立检查、合法 Unicode 边界复现与遗留责任。
+20. [S19 优化规划](docs/s19-optimization-plan.md)：先修报告边界，再建设精选 LWT 语义实验室。
 
 运行仓库结构完整性检查：
 
@@ -113,7 +115,7 @@ python -m unittest discover -s tests -p "test_log_detective.py" -v
 
 S18 增加“分析工作台”选项卡：可选择日志、输入 Level/Keyword/Top，查看 LWT 生成的摘要、级别与模块图表、前三条示例和此次完整原始报告；五题挑战保留。工作台显示实际 CLI argv，图表只按报告已给计数缩放。Python GUI 负责窗口、构造参数和严格校验报告；日志读取、解析、过滤、统计与排序仍由 `app/log_report.lwt` 经公开 CLI 完成。无桌面环境仍可运行 [确定性演示日志](app/fixtures/showcase.log) 的 CLI 命令和无头测试。操作说明与约三分钟演示顺序见[应用说明](app/README.md)和[S18 展示说明](docs/s18-app-showcase.md)。
 
-S15–S17 已通过主窗口审查并合入本地 `main`。S17 主窗口实际操作了两款 GUI 的主路径；S18 的新增操作和剩余边界按“实际点击/无头测试/未验证”分别记录在[阶段报告](docs/s18-workbench.md)。
+S15–S18 已通过主窗口审查并合入本地 `main`。S17 主窗口实际操作了两款 GUI 的主路径；S18 的新增操作和剩余边界按“实际点击/无头测试/未验证”分别记录在[阶段报告](docs/s18-workbench.md)，新发现的 Unicode 边界见[主窗口复核](docs/s18-main-review.md)。
 
 ### S16 独立图形化贪吃蛇
 
@@ -123,7 +125,7 @@ S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/
 
 ## S11 性能实验
 
-S11–S17 已通过主窗口审查并合入本地 `main`；S18 实施完成，等待审查，S12 最后收尾仍未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)、[S18 工作报告](docs/s18-workbench.md)。
+S11–S18 已通过主窗口审查并合入本地 `main`；S19 待派发，S12 最后收尾仍未开始。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)、[S18 主窗口复核](docs/s18-main-review.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
@@ -141,4 +143,4 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S9 开发指南、仓库 Skill 和三项独立盲测已审查通过，Skill 自动路由仍不可观测；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S13 综合审计和 S14 完整性门禁/权限错误回归均已通过主窗口审查并合入本地 `main`。S15 日志侦探 GUI、S16 独立贪吃蛇及 S17 界面打磨已审查通过；S18 工作台在阶段分支实施完成、等待主窗口审查。S12 仍未开始，负责新克隆验收、Python 3.10/远端 CI、PPT、演示和最终交付。
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。当前规范允许的程序不再使用阶段临时代码 `Incomplete`/1。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S9 开发指南、仓库 Skill 和三项独立盲测已审查通过，Skill 自动路由仍不可观测；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S13 综合审计和 S14 完整性门禁/权限错误回归均已通过主窗口审查并合入本地 `main`。S15 日志侦探 GUI、S16 独立贪吃蛇、S17 界面打磨和 S18 工作台均已审查并合入本地 `main`；S18 的合法 Unicode 边界由 S19 首项修复。S12 仍未开始，负责新克隆验收、Python 3.10/远端 CI、PPT、演示和最终交付。
