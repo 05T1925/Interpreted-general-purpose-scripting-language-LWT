@@ -146,7 +146,7 @@ python -m unittest discover -s tests -p "test_language_lab.py" -v
 | 1 | `0aa34ad28166fe7df716f951bc7fb41ac63a4c9e` | 报告按 LF 协议拆行与真实 CLI Unicode 回归。 |
 | 2 | `4e48f40bd1473971dd126ba68b37bdc6fe753154` | 语义实验室核心、Tk 界面、入口、错误示例与初版 9 项测试。 |
 | 3 | `fd7972246191da40e6f57c448440f5791301b9fb` | Tkinter 缺失/Tcl 初始化失败转为可读错误，并新增两项测试。 |
-| 4 | `2a4f319` | 保留空报告与额外末尾 LF 的严格拒绝回归。 |
+| 4 | `2a4f319247c5a5bbafd5f9c540e1681fb924b278` | 保留空报告与额外末尾 LF 的严格拒绝回归。 |
 | 5 | 文档阶段提交 | 本报告、状态文档、应用说明和 Agent 开发记录；最终 SHA 由执行窗口交接时列出。 |
 
 - 与本阶段基线比较，六个保护文件没有差异：`app/log_report.lwt`、`tests/test_app.py`、`reports/app-concurrency.json`、`docs/app-concurrency.md`、`bench/results.json`、`reports/performance.md`。
