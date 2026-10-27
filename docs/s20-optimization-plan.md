@@ -28,3 +28,9 @@
 ## 不在本阶段做
 
 不做最终 PPT、新克隆验收、Python 3.10 和远端 Actions 最终门禁、推送/发布/打标签；这些归 S12。不增加联网、用户脚本编辑器、任意代码执行、云服务、第三方依赖、排行榜、更多小游戏或新的 LWT 语法。S20 完成并审查后进入 S12，除非发现真实阻断缺陷。
+
+## 设计参考
+
+- Tucker 等人在 2024 年《Learning and Instruction》发表的[编程教学预测任务研究](https://doi.org/10.1016/j.learninstruc.2023.101871)比较了预测与讲解/练习教学活动。该研究为“先预测、再运行、再解释”提供教学设计启发；本项目没有开展学习效果实验，因此不宣称 S20 能提升学习成绩。
+- Python 官方 [`sys.exit`](https://docs.python.org/3/library/sys.html#sys.exit) 文档说明退出码 0 表示成功，非零表示异常终止；这是启动失败应返回非零的契约依据。
+- Python 官方 [Tkinter 线程模型](https://docs.python.org/3/library/tkinter.html#threading-model)指出事件处理应快速返回，长任务宜放入其他线程或分段执行；沿用 S19 的后台 CLI、Tk 主线程绘制边界。
