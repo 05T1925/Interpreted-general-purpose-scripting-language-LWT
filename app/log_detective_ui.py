@@ -19,6 +19,13 @@ from app.log_detective_core import (
     analyze_question,
     full_report,
 )
+from app.log_report_view import (
+    LogReport,
+    WorkbenchQuery,
+    WorkbenchSession,
+    analyze_workbench,
+)
+from app.log_workbench_ui import WorkbenchPanel
 from app.ui_theme import COLORS, apply_theme, system_font
 
 
@@ -27,6 +34,7 @@ class _WorkerResult:
     action: str
     value: object | None = None
     error: Exception | None = None
+    revision: int | None = None
 
 
 class GuiUnavailableError(RuntimeError):
@@ -49,14 +57,16 @@ class LogDetectiveApp:
         self.question_runner = question_runner
         self.report_runner = report_runner
         self.session = GameSession()
+        self.workbench_state = WorkbenchSession()
         self.results: dict[int, AnalysisResult] = {}
         self.messages: queue.Queue[_WorkerResult] = queue.Queue()
         self.busy = False
+        self._busy_action: str | None = None
         self._closing = False
         self._poll_id: str | None = None
 
         root.title("LWT 日志侦探")
-        root.geometry("920x680")
+        root.geometry("1080x750")
         root.minsize(640, 500)
         apply_theme(root)
         root.columnconfigure(0, weight=1)
@@ -99,10 +109,24 @@ class LogDetectiveApp:
         self.choose_button = ttk.Button(file_row, text="选择日志文件…", command=self.choose_file)
         self.choose_button.grid(row=0, column=2, sticky="e")
 
-        self.content = ttk.Frame(outer, padding=20, style="Card.TFrame")
-        self.content.grid(row=3, column=0, sticky="nsew")
+        self.notebook = ttk.Notebook(outer)
+        self.notebook.grid(row=3, column=0, sticky="nsew")
+        self.workbench = WorkbenchPanel(
+            self.notebook,
+            on_query=self.query_workbench,
+            on_change=self._invalidate_workbench,
+            on_report=self.show_workbench_report,
+        )
+        self.notebook.add(self.workbench, text="分析工作台")
+        self.challenge_tab = ttk.Frame(self.notebook, padding=(10, 8))
+        self.challenge_tab.columnconfigure(0, weight=1)
+        self.challenge_tab.rowconfigure(0, weight=1)
+        self.notebook.add(self.challenge_tab, text="五题挑战")
+
+        self.content = ttk.Frame(self.challenge_tab, padding=20, style="Card.TFrame")
+        self.content.grid(row=0, column=0, sticky="nsew")
         self.content.columnconfigure(0, weight=1)
-        self.content.rowconfigure(2, weight=1)
+        self.content.rowconfigure(4, weight=1)
         self.progress_var = tk.StringVar(value=f"第 0/{self.session.question_count} 题　得分：0")
         ttk.Label(self.content, textvariable=self.progress_var, style="CardHeading.TLabel").grid(
             row=0, column=0, sticky="w"
@@ -138,8 +162,8 @@ class LogDetectiveApp:
         self.submit_button.grid(row=0, column=2, sticky="w")
         self.answer_entry.bind("<Return>", self._submit_on_enter)
 
-        actions = ttk.Frame(outer)
-        actions.grid(row=4, column=0, sticky="ew", pady=(14, 0))
+        actions = ttk.Frame(self.challenge_tab)
+        actions.grid(row=1, column=0, sticky="ew", pady=(10, 0))
         self.start_button = ttk.Button(
             actions, text="开始游戏", style="Primary.TButton", command=self.start_game
         )
@@ -153,6 +177,7 @@ class LogDetectiveApp:
         self.status_label.pack(side="right")
 
         root.bind("<Configure>", self._on_resize, add="+")
+        self.notebook.bind("<<NotebookTabChanged>>", self._on_tab_changed, add="+")
         root.protocol("WM_DELETE_WINDOW", self._on_close)
         self._poll_id = self.root.after(60, self._drain_messages)
         self._render_state()
@@ -185,21 +210,25 @@ class LogDetectiveApp:
         self.choose_button.configure(state=state)
         self.start_button.configure(state=state)
         self.report_button.configure(state=state)
+        self.workbench.set_busy(busy)
         if busy:
             self.submit_button.configure(state="disabled")
             self.next_button.configure(state="disabled")
         self._set_status("正在运行 LWT 分析器…" if busy else "就绪")
 
-    def _run_worker(self, action: str, callback: Callable[[], object]) -> None:
+    def _run_worker(
+        self, action: str, callback: Callable[[], object], revision: int | None = None
+    ) -> None:
         if self.busy:
             return
+        self._busy_action = action
         self._set_busy(True)
 
         def work() -> None:
             try:
-                self.messages.put(_WorkerResult(action, value=callback()))
+                self.messages.put(_WorkerResult(action, value=callback(), revision=revision))
             except Exception as error:  # show errors safely on Tk's own thread
-                self.messages.put(_WorkerResult(action, error=error))
+                self.messages.put(_WorkerResult(action, error=error, revision=revision))
 
         threading.Thread(target=work, name=f"lwt-{action}", daemon=True).start()
 
@@ -209,7 +238,23 @@ class LogDetectiveApp:
         try:
             while True:
                 result = self.messages.get_nowait()
+                self._busy_action = None
                 self._set_busy(False)
+                if result.action == "analysis":
+                    accepted = self.workbench_state.complete(
+                        result.revision if result.revision is not None else -1,
+                        result.value if isinstance(result.value, LogReport) else None,
+                        str(result.error) if result.error is not None else None,
+                    )
+                    if accepted:
+                        if result.error is not None:
+                            self.workbench.show_error(str(result.error))
+                        elif isinstance(result.value, LogReport):
+                            query = self.workbench_state.query
+                            if query is not None:
+                                self.workbench.show_report(query, result.value)
+                    self._render_state()
+                    continue
                 if result.error is not None:
                     if result.action == "question":
                         self._set_feedback(
@@ -332,6 +377,8 @@ class LogDetectiveApp:
             self._render_state()
 
     def choose_file(self) -> None:
+        if self.busy:
+            return
         filename = filedialog.askopenfilename(
             parent=self.root,
             title="选择日志文件",
@@ -341,6 +388,7 @@ class LogDetectiveApp:
             return
         self.log_path = Path(filename).resolve()
         self.path_var.set(str(self.log_path))
+        self._invalidate_workbench()
         self.session = GameSession()
         self.results.clear()
         self._set_feedback("已选择新日志。开始游戏后将由 LWT 分析该文件。", "success")
@@ -348,6 +396,38 @@ class LogDetectiveApp:
 
     def show_full_report(self) -> None:
         self._run_worker("report", lambda: self.report_runner(self.log_path))
+
+    def _invalidate_workbench(self) -> None:
+        self.workbench_state.invalidate()
+        self.workbench.clear("条件已改变，请重新运行 LWT 查询。")
+        self.workbench.status_var.set("等待新查询")
+        self.workbench.status_label.configure(style="Status.TLabel")
+
+    def _on_tab_changed(self, _event: tk.Event[tk.Misc]) -> None:
+        if self._busy_action == "analysis" and self.notebook.select() != str(self.workbench):
+            self._invalidate_workbench()
+
+    def query_workbench(self) -> None:
+        if self.busy:
+            return
+        try:
+            query = WorkbenchQuery.from_fields(
+                self.log_path,
+                self.workbench.level_var.get(),
+                self.workbench.keyword_var.get(),
+                self.workbench.top_var.get(),
+            )
+        except Exception as error:
+            self._invalidate_workbench()
+            self.workbench.show_error(str(error))
+            return
+        revision = self.workbench_state.begin(query)
+        self.workbench.show_running(query)
+        self._run_worker("analysis", lambda: analyze_workbench(query), revision)
+
+    def show_workbench_report(self) -> None:
+        if self.workbench_state.report is not None and not self.busy:
+            self._open_report(self.workbench_state.report.raw)
 
     def _open_report(self, report: str) -> None:
         window = tk.Toplevel(self.root)
@@ -375,6 +455,7 @@ class LogDetectiveApp:
 
     def _on_close(self) -> None:
         self._closing = True
+        self.workbench_state.invalidate()
         if self._poll_id is not None:
             try:
                 self.root.after_cancel(self._poll_id)

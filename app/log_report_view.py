@@ -141,8 +141,9 @@ def parse_report(raw: str, *, top: str = "5") -> LogReport:
     ]:
         raise AnalyzerError("LWT 报告章节重复或顺序错误。")
     if any(
-        line.startswith(tuple(f"{field}: " for field in _FIELDS))
+        re.fullmatch(rf"{re.escape(field)}: [0-9]+", line)
         for line in lines[6:]
+        for field in _FIELDS
     ):
         raise AnalyzerError("LWT 报告包含重复的固定计数字段。")
 
@@ -168,3 +169,40 @@ def analyze_workbench(query: WorkbenchQuery) -> LogReport:
     """Run the public LWT CLI once and interpret only its stdout report."""
 
     return parse_report(run_lwt_report(query.log_path, query.filter_args), top=query.top)
+
+
+class WorkbenchSession:
+    """Keep asynchronous results tied to the exact requested conditions."""
+
+    def __init__(self) -> None:
+        self.revision = 0
+        self.pending: int | None = None
+        self.query: WorkbenchQuery | None = None
+        self.report: LogReport | None = None
+        self.error: str | None = None
+
+    def invalidate(self) -> None:
+        self.revision += 1
+        self.query = None
+        self.report = None
+        self.error = None
+
+    def begin(self, query: WorkbenchQuery) -> int:
+        if self.pending is not None:
+            raise RuntimeError("a workbench query is already running")
+        self.invalidate()
+        self.query = query
+        self.pending = self.revision
+        return self.pending
+
+    def complete(
+        self, revision: int, report: LogReport | None, error: str | None = None
+    ) -> bool:
+        if self.pending != revision:
+            return False
+        self.pending = None
+        if self.revision != revision:
+            return False
+        self.report = report
+        self.error = error
+        return True

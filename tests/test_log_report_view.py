@@ -7,7 +7,13 @@ import tempfile
 import unittest
 
 from app.log_detective_core import AnalyzerError
-from app.log_report_view import CountRow, WorkbenchQuery, analyze_workbench, parse_report
+from app.log_report_view import (
+    CountRow,
+    WorkbenchQuery,
+    WorkbenchSession,
+    analyze_workbench,
+    parse_report,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -156,6 +162,34 @@ class ReportContractTests(unittest.TestCase):
         self.assertEqual(sum(row.count for row in parsed.top_modules), 2)
         with self.assertRaisesRegex(AnalyzerError, "Top"):
             parse_report(parsed.raw, top="0")
+
+    def test_changed_conditions_discard_inflight_result_and_allow_retry(self) -> None:
+        state = WorkbenchSession()
+        first = WorkbenchQuery.from_fields(SAMPLE, level="INFO")
+        stale_report = parse_report(report(0, 0, 0, 0))
+        revision = state.begin(first)
+        with self.assertRaises(RuntimeError):
+            state.begin(first)
+        state.invalidate()
+        self.assertFalse(state.complete(revision, stale_report))
+        self.assertIsNone(state.report)
+        self.assertIsNone(state.pending)
+        next_query = WorkbenchQuery.from_fields(SAMPLE, level="WARN")
+        next_revision = state.begin(next_query)
+        self.assertTrue(state.complete(next_revision, stale_report))
+        self.assertEqual(state.query, next_query)
+        self.assertIs(state.report, stale_report)
+
+    def test_failed_result_does_not_leave_an_old_report_visible(self) -> None:
+        state = WorkbenchSession()
+        query = WorkbenchQuery.from_fields(SAMPLE)
+        first = state.begin(query)
+        self.assertTrue(state.complete(first, parse_report(report(0, 0, 0, 0))))
+        second = state.begin(query)
+        self.assertIsNone(state.report)
+        self.assertTrue(state.complete(second, None, "文件不存在"))
+        self.assertIsNone(state.report)
+        self.assertEqual(state.error, "文件不存在")
 
 
 if __name__ == "__main__":
