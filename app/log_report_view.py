@@ -162,6 +162,8 @@ def parse_report(raw: str, *, top: str = "5") -> LogReport:
         raise AnalyzerError("LWT 报告模块排行计数超过匹配数。")
     if len(examples) != min(3, matched):
         raise AnalyzerError("LWT 报告匹配示例数量与匹配数不符。")
+    if any(example.count("|") != 3 for example in examples):
+        raise AnalyzerError("LWT 报告匹配示例不是四字段记录。")
     return LogReport(total, valid, malformed, matched, levels, modules, examples, raw)
 
 

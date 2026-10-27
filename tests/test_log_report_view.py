@@ -159,6 +159,7 @@ class ReportContractTests(unittest.TestCase):
             good.replace("app|2", "app|2\napp|1"),
             good.replace("app|2", "app|x"),
             good.replace("t2|INFO|app|b\n", ""),
+            good.replace("t2|INFO|app|b", "broken example"),
         )
         for broken in variants:
             with self.subTest(broken=broken), self.assertRaises(AnalyzerError):
