@@ -9,6 +9,7 @@ import threading
 import tkinter as tk
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
+from typing import Callable
 
 from app.language_lab_core import (
     EXAMPLES,
@@ -32,8 +33,14 @@ class _LabMessage:
 class LanguageLabApp:
     """Own Tk controls; execute LWT CLI calls in a worker thread."""
 
-    def __init__(self, root: tk.Tk) -> None:
+    def __init__(
+        self,
+        root: tk.Tk,
+        *,
+        example_runner: Callable[[str], LabResult] | None = None,
+    ) -> None:
         self.root = root
+        self.example_runner = example_runner or run_example
         self.session = LabSession()
         self.session.select(EXAMPLES[0].id)
         self.messages: queue.Queue[_LabMessage] = queue.Queue()
@@ -391,7 +398,9 @@ class LanguageLabApp:
 
         def work() -> None:
             try:
-                self.messages.put(_LabMessage(revision, result=run_example(example_id)))
+                self.messages.put(
+                    _LabMessage(revision, result=self.example_runner(example_id))
+                )
             except LanguageLabError as error:
                 self.messages.put(_LabMessage(revision, error=str(error)))
             except Exception as error:

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tkinter as tk
 from tkinter import ttk
+from typing import Callable
 
 from app.snake_game_core import Direction, GameStatus, SnakeGame, TickResult
 from app.ui_theme import COLORS, apply_theme, system_font
@@ -15,10 +16,18 @@ TICK_MILLISECONDS = 140
 class SnakeGameApp:
     """Owns the Tk event loop and draws the headless Snake state."""
 
-    def __init__(self, root: tk.Tk) -> None:
+    def __init__(
+        self,
+        root: tk.Tk,
+        *,
+        after: Callable[[int, Callable[[], None]], str] | None = None,
+        after_cancel: Callable[[str], None] | None = None,
+    ) -> None:
         self.root = root
         self.game = SnakeGame()
         self._after_id: str | None = None
+        self._after = after or root.after
+        self._after_cancel = after_cancel or root.after_cancel
 
         root.title("LWT 贪吃蛇")
         root.geometry("820x700")
@@ -161,12 +170,12 @@ class SnakeGameApp:
 
     def _schedule_tick(self) -> None:
         if self.game.status is GameStatus.RUNNING and self._after_id is None:
-            self._after_id = self.root.after(TICK_MILLISECONDS, self._on_tick)
+            self._after_id = self._after(TICK_MILLISECONDS, self._on_tick)
 
     def _cancel_tick(self) -> None:
         if self._after_id is not None:
             try:
-                self.root.after_cancel(self._after_id)
+                self._after_cancel(self._after_id)
             except tk.TclError:
                 pass
             self._after_id = None

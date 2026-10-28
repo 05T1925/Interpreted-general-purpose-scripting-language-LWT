@@ -51,11 +51,13 @@ class LogDetectiveApp:
         log_path: str | Path = DEFAULT_LOG,
         question_runner: Callable[..., AnalysisResult] = analyze_question,
         report_runner: Callable[..., str] = full_report,
+        workbench_runner: Callable[[WorkbenchQuery], LogReport] | None = None,
     ) -> None:
         self.root = root
         self.log_path = Path(log_path).resolve()
         self.question_runner = question_runner
         self.report_runner = report_runner
+        self.workbench_runner = workbench_runner or analyze_workbench
         self.session = GameSession()
         self.workbench_state = WorkbenchSession()
         self.results: dict[int, AnalysisResult] = {}
@@ -423,7 +425,7 @@ class LogDetectiveApp:
             return
         revision = self.workbench_state.begin(query)
         self.workbench.show_running(query)
-        self._run_worker("analysis", lambda: analyze_workbench(query), revision)
+        self._run_worker("analysis", lambda: self.workbench_runner(query), revision)
 
     def show_workbench_report(self) -> None:
         if self.workbench_state.report is not None and not self.busy:
