@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S21 已通过主窗口审查并合入本地 `main`；S21 带桌面 GUI 未验证遗留通过。S22 已在独立分支完成真实 Tk 控件/事件回归和 Linux Xvfb CI 配置，等待主窗口审查；控件级自动证据不替代 S12 的人工桌面验收。S12 仍为最后交付阶段，审查通过后进行新克隆、CI/Python 兼容性、PPT、演示和交付。状态见 [`project.md`](project.md)、[S21 主窗口复核](docs/s21-main-review.md)、[S22 GUI 回归计划](docs/s22-gui-regression-plan.md)、[S22 执行报告](docs/s22-gui-regression.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C 桌面交互仍未验证。S23 计划补充确定性语义性质测试与有限故障探针，重点审计黑盒测试能否识别典型语义回归；S23 审查后进入最后的 S12。自动 GUI 证据不替代 S12 的人工桌面验收。状态见 [`project.md`](project.md)、[S21 主窗口复核](docs/s21-main-review.md)、[S22 主窗口复核](docs/s22-main-review.md)、[S23 测试充分性计划](docs/s23-test-adequacy-plan.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
 
 ## 阅读入口
 
@@ -34,7 +34,9 @@
 28. [S21 主窗口复核](docs/s21-main-review.md)：独立复核、合入状态、未验证项及 S12 交接。
 29. [S22 GUI 集成回归计划](docs/s22-gui-regression-plan.md)：以真实 Tk 控件和隔离事件循环补齐交互回归，不把合成事件当作人工 GUI 验收。
 30. [S22 GUI 集成回归执行报告](docs/s22-gui-regression.md)：三款应用控件/事件映射、真实 CLI 证据、CI 显示服务和未验证项。
-31. [S12 最终交付规划](docs/s12-final-delivery-plan.md)：评分项证据映射、新克隆/CI、GUI 预检、PPT 与答辩收尾。
+31. [S22 主窗口复核](docs/s22-main-review.md)：独立复跑结果、合入状态和 S12 遗留。
+32. [S23 黑盒测试充分性计划](docs/s23-test-adequacy-plan.md)：确定性语义性质验证与有限、可解释的故障探针；S23 报告待执行。
+33. [S12 最终交付规划](docs/s12-final-delivery-plan.md)：评分项证据映射、新克隆/CI、GUI 预检、PPT 与答辩收尾。
 
 运行仓库结构完整性检查：
 
@@ -140,7 +142,7 @@ S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/
 
 ## S11 性能实验
 
-S11–S21 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互均受遮挡限制而未验证，详见[主窗口复核](docs/s21-main-review.md)。S22 已在独立阶段分支完成控件级自动回归，等待主窗口审查；这不等于人工桌面验收。S12 是最后交付阶段，审查通过后再开始，详见[最终交付规划](docs/s12-final-delivery-plan.md)。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)、[S21 GUI 验收报告](docs/s21-gui-acceptance.md)和[S22 GUI 回归报告](docs/s22-gui-regression.md)。
+S11–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互均受遮挡限制而未验证，详见[主窗口复核](docs/s21-main-review.md)。S22 的真实 Tk 控件/事件回归已通过主窗口复核，但不等于人工桌面验收，详见[S22 主窗口复核](docs/s22-main-review.md)。下一阶段 S23 计划审计黑盒测试对典型语义回归的识别能力；审查通过后进入最后的 S12，详见[测试充分性计划](docs/s23-test-adequacy-plan.md)与[最终交付规划](docs/s12-final-delivery-plan.md)。阶段和性能证据见 [`project.md`](project.md)、[阶段路线图](阶段执行与审查路线图.md)、[S13 综合审计](docs/comprehensive-review.md)、[S14 改进报告](docs/s14-improvements.md)和[S22 GUI 回归报告](docs/s22-gui-regression.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
@@ -158,4 +160,4 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S15–S21 应用/展示阶段已审查并合入本地 `main`。S22 增加三款应用的 Tk 控件级回归与 Linux Xvfb CI 步骤，等待主窗口审查；人工桌面验收仍未完成。S12 最终新克隆、Python/CI、PPT、演示和交付尚未开始，清单见 [S12 最终交付规划](docs/s12-final-delivery-plan.md)。
+当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S15–S22 应用/展示与 GUI 控件回归阶段已审查并合入本地 `main`。S23 计划以确定性语义性质测试和有限故障探针审计测试强度；人工桌面验收仍未完成。S12 最终新克隆、Python/CI、PPT、演示和交付尚未开始，清单见 [S12 最终交付规划](docs/s12-final-delivery-plan.md)。

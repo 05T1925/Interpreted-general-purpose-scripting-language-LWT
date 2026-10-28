@@ -27,7 +27,7 @@
 
 ## 三、优先级和阶段门槛
 
-关键路径是 **冻结语义 → 解释器必需功能 → 黑盒覆盖 → Agent 指南 → Agent 应用 → 性能报告 → 全项目复检 → 质量保障升级 → 应用交互体验升级 → 应用复检与独立小游戏 → 应用视觉/交互打磨 → LWT 交互分析工作台 → 语言语义实验室 → 预测式教学交互 → 现有 GUI 桌面验收 → Tk 控件交互回归 → 最终答辩整合**。文档、示例和测试随每项语言功能同步编写，避免尾期补写。下表 P0–P6 是课程交付里程碑；实际派发按[阶段路线图](阶段执行与审查路线图.md)细分。S22 是本轮新增的最后质量阶段，审查通过后进入最终 S12。
+关键路径是 **冻结语义 → 解释器必需功能 → 黑盒覆盖 → Agent 指南 → Agent 应用 → 性能报告 → 全项目复检 → 质量保障升级 → 应用交互体验升级 → 应用复检与独立小游戏 → 应用视觉/交互打磨 → LWT 交互分析工作台 → 语言语义实验室 → 预测式教学交互 → 现有 GUI 桌面验收 → Tk 控件交互回归 → 黑盒测试强度审计 → 最终答辩整合**。文档、示例和测试随每项语言功能同步编写，避免尾期补写。下表 P0–P6 是课程交付里程碑；实际派发按[阶段路线图](阶段执行与审查路线图.md)细分。S23 是用户要求新增的最后测试质量审计，审查通过后进入最终 S12。
 
 | 阶段 | 交付结果 | 通过门槛 |
 |---|---|---|
@@ -76,4 +76,4 @@ S13 是进入最终交付前的全面审计；S14 接续 S13 风险登记，完�
 
 远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，合并其仅含 README 的初始提交与本地规划提交，并正常推送 `main`；后续同步状态以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
 
-**S0–S11、S13–S21 已通过主窗口审查并合入本地 `main`；S21 带 A/B/C GUI 未验证遗留通过；S22 已实施并等待主窗口审查；S12 是最后阶段。** S20 入口修复、预测交互和桌面验收边界见[主窗口复核](docs/s20-main-review.md)；S21 停止依据和现场复测清单见[主窗口复核](docs/s21-main-review.md)与[执行报告](docs/s21-gui-acceptance.md)。S22 控件级自动回归见[计划](docs/s22-gui-regression-plan.md)和[执行报告](docs/s22-gui-regression.md)；S12 验收范围和交付物见[最终交付规划](docs/s12-final-delivery-plan.md)，包括 Python/CI、新克隆、PPT、答辩演示和远端同步。
+**S0–S11、S13–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 人工操作仍未验证；S23 测试充分性审计已规划、待执行；S12 是最后阶段。** S20 入口修复、预测交互和桌面验收边界见[主窗口复核](docs/s20-main-review.md)；S21 停止依据和现场复测清单见[主窗口复核](docs/s21-main-review.md)与[执行报告](docs/s21-gui-acceptance.md)。S22 控件级自动回归见[主窗口复核](docs/s22-main-review.md)、[计划](docs/s22-gui-regression-plan.md)和[执行报告](docs/s22-gui-regression.md)；S23 计划见[黑盒测试充分性审计](docs/s23-test-adequacy-plan.md)；S12 验收范围和交付物见[最终交付规划](docs/s12-final-delivery-plan.md)，包括 Python/CI、新克隆、PPT、答辩演示和远端同步。
