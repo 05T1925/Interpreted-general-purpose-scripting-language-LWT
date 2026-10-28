@@ -1,0 +1,9 @@
+let n = 0; let first = 0; let second = 0;
+fn mark(value) {
+  when (n == 0) { first = value; } otherwise { second = value; }
+  n = n + 1;
+  return value;
+}
+fn pair(first, second) { return [first, second]; }
+emit pair(mark(11), mark(22));
+emit [first, second];
