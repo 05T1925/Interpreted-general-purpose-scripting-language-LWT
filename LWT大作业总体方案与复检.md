@@ -22,7 +22,7 @@
 2. **语言范围：** 整数、字符串、布尔、`null`、数组、命名 `record`、输入输出、条件与循环、函数及递归。以 `record`、`when/otherwise`、`each`、`emit` 的组合形成有辨识度的 LWT 语法。只实现支撑作业和应用所需的少量内置函数。
 3. **测试：** 所有被测程序是 `.lwt`，Python 驱动仅通过公开 CLI 注入输入、比较 stdout/stderr/退出码。覆盖以“规范条款 → 正常/边界/错误用例”矩阵为准，70 个以上独立用例是目标，不是替代覆盖率的指标。[Python `subprocess.run`](https://docs.python.org/3/library/subprocess.html)提供进程输出捕获与超时机制。
 4. **性能：** 至少两组成对 LWT/Python 脚本，使用相同算法、输入规模与结果校验。每次启动新进程测端到端耗时，保存多次原始数据并报告中位数、最小值、波动和时间比；同时说明进程启动与解析成本。[Python 计时文档](https://docs.python.org/3/library/timeit.html)提醒重复测量及环境噪声的影响。
-5. **Agent 应用：** 保留 S10 的只读 LWT 命令行日志分析器作为应用核心，覆盖解析、过滤、统计、排行、坏记录处理与 Unicode。S15 在其外层增加标准库 Tkinter 日志侦探；每题正确统计仍由公开 LWT CLI 计算，Python 不复制日志解析规则。S16 新增与日志分析器分开的 Python/Tkinter 贪吃蛇。S17 已实施共同主题、响应式排版和 Snake 结束态重开修复。S18 增加 LWT 原始报告驱动的可视化工作台。S19 修复报告 LF 拆行边界并添加只读语义实验室；S20 修复启动失败退出码并加入“预测—运行—解释”教学流程，已通过主窗口审查。S21 已尝试进行真实桌面验收，但目标窗口被其他应用遮挡，按归因规则停止输入；A/B/C 界面路径仍待可控桌面复测，详见[S21 报告](docs/s21-gui-acceptance.md)和[规划](docs/s21-gui-acceptance-plan.md)。
+5. **Agent 应用：** 保留 S10 的只读 LWT 命令行日志分析器作为应用核心，覆盖解析、过滤、统计、排行、坏记录处理与 Unicode。S15 在其外层增加标准库 Tkinter 日志侦探；每题正确统计仍由公开 LWT CLI 计算，Python 不复制日志解析规则。S16 新增与日志分析器分开的 Python/Tkinter 贪吃蛇。S17 已实施共同主题、响应式排版和 Snake 结束态重开修复。S18 增加 LWT 原始报告驱动的可视化工作台。S19 修复报告 LF 拆行边界并添加只读语义实验室；S20 修复启动失败退出码并加入“预测—运行—解释”教学流程，已通过主窗口审查。S21 已尝试进行真实桌面验收，但目标窗口被其他应用遮挡，按归因规则停止输入；S22 已增加真实 Tk 控件/事件级自动回归，未发现可复现产品缺陷。A/B/C 人工桌面路径仍待 S12 可控现场复测，详见[S21 报告](docs/s21-gui-acceptance.md)、[S22 报告](docs/s22-gui-regression.md)和[规划](docs/s21-gui-acceptance-plan.md)。
 6. **文档与历史：** 语法规范是实现行为的唯一权威说明；开发指南面向使用者；根目录 `project.md` 面向 Agent 复用；`AGENTS.md` 提醒 Agent 先读该文件。小步提交、测试和审查先于提交；新克隆仓库能按 README 复现。GitHub Actions 在一键测试稳定后接入同一命令。[官方 GitHub Python CI 指南](https://docs.github.com/en/actions/tutorials/build-and-test-code/python)建议显式设置 Python 版本。
 
 ## 三、优先级和阶段门槛
@@ -76,4 +76,4 @@ S13 是进入最终交付前的全面审计；S14 接续 S13 风险登记，完�
 
 远端：[05T1925/Interpreted-general-purpose-scripting-language-LWT](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT)。2026-10-06 已在本地添加为 `origin`，获取远端 `main`，合并其仅含 README 的初始提交与本地规划提交，并正常推送 `main`；后续同步状态以 `git status -sb` 和 `git ls-remote origin` 的实时结果为准。
 
-**S0–S11、S13–S21 已通过主窗口审查并合入本地 `main`；S21 带 A/B/C GUI 未验证遗留通过；S22 待派发；S12 是最后阶段。** S20 入口修复、预测交互和桌面验收边界见[主窗口复核](docs/s20-main-review.md)；S21 停止依据和现场复测清单见[主窗口复核](docs/s21-main-review.md)与[执行报告](docs/s21-gui-acceptance.md)。S22 范围见[GUI 回归计划](docs/s22-gui-regression-plan.md)；S12 验收范围和交付物见[最终交付规划](docs/s12-final-delivery-plan.md)，包括 Python/CI、新克隆、PPT、答辩演示和远端同步。
+**S0–S11、S13–S21 已通过主窗口审查并合入本地 `main`；S21 带 A/B/C GUI 未验证遗留通过；S22 已实施并等待主窗口审查；S12 是最后阶段。** S20 入口修复、预测交互和桌面验收边界见[主窗口复核](docs/s20-main-review.md)；S21 停止依据和现场复测清单见[主窗口复核](docs/s21-main-review.md)与[执行报告](docs/s21-gui-acceptance.md)。S22 控件级自动回归见[计划](docs/s22-gui-regression-plan.md)和[执行报告](docs/s22-gui-regression.md)；S12 验收范围和交付物见[最终交付规划](docs/s12-final-delivery-plan.md)，包括 Python/CI、新克隆、PPT、答辩演示和远端同步。

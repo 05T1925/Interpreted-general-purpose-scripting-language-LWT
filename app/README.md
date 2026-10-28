@@ -145,3 +145,14 @@ python -m unittest discover -s tests -p "test_snake_game.py" -v
 ```
 
 Tkinter 可能未随 Python 安装；若启动时报 Tk 或桌面不可用，核心测试仍可运行。S17 为两款 GUI 统一了配色、间距和系统默认字体回退；日志侦探的题面、反馈与所选路径随窗口宽度调整，Snake 棋盘缩小时收敛网格细节，结束提示按棋盘尺寸排版。S17 主窗口已实际操作两款 GUI 主路径；S18 工作台的实测与尚未验证项见 [阶段报告](../docs/s18-workbench.md)，S17 原有审查记录见 [主窗口复核](../docs/s17-main-review.md)。
+
+## S22 控件级交互回归
+
+从仓库根目录运行真实 Tk 控件/事件集成测试：
+
+```powershell
+python -m unittest discover -s tests -p "test_gui_integration.py" -v
+python tools/run_gui_integration.py --require-no-skips
+```
+
+测试使用真实应用窗口、Tk/Ttk 控件和事件循环；边界测试只注入受控 runner/timer，不替代主要 CLI 路径。语义实验室、工作台与五题挑战包含真实 `python -m lwt` 调用。Windows 上需要可用 Tk 桌面；无显示时测试会逐项标记 skip。Linux CI 会检查/按需安装 Xvfb，以虚拟显示运行 GUI 定向测试和完整 unittest。合成事件只证明控件与回调集成，不代表物理鼠标键盘、输入法、窗口管理器或人工视觉验收通过。S21 留下的人工 A/B/C 检查仍交由 S12 现场预检；完整映射、结果和限制见 [S22 执行报告](../docs/s22-gui-regression.md)。
