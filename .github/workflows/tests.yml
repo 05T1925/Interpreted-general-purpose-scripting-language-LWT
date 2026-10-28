@@ -29,7 +29,23 @@ jobs:
         run: python tools/check_project_integrity.py
       - name: Run LWT black-box suite
         run: python tools/run_tests.py
-      - name: Run Python unit tests
+      - name: Run Tk GUI integration tests (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          if command -v xvfb-run >/dev/null 2>&1; then
+            echo "GUI display setup: xvfb-run already installed"
+          else
+            echo "GUI display setup: xvfb-run missing; installing Xvfb"
+            sudo apt-get update
+            sudo apt-get install --yes xvfb xauth
+          fi
+          xvfb-run -a python -c "import tkinter as tk; root = tk.Tk(); print('Tk display ready:', root.tk.call('info', 'patchlevel')); root.destroy()"
+          xvfb-run -a python tools/run_gui_integration.py --require-no-skips
+      - name: Run Python unit tests (Linux with Xvfb)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a python -m unittest discover -s tests -v
+      - name: Run Python unit tests (non-Linux)
+        if: runner.os != 'Linux'
         run: python -m unittest discover -s tests -v
       - name: Compile Python sources
         run: python -m compileall -q lwt tests tools
