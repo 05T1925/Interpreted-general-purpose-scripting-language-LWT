@@ -7,10 +7,12 @@ from typing import Callable, NoReturn
 
 from .ast_nodes import (
     ArrayExpression,
+    BreakStatement,
     AssignmentExpression,
     BinaryExpression,
     Block,
     CallExpression,
+    ContinueStatement,
     EachStatement,
     EmitStatement,
     Expression,
@@ -66,7 +68,7 @@ class Parser:
             elif self._match(TokenKind.FN):
                 items.append(self._function_declaration(self._previous()))
             else:
-                items.append(self._statement(return_allowed=False))
+                items.append(self._statement(return_allowed=False, loop_depth=0))
         eof = self._consume(TokenKind.EOF, "expected end of file")
         return Program(tuple(items), start if items else _token_location(eof))
 
@@ -103,10 +105,10 @@ class Parser:
                 if not self._match(TokenKind.COMMA):
                     break
         self._consume(TokenKind.RIGHT_PAREN, "expected ')' after parameters")
-        body = self._block(return_allowed=True)
+        body = self._block(return_allowed=True, loop_depth=0)
         return FunctionDeclaration(name, tuple(parameters), body, _token_location(keyword))
 
-    def _statement(self, return_allowed: bool) -> Statement:
+    def _statement(self, return_allowed: bool, loop_depth: int) -> Statement:
         if self._match(TokenKind.LET):
             keyword = self._previous()
             name = self._identifier("expected variable name after 'let'")
@@ -134,10 +136,10 @@ class Parser:
             self._consume(TokenKind.LEFT_PAREN, "expected '(' after 'when'")
             condition = self._expression()
             self._consume(TokenKind.RIGHT_PAREN, "expected ')' after when condition")
-            then_branch = self._block(return_allowed=return_allowed)
+            then_branch = self._block(return_allowed=return_allowed, loop_depth=loop_depth)
             otherwise_branch = None
             if self._match(TokenKind.OTHERWISE):
-                otherwise_branch = self._block(return_allowed=return_allowed)
+                otherwise_branch = self._block(return_allowed=return_allowed, loop_depth=loop_depth)
             return WhenStatement(
                 condition, then_branch, otherwise_branch, _token_location(keyword)
             )
@@ -147,7 +149,7 @@ class Parser:
             self._consume(TokenKind.LEFT_PAREN, "expected '(' after 'while'")
             condition = self._expression()
             self._consume(TokenKind.RIGHT_PAREN, "expected ')' after while condition")
-            body = self._block(return_allowed=return_allowed)
+            body = self._block(return_allowed=return_allowed, loop_depth=loop_depth + 1)
             return WhileStatement(condition, body, _token_location(keyword))
 
         if self._match(TokenKind.EACH):
@@ -157,26 +159,41 @@ class Parser:
             self._consume(TokenKind.IN, "expected 'in' after each loop variable")
             iterable = self._expression()
             self._consume(TokenKind.RIGHT_PAREN, "expected ')' after each iterable")
-            body = self._block(return_allowed=return_allowed)
+            body = self._block(return_allowed=return_allowed, loop_depth=loop_depth + 1)
             return EachStatement(variable, iterable, body, _token_location(keyword))
 
         if self._match(TokenKind.LEFT_BRACE):
-            return self._block(self._previous(), return_allowed)
+            return self._block(self._previous(), return_allowed, loop_depth)
 
-        if self._check(TokenKind.BREAK) or self._check(TokenKind.CONTINUE):
-            token = self._advance()
-            self._error(f"unsupported statement {token.lexeme!r}", token)
+        if self._match(TokenKind.BREAK):
+            keyword = self._previous()
+            if loop_depth == 0:
+                self._error("'break' is only allowed inside a loop", keyword)
+            self._consume(TokenKind.SEMICOLON, "expected ';' after break statement")
+            return BreakStatement(_token_location(keyword))
+
+        if self._match(TokenKind.CONTINUE):
+            keyword = self._previous()
+            if loop_depth == 0:
+                self._error("'continue' is only allowed inside a loop", keyword)
+            self._consume(TokenKind.SEMICOLON, "expected ';' after continue statement")
+            return ContinueStatement(_token_location(keyword))
 
         expression = self._expression()
         self._consume(TokenKind.SEMICOLON, "expected ';' after expression")
         return ExpressionStatement(expression, expression.location)
 
-    def _block(self, opening: Token | None = None, return_allowed: bool = False) -> Block:
+    def _block(
+        self,
+        opening: Token | None = None,
+        return_allowed: bool = False,
+        loop_depth: int = 0,
+    ) -> Block:
         if opening is None:
             opening = self._consume(TokenKind.LEFT_BRACE, "expected '{' to begin block")
         statements: list[Statement] = []
         while not self._check(TokenKind.RIGHT_BRACE) and not self._check(TokenKind.EOF):
-            statements.append(self._statement(return_allowed))
+            statements.append(self._statement(return_allowed, loop_depth))
         self._consume(TokenKind.RIGHT_BRACE, "expected '}' after block")
         return Block(tuple(statements), _token_location(opening))
 

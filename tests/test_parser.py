@@ -7,7 +7,9 @@ from lwt.ast_nodes import (
     AssignmentExpression,
     BinaryExpression,
     Block,
+    BreakStatement,
     CallExpression,
+    ContinueStatement,
     EachStatement,
     EmitStatement,
     ExpressionStatement,
@@ -318,11 +320,68 @@ class ParserErrorTests(unittest.TestCase):
         self.assert_syntax_error(source, SourceLocation(1, source.index("(", 7) + 1))
         parse_source("emit f()[0].field;")
 
-    def test_reserved_unsupported_statements_and_return_context(self) -> None:
-        for source in ("break;", "continue;", "return;", "{ return 1; }"):
+    def test_return_and_loop_transfer_contexts(self) -> None:
+        for source in ("return;", "{ return 1; }"):
             with self.subTest(source=source):
-                self.assert_syntax_error(source, SourceLocation(1, 1 if not source.startswith("{") else 3))
+                self.assert_syntax_error(
+                    source,
+                    SourceLocation(1, 1 if not source.startswith("{") else 3),
+                )
         parse_source("fn f() { { when (true) { return; } } }")
+
+    def test_break_and_continue_are_valid_only_inside_local_loop_context(self) -> None:
+        source = (
+            "fn f(xs) { while (true) { when (true) { { break; } } "
+            "each (x in xs) { continue; } } }"
+        )
+        function = parse_source(source).items[0]
+        outer_loop = function.body.statements[0]
+        self.assertIsInstance(outer_loop, WhileStatement)
+        branch = outer_loop.body.statements[0]
+        transfer_block = branch.then_branch.statements[0]
+        self.assertIsInstance(transfer_block, Block)
+        breaking = transfer_block.statements[0]
+        self.assertIsInstance(breaking, BreakStatement)
+        self.assertEqual(
+            breaking.location,
+            SourceLocation(1, source.index("break") + 1),
+        )
+        inner_loop = outer_loop.body.statements[1]
+        self.assertIsInstance(inner_loop, EachStatement)
+        continuing = inner_loop.body.statements[0]
+        self.assertIsInstance(continuing, ContinueStatement)
+        self.assertEqual(
+            continuing.location,
+            SourceLocation(1, source.index("continue") + 1),
+        )
+
+    def test_loop_context_does_not_cross_function_boundary(self) -> None:
+        source = "while (true) { break; } fn f() { continue; }"
+        self.assert_syntax_error(
+            source, SourceLocation(1, source.index("continue") + 1)
+        )
+        source = "fn f() { break; } while (true) { f(); }"
+        self.assert_syntax_error(source, SourceLocation(1, source.index("break") + 1))
+
+    def test_loop_transfers_require_bare_keyword_and_semicolon(self) -> None:
+        cases = (
+            ("while (true) { break }", "break", "}"),
+            ("while (true) { continue }", "continue", "}"),
+            ("while (true) { break label; }", "break", "label"),
+            ("while (true) { continue label; }", "continue", "label"),
+            ("while (true) { break 1; }", "break", "1"),
+            ("while (true) { continue false; }", "continue", "false"),
+        )
+        for source, keyword, unexpected in cases:
+            with self.subTest(source=source):
+                error = self.assert_syntax_error(
+                    source,
+                    SourceLocation(1, source.index(unexpected) + 1),
+                )
+                self.assertEqual(
+                    error.message,
+                    f"expected ';' after {keyword} statement",
+                )
 
     def test_nested_declarations_and_otherwise_when_are_rejected(self) -> None:
         cases = (

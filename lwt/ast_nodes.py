@@ -55,6 +55,16 @@ class LetStatement:
 
 
 @dataclass(frozen=True, slots=True)
+class BreakStatement:
+    location: SourceLocation
+
+
+@dataclass(frozen=True, slots=True)
+class ContinueStatement:
+    location: SourceLocation
+
+
+@dataclass(frozen=True, slots=True)
 class ReturnStatement:
     value: Expression | None
     location: SourceLocation
@@ -192,6 +202,8 @@ Expression = (
 )
 Statement = (
     LetStatement
+    | BreakStatement
+    | ContinueStatement
     | ReturnStatement
     | EmitStatement
     | ExpressionStatement
