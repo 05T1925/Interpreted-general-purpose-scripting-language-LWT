@@ -69,7 +69,7 @@ stderr 为空，退出码为 0。while 循环跳过 `i == 2` 并在 `i == 4` 停
 | `python tools/audit_semantic_mutants.py` | 退出码 0；10 个探针：9 killed、1 survived、0 equivalent、0 invalid。存活项仍是旧的参数顺序对称案例；新的不对称副作用案例击杀同一逆序变异。工具只用临时副本，未修改正式 runtime。 |
 | `python -m lwt examples/loop_control.lwt` | 退出码 0；stderr 为空，stdout 如上。 |
 | `python tools/count_lwt_lines.py app/log_report.lwt` | 退出码 0；246 行有效 LWT。 |
-| Python 3.11.16 下同一 `tools/run_tests.py`、完整性、全量 unittest 与 compileall 命令 | 均退出码 0；黑盒 217/217，完整性 217/314/217，unittest 297 项 OK，compileall 无诊断。 |
+| Python 3.11.16 下同一黑盒、完整性、全量 unittest 与 compileall 命令 | 使用 `& 'C:\Users\28641\AppData\Roaming\uv\python\cpython-3.11.16-windows-x86_64-none\python.exe' <arguments>` 调用；四项均退出码 0，黑盒 217/217，完整性 217/314/217，unittest 297 项 OK，compileall 无诊断。 |
 | `git diff --check` | 退出码 0；工作区改动无 whitespace error。Git 提示若干 LF 文件在未来触及时可能转成 CRLF，不影响检查结果。 |
 | `git diff --check 999cc7844065336d095b1efe4875313d2ee45da2...HEAD` | 退出码 0、无诊断；在报告与状态文档提交后再次执行，覆盖完整 S24 阶段差异。 |
 | Markdown 链接/围栏检查（PowerShell here-string 驱动的 Python 检查器） | 覆盖 12 份变更 Markdown/Skill 文档，检查 587 个相对链接并对百分号编码路径先 URL 解码；所有目标存在，代码围栏成对，退出码 0。首次检查未解码 `%20`，把两个指向课程 PDF 的合法链接误报为缺失；加入 `urllib.parse.unquote` 后检查通过。 |
