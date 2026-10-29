@@ -33,6 +33,7 @@ class TokenKind(str, Enum):
     NOT = "not"
     BREAK = "break"
     CONTINUE = "continue"
+    IMPORT = "import"
 
     PLUS = "+"
     MINUS = "-"
@@ -67,6 +68,7 @@ class Token:
     literal: object | None
     line: int
     column: int
+    source_path: str | None = None
 
 
 _KEYWORDS: dict[str, TokenKind] = {
@@ -88,6 +90,7 @@ _KEYWORDS: dict[str, TokenKind] = {
     "not": TokenKind.NOT,
     "break": TokenKind.BREAK,
     "continue": TokenKind.CONTINUE,
+    "import": TokenKind.IMPORT,
 }
 
 _SINGLE_CHARACTERS: dict[str, TokenKind] = {
@@ -134,8 +137,9 @@ def normalize_source(source: str) -> str:
 class Lexer:
     """Scan a source string into tokens, raising on the first lexical error."""
 
-    def __init__(self, source: str) -> None:
+    def __init__(self, source: str, source_path: str | None = None) -> None:
         self.source = normalize_source(source)
+        self.source_path = source_path
         self.start = 0
         self.current = 0
         self.line = 1
@@ -152,7 +156,7 @@ class Lexer:
             self._scan_one()
 
         self.tokens.append(
-            Token(TokenKind.EOF, "", None, self.line, self.column)
+            Token(TokenKind.EOF, "", None, self.line, self.column, self.source_path)
         )
         return self.tokens
 
@@ -190,7 +194,7 @@ class Lexer:
 
         self._error(
             f"unexpected character U+{ord(character):04X}",
-            SourceLocation(self.start_line, self.start_column),
+            self._location(self.start_line, self.start_column),
         )
 
     def _comment(self) -> None:
@@ -224,7 +228,7 @@ class Lexer:
         self._add_token(TokenKind.INT)
 
     def _string(self) -> None:
-        opening = SourceLocation(self.start_line, self.start_column)
+        opening = self._location(self.start_line, self.start_column)
         value: list[str] = []
 
         while not self._at_end():
@@ -238,7 +242,7 @@ class Lexer:
                 value.append(character)
                 continue
 
-            escape_location = SourceLocation(self.line, self.column - 1)
+            escape_location = self._location(self.line, self.column - 1)
             if self._at_end():
                 self._error("incomplete string escape", escape_location)
             escape = self._advance()
@@ -252,11 +256,21 @@ class Lexer:
     def _add_token(self, kind: TokenKind, literal: object | None = None) -> None:
         lexeme = self.source[self.start : self.current]
         self.tokens.append(
-            Token(kind, lexeme, literal, self.start_line, self.start_column)
+            Token(
+                kind,
+                lexeme,
+                literal,
+                self.start_line,
+                self.start_column,
+                self.source_path,
+            )
         )
 
     def _error(self, message: str, location: SourceLocation) -> NoReturn:
         raise LwtError("LexError", message, 2, location)
+
+    def _location(self, line: int, column: int) -> SourceLocation:
+        return SourceLocation(line, column, self.source_path)
 
     def _advance(self) -> str:
         character = self.source[self.current]
@@ -285,7 +299,7 @@ class Lexer:
         return "0" <= character <= "9"
 
 
-def scan(source: str) -> list[Token]:
+def scan(source: str, source_path: str | None = None) -> list[Token]:
     """Convenience API used by the CLI and lexer unit tests."""
 
-    return Lexer(source).scan_tokens()
+    return Lexer(source, source_path).scan_tokens()

@@ -19,10 +19,12 @@ from .ast_nodes import (
     ExpressionStatement,
     FieldExpression,
     FunctionDeclaration,
+    ImportDeclaration,
     Identifier,
     IndexExpression,
     LetStatement,
     LiteralExpression,
+    ModuleCallExpression,
     Program,
     RecordConstructionExpression,
     RecordDeclaration,
@@ -53,24 +55,50 @@ _MULTIPLICATIVE_OPERATORS = frozenset(
 class Parser:
     """Build an ordered AST or raise one located ``SyntaxError`` diagnostic."""
 
-    def __init__(self, tokens: Sequence[Token]) -> None:
+    def __init__(self, tokens: Sequence[Token], *, module_mode: bool = False) -> None:
         if not tokens or tokens[-1].kind is not TokenKind.EOF:
             raise ValueError("parser input must end with an EOF token")
         self.tokens = tokens
         self.current = 0
+        self.module_mode = module_mode
 
     def parse(self) -> Program:
         items: list[TopLevelItem] = []
         start = _token_location(self._peek())
+        imports_open = True
         while not self._check(TokenKind.EOF):
-            if self._match(TokenKind.RECORD):
+            if self._match(TokenKind.IMPORT):
+                if not imports_open:
+                    self._error(
+                        "import declarations must appear before other top-level items",
+                        self._previous(),
+                    )
+                items.append(self._import_declaration(self._previous()))
+            elif self._match(TokenKind.RECORD):
+                imports_open = False
+                if self.module_mode:
+                    self._error("library modules cannot declare record types", self._previous())
                 items.append(self._record_declaration(self._previous()))
             elif self._match(TokenKind.FN):
+                imports_open = False
                 items.append(self._function_declaration(self._previous()))
             else:
+                imports_open = False
+                if self.module_mode:
+                    self._error("library modules may contain only imports and functions", self._peek())
                 items.append(self._statement(return_allowed=False, loop_depth=0))
         eof = self._consume(TokenKind.EOF, "expected end of file")
         return Program(tuple(items), start if items else _token_location(eof))
+
+    def _import_declaration(self, keyword: Token) -> ImportDeclaration:
+        path = self._consume(TokenKind.STRING, "expected a string path after 'import'")
+        self._consume(TokenKind.IDENT, "expected 'as' after import path")
+        # `as` is deliberately a contextual word, not a reserved identifier.
+        if self._previous().lexeme != "as":
+            self._error("expected 'as' after import path", self._previous())
+        alias = self._identifier("expected module alias after 'as'")
+        self._consume(TokenKind.SEMICOLON, "expected ';' after import declaration")
+        return ImportDeclaration(str(path.literal), alias, _token_location(keyword))
 
     def _record_declaration(self, keyword: Token) -> RecordDeclaration:
         name = self._identifier("expected record name")
@@ -319,6 +347,27 @@ class Parser:
                             break
                 self._consume(TokenKind.RIGHT_PAREN, "expected ')' after arguments")
                 return CallExpression(name, tuple(arguments), name.location)
+            if (
+                self._check(TokenKind.DOT)
+                and self.current + 2 < len(self.tokens)
+                and self.tokens[self.current + 2].kind is TokenKind.LEFT_PAREN
+            ):
+                self._advance()  # dot
+                member_token = self._consume(
+                    TokenKind.IDENT, "expected function name after module alias"
+                )
+                member = self._identifier_from_token(member_token)
+                self._consume(TokenKind.LEFT_PAREN, "module members can only be called")
+                arguments: list[Expression] = []
+                if not self._check(TokenKind.RIGHT_PAREN):
+                    while True:
+                        arguments.append(self._expression())
+                        if not self._match(TokenKind.COMMA):
+                            break
+                self._consume(
+                    TokenKind.RIGHT_PAREN, "expected ')' after module call arguments"
+                )
+                return ModuleCallExpression(name, member, tuple(arguments), name.location)
             if self._match(TokenKind.LEFT_BRACE):
                 fields: list[RecordFieldInitializer] = []
                 if not self._check(TokenKind.RIGHT_BRACE):
@@ -387,15 +436,15 @@ class Parser:
             "SyntaxError",
             message,
             2,
-            SourceLocation(token.line, token.column),
+            SourceLocation(token.line, token.column, token.source_path),
         )
 
 
-def parse(tokens: Sequence[Token]) -> Program:
+def parse(tokens: Sequence[Token], *, module_mode: bool = False) -> Program:
     """Parse a complete lexer token stream, including its terminal EOF."""
 
-    return Parser(tokens).parse()
+    return Parser(tokens, module_mode=module_mode).parse()
 
 
 def _token_location(token: Token) -> SourceLocation:
-    return SourceLocation(token.line, token.column)
+    return SourceLocation(token.line, token.column, token.source_path)

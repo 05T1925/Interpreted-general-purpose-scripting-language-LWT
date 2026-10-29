@@ -42,6 +42,13 @@ class FunctionDeclaration:
 
 
 @dataclass(frozen=True, slots=True)
+class ImportDeclaration:
+    path: str
+    alias: Identifier
+    location: SourceLocation
+
+
+@dataclass(frozen=True, slots=True)
 class Block:
     statements: tuple[Statement, ...]
     location: SourceLocation
@@ -149,6 +156,14 @@ class CallExpression:
 
 
 @dataclass(frozen=True, slots=True)
+class ModuleCallExpression:
+    alias: Identifier
+    member: Identifier
+    arguments: tuple[Expression, ...]
+    location: SourceLocation
+
+
+@dataclass(frozen=True, slots=True)
 class UnaryExpression:
     operator: TokenKind
     operand: Expression
@@ -194,6 +209,7 @@ Expression = (
     | ArrayExpression
     | RecordConstructionExpression
     | CallExpression
+    | ModuleCallExpression
     | UnaryExpression
     | BinaryExpression
     | AssignmentExpression
@@ -212,4 +228,4 @@ Statement = (
     | EachStatement
     | Block
 )
-TopLevelItem = RecordDeclaration | FunctionDeclaration | Statement
+TopLevelItem = ImportDeclaration | RecordDeclaration | FunctionDeclaration | Statement

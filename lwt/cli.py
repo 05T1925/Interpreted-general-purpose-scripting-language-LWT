@@ -4,12 +4,10 @@ from __future__ import annotations
 
 import sys
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Sequence
 
 from .errors import LwtError, format_diagnostic
-from .lexer import scan
-from .parser import parse
+from .modules import load_module_graph
 from .runtime import execute
 
 
@@ -45,18 +43,6 @@ def _configure_standard_streams() -> None:
         )
 
 
-def _read_source(source_path: str) -> str:
-    try:
-        source_bytes = Path(source_path).read_bytes()
-    except (OSError, ValueError) as error:
-        raise LwtError("FileError", "cannot read source file", 4) from error
-
-    try:
-        return source_bytes.decode("utf-8", errors="strict")
-    except UnicodeDecodeError as error:
-        raise LwtError("FileError", "source file is not valid UTF-8", 4) from error
-
-
 def main(argv: Sequence[str] | None = None) -> int:
     """Read, lex, parse, and execute one LWT source file."""
 
@@ -67,15 +53,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         parsed = parse_cli_args(arguments)
         source_path = parsed.source_path
-        source_text = _read_source(source_path)
-        tokens = scan(source_text)
-        program = parse(tokens)
+        graph = load_module_graph(source_path)
     except LwtError as error:
         sys.stderr.write(format_diagnostic(error, source_path) + "\n")
         return error.exit_code
 
     try:
-        execute(program, sys.stdin.buffer, sys.stdout, parsed.program_args)
+        execute(
+            graph.entry.program,
+            sys.stdin.buffer,
+            sys.stdout,
+            parsed.program_args,
+            module_graph=graph,
+        )
     except LwtError as error:
         sys.stderr.write(format_diagnostic(error, source_path) + "\n")
         return error.exit_code

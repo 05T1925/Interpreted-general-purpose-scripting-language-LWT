@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import fields, is_dataclass
 import sys
 from pathlib import Path
 from typing import BinaryIO, NoReturn, TextIO
@@ -20,9 +21,11 @@ from .ast_nodes import (
     ExpressionStatement,
     FieldExpression,
     FunctionDeclaration,
+    ImportDeclaration,
     IndexExpression,
     LetStatement,
     LiteralExpression,
+    ModuleCallExpression,
     Program,
     RecordConstructionExpression,
     RecordDeclaration,
@@ -35,6 +38,7 @@ from .ast_nodes import (
 )
 from .errors import LwtError, SourceLocation
 from .lexer import TokenKind
+from .modules import ModuleGraph, ModuleUnit
 
 
 _DECIMAL_CHUNK_DIGITS = 9
@@ -103,7 +107,7 @@ class _RecordValue:
 
 
 class _RuntimeContext:
-    """Per-program tables and I/O streams shared by nested function calls."""
+    """Per-source tables with process-level I/O shared by function calls."""
 
     __slots__ = (
         "input_stream",
@@ -111,6 +115,8 @@ class _RuntimeContext:
         "program_args",
         "functions",
         "record_types",
+        "imports",
+        "global_environment",
     )
 
     def __init__(
@@ -120,12 +126,15 @@ class _RuntimeContext:
         functions: dict[str, FunctionDeclaration],
         record_types: dict[str, tuple[str, ...]],
         program_args: tuple[str, ...] = (),
+        imports: dict[str, _RuntimeContext] | None = None,
     ) -> None:
         self.input_stream = input_stream
         self.output_stream = output_stream
         self.program_args = program_args
         self.functions = functions
         self.record_types = record_types
+        self.imports = {} if imports is None else imports
+        self.global_environment = Environment()
 
 
 class Environment:
@@ -185,6 +194,8 @@ def execute(
     input_stream: BinaryIO | None = None,
     output_stream: TextIO | None = None,
     program_args: tuple[str, ...] = (),
+    *,
+    module_graph: ModuleGraph | None = None,
 ) -> None:
     """Execute a supported LWT program or raise a located LWT error.
 
@@ -200,48 +211,65 @@ def execute(
         output_stream = sys.stdout
 
     try:
-        functions: dict[str, FunctionDeclaration] = {}
-        record_types: dict[str, tuple[str, ...]] = {}
-        for item in program.items:
-            if isinstance(item, FunctionDeclaration):
-                name = item.name.name
-                if name in _BUILTIN_NAMES:
-                    _runtime_error(
-                        f"function name {name!r} conflicts with a built-in",
-                        item.name.location,
-                    )
-                if name in functions:
-                    _runtime_error(
-                        f"duplicate function declaration {name!r}",
-                        item.name.location,
-                    )
-                functions[name] = item
-            elif isinstance(item, RecordDeclaration):
-                name = item.name.name
-                if name in record_types:
-                    _runtime_error(
-                        f"duplicate record declaration {name!r}",
-                        item.name.location,
-                    )
-                record_types[name] = tuple(field.name for field in item.fields)
-
-        unsupported = _first_unsupported(program)
-        if unsupported is not None:
-            raise LwtError(
-                "Incomplete",
-                "runtime support for this syntax is not implemented yet",
-                1,
-                unsupported,
+        if module_graph is None:
+            unit = ModuleUnit(Path.cwd() / "<memory>", None, program)
+            graph = ModuleGraph(unit, (unit,))
+        else:
+            graph = module_graph
+        # Build every module table before execution. Each source owns a distinct
+        # function/record namespace and a root variable environment.
+        contexts: dict[ModuleUnit, _RuntimeContext] = {}
+        for unit in graph.modules:
+            functions: dict[str, FunctionDeclaration] = {}
+            record_types: dict[str, tuple[str, ...]] = {}
+            for item in unit.program.items:
+                if isinstance(item, FunctionDeclaration):
+                    name = item.name.name
+                    if name in _BUILTIN_NAMES:
+                        _runtime_error(
+                            f"function name {name!r} conflicts with a built-in",
+                            item.name.location,
+                        )
+                    if name in functions:
+                        _runtime_error(
+                            f"duplicate function declaration {name!r}",
+                            item.name.location,
+                        )
+                    functions[name] = item
+                elif isinstance(item, RecordDeclaration):
+                    name = item.name.name
+                    if name in record_types:
+                        _runtime_error(
+                            f"duplicate record declaration {name!r}",
+                            item.name.location,
+                        )
+                    record_types[name] = tuple(field.name for field in item.fields)
+            unsupported = _first_unsupported(unit.program)
+            if unsupported is not None:
+                raise LwtError(
+                    "Incomplete",
+                    "runtime support for this syntax is not implemented yet",
+                    1,
+                    unsupported,
+                )
+            contexts[unit] = _RuntimeContext(
+                input_stream, output_stream, functions, record_types, program_args
             )
 
-        runtime = _RuntimeContext(
-            input_stream, output_stream, functions, record_types, program_args
-        )
-        environment = Environment()
+        for unit, context in contexts.items():
+            context.imports.update(
+                {alias: contexts[target] for alias, target in unit.imports.items()}
+            )
+        for unit in graph.modules:
+            _validate_module_calls(unit.program, contexts[unit])
+
+        runtime = contexts[graph.entry]
         for item in program.items:
-            if isinstance(item, (FunctionDeclaration, RecordDeclaration)):
+            if isinstance(
+                item, (ImportDeclaration, FunctionDeclaration, RecordDeclaration)
+            ):
                 continue
-            _execute_statement(item, environment, runtime)
+            _execute_statement(item, runtime.global_environment, runtime)
     except RecursionError:
         # Report the host limit as a runtime failure without imposing a fixed
         # language-level depth limit or leaking a Python traceback.
@@ -261,8 +289,45 @@ def _first_unsupported(program: Program) -> SourceLocation | None:
     return None
 
 
+def _validate_module_calls(program: Program, runtime: _RuntimeContext) -> None:
+    """Link every qualified call before any top-level statement can run."""
+
+    visited: set[int] = set()
+
+    def visit(value: object) -> None:
+        if value is None or isinstance(
+            value, (str, int, bool, TokenKind, SourceLocation)
+        ):
+            return
+        identity = id(value)
+        if identity in visited:
+            return
+        visited.add(identity)
+        if isinstance(value, ModuleCallExpression):
+            target = runtime.imports.get(value.alias.name)
+            if target is None:
+                _runtime_error(
+                    f"undefined module alias {value.alias.name!r}",
+                    value.alias.location,
+                )
+            if value.member.name not in target.functions:
+                _runtime_error(
+                    f"module {value.alias.name!r} has no function {value.member.name!r}",
+                    value.member.location,
+                )
+        if isinstance(value, tuple):
+            for child in value:
+                visit(child)
+            return
+        if is_dataclass(value):
+            for descriptor in fields(value):
+                visit(getattr(value, descriptor.name))
+
+    visit(program)
+
+
 def _unsupported_statement(statement: object) -> SourceLocation | None:
-    if isinstance(statement, (BreakStatement, ContinueStatement)):
+    if isinstance(statement, (BreakStatement, ContinueStatement, ImportDeclaration)):
         return None
     if isinstance(statement, FunctionDeclaration):
         return _unsupported_statement(statement.body)
@@ -339,6 +404,12 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
             return expression.target.location
         return _unsupported_expression(expression.value)
     if isinstance(expression, CallExpression):
+        for argument in expression.arguments:
+            location = _unsupported_expression(argument)
+            if location is not None:
+                return location
+        return None
+    if isinstance(expression, ModuleCallExpression):
         for argument in expression.arguments:
             location = _unsupported_expression(argument)
             if location is not None:
@@ -627,6 +698,39 @@ def _evaluate(
             )
         except RecursionError:
             _runtime_error("host recursion limit reached", expression.callee.location)
+
+    if isinstance(expression, ModuleCallExpression):
+        target_runtime = runtime.imports.get(expression.alias.name)
+        if target_runtime is None:
+            _runtime_error(
+                f"undefined module alias {expression.alias.name!r}",
+                expression.alias.location,
+            )
+        declaration = target_runtime.functions.get(expression.member.name)
+        if declaration is None:
+            _runtime_error(
+                f"module {expression.alias.name!r} has no function {expression.member.name!r}",
+                expression.member.location,
+            )
+        arguments = [
+            _evaluate(argument, environment, runtime)
+            for argument in expression.arguments
+        ]
+        if len(arguments) != len(declaration.parameters):
+            _runtime_error(
+                f"function {expression.alias.name}.{expression.member.name} expects "
+                f"{len(declaration.parameters)} arguments, got {len(arguments)}",
+                expression.location,
+            )
+        try:
+            return _invoke_user_function(
+                declaration,
+                arguments,
+                target_runtime.global_environment,
+                target_runtime,
+            )
+        except RecursionError:
+            _runtime_error("host recursion limit reached", expression.location)
 
     # Unsupported nodes are rejected by _first_unsupported before execution.
     raise AssertionError(f"unsupported expression passed to evaluator: {type(expression)!r}")

@@ -11,6 +11,7 @@ class SourceLocation:
 
     line: int
     column: int
+    source_path: str | None = None
 
 
 class LwtError(Exception):
@@ -41,10 +42,13 @@ def format_diagnostic(error: LwtError, source_path: str | None = None) -> str:
 
     category = _single_line(error.category)
     message = _single_line(error.message)
-    if error.location is None or source_path is None:
+    if error.location is None:
         return f"lwt: {category}: {message}"
 
-    path = _single_line(source_path)
+    display_path = error.location.source_path or source_path
+    if display_path is None:
+        return f"lwt: {category}: {message}"
+    path = _single_line(display_path)
     return (
         f"{path}:{error.location.line}:{error.location.column}: "
         f"{category}: {message}"
