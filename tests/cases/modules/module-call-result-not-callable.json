@@ -1,0 +1,12 @@
+{
+  "id": "module-call-result-not-callable",
+  "spec_refs": ["3", "9"],
+  "tags": ["modules", "syntax"],
+  "args": [],
+  "stdin": {"text": ""},
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/modules/module-call-result-not-callable.lwt:2:19: SyntaxError: expected ';' after emit statement\n"
+  }
+}
