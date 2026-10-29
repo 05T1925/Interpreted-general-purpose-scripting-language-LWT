@@ -184,3 +184,11 @@
 - **生成与人工复核：** 新增三款界面的最小 runner/timer 注入点、真实控件/事件测试和 GUI 计数 runner。人工复核重点包括真实 widget 与事件调用、线程仅向 queue 返回结果、关闭后的 poll/after 清理、workbench 条件 revision 丢弃旧结果、Snake 只保留一个活动 tick、CI Linux 条件与矩阵不变。开发过程中修正了对状态文案的测试预期、Notebook 键盘合成前的焦点/选项卡条件及计数脚本仓库导入路径；这些是测试夹具问题，不是产品缺陷。没有降低既有断言，没有发现可复现产品 GUI 缺陷或实施产品逻辑修复。
 - **验证状态：** S22 新增 10 项真实 Tk 控件/事件集成测试；语义实验室、日志工作台、五题挑战通过按钮发起真实 `python -m lwt` 子进程，Snake 通过实际按钮/按键事件和受控 timer 驱动。具体逐项映射、全量命令输出/退出码、工作区保护差异和人工 GUI 未验证事项见 [S22 执行报告](s22-gui-regression.md)。Linux CI 新增显示服务探测：若 `xvfb-run` 缺失才安装 `xvfb`/`xauth`；真实远端 workflow 尚未执行。
 - **提交与状态：** 代码/测试、CI、报告与状态文档按可审查单元提交；精确提交 SHA 和最终状态以本报告提交后的交接为准。状态为“实施完成，等待主窗口审查”；S21 的人工 A/B/C 检查和 Python 3.10/远端 CI 仍留给 S12。S12 未开始。
+
+## S24｜while/each 的 break 与 continue（2026-10-29）
+
+- **实际接收的任务：** 从已报告的 S23 tip 接续，实现 `while`/`each` 的无标签 `break;` 与 `continue;`；更新语言规范、AST/parser/runtime、公开 CLI 黑盒测试、矩阵、指南和阶段状态。要求循环外及函数自身循环外使用在解析期报错，函数不得继承调用方循环上下文；return/runtime error 保持原传播行为，不改应用、性能证据或 CLI 契约，不合并、不推送、不开始 S12。
+- **基线和阶段分支：** S23 tip `999cc7844065336d095b1efe4875313d2ee45da2`，S23 工作区干净；本地 `main` 为 `aadb8f7a2348dad3205c523d4ab1cb4ad5bda063` 且不包含 S23。只读远端 tip `de608f7fbf50946715d370df014657169eb8f26d` 是本地 main 祖先（main ahead 84/behind 0）。S24 在 `stage/s24-loop-control` 执行。第一项独立提交 `aaef11e9df262c5aa3fa5be708da2095f67589a0` 专用于修正 S23 数量文档；后续 AST/parser、runtime、黑盒测试分层提交 SHA 见 S24 阶段报告。
+- **实现与人工复核：** 新增带源码位置的 AST 节点，parser 在块/分支传递 loop depth、每个函数体重置该上下文；runtime 使用独立 break/continue 内部信号，由最近 loop 捕获。逐项审阅了嵌套 loop、条件分支、函数边界、each 快照推进、return 穿越 loop、RuntimeError 传播和旧 unsupported 用例替换；lexer 未修改。
+- **验证：** Windows CPython 3.13.7、3.11.16 均通过黑盒 217/217、完整性 217 cases/314 links/217 referenced IDs、全量 unittest 297 项和 compileall。Parser 定向 24 项、runtime 定向 7 项通过。S23 固定 seed 性质工具复验 156/156、7 个 CLI 程序，hash 与 S23 相同；隔离变异审计为 9 killed/1 survived，存活项仍是旧的对称参数顺序案例。示例 `python -m lwt examples/loop_control.lwt` 退出码 0，stdout 为 `1\n3\n2\n[1, 2, 3, 4]\n`，stderr 为空。细节与剩余检查见 [S24 执行报告](s24-loop-control.md)。
+- **证据边界与状态：** Python 3.10 未安装；Linux、远端 Actions 和人工 GUI 未在本阶段验证。S10/S11 原始数据生成器和正式性能基准未运行；应用 LWT 保持 246 行。S23 未合入本地 main，S24 也不合并或推送；S24 为“实施完成，等待主窗口审查”，S12 仍未开始。
