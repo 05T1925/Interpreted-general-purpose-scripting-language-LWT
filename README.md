@@ -1,14 +1,14 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C 桌面交互仍未验证。S23 和 S24 均已实施、等待主窗口审查：S23 加入固定种子性质检查、隔离变异审计和实参顺序黑盒案例；S24 加入 `while`/`each` 的 `break;` 与 `continue;`。S23 尚未合入 `main`，S24 直接基于其阶段提交继续；两阶段审查完成后进入最后的 S12。自动 GUI 证据不替代 S12 的人工桌面验收。状态见 [`project.md`](project.md)、[S21 主窗口复核](docs/s21-main-review.md)、[S22 主窗口复核](docs/s22-main-review.md)、[S23 报告](docs/s23-test-adequacy.md)、[S24 报告](docs/s24-loop-control.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C 桌面交互仍未验证。S23–S25 已实施、等待主窗口审查，尚未合入 `main`：S23 加入固定种子性质检查和变异审计，S24 加入 `while`/`each` 的 `break;` 与 `continue;`，S25 加入静态函数库模块。S25 不改变课程 LWT 应用的日志统计职责。上述阶段审查后进入最后的 S12。状态见 [`project.md`](project.md)、[S23 报告](docs/s23-test-adequacy.md)、[S24 报告](docs/s24-loop-control.md)、[S25 模块报告](docs/s25-modules.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；S23、S24 等待主窗口审查，随后进入最终收尾 S12。
-5. [正式语言规范](docs/language-spec.md)：S1 审查通过的 LWT 语法和语义，S2 已将两项审查澄清并入正文。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；S23–S25 等待主窗口审查，随后进入最终收尾 S12。
+5. [正式语言规范](docs/language-spec.md)：LWT 语法和语义；S24 循环控制及 S25 静态模块补充等待主窗口审查。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
 8. [Agent Skill](.agents/skills/lwt-app/SKILL.md)：仓库内 LWT 应用编写/调试工作流；是否被其他 Agent 平台自动发现取决于该平台。
@@ -37,7 +37,8 @@
 31. [S22 主窗口复核](docs/s22-main-review.md)：独立复跑结果、合入状态和 S12 遗留。
 32. [S23 黑盒测试充分性计划](docs/s23-test-adequacy-plan.md)：确定性语义性质验证与有限、可解释的故障探针；S23 执行报告见 [docs/s23-test-adequacy.md](docs/s23-test-adequacy.md)。
 33. [S24 循环控制报告](docs/s24-loop-control.md)：break/continue 规范、实现、覆盖、复验和阶段状态。
-34. [S12 最终交付规划](docs/s12-final-delivery-plan.md)：评分项证据映射、新克隆/CI、GUI 预检、PPT 与答辩收尾。
+34. [S25 多文件函数模块报告](docs/s25-modules.md)：模块路径、独立命名空间、加载/错误行为、黑盒覆盖和演示输出。
+35. [S12 最终交付规划](docs/s12-final-delivery-plan.md)：评分项证据映射、新克隆/CI、GUI 预检、PPT 与答辩收尾。
 
 运行仓库结构完整性检查：
 
@@ -53,7 +54,7 @@ python tools/check_project_integrity.py
 python tools/run_tests.py
 ```
 
-语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。S24 当前共有 217 项黑盒用例，其中 212 项执行配对 LWT 程序、5 项专测 CLI 参数契约；Windows CPython 3.13.7 实测为 217/217，完整性检查为 217 个案例、314 个矩阵链接、217 个被引用 ID。S23 的 195/195 与 S8/S14 的 194 项结果分别保留为对应历史/阶段快照；Python 3.10 与远端 GitHub Actions 仍未验证，逐项命令见 [S24 报告](docs/s24-loop-control.md)。
+语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。S25 当前集合为 247 项，其中 242 项执行配对 LWT 程序、5 项专测 CLI 参数契约；模块类别 30 项。精确环境结果、完整性链接数和单元测试数以 [S25 报告](docs/s25-modules.md)为准。S8/S23/S24 历史快照原值保留；Python 3.10 和远端 Actions 未验证。
 
 运行 lexer、parser、runtime、CLI 和黑盒 runner 的开发辅助 unittest：
 
@@ -82,7 +83,10 @@ python -m lwt examples/control_flow.lwt
 python -m lwt examples/functions.lwt
 python -m lwt examples/collections.lwt
 python -m lwt examples/text_tools.lwt -- examples/fixtures/text_tools.txt preview
+python -m lwt examples/modules/main.lwt
 ```
+
+模块示例从仓库根目录输出 `demo:2`，演示入口 → `stats_utils.lwt` → `text_utils.lwt` 两层依赖，以及数组和 record 参数。模块规则见[规范第 9 节](docs/language-spec.md#9-静态函数库模块s25)。
 
 `control_flow.lwt` 的实际输出是 `0\n-1\n2\n-3\n`；`functions.lwt` 的实际输出是 `120\n`。`collections.lwt` 在本阶段实测输出如下，展示 `each` 进入时保存浅快照：
 
@@ -143,7 +147,7 @@ S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/
 
 ## S11 性能实验
 
-S11–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互均受遮挡限制而未验证，详见[主窗口复核](docs/s21-main-review.md)。S22 的真实 Tk 控件/事件回归已通过主窗口复核，但不等于人工桌面验收，详见[S22 主窗口复核](docs/s22-main-review.md)。S23 与 S24 尚未合入 `main`，均等待主窗口审查。S24 完成了 break/continue 语言实现、黑盒扩充和 S23 性质/变异工具复验；详见 [S24 报告](docs/s24-loop-control.md)。S23/S24 审查后才进入最后的 S12；S12 规划见[最终交付规划](docs/s12-final-delivery-plan.md)。
+S11–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互均受遮挡限制而未验证，详见[主窗口复核](docs/s21-main-review.md)。S22 的真实 Tk 控件/事件回归已通过主窗口复核，但不等于人工桌面验收，详见[S22 主窗口复核](docs/s22-main-review.md)。S23、S24、S25 尚未合入 `main`，均等待主窗口审查。S24 完成 break/continue 语言实现，S25 增加静态函数库模块，详见 [S24 报告](docs/s24-loop-control.md) 和 [S25 报告](docs/s25-modules.md)。S23–S25 审查后才进入最后的 S12；S12 规划见[最终交付规划](docs/s12-final-delivery-plan.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
@@ -161,4 +165,4 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现标量、变量/块、`emit`、`input()`、`when/otherwise`、`while`（含 `break;`/`continue;`）、顶层函数/递归/return、可变数组/索引赋值/`push`、record 构造/字段读写和身份相等、`each` 浅快照（含 `break;`/`continue;`）及循环安全显示，并支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/源文件错误返回 4。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试，并有固定输入独立进程读取记录；S11 性能数据和失败计数修复已审查通过。S15–S22 应用/展示与 GUI 控件回归阶段已审查并合入本地 `main`。S23 和 S24 已实施、等待主窗口审查；S24 当前 217 项黑盒通过；S12 尚未开始。人工桌面验收和 Python 3.10/远端 Actions 仍未验证。详见 [S23 报告](docs/s23-test-adequacy.md)、[S24 报告](docs/s24-loop-control.md)与 [S12 最终交付规划](docs/s12-final-delivery-plan.md)。
+当前实现支持标量、变量/块、输入输出、分支循环（含最近循环 `break;`/`continue;`）、顶层函数/递归/return、数组、record、文本内置函数，以及相对静态模块函数库。空程序返回 0；词法/语法错误返回 2；运行时错误返回 3；CLI/依赖文件错误返回 4。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试；S11 性能数据已审查通过。S15–S22 应用/展示与 GUI 控件回归阶段已审查并合入本地 `main`。S23–S25 已实施、等待主窗口审查；S25 当前 247 项黑盒通过。S12 尚未开始。人工桌面验收和 Python 3.10/远端 Actions 仍未验证。详见 [S23 报告](docs/s23-test-adequacy.md)、[S24 报告](docs/s24-loop-control.md)、[S25 报告](docs/s25-modules.md)与 [S12 最终交付规划](docs/s12-final-delivery-plan.md)。

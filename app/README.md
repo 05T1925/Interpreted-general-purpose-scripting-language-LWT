@@ -126,6 +126,8 @@ python -m unittest discover -s tests -p "test_language_lab_entry.py" -v
 
 语义实验室是**Python 教学/展示前端**，通过公开 CLI 运行 LWT 示例，不是第二个“用 LWT 编写的应用”。课程 Agent 编写的完整 LWT 应用仍是 `app/log_report.lwt`，日志读取、解析、过滤、统计和排序仍由 LWT 实现。Tkinter/Tcl 缺失或启动失败时，模块入口在 stderr 给出诊断并返回非零退出码；其他未预期程序异常仍保留回溯供调试。S20 三至五分钟演示步骤、CLI 实测结果和人工 GUI 未验证项见 [`../docs/s20-teaching-demo.md`](../docs/s20-teaching-demo.md)。
 
+LWT 现在也支持静态函数库模块。日志分析器仍按现有单文件 CLI 契约实现；想查看独立的多文件语言示例，可从仓库根目录运行 `python -m lwt examples/modules/main.lwt`，规范和源文件路径语义见 [`../docs/language-spec.md`](../docs/language-spec.md#9-静态函数库模块s25)。
+
 ## 独立贪吃蛇（S16；S17 复检与界面打磨）
 
 贪吃蛇是独立的 **Python/Tkinter 附加演示，并非第二个 LWT 应用**；不调用 LWT 日志分析器，也不计入 `app/log_report.lwt` 的课程代码行数。从仓库根目录启动：

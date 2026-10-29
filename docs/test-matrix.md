@@ -1,6 +1,6 @@
 # LWT 0.1 黑盒覆盖矩阵（S8 主窗口审查通过）
 
-> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23 和 S24 的实测快照分列于 §4。远端 GitHub Actions 尚未触发。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
+> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24 和 S25 的实测快照分列于 §4。远端 GitHub Actions 尚未触发。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
 
 ## 1. 课程要求对应关系
 
@@ -12,7 +12,8 @@
 | 基本输入输出 | [`input-lf-and-crlf`](../tests/cases/builtins-text-io/input-lf-and-crlf.lwt)、[`emit-and-str-match`](../tests/cases/builtins-text-io/emit-and-str-match.lwt) | §6 | `input()`/`emit` 是课程硬要求；文件、参数和文本函数是面向应用的扩展。 |
 | 分支循环 | [`when-otherwise`](../tests/cases/control-functions/when-otherwise.lwt)、[`while-break`](../tests/cases/control-functions/while-break.lwt)、[`each-continue-snapshot`](../tests/cases/control-functions/each-continue-snapshot.lwt) | §3、§5 | 分支循环是课程硬要求；`break`/`continue` 是本方案增加的循环控制扩展。 |
 | 函数定义和调用 | [`function-forward-call`](../tests/cases/control-functions/function-forward-call.lwt)、[`recursive-factorial`](../tests/cases/control-functions/recursive-factorial.lwt) | §3、§5 | 课程硬要求；前向调用、递归和具体作用域是规范规则。 |
-| 完整黑盒测试集及一条命令 | 本矩阵所列 217 对 `.lwt`/JSON 测试用例，由 `python tools/run_tests.py` 运行；其中 212 项执行配对 LWT 源程序，5 项仅测试 CLI argv 契约 | §2–§7 | 课程交付要求；本阶段建立测试基础设施和用例，不代替未来 S12 新克隆验收。 |
+| 静态跨文件函数库 | §9 的 `import`、别名限定调用、相对路径和模块错误规则 | §3、§5、§9 | 方案扩展，不是课程硬性最低要求；用于 Agent 维护较大的多文件程序。 |
+| 完整黑盒测试集及一条命令 | S25 当前 247 对 `.lwt`/JSON 测试用例，由 `python tools/run_tests.py` 运行；242 项执行配对 LWT 源程序，5 项仅测试 CLI argv 契约 | §2–§9 | 课程交付要求；模块是可选扩展，不改变课程硬性功能边界。 |
 | 性能报告、开发指南、Agent 应用、Git 历史、PPT 和线下答辩 | 未作为 LWT 语言语义覆盖 | 不适用 | 属项目后续交付，不伪装为 S8 测试；性能、指南、应用和答辩资料留待后续阶段。 |
 
 ## 2. 用例格式、发现和比较规则
@@ -40,7 +41,7 @@
 字段规则：
 
 - `id`：全库唯一的 ASCII 小写短横线标识符，模式为 `[a-z0-9]+(?:-[a-z0-9]+)*`。
-- `spec_refs`：非空且不重复的规范章节编号数组，例如 `2.1`、`4.3`、`6`；值只能引用规范 §1–§8。
+- `spec_refs`：非空且不重复的规范章节编号数组，例如 `2.1`、`4.3`、`9`；值只能引用规范 §1–§9。
 - `tags`：可选的字符串数组，缺省为空数组；标签不重复。
 - `args`：字符串数组，作为 LWT 程序参数，缺省不允许省略（空数组表示无参数）。空字符串、空格、Unicode 和字面量 `--` 均保留。
 - `stdin`：必须恰有一个键。`{"text":"..."}` 将 JSON 字符串以 UTF-8 编码；`{"base64":"..."}` 使用严格 Base64 解码，适合非法 UTF-8 等任意字节输入。
@@ -51,7 +52,7 @@
 
 ### 2.2 发现与运行
 
-runner 以自身文件定位仓库根目录；递归发现顺序按 POSIX 相对路径排序。除 `tests/cases/fixtures/` 外，每个 `.lwt` 必须恰有一个同路径 `.json`，反之亦然；类别目录中的其他文件、符号链接、孤立文件、空用例集和配置错误均使整次执行失败。fixtures 目录完全排除在用例发现之外。
+runner 以自身文件定位仓库根目录；递归发现顺序按 POSIX 相对路径排序。名为 `fixtures` 的目录在任意测试类别内均不参与用例发现；其余每个 `.lwt` 必须恰有一个同路径 `.json`，反之亦然。类别目录中的其他文件、符号链接、孤立文件、空用例集和配置错误均使整次执行失败。
 
 普通语义用例执行的进程参数为 `[sys.executable, "-m", "lwt", <仓库相对 POSIX 源路径>]`；只有 `args` 非空时才追加 `--` 与参数列表。`cwd` 固定为仓库根目录，stdin 直接传字节，stdout/stderr 捕获为字节，`shell=False`，每项有有限超时。CLI override 用其提供的完整参数数组替换源路径构造，只覆盖 CLI 行为。
 
@@ -59,7 +60,7 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 
 ## 3. 逐条规范规则覆盖矩阵
 
-本表中链接文字是稳定用例 ID；`N` 为正常，`B` 为边界，`E` 为错误。每个链接同时对应同路径 JSON 期望文件。`—` 表示该测试类型对规则没有独立语义结果（例如全定义的相等/显示规则不应产生语言错误），或不适用于项目级交付；规则间共享的错误路径可在相关行重复引用。每条规则最后一列说明适用性和理由。**S8 当时列出的用例**于 2026-10-07 在 Windows Python 3.11.16 和 3.13.7 均通过；该历史运行详见 §4.1。S23 阶段快照为 195 项（§4.2），S24 当前快照为 217 项（§4.3），均在 Windows CPython 3.13.7 实测；不得据此推断 Python 3.11.16 也运行了新加用例。主窗口较早另在 Python 3.13.7 验证 runner 空用例保护、174 项 unittest 和从临时目录启动；远端 CI 尚无运行结果。
+本表中链接文字是稳定用例 ID；`N` 为正常，`B` 为边界，`E` 为错误。每个链接同时对应同路径 JSON 期望文件。`—` 表示该测试类型对规则没有独立语义结果，或不适用于项目级交付；规则间共享的错误路径可在相关行重复引用。每条规则最后一列说明适用性和理由。**S8 当时列出的用例**于 2026-10-07 在 Windows Python 3.11.16 和 3.13.7 均通过；该历史运行详见 §4.1。S23、S24 历史快照分别为 195 项和 217 项（§4.2–§4.3），不得据此推断其它版本也运行过更新后的用例。主窗口较早另在 Python 3.13.7 验证 runner 空用例保护、174 项 unittest 和从临时目录启动；远端 CI 尚无运行结果。
 
 ### §1–§3 范围、词法和语法
 
@@ -141,6 +142,16 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | §7 诊断路径/行列、EOF、错误触发位置、首个运行时错误、无 traceback | [diagnostic-path-keeps-cli-argument](../tests/cases/cli-errors/diagnostic-path-keeps-cli-argument.lwt)；[unicode-codepoint-error-column](../tests/cases/lexer-parser/unicode-codepoint-error-column.lwt)；[runtime-location-accessor](../tests/cases/cli-errors/runtime-location-accessor.lwt) | [syntax-eof-location](../tests/cases/cli-errors/syntax-eof-location.lwt) | [integrated-runtime-failure-preserves-stdout](../tests/cases/integrated/integrated-runtime-failure-preserves-stdout.lwt) | 可适用；S8 历史运行的 194 项完整 stderr 均无意外 traceback；S24 当前 217 项实测见 §4.3。 |
 | §7 禁止 Python `eval`/`exec` 执行 LWT；实现约束而非语言语义 | — | — | — | 运行结果不可观察，矩阵不伪造黑盒覆盖；通过源码审查约束验证（runner 不导入 LWT 前端/运行时作为被测路径）。 |
 
+### §9 静态函数库模块
+
+| 规则与用例 | 覆盖目的 | 结果 |
+|---|---|---|
+| [module-simple-alias-call](../tests/cases/modules/simple-alias-call.lwt)；[module-multi-level-relative-import](../tests/cases/modules/multi-level-relative-import.lwt)；[module-dot-dot-module-path](../tests/cases/modules/dot-dot-module-path.lwt)；[module-unicode-space-module-path](../tests/cases/modules/unicode-space-module-path.lwt)；[module-directory-dependency](../tests/cases/modules/directory-dependency.lwt)；[module-missing-dependency-no-partial-output](../tests/cases/modules/missing-dependency-no-partial-output.lwt) | 单文件和多层限定调用；路径相对 importer、`..`/Unicode/空格；目录和缺失依赖；失败前不执行入口输出 | 6 项 CLI 黑盒；路径错误精确比较退出码/stdout/stderr。 |
+| [module-direct-cycle](../tests/cases/modules/direct-cycle.lwt)；[module-indirect-cycle](../tests/cases/modules/indirect-cycle.lwt)；[module-entry-self-cycle](../tests/cases/modules/entry-self-cycle.lwt)；[module-duplicate-alias](../tests/cases/modules/duplicate-alias.lwt)；[module-import-after-top-level-item](../tests/cases/modules/import-after-top-level-item.lwt)；[module-import-in-function](../tests/cases/modules/import-in-function.lwt)；[module-import-reserved-identifier](../tests/cases/modules/import-reserved-identifier.lwt) | 循环路径、入口回边、别名重复、导入位置约束、仅顶层导入和新增保留字 | 7 项 CLI 黑盒；循环为 ImportError/4，其余语法错误为 SyntaxError/2。 |
+| [module-top-level-let](../tests/cases/modules/module-top-level-let.lwt)；[module-top-level-record](../tests/cases/modules/module-top-level-record.lwt)；[module-top-level-emit](../tests/cases/modules/module-top-level-emit.lwt)；[module-module-lexer-source-location](../tests/cases/modules/module-lexer-source-location.lwt)；[module-module-parser-source-location](../tests/cases/modules/module-parser-source-location.lwt)；[module-runtime-source-location](../tests/cases/modules/module-runtime-source-location.lwt) | 模块只含 import/fn；词法、语法、运行时诊断保留实际模块来源路径 | 6 项 CLI 黑盒；错误位置与退出码精确匹配。 |
+| [module-same-name-namespaces](../tests/cases/modules/same-name-namespaces.lwt)；[module-forward-recursion](../tests/cases/modules/forward-recursion.lwt)；[module-unqualified-import-is-not-visible](../tests/cases/modules/unqualified-import-is-not-visible.lwt)；[module-undefined-alias-link-error](../tests/cases/modules/undefined-alias-link-error.lwt)；[module-undefined-member-link-error](../tests/cases/modules/undefined-member-link-error.lwt)；[module-alias-is-not-value](../tests/cases/modules/module-alias-is-not-value.lwt)；[module-call-result-not-callable](../tests/cases/modules/module-call-result-not-callable.lwt)；[module-cannot-call-main-function](../tests/cases/modules/module-cannot-call-main-function.lwt)；[module-cannot-read-main-global](../tests/cases/modules/module-cannot-read-main-global.lwt) | 独立命名空间、前向调用/递归、别名/成员解析、调用结果不可继续调用和非闭包边界 | 9 项 CLI 黑盒；链接失败在入口执行前报告，运行时命名错误使用 RuntimeError/3。 |
+| [module-array-record-aliasing](../tests/cases/modules/array-record-aliasing.lwt)；[module-process-io](../tests/cases/modules/module-process-io.lwt) | 数组和 record 引用参数；模块中的 `args()`/`input()`/`read_text()` 仍使用进程级语义 | 2 项 CLI 黑盒；`read_text` 仍以进程 cwd 为基准。另有定向临时目录测试覆盖绝对路径、非法 UTF-8、同一规范文件多 alias。 |
+
 ## 4. 本次实测摘要、未覆盖边界和 CI
 
 ### 4.1 历史 S8 实测快照（2026-10-07）
@@ -162,11 +173,15 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 
 本节单独保留 S23 阶段更新覆盖集后的实测结果，不覆盖或替代上面的 S8 历史快照，也不代表 S24 当前用例数。Windows 11 build 26200、CPython 3.13.7 下，`python tools/run_tests.py` 实际通过 195/195，0 失败；类别分别为 `lexer-parser` 42、`values-operators` 31、`control-functions` 31、`arrays-records-each` 32、`builtins-text-io` 43、`cli-errors` 13、`integrated` 3。总计 195 对同名 `.lwt`/JSON 文件，其中 190 个配对 LWT 源程序由公开 CLI 执行，5 个使用 `cli_args_override` 检查 CLI argv。`python tools/check_project_integrity.py` 实际输出 `cases=195; matrix_links=290; referenced_cases=195`。该结果只证明 S23 本次环境实测，不代表 Python 3.11.16、Python 3.10、Linux 或远端 Actions 也运行了 195 项。
 
-### 4.3 S24 当前本地实测
+### 4.3 S24 阶段本地实测快照
 
-Windows 11 build 26200、CPython 3.13.7 下，S24 当前集合为 217 项：`lexer-parser` 52、`values-operators` 31、`control-functions` 43、`arrays-records-each` 32、`builtins-text-io` 43、`cli-errors` 13、`integrated` 3。212 项由公开 CLI 执行配对 LWT 源程序，另 5 项为 CLI argv override。实际运行的 `python tools/run_tests.py` 和 `python tools/check_project_integrity.py` 结果见 S24 阶段报告；S23 的 195/195 结果仍保留在 §4.2。
+Windows 11 build 26200、CPython 3.13.7 下，S24 阶段集合为 217 项：`lexer-parser` 52、`values-operators` 31、`control-functions` 43、`arrays-records-each` 32、`builtins-text-io` 43、`cli-errors` 13、`integrated` 3。212 项由公开 CLI 执行配对 LWT 源程序，另 5 项为 CLI argv override。该值是 S24 的历史快照，不覆盖后续扩展；S23 的 195/195 仍保留在 §4.2。
 
-### 4.4 明确未覆盖或不属于本阶段
+### 4.4 S25 当前本地实测
+
+Windows CPython 3.13.7 的 S25 集合共 247 项：`arrays-records-each` 32、`builtins-text-io` 43、`cli-errors` 13、`control-functions` 43、`integrated` 3、`lexer-parser` 52、`modules` 30、`values-operators` 31。242 项执行配对 `.lwt` 程序，另 5 项为 CLI argv override。完整命令输出、实际完整性链接数与 unittest 数见 [S25 阶段报告](s25-modules.md)；该本地结果不代表 Python 3.10、Linux 或远端 Actions 已运行。
+
+### 4.5 明确未覆盖或不属于本阶段
 
 - `input()` 底层流读取失败：普通子进程管道难以跨 Windows/Linux 稳定触发该 OS 错误；非法 UTF-8、空输入 EOF、空行及 CRLF 已测。
 - `read_text()` 权限拒绝：权限/管理员身份/Windows ACL 差异不适合作为可移植黑盒前置条件；缺失路径、目录路径、非法 UTF-8 均已测，三者都要求 RuntimeError/3。
@@ -175,7 +190,7 @@ Windows 11 build 26200、CPython 3.13.7 下，S24 当前集合为 217 项：`lex
 - 解释器递归耗尽、内存耗尽、外部强制终止不属于语言正常错误契约；不设置固定递归深度黑盒承诺。
 - 项目性能脚本、Agent 指南/盲测、≥200 行应用、最终 PPT/新克隆验收属于后续阶段，不列为 S8 已覆盖功能。
 
-### 4.5 CI 工作流
+### 4.6 CI 工作流
 
 [`tests.yml`](../.github/workflows/tests.yml) 在 `push`、`pull_request` 和 `workflow_dispatch` 触发；Python 3.10/3.13 × `ubuntu-latest`/`windows-latest` 共四格，每格首先运行同一 `python tools/run_tests.py`，随后运行旧 unittest 和 compileall。工作流只授予 `contents: read`，无 secrets，job 超时为 15 分钟。动作引用为官方稳定发布 `actions/checkout@v7.0.1` 和 `actions/setup-python@v7.0.0`。
 

@@ -1,0 +1,15 @@
+import "text_utils.lwt" as text;
+
+fn count_nonempty(lines) {
+    let count = 0;
+    each (line in lines) {
+        when (len(text.clean(line)) > 0) {
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+fn summarize(batch) {
+    return text.clean(batch.tag) + ":" + str(count_nonempty(batch.lines));
+}

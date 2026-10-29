@@ -1,0 +1,5 @@
+import "stats_utils.lwt" as stats;
+
+record Batch { lines, tag };
+let batch = Batch{lines: [" alpha ", " ", "雪"], tag: " demo "};
+emit stats.summarize(batch);
