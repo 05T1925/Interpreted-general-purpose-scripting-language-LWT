@@ -27,6 +27,30 @@ class IntegerConversionTests(unittest.TestCase):
         self.assertEqual(format_decimal_integer(0), "0")
 
 
+class LoopControlRuntimeTests(unittest.TestCase):
+    def run_source(self, source: str) -> str:
+        output = StringIO()
+        execute(parse(scan(source)), BytesIO(), output)
+        return output.getvalue()
+
+    def test_continue_in_loop_does_not_swallow_return(self) -> None:
+        source = (
+            "fn find() { let n = 0; while (true) { n = n + 1; "
+            "when (n == 2) { return n; } continue; } return 0; } "
+            "emit find();"
+        )
+        self.assertEqual(self.run_source(source), "2\n")
+
+    def test_runtime_error_inside_loop_propagates_after_prior_output(self) -> None:
+        output = StringIO()
+        source = 'emit "before"; while (true) { emit 1; emit 1 / 0; }'
+        with self.assertRaises(LwtError) as caught:
+            execute(parse(scan(source)), BytesIO(), output)
+        self.assertEqual(caught.exception.category, "RuntimeError")
+        self.assertEqual(caught.exception.exit_code, 3)
+        self.assertEqual(output.getvalue(), "before\n1\n")
+
+
 class InputErrorTests(unittest.TestCase):
     def test_input_read_failure_becomes_located_runtime_error(self) -> None:
         class BrokenInput:

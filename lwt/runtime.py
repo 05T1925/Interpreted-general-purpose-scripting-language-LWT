@@ -8,10 +8,12 @@ from typing import BinaryIO, NoReturn, TextIO
 
 from .ast_nodes import (
     ArrayExpression,
+    BreakStatement,
     AssignmentExpression,
     BinaryExpression,
     Block,
     CallExpression,
+    ContinueStatement,
     EachStatement,
     EmitStatement,
     Expression,
@@ -68,6 +70,22 @@ class _ReturnSignal(Exception):
     def __init__(self, value: object) -> None:
         super().__init__()
         self.value = value
+
+
+class _BreakSignal(Exception):
+    """Internal transfer caught only by the innermost active loop."""
+
+    def __init__(self, location: SourceLocation) -> None:
+        super().__init__()
+        self.location = location
+
+
+class _ContinueSignal(Exception):
+    """Internal transfer caught only by the innermost active loop."""
+
+    def __init__(self, location: SourceLocation) -> None:
+        super().__init__()
+        self.location = location
 
 
 class _RecordValue:
@@ -244,6 +262,8 @@ def _first_unsupported(program: Program) -> SourceLocation | None:
 
 
 def _unsupported_statement(statement: object) -> SourceLocation | None:
+    if isinstance(statement, (BreakStatement, ContinueStatement)):
+        return None
     if isinstance(statement, FunctionDeclaration):
         return _unsupported_statement(statement.body)
     if isinstance(statement, RecordDeclaration):
@@ -359,6 +379,12 @@ def _execute_statement(
         environment.values[name] = value
         return
 
+    if isinstance(statement, BreakStatement):
+        raise _BreakSignal(statement.location)
+
+    if isinstance(statement, ContinueStatement):
+        raise _ContinueSignal(statement.location)
+
     if isinstance(statement, ReturnStatement):
         value = (
             _evaluate(statement.value, environment, runtime)
@@ -405,7 +431,12 @@ def _execute_statement(
             if not condition:
                 return
             # The Block creates a fresh child environment on each iteration.
-            _execute_statement(statement.body, environment, runtime)
+            try:
+                _execute_statement(statement.body, environment, runtime)
+            except _ContinueSignal:
+                continue
+            except _BreakSignal:
+                return
 
     if isinstance(statement, EachStatement):
         iterable = _evaluate(statement.iterable, environment, runtime)
@@ -417,7 +448,12 @@ def _execute_statement(
             # The loop binding intentionally shadows an outer binding.
             iteration_scope.values[statement.variable.name] = value
             # The body Block creates a second scope nested under the iteration scope.
-            _execute_statement(statement.body, iteration_scope, runtime)
+            try:
+                _execute_statement(statement.body, iteration_scope, runtime)
+            except _ContinueSignal:
+                continue
+            except _BreakSignal:
+                break
         return
 
     # Top-level record declarations are registered before execution and skipped
