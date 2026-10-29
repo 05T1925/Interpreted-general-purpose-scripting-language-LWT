@@ -1,0 +1,20 @@
+{
+  "id": "break-missing-semicolon",
+  "spec_refs": [
+    "3",
+    "5",
+    "7"
+  ],
+  "tags": [
+    "error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/break-missing-semicolon.lwt:1:22: SyntaxError: expected ';' after break statement\n"
+  }
+}

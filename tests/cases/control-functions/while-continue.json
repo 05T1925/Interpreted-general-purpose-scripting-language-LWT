@@ -1,0 +1,18 @@
+{
+  "id": "while-continue",
+  "spec_refs": [
+    "5"
+  ],
+  "tags": [
+    "normal"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n10\n3\n30\n4\n40\ndone\n",
+    "stderr": ""
+  }
+}

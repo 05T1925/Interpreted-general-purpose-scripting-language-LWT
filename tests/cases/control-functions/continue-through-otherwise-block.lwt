@@ -1,0 +1,7 @@
+let n = 0;
+while (n < 3) {
+  n = n + 1;
+  when (n == 1) { emit n; } otherwise { { continue; } }
+  emit n * 10;
+}
+emit "after";

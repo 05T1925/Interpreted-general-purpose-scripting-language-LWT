@@ -1,0 +1,8 @@
+fn through_each() {
+  each (item in [4, 5, 6]) {
+    when (item == 5) { return item; }
+    continue;
+  }
+  return 0;
+}
+emit through_each();

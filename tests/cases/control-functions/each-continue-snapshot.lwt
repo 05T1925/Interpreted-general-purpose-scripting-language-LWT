@@ -1,0 +1,14 @@
+let values = [1, 2, 3];
+let seen = [];
+each (item in values) {
+  when (item == 1) {
+    values[1] = 20;
+    push(values, 4);
+    continue;
+  }
+  push(seen, item);
+  when (item == 2) { continue; }
+  emit item;
+}
+emit seen;
+emit values;

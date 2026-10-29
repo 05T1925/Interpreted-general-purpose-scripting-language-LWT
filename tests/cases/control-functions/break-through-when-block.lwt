@@ -1,0 +1,7 @@
+let n = 0;
+while (n < 4) {
+  n = n + 1;
+  when (n == 2) { { break; } }
+  emit n;
+}
+emit "after";

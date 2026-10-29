@@ -1,0 +1,9 @@
+each (outer in [1, 2]) {
+  while (true) {
+    emit 9;
+    break;
+    emit 99;
+  }
+  emit outer;
+}
+emit "done";

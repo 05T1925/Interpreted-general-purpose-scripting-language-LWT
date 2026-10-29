@@ -1,0 +1,10 @@
+fn through_while() {
+  let i = 0;
+  while (true) {
+    i = i + 1;
+    when (i == 3) { return i; }
+    continue;
+  }
+  return 99;
+}
+emit through_while();

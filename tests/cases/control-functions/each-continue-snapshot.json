@@ -1,0 +1,18 @@
+{
+  "id": "each-continue-snapshot",
+  "spec_refs": [
+    "5"
+  ],
+  "tags": [
+    "normal"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "3\n[2, 3]\n[1, 20, 3, 4]\n",
+    "stderr": ""
+  }
+}

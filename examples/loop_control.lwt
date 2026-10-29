@@ -1,0 +1,20 @@
+# while 的 continue 跳过本轮 emit；break 在 i 达到 4 时结束循环。
+let i = 0;
+while (i < 6) {
+  i = i + 1;
+  when (i == 2) { continue; }
+  when (i == 4) { break; }
+  emit i;
+}
+
+# each 使用进入时的浅快照：push 不会把新元素加入本轮遍历。
+let values = [1, 2, 3];
+each (value in values) {
+  when (value == 1) {
+    push(values, 4);
+    continue;
+  }
+  when (value == 3) { break; }
+  emit value;
+}
+emit values;

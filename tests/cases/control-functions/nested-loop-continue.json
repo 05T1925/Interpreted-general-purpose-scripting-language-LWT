@@ -1,0 +1,18 @@
+{
+  "id": "nested-loop-continue",
+  "spec_refs": [
+    "5"
+  ],
+  "tags": [
+    "normal"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "11\n13\n1\n21\n23\n2\n",
+    "stderr": ""
+  }
+}

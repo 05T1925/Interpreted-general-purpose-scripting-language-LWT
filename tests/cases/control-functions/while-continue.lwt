@@ -1,0 +1,8 @@
+let i = 0;
+while (i < 4) {
+  i = i + 1;
+  when (i == 2) { continue; }
+  emit i;
+  emit i * 10;
+}
+emit "done";

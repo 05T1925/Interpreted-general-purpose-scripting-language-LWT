@@ -1,0 +1,7 @@
+let i = 0;
+while (i < 5) {
+  i = i + 1;
+  when (i == 3) { break; }
+  emit i;
+}
+emit "after";

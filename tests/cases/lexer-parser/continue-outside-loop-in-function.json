@@ -1,0 +1,20 @@
+{
+  "id": "continue-outside-loop-in-function",
+  "spec_refs": [
+    "3",
+    "5",
+    "7"
+  ],
+  "tags": [
+    "error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/lexer-parser/continue-outside-loop-in-function.lwt:1:10: SyntaxError: 'continue' is only allowed inside a loop\n"
+  }
+}

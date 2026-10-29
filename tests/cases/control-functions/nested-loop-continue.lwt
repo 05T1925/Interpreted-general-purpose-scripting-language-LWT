@@ -1,0 +1,7 @@
+each (outer in [1, 2]) {
+  each (inner in [1, 2, 3]) {
+    when (inner == 2) { continue; }
+    emit outer * 10 + inner;
+  }
+  emit outer;
+}
