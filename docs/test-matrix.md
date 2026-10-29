@@ -1,6 +1,6 @@
 # LWT 0.1 黑盒覆盖矩阵（S8 主窗口审查通过）
 
-> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。本矩阵记录 S8 主窗口审查通过后的本地实测；远端 GitHub Actions 尚未触发。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
+> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8 历史结果与 S23 当前本地实测分列于 §4。远端 GitHub Actions 尚未触发。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
 
 ## 1. 课程要求对应关系
 
@@ -12,7 +12,7 @@
 | 基本输入输出 | [`input-lf-and-crlf`](../tests/cases/builtins-text-io/input-lf-and-crlf.lwt)、[`emit-and-str-match`](../tests/cases/builtins-text-io/emit-and-str-match.lwt) | §6 | `input()`/`emit` 是课程硬要求；文件、参数和文本函数是面向应用的扩展。 |
 | 分支循环 | [`when-otherwise`](../tests/cases/control-functions/when-otherwise.lwt)、[`while-rechecks-condition`](../tests/cases/control-functions/while-rechecks-condition.lwt)、[`each-snapshot-append`](../tests/cases/arrays-records-each/each-snapshot-append.lwt) | §3、§5 | 课程硬要求；`when/otherwise` 与 `each` 是 LWT 选定形式。 |
 | 函数定义和调用 | [`function-forward-call`](../tests/cases/control-functions/function-forward-call.lwt)、[`recursive-factorial`](../tests/cases/control-functions/recursive-factorial.lwt) | §3、§5 | 课程硬要求；前向调用、递归和具体作用域是规范规则。 |
-| 完整黑盒测试集及一条命令 | 本矩阵所列 194 对 `.lwt`/JSON 测试用例，由 `python tools/run_tests.py` 运行；其中 189 项执行配对 LWT 源程序，5 项仅测试 CLI argv 契约 | §2–§7 | 课程交付要求；本阶段建立测试基础设施和用例，不代替未来 S12 新克隆验收。 |
+| 完整黑盒测试集及一条命令 | 本矩阵所列 195 对 `.lwt`/JSON 测试用例，由 `python tools/run_tests.py` 运行；其中 190 项执行配对 LWT 源程序，5 项仅测试 CLI argv 契约 | §2–§7 | 课程交付要求；本阶段建立测试基础设施和用例，不代替未来 S12 新克隆验收。 |
 | 性能报告、开发指南、Agent 应用、Git 历史、PPT 和线下答辩 | 未作为 LWT 语言语义覆盖 | 不适用 | 属项目后续交付，不伪装为 S8 测试；性能、指南、应用和答辩资料留待后续阶段。 |
 
 ## 2. 用例格式、发现和比较规则
@@ -59,7 +59,7 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 
 ## 3. 逐条规范规则覆盖矩阵
 
-本表中链接文字是稳定用例 ID；`N` 为正常，`B` 为边界，`E` 为错误。每个链接同时对应同路径 JSON 期望文件。`—` 表示该测试类型对规则没有独立语义结果（例如全定义的相等/显示规则不应产生语言错误），或不适用于项目级交付；规则间共享的错误路径可在相关行重复引用。每条规则最后一列说明适用性和理由。表内列出的本地用例于 **2026-10-07 在 Windows Python 3.11.16 和 3.13.7** 均通过。主窗口另在 Python 3.13.7 验证 runner 的空用例保护、174 项 unittest 和从临时目录启动；其他平台/版本的 CI 计划见 §4，尚无远端运行结果。
+本表中链接文字是稳定用例 ID；`N` 为正常，`B` 为边界，`E` 为错误。每个链接同时对应同路径 JSON 期望文件。`—` 表示该测试类型对规则没有独立语义结果（例如全定义的相等/显示规则不应产生语言错误），或不适用于项目级交付；规则间共享的错误路径可在相关行重复引用。每条规则最后一列说明适用性和理由。**S8 当时列出的用例**于 2026-10-07 在 Windows Python 3.11.16 和 3.13.7 均通过；该历史运行详见 §4.1。S23 新增覆盖后的完整当前测试数为 195，Windows CPython 3.13.7 实测详见 §4.2；不得据此推断 Python 3.11.16 也运行了新加用例。主窗口较早另在 Python 3.13.7 验证 runner 空用例保护、174 项 unittest 和从临时目录启动；远端 CI 尚无运行结果。
 
 ### §1–§3 范围、词法和语法
 
@@ -136,12 +136,12 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | §6 `emit` 恰好输出显示值和 LF；成功无状态文本、诊断不进 stdout | [emit-and-str-match](../tests/cases/builtins-text-io/emit-and-str-match.lwt)；[integrated-input-text-and-args](../tests/cases/integrated/integrated-input-text-and-args.lwt) | [empty-program](../tests/cases/lexer-parser/empty-program.lwt) | [integrated-runtime-failure-preserves-stdout](../tests/cases/integrated/integrated-runtime-failure-preserves-stdout.lwt) | 可适用；stdout/stderr 分流和运行时错误前的已输出内容均精确比较；通过。 |
 | §6 CLI 参数分隔、源路径、缺失路径和程序参数边界 | [cli-empty-argument-preserved](../tests/cases/cli-errors/cli-empty-argument-preserved.lwt)；[cli-double-separator-data](../tests/cases/cli-errors/cli-double-separator-data.lwt) | [cli-bare-separator](../tests/cases/cli-errors/cli-bare-separator.lwt) | [cli-no-arguments](../tests/cases/cli-errors/cli-no-arguments.lwt)；[cli-args-require-separator](../tests/cases/cli-errors/cli-args-require-separator.lwt)；[cli-missing-source-file](../tests/cases/cli-errors/cli-missing-source-file.lwt)；[cli-source-is-directory](../tests/cases/cli-errors/cli-source-is-directory.lwt) | 可适用；CLI override 用例仅计 CLI 行为；通过。 |
 | §7 成功/词法或语法/runtime/CLI 或源文件错误退出码 0/2/3/4 | [empty-program](../tests/cases/lexer-parser/empty-program.lwt) | [syntax-eof-location](../tests/cases/cli-errors/syntax-eof-location.lwt) | [lex-location-invalid-character](../tests/cases/cli-errors/lex-location-invalid-character.lwt)；[runtime-location-operator](../tests/cases/cli-errors/runtime-location-operator.lwt)；[invalid-utf8-source](../tests/cases/cli-errors/invalid-utf8-source.lwt)；[cli-no-arguments](../tests/cases/cli-errors/cli-no-arguments.lwt) | 可适用；四种退出码均由 CLI 端到端实测；通过。 |
-| §7 诊断路径/行列、EOF、错误触发位置、首个运行时错误、无 traceback | [diagnostic-path-keeps-cli-argument](../tests/cases/cli-errors/diagnostic-path-keeps-cli-argument.lwt)；[unicode-codepoint-error-column](../tests/cases/lexer-parser/unicode-codepoint-error-column.lwt)；[runtime-location-accessor](../tests/cases/cli-errors/runtime-location-accessor.lwt) | [syntax-eof-location](../tests/cases/cli-errors/syntax-eof-location.lwt) | [integrated-runtime-failure-preserves-stdout](../tests/cases/integrated/integrated-runtime-failure-preserves-stdout.lwt) | 可适用；完整 stderr 字节相等且所有 194 项均无意外 traceback；通过。 |
+| §7 诊断路径/行列、EOF、错误触发位置、首个运行时错误、无 traceback | [diagnostic-path-keeps-cli-argument](../tests/cases/cli-errors/diagnostic-path-keeps-cli-argument.lwt)；[unicode-codepoint-error-column](../tests/cases/lexer-parser/unicode-codepoint-error-column.lwt)；[runtime-location-accessor](../tests/cases/cli-errors/runtime-location-accessor.lwt) | [syntax-eof-location](../tests/cases/cli-errors/syntax-eof-location.lwt) | [integrated-runtime-failure-preserves-stdout](../tests/cases/integrated/integrated-runtime-failure-preserves-stdout.lwt) | 可适用；S8 历史运行的 194 项完整 stderr 均无意外 traceback；S23 当前 195 项实测见 §4.2。 |
 | §7 禁止 Python `eval`/`exec` 执行 LWT；实现约束而非语言语义 | — | — | — | 运行结果不可观察，矩阵不伪造黑盒覆盖；通过源码审查约束验证（runner 不导入 LWT 前端/运行时作为被测路径）。 |
 
 ## 4. 本次实测摘要、未覆盖边界和 CI
 
-### 4.1 本地用例数与状态
+### 4.1 历史 S8 实测快照（2026-10-07）
 
 | 类别目录 | 用例数 | 实测 |
 |---|---:|---|
@@ -154,9 +154,13 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | `integrated` | 3 | Python 3.11.16、3.13.7 各 3 通过 |
 | **合计** | **194** | **每个版本均 194 通过，0 失败** |
 
-结果来自 `python tools/run_tests.py`，Windows Python 3.11.16 和 3.13.7，2026-10-07；两个版本各 194/194 通过。194 项中 189 项经公开 CLI 执行配对 LWT 源文件，5 项使用 `cli_args_override` 专测 CLI 输入形式且不执行配对源码。S8 的运行时错误回归 [`runtime-location-operator`](../tests/cases/cli-errors/runtime-location-operator.lwt) 和词法错误回归 [`lex-location-invalid-character`](../tests/cases/cli-errors/lex-location-invalid-character.lwt) 都比较完整退出码/stdout/stderr，而不是只匹配消息片段。
+本表和本段是 S8 在 2026-10-07 留存的历史结果：`python tools/run_tests.py` 在 Windows Python 3.11.16 和 3.13.7 各通过 194/194。彼时 194 项中 189 项经公开 CLI 执行配对 LWT 源文件，5 项使用 `cli_args_override` 专测 CLI 输入形式且不执行配对源码。不得将此历史结果改写为 S23 的 195 项结果。S8 的运行时错误回归 [`runtime-location-operator`](../tests/cases/cli-errors/runtime-location-operator.lwt) 和词法错误回归 [`lex-location-invalid-character`](../tests/cases/cli-errors/lex-location-invalid-character.lwt) 都比较完整退出码/stdout/stderr，而不是只匹配消息片段。
 
-### 4.2 明确未覆盖或不属于本阶段
+### 4.2 S23 当前本地实测（2026-10-28）
+
+本节单独记录 S23 更新覆盖集后的当前结果，不覆盖或替代上面的 S8 历史快照。Windows 11 build 26200、CPython 3.13.7 下，`python tools/run_tests.py` 实际通过 195/195，0 失败；类别分别为 `lexer-parser` 42、`values-operators` 31、`control-functions` 31、`arrays-records-each` 32、`builtins-text-io` 43、`cli-errors` 13、`integrated` 3。总计 195 对同名 `.lwt`/JSON 文件，其中 190 个配对 LWT 源程序由公开 CLI 执行，5 个使用 `cli_args_override` 检查 CLI argv。`python tools/check_project_integrity.py` 实际输出 `cases=195; matrix_links=290; referenced_cases=195`。该结果只证明 S23 本次环境实测，不代表 Python 3.11.16、Python 3.10、Linux 或远端 Actions 也运行了 195 项。
+
+### 4.3 明确未覆盖或不属于本阶段
 
 - `input()` 底层流读取失败：普通子进程管道难以跨 Windows/Linux 稳定触发该 OS 错误；非法 UTF-8、空输入 EOF、空行及 CRLF 已测。
 - `read_text()` 权限拒绝：权限/管理员身份/Windows ACL 差异不适合作为可移植黑盒前置条件；缺失路径、目录路径、非法 UTF-8 均已测，三者都要求 RuntimeError/3。

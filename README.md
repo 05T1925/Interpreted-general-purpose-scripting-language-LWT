@@ -52,7 +52,7 @@ python tools/check_project_integrity.py
 python tools/run_tests.py
 ```
 
-语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。当前共有 194 项黑盒用例，其中 189 项执行配对 LWT 程序、5 项专测 CLI 参数契约。S14 本轮在 Windows Python 3.13.7 和 WSL Ubuntu 24.04 / Linux Python 3.12.3 各测得 194/194，全量 unittest 各为 219 项通过。完整性检查当前报告 194 个配对用例、287 个矩阵链接和 194 个被引用 ID。GitHub Actions 尚未远端运行，Python 3.10 格仍未验证。
+语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。当前共有 195 项黑盒用例，其中 190 项执行配对 LWT 程序、5 项专测 CLI 参数契约。S23 当前实测在 Windows CPython 3.13.7 为 195/195；完整性检查为 195 个案例、290 个矩阵链接、195 个被引用 ID。S8/S14 的 194 项结果是对应历史阶段实测，不代表 S23 当前数量；Python 3.10 格和远端 GitHub Actions 仍未验证。
 
 运行 lexer、parser、runtime、CLI 和黑盒 runner 的开发辅助 unittest：
 
@@ -138,7 +138,7 @@ S15–S18 已通过主窗口审查并合入本地 `main`。S17 主窗口实际�
 
 S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/Tkinter 附加演示，并非第二个 LWT 应用**；不会替代 `app/log_report.lwt`，也不计入课程要求的 LWT 有效代码行数。S17 为两个 GUI 提取共享主题并修复 Snake 结束态重开；S18 没有改变 Snake 规则。桌面复核状态见[S18 工作报告](docs/s18-workbench.md)。
 
-应用测试经公开 CLI 运行，不纳入 S8 的 194 项语言黑盒矩阵。并发工具使用固定输入分别同时启动 1、2、4 个独立操作系统进程，不代表 LWT 线程支持；原始逐试次结果位于[`reports/app-concurrency.json`](reports/app-concurrency.json)。
+应用测试经公开 CLI 运行，不纳入语言黑盒矩阵；S8 历史基线为 194 项，S23 当前集合为 195 项。并发工具使用固定输入分别同时启动 1、2、4 个独立操作系统进程，不代表 LWT 线程支持；原始逐试次结果位于[`reports/app-concurrency.json`](reports/app-concurrency.json)。
 
 ## S11 性能实验
 

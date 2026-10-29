@@ -22,7 +22,7 @@
 | 数组、record 与 `each` | S6 已审查并快进合入本地 `main`；尚未推送 | 数组索引/赋值/别名/`push`；record 预登记、构造和字段读写；浅快照遍历；身份相等和循环安全显示 |
 | 文件/文本内置函数与 CLI 集成 | S7 已审查并快进合入本地 `main` | 已支持 `args()`、`read_text()`、`len()`、`split()`、`trim()`、`to_int()`、`str()`、`fail()`；S7 提交 `4f11b80`，未推送 |
 | 阶段性 lexer/parser/runtime/CLI 测试 | S7 主窗口复核通过 | Python 3.13.7；`python -m unittest discover -s tests -v`：157 项通过；`compileall`、diff 检查和跨功能示例通过；不是最终黑盒测试集 |
-| 黑盒测试/CI | S8 已审查；S13 本机复核；S14 增加结构门禁 | 194 个用例（189 执行 LWT 源、5 个 CLI override）；runner、63 条规范矩阵记录、GitHub Actions 四格工作流。S14 的 `python tools/check_project_integrity.py` 检查配对/metadata/唯一 ID 和 287 个矩阵链接。本轮 Windows Python 3.13.7、WSL Ubuntu 24.04 Python 3.12.3 各 194/194；全量 unittest 各 219 项通过。Python 3.10 和远端 Actions 仍未验证 |
+| 黑盒测试/CI | S8 已审查；S13 本机复核；S14 增加结构门禁；S23 扩充并复测 | 当前 195 个用例（190 个执行 LWT 源、5 个 CLI override），完整性检查为 195 cases/290 matrix links/195 referenced cases。S23 当前 Windows CPython 3.13.7 实测 195/195；S8/S14 的 194 项和 S8 Python 3.11.16/3.13.7、S14 Linux Python 3.12.3 结果保留为各自历史记录，不代表 195 项运行。Python 3.10 和远端 Actions 仍未验证 |
 | 人类/Agent 指南与仓库 Skill | S9 已审查通过并合入本地 `main` | `docs/developer-guide.md`、`.agents/skills/lwt-app/SKILL.md`、`docs/agent-blind-test.md`；三个独立上下文各自完成数组去重、record 统计、文本筛选，主窗口复跑通过。Skill 自动路由当前平台不可观察 |
 | 完整 Agent 应用 | S10、S15–S19 已审查并合入本地 `main` | [`app/log_report.lwt`](app/log_report.lwt) 保持 246 行有效代码；[`tests/test_app.py`](tests/test_app.py) 保持 25 项 CLI 集成测试。S18 新增 LWT 报告驱动工作台；S19 修复 Unicode 报告拆行，新增 Python/Tkinter 语义教学前端，课程 LWT 应用仍是日志分析器。 |
 | 性能报告与 PPT | S11 已审查通过；S13 已独立复核性能 raw；PPT 待 S12 | 正式 run `291bd4e2-8a3e-4de6-be86-46b62980e656`：120 个计时子进程/60 个配对、12 个 warm-up，全部有效；本轮再次核验输出 Base64/长度/hash、pair 链接、六组 median/min/max/range/ratio 与报告一致。没有重跑或覆盖 raw，也未根据端到端比值做优化 |
