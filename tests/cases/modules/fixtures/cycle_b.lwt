@@ -1,0 +1,2 @@
+import "cycle_a.lwt" as a;
+fn b() { return a.a(); }

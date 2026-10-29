@@ -1,0 +1,2 @@
+import "fixtures/recursive.lwt" as calc;
+emit calc.first(5);

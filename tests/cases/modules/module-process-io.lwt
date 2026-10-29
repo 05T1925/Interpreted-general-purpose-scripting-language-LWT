@@ -1,0 +1,4 @@
+import "fixtures/process_io.lwt" as process;
+emit process.command_args();
+emit process.read_line();
+emit process.read_data();

@@ -1,0 +1,1 @@
+{"id":"module-forward-recursion","spec_refs":["9"],"tags":["modules"],"args":[],"stdin":{"text":""},"expected":{"exit_code":0,"stdout":"120\n","stderr":""}}

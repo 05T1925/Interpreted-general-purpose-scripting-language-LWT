@@ -1,0 +1,3 @@
+import "fixtures/basic.lwt" as math;
+emit "before";
+emit math.nope();

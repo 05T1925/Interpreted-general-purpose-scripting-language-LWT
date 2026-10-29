@@ -1,0 +1,2 @@
+import "fixtures/cycle_a.lwt" as cycle;
+emit cycle.a();

@@ -1,0 +1,5 @@
+import "nested/inner.lwt" as inner;
+
+fn route(value) {
+    return inner.decorate(value);
+}

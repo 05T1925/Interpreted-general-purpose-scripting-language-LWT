@@ -1,0 +1,1 @@
+{"id":"module-multi-level-relative-import","spec_refs":["9"],"tags":["modules"],"args":[],"stdin":{"text":""},"expected":{"exit_code":0,"stdout":"inner:ok\n","stderr":""}}

@@ -1,0 +1,2 @@
+import "fixtures/bad_lex.lwt" as bad;
+emit "before";

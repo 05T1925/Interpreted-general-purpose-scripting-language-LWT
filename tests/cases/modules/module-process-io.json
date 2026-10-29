@@ -1,0 +1,1 @@
+{"id":"module-process-io","spec_refs":["9","6"],"tags":["modules","io"],"args":["first","two words","雪"],"stdin":{"text":"hello\n"},"expected":{"exit_code":0,"stdout":"[\"first\", \"two words\", \"雪\"]\nhello\ncwd data\n\n","stderr":""}}

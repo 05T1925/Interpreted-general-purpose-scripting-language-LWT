@@ -1,0 +1,1 @@
+{"id":"module-undefined-member-link-error","spec_refs":["9"],"tags":["modules","error"],"args":[],"stdin":{"text":""},"expected":{"exit_code":3,"stdout":"","stderr":"tests/cases/modules/undefined-member-link-error.lwt:3:11: RuntimeError: module 'math' has no function 'nope'\n"}}

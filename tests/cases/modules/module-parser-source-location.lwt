@@ -1,0 +1,2 @@
+import "fixtures/bad_syntax.lwt" as bad;
+emit "before";

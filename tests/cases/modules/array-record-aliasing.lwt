@@ -1,0 +1,7 @@
+import "fixtures/mutate.lwt" as data;
+record Item { count };
+let items = [1, 2];
+let item = Item{count: 4};
+emit data.update(items, item);
+emit items;
+emit item.count;

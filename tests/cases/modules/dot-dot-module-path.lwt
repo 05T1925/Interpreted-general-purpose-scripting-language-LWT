@@ -1,0 +1,2 @@
+import "fixtures/nested/parent.lwt" as parent;
+emit parent.value();

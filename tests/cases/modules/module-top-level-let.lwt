@@ -1,0 +1,1 @@
+import "fixtures/top_level_let.lwt" as bad;

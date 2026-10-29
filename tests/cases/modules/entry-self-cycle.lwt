@@ -1,0 +1,3 @@
+import "entry-self-cycle.lwt" as self;
+emit self.value();
+fn value() { return 1; }

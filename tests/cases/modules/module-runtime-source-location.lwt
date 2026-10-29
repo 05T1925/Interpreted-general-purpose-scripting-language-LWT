@@ -1,0 +1,2 @@
+import "fixtures/runtime_bad.lwt" as bad;
+emit bad.explode();

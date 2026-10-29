@@ -1,0 +1,2 @@
+let value = 3;
+fn get() { return value; }

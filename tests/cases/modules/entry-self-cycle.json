@@ -1,0 +1,1 @@
+{"id":"module-entry-self-cycle","spec_refs":["9"],"tags":["modules","errors"],"args":[],"stdin":{"text":""},"expected":{"exit_code":4,"stdout":"","stderr":"tests/cases/modules/entry-self-cycle.lwt:1:1: ImportError: cyclic module import: entry-self-cycle.lwt -> entry-self-cycle.lwt\n"}}

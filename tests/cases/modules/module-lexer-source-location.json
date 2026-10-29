@@ -1,0 +1,1 @@
+{"id":"module-module-lexer-source-location","spec_refs":["9","2.2"],"tags":["modules","diagnostics"],"args":[],"stdin":{"text":""},"expected":{"exit_code":2,"stdout":"","stderr":"fixtures/bad_lex.lwt:1:1: LexError: unexpected character U+0040\n"}}

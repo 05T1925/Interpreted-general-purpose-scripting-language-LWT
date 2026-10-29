@@ -1,0 +1,1 @@
+{"id":"module-top-level-let","spec_refs":["9"],"tags":["modules","errors"],"args":[],"stdin":{"text":""},"expected":{"exit_code":2,"stdout":"","stderr":"fixtures/top_level_let.lwt:1:1: SyntaxError: library modules may contain only imports and functions\n"}}

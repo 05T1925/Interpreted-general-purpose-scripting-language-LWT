@@ -1,0 +1,5 @@
+fn update(items, item) {
+    push(items, 3);
+    item.count = item.count + 1;
+    return len(items);
+}

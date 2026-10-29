@@ -1,0 +1,3 @@
+fn greeting() {
+    return "雪";
+}

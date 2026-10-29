@@ -1,0 +1,10 @@
+fn first(value) {
+    return second(value);
+}
+
+fn second(value) {
+    when (value <= 1) {
+        return 1;
+    }
+    return value * second(value - 1);
+}

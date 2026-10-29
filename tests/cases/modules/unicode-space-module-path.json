@@ -1,0 +1,1 @@
+{"id":"module-unicode-space-module-path","spec_refs":["9"],"tags":["modules","unicode"],"args":[],"stdin":{"text":""},"expected":{"exit_code":0,"stdout":"雪\n","stderr":""}}

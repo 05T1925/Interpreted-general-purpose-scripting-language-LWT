@@ -1,0 +1,1 @@
+import "fixtures/top_level_emit.lwt" as bad;

@@ -1,0 +1,1 @@
+{"id":"module-import-after-top-level-item","spec_refs":["9","3"],"tags":["modules","errors"],"args":[],"stdin":{"text":""},"expected":{"exit_code":2,"stdout":"","stderr":"tests/cases/modules/import-after-top-level-item.lwt:2:1: SyntaxError: import declarations must appear before other top-level items\n"}}

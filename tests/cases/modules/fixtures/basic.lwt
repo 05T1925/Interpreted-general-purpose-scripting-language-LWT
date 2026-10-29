@@ -1,0 +1,7 @@
+fn twice(value) {
+    return value * 2;
+}
+
+fn shared() {
+    return "library";
+}

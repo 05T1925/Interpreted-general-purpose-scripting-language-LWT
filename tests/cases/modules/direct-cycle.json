@@ -1,0 +1,1 @@
+{"id":"module-direct-cycle","spec_refs":["9"],"tags":["modules","errors"],"args":[],"stdin":{"text":""},"expected":{"exit_code":4,"stdout":"","stderr":"fixtures/cycle_b.lwt:1:1: ImportError: cyclic module import: fixtures/cycle_a.lwt -> fixtures/cycle_b.lwt -> fixtures/cycle_a.lwt\n"}}

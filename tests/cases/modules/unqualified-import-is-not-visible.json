@@ -1,0 +1,1 @@
+{"id":"module-unqualified-import-is-not-visible","spec_refs":["9"],"tags":["modules","error"],"args":[],"stdin":{"text":""},"expected":{"exit_code":3,"stdout":"","stderr":"tests/cases/modules/unqualified-import-is-not-visible.lwt:2:6: RuntimeError: undefined function 'twice'\n"}}

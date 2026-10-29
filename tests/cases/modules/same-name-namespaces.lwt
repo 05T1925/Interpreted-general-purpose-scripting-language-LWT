@@ -1,0 +1,6 @@
+import "fixtures/same_a.lwt" as left;
+import "fixtures/same_b.lwt" as right;
+fn shared() { return "main"; }
+emit shared();
+emit left.shared();
+emit right.shared();

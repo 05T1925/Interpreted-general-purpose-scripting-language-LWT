@@ -1,0 +1,2 @@
+import "fixtures/雪 helpers.lwt" as snow;
+emit snow.greeting();

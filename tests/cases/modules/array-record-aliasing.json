@@ -1,0 +1,1 @@
+{"id":"module-array-record-aliasing","spec_refs":["9","4.3"],"tags":["modules","arrays","records"],"args":[],"stdin":{"text":""},"expected":{"exit_code":0,"stdout":"3\n[1, 2, 3]\n5\n","stderr":""}}

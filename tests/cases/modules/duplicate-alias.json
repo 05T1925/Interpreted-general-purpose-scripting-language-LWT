@@ -1,0 +1,1 @@
+{"id":"module-duplicate-alias","spec_refs":["9"],"tags":["modules","errors"],"args":[],"stdin":{"text":""},"expected":{"exit_code":2,"stdout":"","stderr":"tests/cases/modules/duplicate-alias.lwt:2:33: SyntaxError: duplicate import alias 'math'\n"}}

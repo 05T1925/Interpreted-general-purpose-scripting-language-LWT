@@ -1,0 +1,1 @@
+{"id":"module-cannot-read-main-global","spec_refs":["9"],"tags":["modules","namespace"],"args":[],"stdin":{"text":""},"expected":{"exit_code":3,"stdout":"","stderr":"fixtures/reads_main_global.lwt:2:12: RuntimeError: undefined variable 'secret'\n"}}

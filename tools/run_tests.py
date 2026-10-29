@@ -23,7 +23,7 @@ DEFAULT_TIMEOUT_SECONDS = 5.0
 MAX_TIMEOUT_SECONDS = 30.0
 CASE_ID_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 VALID_SPEC_REFS = frozenset(
-    {"1", "2", "2.1", "2.2", "3", "4", "4.1", "4.2", "4.3", "5", "6", "7", "8"}
+    {"1", "2", "2.1", "2.2", "3", "4", "4.1", "4.2", "4.3", "5", "6", "7", "8", "9"}
 )
 
 
@@ -202,14 +202,13 @@ def discover_cases(case_root: Path = CASE_ROOT) -> list[TestCase]:
 
     for current, directories, filenames in os.walk(root, onerror=raise_walk_error):
         current_path = Path(current)
-        rel_dir = current_path.relative_to(root)
         for directory in directories:
             if (current_path / directory).is_symlink():
                 raise ConfigurationError(
                     f"symbolic links are not allowed in case directories: "
                     f"{(current_path / directory).relative_to(root).as_posix()}"
                 )
-        if not rel_dir.parts and "fixtures" in directories:
+        if "fixtures" in directories:
             directories.remove("fixtures")
         directories.sort()
         for filename in sorted(filenames):

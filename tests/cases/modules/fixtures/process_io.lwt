@@ -1,0 +1,11 @@
+fn command_args() {
+    return args();
+}
+
+fn read_line() {
+    return input();
+}
+
+fn read_data() {
+    return read_text("tests/cases/modules/fixtures/data.txt");
+}

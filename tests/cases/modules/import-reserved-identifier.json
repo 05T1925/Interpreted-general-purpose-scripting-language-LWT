@@ -1,0 +1,1 @@
+{"id":"module-import-reserved-identifier","spec_refs":["9","2.1"],"tags":["modules","lexer-parser"],"args":[],"stdin":{"text":""},"expected":{"exit_code":2,"stdout":"","stderr":"tests/cases/modules/import-reserved-identifier.lwt:1:5: SyntaxError: expected variable name after 'let'\n"}}

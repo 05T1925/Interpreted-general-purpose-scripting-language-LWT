@@ -1,0 +1,2 @@
+import "../basic.lwt" as base;
+fn value() { return base.twice(5); }

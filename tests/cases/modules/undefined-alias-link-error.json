@@ -1,0 +1,1 @@
+{"id":"module-undefined-alias-link-error","spec_refs":["9"],"tags":["modules","error"],"args":[],"stdin":{"text":""},"expected":{"exit_code":3,"stdout":"","stderr":"tests/cases/modules/undefined-alias-link-error.lwt:2:6: RuntimeError: undefined module alias 'absent'\n"}}

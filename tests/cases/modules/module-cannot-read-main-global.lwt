@@ -1,0 +1,3 @@
+import "fixtures/reads_main_global.lwt" as lib;
+let secret = 42;
+emit lib.bad();

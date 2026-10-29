@@ -1,0 +1,1 @@
+{"id":"module-module-parser-source-location","spec_refs":["9","3"],"tags":["modules","diagnostics"],"args":[],"stdin":{"text":""},"expected":{"exit_code":2,"stdout":"","stderr":"fixtures/bad_syntax.lwt:1:12: SyntaxError: expected parameter name\n"}}

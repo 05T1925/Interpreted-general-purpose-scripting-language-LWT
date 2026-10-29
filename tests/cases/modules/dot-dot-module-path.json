@@ -1,0 +1,1 @@
+{"id":"module-dot-dot-module-path","spec_refs":["9"],"tags":["modules","paths"],"args":[],"stdin":{"text":""},"expected":{"exit_code":0,"stdout":"10\n","stderr":""}}

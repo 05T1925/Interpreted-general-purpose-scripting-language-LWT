@@ -68,6 +68,25 @@ class CaseInventoryTests(unittest.TestCase):
 
         self.assertEqual([case.case_id for case in cases], ["a-first", "z-last"])
 
+    def test_nested_module_fixture_subtrees_are_not_discovered_as_cases(self) -> None:
+        self.write_case("library-user", case_id="library-user")
+        nested_fixtures = self.group / "fixtures"
+        nested_fixtures.mkdir()
+        (nested_fixtures / "library.lwt").write_text(
+            "fn value() { return 1; }", encoding="utf-8"
+        )
+
+        cases = runner.discover_cases(self.root)
+
+        self.assertEqual([case.case_id for case in cases], ["library-user"])
+
+    def test_module_spec_section_is_a_valid_case_reference(self) -> None:
+        self.write_case(metadata={"spec_refs": ["9"]})
+
+        cases = runner.discover_cases(self.root)
+
+        self.assertEqual(cases[0].spec_refs, ("9",))
+
     def test_empty_case_tree_is_a_configuration_error(self) -> None:
         with self.assertRaisesRegex(
             runner.ConfigurationError, "no black-box test cases were discovered"

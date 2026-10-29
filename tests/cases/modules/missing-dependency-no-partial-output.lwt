@@ -1,0 +1,2 @@
+import "fixtures/missing.lwt" as absent;
+emit "before";

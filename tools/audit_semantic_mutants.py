@@ -85,11 +85,15 @@ PROBES = (
         "call-arguments-evaluate-right-to-left",
         ("argument-evaluation-order",),
         "Evaluate user-call arguments in reversed source order.",
-        "arguments = [\n"
+        "# Both user and built-in calls evaluate all arguments left-to-right\n"
+        "        # before checking arity, once the callee has been found.\n"
+        "        arguments = [\n"
         "            _evaluate(argument, environment, runtime)\n"
         "            for argument in expression.arguments\n"
         "        ]",
-        "arguments = [\n"
+        "# Both user and built-in calls evaluate all arguments left-to-right\n"
+        "        # before checking arity, once the callee has been found.\n"
+        "        arguments = [\n"
         "            _evaluate(argument, environment, runtime)\n"
         "            for argument in reversed(expression.arguments)\n"
         "        ]",
@@ -98,11 +102,15 @@ PROBES = (
         "call-arguments-reversed-distinct-effects",
         ("argument-evaluation-order-distinct-effects",),
         "Evaluate arguments with distinct logged effects in reversed source order.",
-        "arguments = [\n"
+        "# Both user and built-in calls evaluate all arguments left-to-right\n"
+        "        # before checking arity, once the callee has been found.\n"
+        "        arguments = [\n"
         "            _evaluate(argument, environment, runtime)\n"
         "            for argument in expression.arguments\n"
         "        ]",
-        "arguments = [\n"
+        "# Both user and built-in calls evaluate all arguments left-to-right\n"
+        "        # before checking arity, once the callee has been found.\n"
+        "        arguments = [\n"
         "            _evaluate(argument, environment, runtime)\n"
         "            for argument in reversed(expression.arguments)\n"
         "        ]",

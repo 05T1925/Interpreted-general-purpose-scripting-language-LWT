@@ -1,0 +1,1 @@
+{"id":"module-import-in-function","spec_refs":["9","3"],"tags":["modules","errors"],"args":[],"stdin":{"text":""},"expected":{"exit_code":2,"stdout":"","stderr":"tests/cases/modules/import-in-function.lwt:2:5: SyntaxError: expected expression\n"}}

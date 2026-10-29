@@ -1,0 +1,2 @@
+emit "before";
+import "fixtures/basic.lwt" as math;

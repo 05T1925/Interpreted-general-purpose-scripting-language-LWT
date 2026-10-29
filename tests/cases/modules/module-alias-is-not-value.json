@@ -1,0 +1,1 @@
+{"id":"module-alias-is-not-value","spec_refs":["9"],"tags":["modules","error"],"args":[],"stdin":{"text":""},"expected":{"exit_code":3,"stdout":"","stderr":"tests/cases/modules/module-alias-is-not-value.lwt:2:6: RuntimeError: undefined variable 'math'\n"}}

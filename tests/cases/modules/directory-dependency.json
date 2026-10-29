@@ -1,0 +1,1 @@
+{"id":"module-directory-dependency","spec_refs":["9"],"tags":["modules","errors"],"args":[],"stdin":{"text":""},"expected":{"exit_code":4,"stdout":"","stderr":"tests/cases/modules/directory-dependency.lwt:1:1: ImportError: module path 'fixtures' is not a readable file\n"}}

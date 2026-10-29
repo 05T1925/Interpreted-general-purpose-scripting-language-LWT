@@ -1,0 +1,3 @@
+import "fixtures/calls_main.lwt" as lib;
+fn only_main() { return 42; }
+emit lib.bad();

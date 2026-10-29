@@ -1,0 +1,1 @@
+{"id":"module-missing-dependency-no-partial-output","spec_refs":["9","7"],"tags":["modules","errors"],"args":[],"stdin":{"text":""},"expected":{"exit_code":4,"stdout":"","stderr":"tests/cases/modules/missing-dependency-no-partial-output.lwt:1:1: ImportError: module path 'fixtures/missing.lwt' is not a readable file\n"}}

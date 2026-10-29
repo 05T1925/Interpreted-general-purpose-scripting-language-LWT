@@ -1,0 +1,1 @@
+{"id":"module-cannot-call-main-function","spec_refs":["9"],"tags":["modules","namespace"],"args":[],"stdin":{"text":""},"expected":{"exit_code":3,"stdout":"","stderr":"fixtures/calls_main.lwt:2:12: RuntimeError: undefined function 'only_main'\n"}}

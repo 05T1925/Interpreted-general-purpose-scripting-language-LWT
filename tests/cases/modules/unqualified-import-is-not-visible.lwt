@@ -1,0 +1,2 @@
+import "fixtures/basic.lwt" as math;
+emit twice(2);

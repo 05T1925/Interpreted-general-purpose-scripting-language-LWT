@@ -1,0 +1,2 @@
+import "fixtures/outer.lwt" as route;
+emit route.route("ok");

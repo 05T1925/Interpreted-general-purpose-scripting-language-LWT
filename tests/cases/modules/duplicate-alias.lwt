@@ -1,0 +1,2 @@
+import "fixtures/basic.lwt" as math;
+import "fixtures/same_a.lwt" as math;
