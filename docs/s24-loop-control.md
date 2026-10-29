@@ -10,7 +10,7 @@
 | 本地 `main` | `aadb8f7a2348dad3205c523d4ab1cb4ad5bda063`，不包含 S23；本轮没有声称 S23 已合入。 |
 | 新阶段分支 | `stage/s24-loop-control`，从 S23 已报告最终提交继续建立。 |
 | 远端只读核对 | `origin/main` 跟踪值和 `git ls-remote --heads origin main` 均为 `de608f7fbf50946715d370df014657169eb8f26d`；远端是本地 `main` 的祖先，本地 main ahead 84、behind 0。未 fetch、pull、push 或同步远端。 |
-| 分层提交 | S23 数量校正文档 `aaef11e9df262c5aa3fa5be708da2095f67589a0`；parser/AST `d3cef2a`；runtime `e5bd18e`；黑盒用例、矩阵和示例 `5bb2e70`；报告和状态文档作为本阶段收尾提交。最终阶段 tip 见执行窗口交接。 |
+| 分层提交 | S23 数量校正文档 `aaef11e9df262c5aa3fa5be708da2095f67589a0`；parser/AST `d3cef2acf38fa7a3dbe0624dd79afb1c957b8703`；runtime `e5bd18e3dea2c519f3c082cecee859bbe3638b10`；黑盒用例、矩阵和示例 `5bb2e7083d8ce46badea9cd99e919933d7dcbecb`；报告及阶段状态文档首个提交 `6c0a02246f8d98baf8d39b45394b195f93bfc6a8`。最后的 SHA 索引修订提交和最终 tip 见执行窗口交接。 |
 
 第一项 S24 提交只校正文档中的 S23 当前数量，保留 S8 于 2026-10-07 在 Python 3.11.16/3.13.7 上通过 194 项的历史结果。S23 快照另列为 195 项、190 个配对 LWT 程序加 5 个 CLI override；没有把 S8 的历史结果改写成 S23 实测。
 
@@ -71,7 +71,7 @@ stderr 为空，退出码为 0。while 循环跳过 `i == 2` 并在 `i == 4` 停
 | `python tools/count_lwt_lines.py app/log_report.lwt` | 退出码 0；246 行有效 LWT。 |
 | Python 3.11.16 下同一 `tools/run_tests.py`、完整性、全量 unittest 与 compileall 命令 | 均退出码 0；黑盒 217/217，完整性 217/314/217，unittest 297 项 OK，compileall 无诊断。 |
 | `git diff --check` | 退出码 0；工作区改动无 whitespace error。Git 提示若干 LF 文件在未来触及时可能转成 CRLF，不影响检查结果。 |
-| `git diff --check 999cc7844065336d095b1efe4875313d2ee45da2...HEAD` | 退出码 0、无诊断；覆盖已提交的 S24 代码/测试层。最终文档提交后再次执行并以交接结果为准。 |
+| `git diff --check 999cc7844065336d095b1efe4875313d2ee45da2...HEAD` | 退出码 0、无诊断；在报告与状态文档提交后再次执行，覆盖完整 S24 阶段差异。 |
 | Markdown 链接/围栏检查（PowerShell here-string 驱动的 Python 检查器） | 覆盖 12 份变更 Markdown/Skill 文档，检查 587 个相对链接并对百分号编码路径先 URL 解码；所有目标存在，代码围栏成对，退出码 0。首次检查未解码 `%20`，把两个指向课程 PDF 的合法链接误报为缺失；加入 `urllib.parse.unquote` 后检查通过。 |
 | S10/S11 保护路径 Git 差异检查 | `git diff --quiet 999cc7844065336d095b1efe4875313d2ee45da2 HEAD -- app/log_report.lwt tests/test_app.py reports/app-concurrency.json docs/app-concurrency.md bench/results.json reports/performance.md` 退出码 0；这些路径未变化。 |
 
