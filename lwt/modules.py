@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import hashlib
 import os
+from dataclasses import dataclass, field
 from pathlib import Path, PureWindowsPath
 
 from .ast_nodes import FunctionDeclaration, ImportDeclaration, ModuleCallExpression, Program
@@ -20,6 +21,7 @@ class ModuleUnit:
     display_path: str | None
     program: Program
     imports: dict[str, ModuleUnit] = field(default_factory=dict)
+    source_sha256: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,18 +61,26 @@ def resolve_module_call(
     return ModuleCallResolution(target, declaration, None)
 
 
-def load_module_graph(entry_path: str) -> ModuleGraph:
+def load_module_graph(entry_path: str, *, include_hashes: bool = False) -> ModuleGraph:
     """Read, scan, parse, and link all static imports before execution."""
 
     try:
         entry_canonical = Path(entry_path).resolve()
-        entry_text = _decode_file(entry_canonical, entry=True)
+        if include_hashes:
+            entry_text, entry_sha256 = _decode_file_with_hash(entry_canonical, entry=True)
+        else:
+            entry_text, entry_sha256 = _decode_file(entry_canonical, entry=True), None
     except LwtError:
         raise
     except (OSError, ValueError, RuntimeError):
         raise LwtError("FileError", "cannot read source file", 4) from None
 
-    entry = ModuleUnit(entry_canonical, None, _parse(entry_text, None, module_mode=False))
+    entry = ModuleUnit(
+        entry_canonical,
+        None,
+        _parse(entry_text, None, module_mode=False),
+        source_sha256=entry_sha256,
+    )
     by_path: dict[Path, ModuleUnit] = {entry_canonical: entry}
     ordered: list[ModuleUnit] = [entry]
     visiting: list[ModuleUnit] = [entry]
@@ -110,7 +120,10 @@ def load_module_graph(entry_path: str) -> ModuleGraph:
             if imported is None:
                 display = _display_path(target, entry_canonical.parent)
                 try:
-                    source = _decode_file(target, entry=False)
+                    if include_hashes:
+                        source, source_sha256 = _decode_file_with_hash(target, entry=False)
+                    else:
+                        source, source_sha256 = _decode_file(target, entry=False), None
                 except LwtError as error:
                     raise LwtError(
                         "ImportError",
@@ -119,7 +132,9 @@ def load_module_graph(entry_path: str) -> ModuleGraph:
                         item.location,
                     ) from None
                 program = _parse(source, display, module_mode=True)
-                imported = ModuleUnit(target, display, program)
+                imported = ModuleUnit(
+                    target, display, program, source_sha256=source_sha256
+                )
                 by_path[target] = imported
                 ordered.append(imported)
                 unit.imports[alias_name] = imported
@@ -177,6 +192,19 @@ def _decode_file(path: Path, *, entry: bool) -> str:
         raise LwtError("FileError", message, 4) from None
     try:
         return data.decode("utf-8", errors="strict")
+    except UnicodeDecodeError:
+        message = "source file is not valid UTF-8" if entry else "module file is not valid UTF-8"
+        raise LwtError("FileError", message, 4) from None
+
+
+def _decode_file_with_hash(path: Path, *, entry: bool) -> tuple[str, str]:
+    try:
+        data = path.read_bytes()
+    except (OSError, ValueError):
+        message = "cannot read source file" if entry else "cannot read module file"
+        raise LwtError("FileError", message, 4) from None
+    try:
+        return data.decode("utf-8", errors="strict"), hashlib.sha256(data).hexdigest()
     except UnicodeDecodeError:
         message = "source file is not valid UTF-8" if entry else "module file is not valid UTF-8"
         raise LwtError("FileError", message, 4) from None

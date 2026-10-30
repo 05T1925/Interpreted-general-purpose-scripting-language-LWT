@@ -60,9 +60,10 @@ _BUILTIN_NAMES = BUILTIN_NAMES
 class _ReturnSignal(Exception):
     """Internal control transfer caught only by the active function call."""
 
-    def __init__(self, value: object) -> None:
+    def __init__(self, value: object, location: SourceLocation) -> None:
         super().__init__()
         self.value = value
+        self.location = location
 
 
 class _BreakSignal(Exception):
@@ -118,6 +119,8 @@ class _RuntimeContext:
         "imports",
         "global_environment",
         "source_path",
+        "observer",
+        "profile_source",
     )
 
     def __init__(
@@ -129,6 +132,8 @@ class _RuntimeContext:
         program_args: tuple[str, ...] = (),
         imports: dict[str, _RuntimeContext] | None = None,
         source_path: str | None = None,
+        observer: object | None = None,
+        profile_source: str | None = None,
     ) -> None:
         self.input_stream = input_stream
         self.output_stream = output_stream
@@ -138,6 +143,8 @@ class _RuntimeContext:
         self.imports = {} if imports is None else imports
         self.global_environment = Environment()
         self.source_path = source_path
+        self.observer = observer
+        self.profile_source = profile_source
 
 
 class Environment:
@@ -200,6 +207,7 @@ def execute(
     *,
     module_graph: ModuleGraph | None = None,
     source_path: str | None = None,
+    observer: object | None = None,
 ) -> None:
     """Execute a supported LWT program or raise a located LWT error.
 
@@ -220,6 +228,10 @@ def execute(
             graph = ModuleGraph(unit, (unit,))
         else:
             graph = module_graph
+        profile_entry = getattr(observer, "entry", None) if observer is not None else None
+        profile_entry = profile_entry or source_path or "entry.lwt"
+        if observer is not None:
+            _notify_observer(observer, "program_start", graph.entry.program)
         # Build every module table before execution. Each source owns a distinct
         # function/record namespace and a root variable environment.
         contexts: dict[ModuleUnit, _RuntimeContext] = {}
@@ -263,6 +275,12 @@ def execute(
                 record_types,
                 program_args,
                 source_path=source_path if unit is graph.entry else None,
+                observer=observer,
+                profile_source=(
+                    observer.source_for(unit)
+                    if observer is not None and hasattr(observer, "source_for")
+                    else unit.display_path or source_path
+                ),
             )
 
         for unit, context in contexts.items():
@@ -279,15 +297,36 @@ def execute(
             ):
                 continue
             _execute_statement(item, runtime.global_environment, runtime)
+    except LwtError as error:
+        if observer is not None:
+            status = "runtime_error" if error.category == "RuntimeError" and error.exit_code == 3 else "error"
+            if status == "runtime_error":
+                _notify_observer(observer, "runtime_error", error, profile_entry)
+            _notify_observer(observer, "program_end", profile_entry, program.location, status, error.exit_code)
+        raise
     except RecursionError:
         # Report the host limit as a runtime failure without imposing a fixed
         # language-level depth limit or leaking a Python traceback.
-        raise LwtError(
+        error = LwtError(
             "RuntimeError",
             "host recursion limit reached",
             3,
             program.location,
-        ) from None
+        )
+        if observer is not None:
+            _notify_observer(observer, "runtime_error", error, profile_entry)
+            _notify_observer(observer, "program_end", profile_entry, program.location, "runtime_error", 3)
+        raise error from None
+    else:
+        if observer is not None:
+            _notify_observer(observer, "program_end", profile_entry, program.location, "success", 0)
+
+
+def _notify_observer(observer: object, method: str, *arguments: object) -> None:
+    try:
+        getattr(observer, method)(*arguments)
+    except Exception:
+        raise LwtError("FileError", "execution profile collection failed", 4) from None
 
 
 def _first_unsupported(program: Program) -> SourceLocation | None:
@@ -452,6 +491,10 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
 def _execute_statement(
     statement: Statement, environment: Environment, runtime: _RuntimeContext
 ) -> None:
+    if runtime.observer is not None and not isinstance(statement, Block):
+        source = runtime.profile_source or runtime.source_path or "entry.lwt"
+        _notify_observer(runtime.observer, "statement", statement, source)
+
     if isinstance(statement, LetStatement):
         name = statement.name.name
         if name in environment.values:
@@ -470,28 +513,64 @@ def _execute_statement(
         raise _ContinueSignal(statement.location)
 
     if isinstance(statement, AttemptStatement):
+        attempt_outcome: str | None = None
         try:
-            _execute_statement(statement.body, environment, runtime)
-        except LwtError as error:
-            if error.category != "RuntimeError" or error.exit_code != 3:
-                raise
-            location = error.location
-            source = (
-                location.source_path
-                if location is not None and location.source_path is not None
-                else runtime.source_path
-            )
-            error_value = _ErrorValue(
-                error.category,
-                error.message,
-                source,
-                location.line if location is not None else None,
-                location.column if location is not None else None,
-            )
-            handler_scope = Environment(environment)
-            handler_scope.values[statement.error_name.name] = error_value
-            # Keep handler failures outside this attempt's catch boundary.
-            _execute_statement(statement.recover_body, handler_scope, runtime)
+            try:
+                _execute_statement(statement.body, environment, runtime)
+            except LwtError as error:
+                if error.category != "RuntimeError" or error.exit_code != 3:
+                    attempt_outcome = "error"
+                    raise
+                attempt_outcome = "recovered"
+                location = error.location
+                source = (
+                    location.source_path
+                    if location is not None and location.source_path is not None
+                    else runtime.source_path
+                )
+                error_value = _ErrorValue(
+                    error.category,
+                    error.message,
+                    source,
+                    location.line if location is not None else None,
+                    location.column if location is not None else None,
+                )
+                handler_scope = Environment(environment)
+                handler_scope.values[statement.error_name.name] = error_value
+                if runtime.observer is not None:
+                    _notify_observer(
+                        runtime.observer,
+                        "decision",
+                        runtime.profile_source or "entry.lwt",
+                        statement.location,
+                        "attempt",
+                        "recovered",
+                    )
+                    _notify_observer(
+                        runtime.observer,
+                        "recover",
+                        runtime.profile_source or "entry.lwt",
+                        statement,
+                        error,
+                    )
+                # Keep handler failures outside this attempt's catch boundary.
+                _execute_statement(statement.recover_body, handler_scope, runtime)
+            else:
+                attempt_outcome = "normal"
+        finally:
+            # Return/break/continue signals pass through unchanged. A finally
+            # hook records the normal attempt edge without catching them.
+            if attempt_outcome is None:
+                attempt_outcome = "normal"
+            if attempt_outcome == "normal" and runtime.observer is not None:
+                _notify_observer(
+                    runtime.observer,
+                    "decision",
+                    runtime.profile_source or "entry.lwt",
+                    statement.location,
+                    "attempt",
+                    "normal",
+                )
         return
 
     if isinstance(statement, ReturnStatement):
@@ -500,7 +579,7 @@ def _execute_statement(
             if statement.value is not None
             else None
         )
-        raise _ReturnSignal(value)
+        raise _ReturnSignal(value, statement.location)
 
     if isinstance(statement, EmitStatement):
         value = _evaluate(statement.value, environment, runtime)
@@ -526,6 +605,15 @@ def _execute_statement(
         condition = _evaluate(statement.condition, environment, runtime)
         if type(condition) is not bool:
             _runtime_error("when condition must be a boolean", statement.location)
+        if runtime.observer is not None:
+            _notify_observer(
+                runtime.observer,
+                "decision",
+                runtime.profile_source or "entry.lwt",
+                statement.location,
+                "when",
+                "then" if condition else "otherwise",
+            )
         if condition:
             _execute_statement(statement.then_branch, environment, runtime)
         elif statement.otherwise_branch is not None:
@@ -537,6 +625,15 @@ def _execute_statement(
             condition = _evaluate(statement.condition, environment, runtime)
             if type(condition) is not bool:
                 _runtime_error("while condition must be a boolean", statement.location)
+            if runtime.observer is not None:
+                _notify_observer(
+                    runtime.observer,
+                    "decision",
+                    runtime.profile_source or "entry.lwt",
+                    statement.location,
+                    "while",
+                    "true" if condition else "false",
+                )
             if not condition:
                 return
             # The Block creates a fresh child environment on each iteration.
@@ -552,6 +649,15 @@ def _execute_statement(
         if type(iterable) is not list:
             _runtime_error("each requires an array", statement.location)
         snapshot = list(iterable)
+        if runtime.observer is not None:
+            _notify_observer(
+                runtime.observer,
+                "decision",
+                runtime.profile_source or "entry.lwt",
+                statement.location,
+                "each",
+                "nonempty" if snapshot else "empty",
+            )
         for value in snapshot:
             iteration_scope = Environment(environment)
             # The loop binding intentionally shadows an outer binding.
@@ -685,7 +791,11 @@ def _evaluate(
             if type(left) is not bool:
                 _runtime_error("'and' requires boolean operands", expression.operator_location)
             if not left:
+                if runtime.observer is not None:
+                    _notify_observer(runtime.observer, "decision", runtime.profile_source or "entry.lwt", expression.operator_location, "and", "short_circuit")
                 return False
+            if runtime.observer is not None:
+                _notify_observer(runtime.observer, "decision", runtime.profile_source or "entry.lwt", expression.operator_location, "and", "evaluate_right")
             right = _evaluate(expression.right, environment, runtime)
             if type(right) is not bool:
                 _runtime_error("'and' requires boolean operands", expression.operator_location)
@@ -694,7 +804,11 @@ def _evaluate(
             if type(left) is not bool:
                 _runtime_error("'or' requires boolean operands", expression.operator_location)
             if left:
+                if runtime.observer is not None:
+                    _notify_observer(runtime.observer, "decision", runtime.profile_source or "entry.lwt", expression.operator_location, "or", "short_circuit")
                 return True
+            if runtime.observer is not None:
+                _notify_observer(runtime.observer, "decision", runtime.profile_source or "entry.lwt", expression.operator_location, "or", "evaluate_right")
             right = _evaluate(expression.right, environment, runtime)
             if type(right) is not bool:
                 _runtime_error("'or' requires boolean operands", expression.operator_location)
@@ -747,6 +861,9 @@ def _evaluate(
                 arguments,
                 environment.global_scope(),
                 runtime,
+                caller_runtime=runtime,
+                call_location=expression.location,
+                qualified_name=name,
             )
         except RecursionError:
             _runtime_error("host recursion limit reached", expression.callee.location)
@@ -780,6 +897,9 @@ def _evaluate(
                 arguments,
                 target_runtime.global_environment,
                 target_runtime,
+                caller_runtime=runtime,
+                call_location=expression.location,
+                qualified_name=f"{expression.alias.name}.{expression.member.name}",
             )
         except RecursionError:
             _runtime_error("host recursion limit reached", expression.location)
@@ -888,7 +1008,11 @@ def _invoke_builtin(
         message = arguments[0]
         if type(message) is not str:
             _runtime_error("fail expects a string message", location)
-        _runtime_error(message, location)
+        _runtime_error(
+            message,
+            location,
+            profile_message="program requested failure (user message redacted)",
+        )
 
     raise AssertionError(f"unknown built-in function: {name!r}")
 
@@ -939,6 +1063,10 @@ def _invoke_user_function(
     arguments: list[object],
     global_environment: Environment,
     runtime: _RuntimeContext,
+    *,
+    caller_runtime: _RuntimeContext,
+    call_location: SourceLocation,
+    qualified_name: str,
 ) -> object:
     """Run a function with a fresh activation whose parent is always global."""
 
@@ -946,14 +1074,49 @@ def _invoke_user_function(
     for parameter, argument in zip(declaration.parameters, arguments):
         activation.values[parameter.name] = argument
 
+    observer = runtime.observer
+    if observer is not None:
+        _notify_observer(
+            observer,
+            "function_call",
+            declaration,
+            qualified_name,
+            runtime.profile_source or "entry.lwt",
+            caller_runtime.profile_source or caller_runtime.source_path or "entry.lwt",
+            call_location,
+        )
     try:
         # The function's outer body shares its scope with the parameters.
         # Nested Block statements create child scopes in _execute_statement.
         for statement in declaration.body.statements:
             _execute_statement(statement, activation, runtime)
     except _ReturnSignal as returned:
+        if observer is not None:
+            _notify_observer(
+                observer,
+                "function_return",
+                declaration,
+                runtime.profile_source or "entry.lwt",
+                returned.location,
+                "explicit",
+                qualified_name,
+            )
         return returned.value
-    return None
+    else:
+        if observer is not None:
+            _notify_observer(
+                observer,
+                "function_return",
+                declaration,
+                runtime.profile_source or "entry.lwt",
+                declaration.name.location,
+                "natural",
+                qualified_name,
+            )
+        return None
+    finally:
+        if observer is not None:
+            _notify_observer(observer, "leave_function")
 
 
 def _evaluate_binary(
@@ -1119,8 +1282,16 @@ def _quote_string(value: str) -> str:
     return "".join(escaped)
 
 
-def _runtime_error(message: str, location: SourceLocation) -> NoReturn:
-    raise LwtError("RuntimeError", message, 3, location)
+def _runtime_error(
+    message: str,
+    location: SourceLocation,
+    *,
+    profile_message: str | None = None,
+) -> NoReturn:
+    error = LwtError("RuntimeError", message, 3, location)
+    if profile_message is not None:
+        error.profile_message = profile_message
+    raise error
 
 
 _ERROR_FIELDS = frozenset({"category", "message", "source", "line", "column"})
