@@ -117,7 +117,7 @@ S26 独立修正提交唯一修改文件为 `docs/s26-runtime-recovery.md`，将
 | `python tools/count_lwt_lines.py app/log_report.lwt` | 0 | 246 行有效 LWT |
 | `git diff --check` | 0 | 无 whitespace error；Git 仅提示工作副本 LF 将规范为 CRLF |
 
-文档自检：对本阶段所有已修改或新增 Markdown 执行相对链接存在性与代码围栏配对检查，结果为 11 个文件、618 个相对链接、120 个围栏标记，缺失链接 0、未闭合围栏 0。保护路径相对 S27 基线 `9006119fc6c98f151244ef06608d72730da1071e` 执行 `git diff --quiet BASE -- app/log_report.lwt tests/test_app.py reports/app-concurrency.json docs/app-concurrency.md bench/results.json reports/performance.md tests/cases`，退出码 0、无差异。
+文档自检：对本阶段所有已修改或新增 Markdown 执行相对链接存在性与代码围栏配对检查，结果为 14 个文件、714 个相对链接、126 个围栏标记，缺失链接 0、未闭合围栏 0。检查清单使用 NUL 分隔路径，包含中文文件名。保护路径相对 S27 基线 `9006119fc6c98f151244ef06608d72730da1071e` 执行 `git diff --quiet BASE -- app/log_report.lwt tests/test_app.py reports/app-concurrency.json docs/app-concurrency.md bench/results.json reports/performance.md tests/cases`，退出码 0、无差异。
 
 `python -m lwt --check examples/modules/main.lwt`、JSON 模式、`app/log_report.lwt` 检查和上节示例均由公开 CLI 实际运行。最后的报告版本会记录所有命令的最终复跑结果、修改后的 Markdown 链接/代码围栏检查、S27 基线保护路径差异及最终 `git diff --check`。
 
