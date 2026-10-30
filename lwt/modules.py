@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 import os
 from pathlib import Path, PureWindowsPath
 
-from .ast_nodes import ImportDeclaration, Program
+from .ast_nodes import FunctionDeclaration, ImportDeclaration, ModuleCallExpression, Program
 from .errors import LwtError
 from .lexer import scan
 from .parser import parse
@@ -26,6 +26,37 @@ class ModuleUnit:
 class ModuleGraph:
     entry: ModuleUnit
     modules: tuple[ModuleUnit, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class ModuleCallResolution:
+    """Static target of a qualified call, or its first linking problem."""
+
+    target: ModuleUnit | None
+    declaration: FunctionDeclaration | None
+    problem: str | None
+
+
+def resolve_module_call(
+    unit: ModuleUnit, expression: ModuleCallExpression
+) -> ModuleCallResolution:
+    """Resolve a qualified function against the import alias in its own file."""
+
+    target = unit.imports.get(expression.alias.name)
+    if target is None:
+        return ModuleCallResolution(None, None, "alias")
+    declaration = next(
+        (
+            item
+            for item in target.program.items
+            if isinstance(item, FunctionDeclaration)
+            and item.name.name == expression.member.name
+        ),
+        None,
+    )
+    if declaration is None:
+        return ModuleCallResolution(target, None, "member")
+    return ModuleCallResolution(target, declaration, None)
 
 
 def load_module_graph(entry_path: str) -> ModuleGraph:

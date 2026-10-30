@@ -38,8 +38,9 @@ from .ast_nodes import (
     WhileStatement,
 )
 from .errors import LwtError, SourceLocation
+from .builtin_signatures import BUILTIN_NAMES
 from .lexer import TokenKind
-from .modules import ModuleGraph, ModuleUnit
+from .modules import ModuleGraph, ModuleUnit, resolve_module_call
 
 
 _DECIMAL_CHUNK_DIGITS = 9
@@ -53,20 +54,7 @@ _LITERAL_KINDS = frozenset(
         TokenKind.NULL,
     }
 )
-_BUILTIN_NAMES = frozenset(
-    {
-        "input",
-        "args",
-        "read_text",
-        "len",
-        "split",
-        "trim",
-        "to_int",
-        "str",
-        "push",
-        "fail",
-    }
-)
+_BUILTIN_NAMES = BUILTIN_NAMES
 
 
 class _ReturnSignal(Exception):
@@ -282,7 +270,7 @@ def execute(
                 {alias: contexts[target] for alias, target in unit.imports.items()}
             )
         for unit in graph.modules:
-            _validate_module_calls(unit.program, contexts[unit])
+            _validate_module_calls(unit.program, unit)
 
         runtime = contexts[graph.entry]
         for item in program.items:
@@ -310,7 +298,7 @@ def _first_unsupported(program: Program) -> SourceLocation | None:
     return None
 
 
-def _validate_module_calls(program: Program, runtime: _RuntimeContext) -> None:
+def _validate_module_calls(program: Program, unit: ModuleUnit) -> None:
     """Link every qualified call before any top-level statement can run."""
 
     visited: set[int] = set()
@@ -325,13 +313,13 @@ def _validate_module_calls(program: Program, runtime: _RuntimeContext) -> None:
             return
         visited.add(identity)
         if isinstance(value, ModuleCallExpression):
-            target = runtime.imports.get(value.alias.name)
-            if target is None:
+            resolution = resolve_module_call(unit, value)
+            if resolution.problem == "alias":
                 _runtime_error(
                     f"undefined module alias {value.alias.name!r}",
                     value.alias.location,
                 )
-            if value.member.name not in target.functions:
+            if resolution.problem == "member":
                 _runtime_error(
                     f"module {value.alias.name!r} has no function {value.member.name!r}",
                     value.member.location,
