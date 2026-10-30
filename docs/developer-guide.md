@@ -71,6 +71,17 @@ tests/cases/cli-errors/lex-location-invalid-character.lwt:1:6: LexError: unexpec
 
 实际错误消息和触发位置由输入决定；完整规则见规范第 7 节。
 
+### 运行前静态检查
+
+可先让 LWT 检查源文件及其静态导入的模块，不运行程序：
+
+```powershell
+python -m lwt --check examples/modules/main.lwt
+python -m lwt --check --format=json examples/modules/main.lwt
+```
+
+成功时文本模式显示已检查文件数，JSON 模式输出稳定的机器可读结果。检查器汇总未定义名字、调用参数数量和 record 构造字段问题；它不执行 `emit`、`input()`、`read_text()` 或 `fail()`，也不推断值类型或证明所有路径都能成功运行。建议工作流是先 `--check`，再按程序所需提供 stdin/`--` 参数，以公开执行 CLI 和测试核对真实行为。诊断码和检查边界见[静态检查器说明](static-checker.md)。
+
 ### 恢复运行时错误
 
 `attempt`/`recover` 只捕获 LWT 执行期的 `RuntimeError`（退出码 3）。词法、语法、命令行和模块加载错误仍在执行前失败。`recover` 变量绑定为只读字段的错误值；错误发生前的输出、修改和输入消费不会回滚。

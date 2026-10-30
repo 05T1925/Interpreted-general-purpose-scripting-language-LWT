@@ -207,3 +207,7 @@ Windows CPython 3.13.7 的 S26 集合共 287 项：`arrays-records-each` 32、`b
 [`tests.yml`](../.github/workflows/tests.yml) 在 `push`、`pull_request` 和 `workflow_dispatch` 触发；Python 3.10/3.13 × `ubuntu-latest`/`windows-latest` 共四格，每格首先运行同一 `python tools/run_tests.py`，随后运行旧 unittest 和 compileall。工作流只授予 `contents: read`，无 secrets，job 超时为 15 分钟。动作引用为官方稳定发布 `actions/checkout@v7.0.1` 和 `actions/setup-python@v7.0.0`。
 
 截至本文编写时没有触发远端 GitHub Actions。CI 的 Linux、Python 3.10 结果均未运行；工作流语法与关键字段由本地结构检查复核，最终是否可执行仍须实际 GitHub runner 确认。CI 通过也只表示当前用例通过，不代替主窗口语义审查。
+
+## 5. 开发工具验证（S27，不计入语言黑盒）
+
+静态检查 CLI 的目标是验证运行前工具行为，不是执行 LWT 语义用例。因此这些用例位于 unittest，而不加入 `tests/cases/`，也不改变上方 287 项语言黑盒契约。`tests/test_static_checker.py` 通过 `python -m lwt --check` 子进程覆盖模块图扫描、名称/调用/record 诊断、词法/语法/CLI/文件错误、JSON schema、作用域边界与不执行语义；无效 AST 夹具由测试临时目录创建。阶段报告记录 S27 本轮实际测试结果，不将工具用例数量并入语言黑盒总数。

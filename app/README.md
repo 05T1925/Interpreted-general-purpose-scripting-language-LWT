@@ -1,5 +1,9 @@
 # LWT 日志分析器
 
+## 开发工具提示
+
+S27 为 LWT 提供 `python -m lwt --check app/log_report.lwt`，用于不执行应用源码地检查静态名字、调用参数和 record 构造字段。该命令是解释器开发工具，不替代下方应用 CLI 示例，也不会读取日志；日志分析职责仍由 `app/log_report.lwt` 承担。机器可读方式为 `python -m lwt --check --format=json app/log_report.lwt`，完整范围见 [`docs/static-checker.md`](../docs/static-checker.md)。
+
 `log_report.lwt` 是一个只读的日志统计 CLI 程序。它从一个 UTF-8 文本文件读取记录，在 stdout 输出固定格式的报告，不修改输入文件，也不写其他应用输出文件。
 
 ## 运行

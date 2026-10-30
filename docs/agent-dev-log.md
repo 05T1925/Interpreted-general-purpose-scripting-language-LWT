@@ -208,3 +208,11 @@
 - **产出：** 在独立 `stage/s26-runtime-recovery` 上修改 lexer、AST、parser、runtime 和 CLI；新增 40 组黑盒配对、parser/runtime/runner 定向测试，以及展示模块函数错误传播和继续处理的 `examples/error_recovery/`。规范第 10 节固定捕获边界、字段和 Error 显示格式。
 - **人工复核与修正：** 对照提示逐项审查 LwtError 过滤、return/break/continue 的独立信号、handler 置于自身 try 外、模块 SourceLocation、入口路径回退、Error 字段写入和类型约束。初次定向测试暴露两项既有 composite mutation 测试因测试类插入边界而缺少 helper，补 helper 后定向/全量通过。首次 S23 变异审计发现旧 structural-equality 探针源码锚点被 Error 组合分支扩展影响，更新探针以只变异数组/record 比较、保留 Error 身份规则；复跑 9 killed、1 survived、0 invalid。修订的是隔离审计工具，不是 LWT 行为。
 - **真实验证：** Windows 11 build 26200、CPython 3.13.7。黑盒 287/287，完整性 287/384/287，全量 unittest 318 项，parser/runtime/runner 定向 60 项，compileall 通过；固定种子性质检查 156 项通过，变异探针 9 killed/1 survived。错误恢复示例真实 CLI 退出码 0，stderr 空，输出见 [S26 执行报告](s26-runtime-recovery.md)。Python 3.10、Linux、远端 Actions 未验证。未运行并发 raw 或正式性能基准；S10 应用仍为 246 行。最终提交及全部命令、保护路径差异、环境限制见 [S26 执行报告](s26-runtime-recovery.md)。
+
+## S27｜模块感知静态语义检查与机器可读诊断（2026-10-30）
+
+- **实际收到的提示：** 用户要求接续 S26 实际 tip `451f55a4c60dbb50a21f30788a3b79463d9c0b4d`，先将该 SHA 写回 S26 自身提交记录并单独提交，再在 `stage/s27-static-checker` 增加不执行程序的静态检查器与 JSON CLI。要求保持 287 项语言黑盒、正常执行语义和 S10/S11 原始证据不变；更新工具文档、语言规范 CLI 说明及阶段状态；不合并、推送或开始 S12。
+- **产出：** S26 报告自包含性修正独立提交 `9006119fc6c98f151244ef06608d72730da1071e`。S27 新增 `lwt/analyzer.py`、`lwt/builtin_signatures.py`、稳定错误夹具 `tests/fixtures/static-checker/undefined-function.lwt` 和 `--check [--format=json]`；复用静态模块图，扫描未调用函数和所有分支。诊断覆盖重复/冲突声明、未知函数/变量/record、调用参数数目、record 字段集合、模块 alias/member 和同作用域重复 let。代码及文档未增加源语言语法。
+- **人工复核与修正：** 对照 runtime 环境核对函数局部不能捕获调用者、函数外层 body 与参数共用作用域、each/recover 父作用域、record 仅入口可见、初始化器先于新绑定可见等规则。明确采用保守名字存在检查，不做路径敏感 definite-assignment 或类型推断。共享内置签名避免 checker/runtime arity 名单分叉；静态限定调用与 runtime 预链接复用同一模块解析 helper。JSON 诊断只写 stdout、成功完整加载后才填文件数，读/词法/语法/模块错误沿用原分类和退出码。
+- **真实验证：** Windows 11 build 26200、CPython 3.13.7（版本、系统与各命令结果见 [S27 执行报告](s27-static-checker.md)）。新增 checker/CLI 子进程测试 20 项，全量 unittest 和既有语言黑盒的最终实测数见阶段报告；语言黑盒保持 287 项且未添加/修改案例。`test_cli.py` 定向测试实跑 108 项。另复跑固定 seed 20261028 的 156 项性质检查，以及原隔离变异审计 9 killed、1 survived、0 invalid。S27 阶段没有运行 S10 并发数据生成器或正式性能基准。
+- **责任与状态：** `examples/modules/main.lwt` 是成功的多模块检查/执行示例；程序输出仍只来自正常执行 CLI，检查器不运行 `emit`、`input()`、`read_text()` 或 `fail()`。`docs/test-matrix.md` 将开发工具测试单列，不计入语言黑盒。S27 实施完成、等待主窗口审查；未合并/推送，S12 未开始。逐条命令、保护文件差异、提交 SHA 和环境限制见 [S27 执行报告](s27-static-checker.md)。

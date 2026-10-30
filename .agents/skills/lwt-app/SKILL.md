@@ -14,8 +14,9 @@ description: Use when creating, editing, debugging, or validating an LWT `.lwt` 
 3. 只用仓库中已实现且有规范/测试依据的 LWT 能力设计程序。`break;`/`continue;` 只可处于当前函数自身的 while/each 循环体，目标是最近循环；each 的 continue 使用进入循环时的浅快照。不要把 Python 语法、标准库 API 或未实现特性写入 `.lwt`。
 4. 在用户指定的路径创建或修改 `.lwt` 文件；有需要时添加最小 fixture。不要无理由修改解释器、正式规范或 S8 测试。不要通过 Python `eval`/`exec` 执行 LWT。
    - 若程序拆成多个 LWT 文件，在入口开头使用 `import "相对路径" as alias;`，并以 `alias.function(...)` 调用。路径相对于声明 import 的文件；库文件只写开头 import 和顶层函数，不写顶层执行语句或 record。保持依赖单向以避免循环，示例见 `examples/modules/`。
-5. 使用公开 CLI 运行程序：`python -m lwt path/to/program.lwt`。如程序需要输入，提供 stdin；如需要程序参数，使用 `python -m lwt path/to/program.lwt -- arg1 arg2`。从实际工作目录核对相对文件路径。
-6. 检查 stdout、stderr、退出码和报错行列位置；将实际结果与任务预期逐项比较。修正后重新运行受影响的命令；不要只依赖静态阅读，也不要声称未运行的验证通过。
+5. 先用公开静态检查器检查可确定的名字、调用参数和 record 字段问题：`python -m lwt --check path/to/program.lwt`；需要 Agent/CI 解析时用 `python -m lwt --check --format=json path/to/program.lwt`。它检查入口及静态导入的全部模块，但不执行程序，也不是静态类型证明。
+6. 再使用公开 CLI 运行程序：`python -m lwt path/to/program.lwt`。如程序需要输入，提供 stdin；如需要程序参数，使用 `python -m lwt path/to/program.lwt -- arg1 arg2`。从实际工作目录核对相对文件路径。
+7. 检查 stdout、stderr、退出码和报错行列位置；将实际结果与任务预期逐项比较。修正后重新运行受影响的命令；不要只依赖静态检查，也不要声称未运行的验证通过。
 7. 最终报告列出改动文件、实际执行的命令及结果、尚未验证的环境或边界。若怀疑解释器缺陷，保留最小复现及规范预期；除非用户当前明确派发解释器修复任务，不要在应用任务里改变解释器语义。
 
 ## 边界
