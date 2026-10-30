@@ -211,3 +211,7 @@ Windows CPython 3.13.7 的 S26 集合共 287 项：`arrays-records-each` 32、`b
 ## 5. 开发工具验证（S27，不计入语言黑盒）
 
 静态检查 CLI 的目标是验证运行前工具行为，不是执行 LWT 语义用例。因此这些用例位于 unittest，而不加入 `tests/cases/`，也不改变上方 287 项语言黑盒契约。`tests/test_static_checker.py` 通过 `python -m lwt --check` 子进程覆盖模块图扫描、名称/调用/record 诊断、词法/语法/CLI/文件错误、JSON schema、作用域边界与不执行语义；无效 AST 夹具由测试临时目录创建。阶段报告记录 S27 本轮实际测试结果，不将工具用例数量并入语言黑盒总数。
+
+## 6. 执行档案工具验证（S28，不计入语言黑盒）
+
+`tests/test_execution_profile.py` 覆盖 profile CLI 边界、运行时控制事件、AST 覆盖分母、模块哈希、隐私边界、RuntimeError/recover、输出等价、严格 JSON/schema 校验、合并和离线 HTML 转义/确定性。真实 CLI 测试只在临时文件夹创建受控程序，应用场景通过独立 runner 对照公开 CLI 的有/无 profile 输出。此类测试检验开发工具实现，不加入 `tests/cases/`，不改变 S26 的 287 项语言黑盒基数，也不应计作新语言语义覆盖。定向命令为 `python -m unittest discover -s tests -p "test_execution_profile.py" -v`；详细模型和本轮实测见 [S28 报告](s28-execution-observability.md)。

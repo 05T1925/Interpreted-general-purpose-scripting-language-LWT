@@ -1,13 +1,13 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C 桌面交互仍未验证。S23–S27 已实施、等待主窗口审查，尚未合入 `main`：S23 加入固定种子性质检查和变异审计，S24 加入 `while`/`each` 的 `break;` 与 `continue;`，S25 加入静态函数库模块，S26 增加受限的 `attempt`/`recover` 运行时错误恢复，S27 增加不执行源码的静态检查 CLI。课程 LWT 应用仍由 `app/log_report.lwt` 负责日志统计。上述阶段审查后进入最后的 S12。状态见 [`project.md`](project.md)、[S23 报告](docs/s23-test-adequacy.md)、[S24 报告](docs/s24-loop-control.md)、[S25 模块报告](docs/s25-modules.md)、[S26 错误恢复报告](docs/s26-runtime-recovery.md)、[S27 静态检查报告](docs/s27-static-checker.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C 桌面交互仍未验证。S23–S28 已实施、等待主窗口审查，尚未合入 `main`：S23 加入固定种子性质检查和变异审计，S24 加入 `while`/`each` 的 `break;` 与 `continue;`，S25 加入静态函数库模块，S26 增加受限的 `attempt`/`recover` 运行时错误恢复，S27 增加不执行源码的静态检查 CLI，S28 增加仅观察 LWT 控制流的 profile/覆盖报告开发工具。课程 LWT 应用仍由 `app/log_report.lwt` 负责日志统计。上述阶段审查后进入最后的 S12。状态见 [`project.md`](project.md)、[S23 报告](docs/s23-test-adequacy.md)、[S24 报告](docs/s24-loop-control.md)、[S25 模块报告](docs/s25-modules.md)、[S26 错误恢复报告](docs/s26-runtime-recovery.md)、[S27 静态检查报告](docs/s27-static-checker.md)、[S28 执行档案报告](docs/s28-execution-observability.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；S23–S27 等待主窗口审查，随后进入最终收尾 S12。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；S23–S28 等待主窗口审查，随后进入最终收尾 S12。
 5. [正式语言规范](docs/language-spec.md)：LWT 语法和语义；S24 循环控制及 S25 静态模块补充等待主窗口审查。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
@@ -159,7 +159,7 @@ S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/
 
 ## S11 性能实验
 
-S11–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互均受遮挡限制而未验证，详见[主窗口复核](docs/s21-main-review.md)。S22 的真实 Tk 控件/事件回归已通过主窗口复核，但不等于人工桌面验收，详见[S22 主窗口复核](docs/s22-main-review.md)。S23–S27 尚未合入 `main`，均等待主窗口审查。S24 完成 break/continue，S25 增加静态函数库模块，S26 增加受限的运行时错误恢复，S27 增加开发者静态检查 CLI，分别见 [S24 报告](docs/s24-loop-control.md)、[S25 报告](docs/s25-modules.md)、[S26 报告](docs/s26-runtime-recovery.md) 和 [S27 报告](docs/s27-static-checker.md)。S23–S27 审查后才进入最后的 S12；S12 规划见[最终交付规划](docs/s12-final-delivery-plan.md)。
+S11–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互均受遮挡限制而未验证，详见[主窗口复核](docs/s21-main-review.md)。S22 的真实 Tk 控件/事件回归已通过主窗口复核，但不等于人工桌面验收，详见[S22 主窗口复核](docs/s22-main-review.md)。S23–S28 尚未合入 `main`，均等待主窗口审查。S24 完成 break/continue，S25 增加静态函数库模块，S26 增加受限的运行时错误恢复，S27 增加开发者静态检查 CLI，S28 增加 LWT 执行 profile/覆盖可视化，分别见 [S24 报告](docs/s24-loop-control.md)、[S25 报告](docs/s25-modules.md)、[S26 报告](docs/s26-runtime-recovery.md) 和 [S27 报告](docs/s27-static-checker.md)、[S28 执行档案报告](docs/s28-execution-observability.md)。S23–S28 审查后才进入最后的 S12；S12 规划见[最终交付规划](docs/s12-final-delivery-plan.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
@@ -177,4 +177,15 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现支持标量、变量/块、输入输出、分支循环（含最近循环 `break;`/`continue;`）、顶层函数/递归/return、数组、record、文本内置函数、相对静态模块函数库，以及只捕获 RuntimeError/3 的 `attempt`/`recover`。空程序返回 0；词法/语法错误返回 2；未捕获运行时错误返回 3；CLI/依赖文件错误返回 4。S27 增加独立开发工具 `python -m lwt --check`，不执行源码、不改变上述语言执行语义。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试；S11 性能数据已审查通过。S15–S22 应用/展示与 GUI 控件回归阶段已审查并合入本地 `main`。S23–S27 已实施、等待主窗口审查；语言黑盒仍为 S26 的 287 项。S12 尚未开始。人工桌面验收和 Python 3.10/远端 Actions 仍未验证。详见 [S23 报告](docs/s23-test-adequacy.md)、[S24 报告](docs/s24-loop-control.md)、[S25 报告](docs/s25-modules.md)、[S26 报告](docs/s26-runtime-recovery.md)、[S27 报告](docs/s27-static-checker.md)与 [S12 最终交付规划](docs/s12-final-delivery-plan.md)。
+当前实现支持标量、变量/块、输入输出、分支循环（含最近循环 `break;`/`continue;`）、顶层函数/递归/return、数组、record、文本内置函数、相对静态模块函数库，以及只捕获 RuntimeError/3 的 `attempt`/`recover`。空程序返回 0；词法/语法错误返回 2；未捕获运行时错误返回 3；CLI/依赖文件错误返回 4。S27 增加独立开发工具 `python -m lwt --check`，不执行源码、不改变上述语言执行语义。S8 建立逐条覆盖矩阵、194 项黑盒测试和四格 CI 工作流；S10 日志分析器有 246 行有效 LWT 和 25 项公开 CLI 测试；S11 性能数据已审查通过。S15–S22 应用/展示与 GUI 控件回归阶段已审查并合入本地 `main`。S23–S28 已实施、等待主窗口审查；语言黑盒仍为 S26 的 287 项。S12 尚未开始。人工桌面验收和 Python 3.10/远端 Actions 仍未验证。详见 [S23 报告](docs/s23-test-adequacy.md)、[S24 报告](docs/s24-loop-control.md)、[S25 报告](docs/s25-modules.md)、[S26 报告](docs/s26-runtime-recovery.md)、[S27 报告](docs/s27-static-checker.md)、[S28 报告](docs/s28-execution-observability.md)与 [S12 最终交付规划](docs/s12-final-delivery-plan.md)。
+
+## S28 执行档案与覆盖率报告
+
+S28 在公开 CLI 增加可选的 LWT 源码级执行档案，不增添源语言语法。它通过显式运行时观察钩子记录函数、语句、decision、recover 和运行错误事件；静态分母来自完整模块 AST。示例命令：
+
+```powershell
+python -m lwt --profile reports/run.json examples/modules/main.lwt
+python tools/render_lwt_profile.py reports/run.json --output reports/run.html
+```
+
+日志应用的两个固定 profile 场景及合并报告可用 `python tools/run_app_profile_scenarios.py` 重新生成；已提交的 [JSON](reports/app-lwt-profile.json) 和[离线 HTML](reports/app-lwt-profile.html) 保留默认与 `WARN + retry + top=2` 两次运行的独立事件。覆盖率不证明正确性；profile 模式有额外运行开销，不得用于 S11 性能对照。该工具不修改 `app/log_report.lwt`，也不更新 S10 并发证据。实现/schema/限制见[执行档案说明](docs/execution-profile.md)，阶段实现、实测与保护文件检查见[S28 报告](docs/s28-execution-observability.md)。当前 S28 实施完成、等待主窗口审查；S12 未开始。

@@ -98,6 +98,17 @@ emit "continued";
 
 预期 stdout 为 `RuntimeError`、`division by zero`、`continued` 各一行，stderr 为空，退出码为 0。错误值还提供 `source`、`line`、`column`；显示格式和嵌套 handler 规则见[规范第 10 节](language-spec.md#10-运行时错误恢复s26)。
 
+### 定位控制流和覆盖情况（S28 开发工具）
+
+需要追踪固定场景经过哪些 LWT 语句、函数和分支时，可生成 profile 并离线渲染：
+
+```powershell
+python -m lwt --profile reports/modules-profile.json examples/modules/main.lwt
+python tools/render_lwt_profile.py reports/modules-profile.json --output reports/modules-profile.html
+```
+
+profile 记录 LWT 控制流事件与 AST 覆盖摘要，不保存变量、参数、stdin 或数组/record 值。渲染器会严格验证 JSON，并在本地源码可解析时核验 SHA-256。该功能是解释器开发工具，不属于 LWT 语义；额外记录会增加运行开销，不能用于 S11 性能比较。覆盖率只反映给定场景到达的节点，不能作为正确性证明。详细 schema、事件字段、输出错误边界和合并用法见[执行档案说明](execution-profile.md)。
+
 ## 2. 从小程序开始
 
 ### 值、变量、表达式和注释

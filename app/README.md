@@ -162,3 +162,13 @@ python tools/run_gui_integration.py --require-no-skips
 ```
 
 测试使用真实应用窗口、Tk/Ttk 控件和事件循环；边界测试只注入受控 runner/timer，不替代主要 CLI 路径。语义实验室、工作台与五题挑战包含真实 `python -m lwt` 调用。Windows 上需要可用 Tk 桌面；无显示时测试会逐项标记 skip。Linux CI 会检查/按需安装 Xvfb，以虚拟显示运行 GUI 定向测试和完整 unittest。合成事件只证明控件与回调集成，不代表物理鼠标键盘、输入法、窗口管理器或人工视觉验收通过。S21 留下的人工 A/B/C 检查仍交由 S12 现场预检；完整映射、结果和限制见 [S22 执行报告](../docs/s22-gui-regression.md)。
+
+## S28 LWT 执行档案演示
+
+日志分析仍完全由 `app/log_report.lwt` 解析、过滤和汇总。可从仓库根目录运行固定 profile 场景：
+
+```powershell
+python tools/run_app_profile_scenarios.py
+```
+
+该 runner 使用公开 `python -m lwt --profile ...` 子进程，固定执行默认样例和 `WARN + retry + top=2`，逐字比较普通模式与 profile 模式的 stdout、stderr、退出码，再合并两次独立运行并渲染 HTML。预生成的 [档案 JSON](../reports/app-lwt-profile.json) 与[离线 HTML](../reports/app-lwt-profile.html) 可直接查看。profile 是解释器开发工具，不属于 LWT 应用能力；额外开销使其不适合作为 S11 性能测量模式，也不刷新 S10 并发记录。数据结构和证据细节见 [执行档案说明](../docs/execution-profile.md) 与 [S28 报告](../docs/s28-execution-observability.md)。

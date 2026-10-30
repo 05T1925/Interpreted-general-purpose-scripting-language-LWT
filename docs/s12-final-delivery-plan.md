@@ -1,6 +1,6 @@
 # S12 最终验收、答辩准备与交付规划
 
-状态：**S21、S22 已通过主窗口复核并合入本地 `main`；S23–S27 已实施、等待主窗口审查，且均未合入本地 `main`；S12 待派发且仍是最后阶段。** S22 的真实 Tk 控件/合成事件回归不替代桌面人工验收；S23 是黑盒充分性审计，S24 补足循环跳转语义，S25 增加静态函数模块，S26 增加受限的 RuntimeError 恢复，S27 增加只读静态检查 CLI。五阶段均审查通过后进入 S12，不再追加应用/语言功能阶段。本规划把《大作业内容.md》的八项交付、课程验收和 GUI 遗留整合为一个可逐项核验的收尾任务。阶段报告见 [`s23-test-adequacy.md`](s23-test-adequacy.md)、[`s24-loop-control.md`](s24-loop-control.md)、[`s25-modules.md`](s25-modules.md)、[`s26-runtime-recovery.md`](s26-runtime-recovery.md) 和 [`s27-static-checker.md`](s27-static-checker.md)。
+状态：**S21、S22 已通过主窗口复核并合入本地 `main`；S23–S28 已实施、等待主窗口审查，且均未合入本地 `main`；S12 待派发且仍是最后阶段。** S22 的真实 Tk 控件/合成事件回归不替代桌面人工验收；S23 是黑盒充分性审计，S24 补足循环跳转语义，S25 增加静态函数模块，S26 增加受限的 RuntimeError 恢复，S27 增加只读静态检查 CLI，S28 增加非语言语义的源码执行档案工具。S23–S28 审查通过后进入 S12，不再追加应用/语言功能阶段。本规划把《大作业内容.md》的八项交付、课程验收和 GUI 遗留整合为一个可逐项核验的收尾任务。阶段报告见 [`s23-test-adequacy.md`](s23-test-adequacy.md)、[`s24-loop-control.md`](s24-loop-control.md)、[`s25-modules.md`](s25-modules.md)、[`s26-runtime-recovery.md`](s26-runtime-recovery.md)、[`s27-static-checker.md`](s27-static-checker.md) 和 [`s28-execution-observability.md`](s28-execution-observability.md)。
 
 ## 一、目标和评分对应
 
@@ -38,6 +38,7 @@ S21 报告中的 A/B/C GUI 项均未验证。S22 已通过隔离 Tk 根窗口、
 ## 四、性能与并发原始证据保护
 
 - 不为“刷新数字”重跑正式性能基准，也不运行会覆盖 `reports/app-concurrency.json` 的并发生成器。
+- S28 profile 档案只用于解释器控制流调试与展示，包含额外散列、事件和写盘开销；不得当作 S11 性能对照，也不得与原始性能样本混用。S10 并发证据仍以既有 raw 为准，不因生成 profile 自动刷新。
 - 对照最终代码与 raw 中的源文件哈希、运行身份、样本数量、统计值和报告文本；发现不一致时先说明因果及影响，再决定是否需要新 run。旧 raw 不覆盖，任何新数据应追加并保留旧 run。
 - PPT 和答辩应说明 S11 测量包含进程启动、导入、词法/语法分析、执行和退出等待；不是纯运行时速度。引用结果时注明操作系统、Python 版本、负载、样本数和限制，不宣称 LWT 更快或把结论泛化到其他平台。
 - S10 并发材料说明的是固定只读输入下的多个独立操作系统进程输出一致性，不是 LWT 线程支持，也不证明 GUI 并行性能。
