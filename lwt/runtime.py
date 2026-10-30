@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from dataclasses import fields, is_dataclass
+from dataclasses import dataclass, fields, is_dataclass
 import sys
 from pathlib import Path
 from typing import BinaryIO, NoReturn, TextIO
 
 from .ast_nodes import (
     ArrayExpression,
+    AttemptStatement,
     BreakStatement,
     AssignmentExpression,
     BinaryExpression,
@@ -92,6 +93,17 @@ class _ContinueSignal(Exception):
         self.location = location
 
 
+@dataclass(frozen=True, slots=True, eq=False)
+class _ErrorValue:
+    """An immutable, identity-compared LWT value made by a recover handler."""
+
+    category: str
+    message: str
+    source: str | None
+    line: int | None
+    column: int | None
+
+
 class _RecordValue:
     """A mutable record instance whose equality is object identity."""
 
@@ -117,6 +129,7 @@ class _RuntimeContext:
         "record_types",
         "imports",
         "global_environment",
+        "source_path",
     )
 
     def __init__(
@@ -127,6 +140,7 @@ class _RuntimeContext:
         record_types: dict[str, tuple[str, ...]],
         program_args: tuple[str, ...] = (),
         imports: dict[str, _RuntimeContext] | None = None,
+        source_path: str | None = None,
     ) -> None:
         self.input_stream = input_stream
         self.output_stream = output_stream
@@ -135,6 +149,7 @@ class _RuntimeContext:
         self.record_types = record_types
         self.imports = {} if imports is None else imports
         self.global_environment = Environment()
+        self.source_path = source_path
 
 
 class Environment:
@@ -196,6 +211,7 @@ def execute(
     program_args: tuple[str, ...] = (),
     *,
     module_graph: ModuleGraph | None = None,
+    source_path: str | None = None,
 ) -> None:
     """Execute a supported LWT program or raise a located LWT error.
 
@@ -253,7 +269,12 @@ def execute(
                     unsupported,
                 )
             contexts[unit] = _RuntimeContext(
-                input_stream, output_stream, functions, record_types, program_args
+                input_stream,
+                output_stream,
+                functions,
+                record_types,
+                program_args,
+                source_path=source_path if unit is graph.entry else None,
             )
 
         for unit, context in contexts.items():
@@ -370,6 +391,10 @@ def _unsupported_statement(statement: object) -> SourceLocation | None:
         return _unsupported_expression(statement.iterable) or _unsupported_statement(
             statement.body
         )
+    if isinstance(statement, AttemptStatement):
+        return _unsupported_statement(statement.body) or _unsupported_statement(
+            statement.recover_body
+        )
     # A future AST node remains unsupported until this checker explicitly
     # admits it.
     return getattr(statement, "location", SourceLocation(1, 1))
@@ -455,6 +480,31 @@ def _execute_statement(
 
     if isinstance(statement, ContinueStatement):
         raise _ContinueSignal(statement.location)
+
+    if isinstance(statement, AttemptStatement):
+        try:
+            _execute_statement(statement.body, environment, runtime)
+        except LwtError as error:
+            if error.category != "RuntimeError" or error.exit_code != 3:
+                raise
+            location = error.location
+            source = (
+                location.source_path
+                if location is not None and location.source_path is not None
+                else runtime.source_path
+            )
+            error_value = _ErrorValue(
+                error.category,
+                error.message,
+                source,
+                location.line if location is not None else None,
+                location.column if location is not None else None,
+            )
+            handler_scope = Environment(environment)
+            handler_scope.values[statement.error_name.name] = error_value
+            # Keep handler failures outside this attempt's catch boundary.
+            _execute_statement(statement.recover_body, handler_scope, runtime)
+        return
 
     if isinstance(statement, ReturnStatement):
         value = (
@@ -564,6 +614,13 @@ def _evaluate(
 
     if isinstance(expression, FieldExpression):
         receiver = _evaluate(expression.object, environment, runtime)
+        if isinstance(receiver, _ErrorValue):
+            if expression.field.name not in _ERROR_FIELDS:
+                _runtime_error(
+                    f"error value has no field {expression.field.name!r}",
+                    expression.access_location,
+                )
+            return getattr(receiver, expression.field.name)
         if not isinstance(receiver, _RecordValue):
             _runtime_error("field access requires a record", expression.access_location)
         field_name = expression.field.name
@@ -601,6 +658,13 @@ def _evaluate(
 
         if isinstance(target, FieldExpression):
             receiver = _evaluate(target.object, environment, runtime)
+            if isinstance(receiver, _ErrorValue):
+                if target.field.name not in _ERROR_FIELDS:
+                    _runtime_error(
+                        f"error value has no field {target.field.name!r}",
+                        target.access_location,
+                    )
+                _runtime_error("error fields are read-only", target.access_location)
             if not isinstance(receiver, _RecordValue):
                 _runtime_error("field assignment requires a record", target.access_location)
             field_name = target.field.name
@@ -915,7 +979,7 @@ def _evaluate_binary(
             equal = False
         elif type(left) in {int, str, bool} or left is None:
             equal = left == right
-        elif type(left) is list or isinstance(left, _RecordValue):
+        elif type(left) is list or isinstance(left, (_RecordValue, _ErrorValue)):
             # Never invoke Python's recursive container/record equality.
             equal = left is right
         else:
@@ -1031,6 +1095,17 @@ def _format_value(value: object, active: set[int], nested: bool) -> str:
             return f"{value.type_name}{{{fields}}}"
         finally:
             active.remove(identity)
+    if isinstance(value, _ErrorValue):
+        source = "null" if value.source is None else _quote_string(value.source)
+        line = "null" if value.line is None else format_decimal_integer(value.line)
+        column = "null" if value.column is None else format_decimal_integer(value.column)
+        return (
+            "Error{"
+            f"category: {_quote_string(value.category)}, "
+            f"message: {_quote_string(value.message)}, "
+            f"source: {source}, line: {line}, column: {column}"
+            "}"
+        )
     raise AssertionError(f"unknown LWT value in display: {type(value)!r}")
 
 
@@ -1058,3 +1133,6 @@ def _quote_string(value: str) -> str:
 
 def _runtime_error(message: str, location: SourceLocation) -> NoReturn:
     raise LwtError("RuntimeError", message, 3, location)
+
+
+_ERROR_FIELDS = frozenset({"category", "message", "source", "line", "column"})

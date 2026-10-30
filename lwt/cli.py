@@ -65,6 +65,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             sys.stdout,
             parsed.program_args,
             module_graph=graph,
+            source_path=source_path,
         )
     except LwtError as error:
         sys.stderr.write(format_diagnostic(error, source_path) + "\n")

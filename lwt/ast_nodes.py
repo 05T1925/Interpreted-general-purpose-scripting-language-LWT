@@ -72,6 +72,14 @@ class ContinueStatement:
 
 
 @dataclass(frozen=True, slots=True)
+class AttemptStatement:
+    body: Block
+    error_name: Identifier
+    recover_body: Block
+    location: SourceLocation
+
+
+@dataclass(frozen=True, slots=True)
 class ReturnStatement:
     value: Expression | None
     location: SourceLocation
@@ -220,6 +228,7 @@ Statement = (
     LetStatement
     | BreakStatement
     | ContinueStatement
+    | AttemptStatement
     | ReturnStatement
     | EmitStatement
     | ExpressionStatement

@@ -34,6 +34,8 @@ class TokenKind(str, Enum):
     BREAK = "break"
     CONTINUE = "continue"
     IMPORT = "import"
+    ATTEMPT = "attempt"
+    RECOVER = "recover"
 
     PLUS = "+"
     MINUS = "-"
@@ -91,6 +93,8 @@ _KEYWORDS: dict[str, TokenKind] = {
     "break": TokenKind.BREAK,
     "continue": TokenKind.CONTINUE,
     "import": TokenKind.IMPORT,
+    "attempt": TokenKind.ATTEMPT,
+    "recover": TokenKind.RECOVER,
 }
 
 _SINGLE_CHARACTERS: dict[str, TokenKind] = {

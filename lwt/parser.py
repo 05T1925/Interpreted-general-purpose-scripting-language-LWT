@@ -7,6 +7,7 @@ from typing import Callable, NoReturn
 
 from .ast_nodes import (
     ArrayExpression,
+    AttemptStatement,
     BreakStatement,
     AssignmentExpression,
     BinaryExpression,
@@ -152,6 +153,20 @@ class Parser:
             value = None if self._check(TokenKind.SEMICOLON) else self._expression()
             self._consume(TokenKind.SEMICOLON, "expected ';' after return statement")
             return ReturnStatement(value, _token_location(keyword))
+
+        if self._match(TokenKind.ATTEMPT):
+            keyword = self._previous()
+            body = self._block(return_allowed=return_allowed, loop_depth=loop_depth)
+            self._consume(TokenKind.RECOVER, "expected 'recover' after attempt block")
+            self._consume(TokenKind.LEFT_PAREN, "expected '(' after 'recover'")
+            error_name = self._identifier("expected error variable in recover clause")
+            self._consume(TokenKind.RIGHT_PAREN, "expected ')' after recover variable")
+            recover_body = self._block(
+                return_allowed=return_allowed, loop_depth=loop_depth
+            )
+            return AttemptStatement(
+                body, error_name, recover_body, _token_location(keyword)
+            )
 
         if self._match(TokenKind.EMIT):
             keyword = self._previous()
