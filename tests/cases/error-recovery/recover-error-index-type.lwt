@@ -1,0 +1,3 @@
+attempt { fail("x"); } recover (problem) {
+  attempt { let values = [1]; emit values[problem]; } recover (other) { emit other.message; }
+}

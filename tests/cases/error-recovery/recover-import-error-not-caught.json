@@ -1,0 +1,20 @@
+{
+  "id": "recover-import-error-not-caught",
+  "spec_refs": [
+    "9",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "modules"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 4,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/recover-import-error-not-caught.lwt:1:1: ImportError: module path 'fixtures/missing.lwt' is not a readable file\n"
+  }
+}

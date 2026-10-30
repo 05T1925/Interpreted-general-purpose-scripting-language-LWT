@@ -1,0 +1,10 @@
+attempt {
+  fail("bad\nline");
+} recover (problem) {
+  emit problem.category;
+  emit problem.message;
+  emit problem.source;
+  emit problem.line;
+  emit problem.column;
+  emit str(problem);
+}

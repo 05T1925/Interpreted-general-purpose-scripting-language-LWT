@@ -1,0 +1,9 @@
+emit "before";
+attempt {
+  emit "body";
+  fail("body failure");
+} recover (problem) {
+  emit "handler";
+  fail("handler failure");
+}
+emit "after";

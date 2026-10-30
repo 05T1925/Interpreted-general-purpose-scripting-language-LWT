@@ -1,0 +1,2 @@
+attempt { fail("hidden"); } recover (problem) { emit problem.message; }
+emit problem.message;

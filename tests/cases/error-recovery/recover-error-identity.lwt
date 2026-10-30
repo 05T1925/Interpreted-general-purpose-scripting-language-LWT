@@ -1,0 +1,6 @@
+let first = null;
+let second = null;
+attempt { fail("same"); } recover (problem) { first = problem; }
+attempt { fail("same"); } recover (problem) { second = problem; }
+emit first == first;
+emit first == second;

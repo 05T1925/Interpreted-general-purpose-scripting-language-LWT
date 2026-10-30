@@ -1,0 +1,21 @@
+{
+  "id": "recover-error-identity",
+  "spec_refs": [
+    "4.3",
+    "7",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\nfalse\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,3 @@
+fn divide() {
+  return 5 / 0;
+}

@@ -1,0 +1,1 @@
+attempt { emit true + 1; } recover (problem) { emit problem.message; }

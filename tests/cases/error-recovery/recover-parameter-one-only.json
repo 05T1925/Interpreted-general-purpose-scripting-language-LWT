@@ -1,0 +1,21 @@
+{
+  "id": "recover-parameter-one-only",
+  "spec_refs": [
+    "2.1",
+    "3",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "syntax-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/recover-parameter-one-only.lwt:1:26: SyntaxError: expected ')' after recover variable\n"
+  }
+}

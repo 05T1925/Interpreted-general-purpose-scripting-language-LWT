@@ -1,0 +1,19 @@
+{
+  "id": "recover-type-error",
+  "spec_refs": [
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "normal"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "'+' requires two integers or two strings\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "recover-error-display-unicode",
+  "spec_refs": [
+    "4.3",
+    "7",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "Error{category: \"RuntimeError\", message: \"café\\t\\\"\", source: \"tests/cases/error-recovery/recover-error-display-unicode.lwt\", line: 1, column: 11}\n",
+    "stderr": ""
+  }
+}

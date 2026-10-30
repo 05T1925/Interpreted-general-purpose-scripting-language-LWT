@@ -1,0 +1,6 @@
+let n = 0;
+while (n < 4) {
+  n = n + 1;
+  attempt { when (n == 2) { break; } emit n; } recover (problem) { emit "caught"; }
+}
+emit n;

@@ -1,0 +1,8 @@
+import "fixtures/outer.lwt" as layer;
+attempt { layer.fail_through(); } recover (problem) {
+  emit problem.category;
+  emit problem.message;
+  emit problem.source;
+  emit problem.line;
+  emit problem.column;
+}

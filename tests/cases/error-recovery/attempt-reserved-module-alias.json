@@ -1,0 +1,21 @@
+{
+  "id": "attempt-reserved-module-alias",
+  "spec_refs": [
+    "2.1",
+    "3",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "syntax-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/attempt-reserved-module-alias.lwt:1:32: SyntaxError: expected module alias after 'as'\n"
+  }
+}

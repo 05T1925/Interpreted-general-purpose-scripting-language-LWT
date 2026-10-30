@@ -1,0 +1,19 @@
+{
+  "id": "recover-handler-error-not-self-caught",
+  "spec_refs": [
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "before\nbody\nhandler\n",
+    "stderr": "tests/cases/error-recovery/recover-handler-error-not-self-caught.lwt:7:3: RuntimeError: handler failure\n"
+  }
+}

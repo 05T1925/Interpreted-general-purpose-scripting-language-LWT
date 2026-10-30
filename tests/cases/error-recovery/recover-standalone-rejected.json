@@ -1,0 +1,21 @@
+{
+  "id": "recover-standalone-rejected",
+  "spec_refs": [
+    "2.1",
+    "3",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "syntax-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/recover-standalone-rejected.lwt:1:1: SyntaxError: expected expression\n"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "recover-lex-error-not-caught",
+  "spec_refs": [
+    "2.2",
+    "3",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "lexical-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/recover-lex-error-not-caught.lwt:3:10: LexError: unknown string escape\n"
+  }
+}

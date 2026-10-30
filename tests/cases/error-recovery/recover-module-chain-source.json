@@ -1,0 +1,20 @@
+{
+  "id": "recover-module-chain-source",
+  "spec_refs": [
+    "9",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "modules"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "RuntimeError\ndivision by zero\nfixtures/inner.lwt\n2\n12\n",
+    "stderr": ""
+  }
+}

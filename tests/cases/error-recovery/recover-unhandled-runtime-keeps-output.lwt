@@ -1,0 +1,3 @@
+emit "before";
+attempt { emit "body"; } recover (problem) { emit "not reached"; }
+fail("uncaught");

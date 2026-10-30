@@ -1,0 +1,21 @@
+{
+  "id": "recover-variable-scope",
+  "spec_refs": [
+    "4.3",
+    "7",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "hidden\n",
+    "stderr": "tests/cases/error-recovery/recover-variable-scope.lwt:2:6: RuntimeError: undefined variable 'problem'\n"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "recover-error-not-record-type",
+  "spec_refs": [
+    "4.3",
+    "7",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "undefined record type 'Error'\n",
+    "stderr": ""
+  }
+}

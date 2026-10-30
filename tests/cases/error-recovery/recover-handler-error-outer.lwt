@@ -1,0 +1,3 @@
+attempt {
+  attempt { fail("body"); } recover (inside) { fail("handler"); }
+} recover (outside) { emit outside.message; }

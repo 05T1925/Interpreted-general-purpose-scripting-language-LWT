@@ -1,0 +1,6 @@
+attempt { # body comment
+  { emit "nested"; }
+} # clause comment
+recover # keyword comment
+( problem ) { emit problem.category; }
+emit "next";

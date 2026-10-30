@@ -1,0 +1,21 @@
+{
+  "id": "attempt-reserved-variable",
+  "spec_refs": [
+    "2.1",
+    "3",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "syntax-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/attempt-reserved-variable.lwt:1:5: SyntaxError: expected variable name after 'let'\n"
+  }
+}

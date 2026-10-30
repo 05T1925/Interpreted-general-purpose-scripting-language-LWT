@@ -87,6 +87,13 @@ class CaseInventoryTests(unittest.TestCase):
 
         self.assertEqual(cases[0].spec_refs, ("9",))
 
+    def test_runtime_recovery_spec_section_is_a_valid_case_reference(self) -> None:
+        self.write_case(metadata={"spec_refs": ["10"]})
+
+        cases = runner.discover_cases(self.root)
+
+        self.assertEqual(cases[0].spec_refs, ("10",))
+
     def test_empty_case_tree_is_a_configuration_error(self) -> None:
         with self.assertRaisesRegex(
             runner.ConfigurationError, "no black-box test cases were discovered"

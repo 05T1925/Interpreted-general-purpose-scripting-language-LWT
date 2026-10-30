@@ -1,0 +1,21 @@
+{
+  "id": "recover-unknown-error-field",
+  "spec_refs": [
+    "4.3",
+    "7",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/recover-unknown-error-field.lwt:1:56: RuntimeError: error value has no field 'unknown'\n"
+  }
+}

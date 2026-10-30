@@ -67,12 +67,17 @@ PROBES = (
         "composite-values-use-structural-equality",
         ("arrays-identity-equality", "record-instance-identity"),
         "Use list value equality and record type/field equality instead of object identity.",
-        "elif type(left) is list or isinstance(left, _RecordValue):\n"
+        "elif type(left) is list or isinstance(left, (_RecordValue, _ErrorValue)):\n"
         "            # Never invoke Python's recursive container/record equality.\n"
         "            equal = left is right",
-        "elif type(left) is list or isinstance(left, _RecordValue):\n"
-        "            # Probe mutation: compound values use structural equality.\n"
-        "            equal = left == right if type(left) is list else (left.type_name == right.type_name and left.fields == right.fields)",
+        "elif type(left) is list:\n"
+        "            # Probe mutation: lists use structural equality.\n"
+        "            equal = left == right\n"
+        "        elif isinstance(left, _RecordValue):\n"
+        "            # Probe mutation: records use structural equality.\n"
+        "            equal = left.type_name == right.type_name and left.fields == right.fields\n"
+        "        elif isinstance(left, _ErrorValue):\n"
+        "            equal = left is right",
     ),
     Probe(
         "each-iterates-live-array",

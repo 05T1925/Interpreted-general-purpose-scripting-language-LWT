@@ -4,6 +4,7 @@ import unittest
 
 from lwt.ast_nodes import (
     ArrayExpression,
+    AttemptStatement,
     AssignmentExpression,
     BinaryExpression,
     Block,
@@ -98,6 +99,24 @@ class ParserStructureTests(unittest.TestCase):
         self.assertIsInstance(loop, EachStatement)
         self.assertEqual(loop.variable.name, "item")
         self.assertIsInstance(loop.body.statements[0], Block)
+
+    def test_attempt_statement_keeps_keyword_error_name_and_both_blocks(self) -> None:
+        source = "attempt { emit 1; } # gap\n recover (problem) { emit problem.message; }"
+        statement = parse_source(source).items[0]
+
+        self.assertIsInstance(statement, AttemptStatement)
+        self.assertEqual(statement.location, SourceLocation(1, 1))
+        self.assertEqual(statement.body.location, SourceLocation(1, 9))
+        self.assertEqual(statement.error_name.name, "problem")
+        self.assertEqual(statement.error_name.location.line, 2)
+        self.assertEqual(len(statement.recover_body.statements), 1)
+
+    def test_attempt_is_legal_inside_function_and_loop_control_context(self) -> None:
+        program = parse_source(
+            "fn f() { while (true) { attempt { continue; } recover (e) { break; } } }"
+        )
+        loop = program.items[0].body.statements[0]
+        self.assertIsInstance(loop.body.statements[0], AttemptStatement)
 
     def test_empty_lists_and_every_primary_expression_are_represented(self) -> None:
         program = parse_source(
@@ -402,6 +421,38 @@ class ParserErrorTests(unittest.TestCase):
         source = "let complete = 1; emit ("
         error = self.assert_syntax_error(source, SourceLocation(1, len(source) + 1))
         self.assertEqual(error.message, "expected expression")
+
+    def test_attempt_requires_recover_and_recover_cannot_stand_alone(self) -> None:
+        error = self.assert_syntax_error(
+            "attempt { } emit 1;", SourceLocation(1, 13)
+        )
+        self.assertEqual(error.message, "expected 'recover' after attempt block")
+        self.assert_syntax_error("recover (problem) {}", SourceLocation(1, 1))
+
+    def test_attempt_requires_blocks_and_one_identifier_parameter(self) -> None:
+        cases = (
+            ("attempt recover (e) {}", "recover", "expected '{' to begin block"),
+            ("attempt {} recover () {}", ")", "expected error variable in recover clause"),
+            ("attempt {} recover (e, other) {}", ",", "expected ')' after recover variable"),
+            ("attempt {} recover (e) {};", ";", "expected expression"),
+        )
+        for source, token, message in cases:
+            with self.subTest(source=source):
+                error = self.assert_syntax_error(
+                    source, SourceLocation(1, source.index(token) + 1)
+                )
+                self.assertEqual(error.message, message)
+
+    def test_attempt_keywords_are_reserved_identifiers(self) -> None:
+        for source, token in (
+            ("let attempt = 1;", "attempt"),
+            ("fn recover() {}", "recover"),
+            ('import "lib.lwt" as attempt;', "attempt"),
+        ):
+            with self.subTest(source=source):
+                self.assert_syntax_error(
+                    source, SourceLocation(1, source.index(token) + 1)
+                )
 
 
 if __name__ == "__main__":

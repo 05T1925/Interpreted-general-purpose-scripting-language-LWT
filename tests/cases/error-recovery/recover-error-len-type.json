@@ -1,0 +1,21 @@
+{
+  "id": "recover-error-len-type",
+  "spec_refs": [
+    "4.3",
+    "7",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "len expects a string or array\n",
+    "stderr": ""
+  }
+}

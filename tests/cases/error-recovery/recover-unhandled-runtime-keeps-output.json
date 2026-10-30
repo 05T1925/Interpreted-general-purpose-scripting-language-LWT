@@ -1,0 +1,19 @@
+{
+  "id": "recover-unhandled-runtime-keeps-output",
+  "spec_refs": [
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "before\nbody\n",
+    "stderr": "tests/cases/error-recovery/recover-unhandled-runtime-keeps-output.lwt:3:1: RuntimeError: uncaught\n"
+  }
+}

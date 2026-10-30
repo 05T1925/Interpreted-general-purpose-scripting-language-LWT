@@ -1,0 +1,5 @@
+attempt {
+  attempt { fail("inner"); } recover (inside) { emit inside.message; }
+  fail("outer");
+} recover (outside) { emit outside.message; }
+emit "after";

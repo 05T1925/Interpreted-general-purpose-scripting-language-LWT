@@ -1,0 +1,19 @@
+{
+  "id": "recover-user-function",
+  "spec_refs": [
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "normal"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "division by zero\ntests/cases/error-recovery/recover-user-function.lwt\n1\n",
+    "stderr": ""
+  }
+}

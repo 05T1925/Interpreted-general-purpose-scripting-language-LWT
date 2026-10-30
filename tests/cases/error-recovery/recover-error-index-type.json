@@ -1,0 +1,21 @@
+{
+  "id": "recover-error-index-type",
+  "spec_refs": [
+    "4.3",
+    "7",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "array index must be an integer\n",
+    "stderr": ""
+  }
+}

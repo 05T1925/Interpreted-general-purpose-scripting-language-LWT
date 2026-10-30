@@ -1,0 +1,12 @@
+record Counter {value};
+let counter = Counter{value: 0};
+let values = [];
+attempt {
+  emit "before";
+  push(values, 7);
+  counter.value = 9;
+  fail("stop");
+} recover (problem) {
+  emit len(values);
+  emit counter.value;
+}

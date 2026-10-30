@@ -1,0 +1,19 @@
+{
+  "id": "recover-nearest-handler",
+  "spec_refs": [
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "normal"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "inner\nouter\nafter\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "recover-readonly-error-fields",
+  "spec_refs": [
+    "4.3",
+    "7",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "runtime-error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/recover-readonly-error-fields.lwt:1:51: RuntimeError: error fields are read-only\n"
+  }
+}

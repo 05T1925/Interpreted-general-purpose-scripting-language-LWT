@@ -1,0 +1,20 @@
+{
+  "id": "recover-while-break",
+  "spec_refs": [
+    "5",
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "control-flow"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n2\n",
+    "stderr": ""
+  }
+}

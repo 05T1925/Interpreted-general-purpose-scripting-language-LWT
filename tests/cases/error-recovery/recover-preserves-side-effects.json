@@ -1,0 +1,19 @@
+{
+  "id": "recover-preserves-side-effects",
+  "spec_refs": [
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "normal"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "before\n1\n9\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,5 @@
+fn choose() {
+  attempt { return 7; } recover (problem) { return 8; }
+}
+emit choose();
+emit "after";

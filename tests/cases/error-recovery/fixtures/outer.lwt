@@ -1,0 +1,2 @@
+import "inner.lwt" as inner;
+fn fail_through() { return inner.divide(); }

@@ -1,0 +1,4 @@
+each (n in [1, 2, 3]) {
+  attempt { when (n == 2) { break; } emit n; } recover (problem) { emit "caught"; }
+}
+emit "after";

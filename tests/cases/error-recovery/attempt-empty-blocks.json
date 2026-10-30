@@ -1,0 +1,19 @@
+{
+  "id": "attempt-empty-blocks",
+  "spec_refs": [
+    "10"
+  ],
+  "tags": [
+    "error-recovery",
+    "normal"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "after\n",
+    "stderr": ""
+  }
+}

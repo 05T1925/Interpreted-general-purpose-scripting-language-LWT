@@ -1,0 +1,2 @@
+fn crash() { return 9 / 0; }
+attempt { crash(); } recover (problem) { emit problem.message; emit problem.source; emit problem.line; }
