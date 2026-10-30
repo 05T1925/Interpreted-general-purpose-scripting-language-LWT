@@ -120,6 +120,6 @@ Python 3.10、Linux、远端 GitHub Actions 未在本阶段验证；远端没有
 1. `b6715782e195be554a48783c025d2ebc632665de` — `feat: add bounded runtime error recovery`。
 2. `682eafe009d23a4f497c34513cada3774d008729` — `test: cover runtime recovery semantics`。
 3. `3dfcf84711b2b47ca00acc98939e6cace140bca0` — `docs: specify and demonstrate runtime recovery`。
-4. 最终报告提交的 SHA 由执行交接中的最终 `git log` 与 `git rev-parse HEAD` 列明。
+4. `451f55a4c60dbb50a21f30788a3b79463d9c0b4d` — `docs: record S26 runtime recovery evidence`（S26 最终提交）。
 
-最终要求：分支仍为 `stage/s26-runtime-recovery`、工作区干净，未合并或推送。
+S26 阶段最终 SHA 为 `451f55a4c60dbb50a21f30788a3b79463d9c0b4d`；当时分支 `stage/s26-runtime-recovery` 工作区干净，未合并或推送。
