@@ -110,7 +110,7 @@ S26 独立修正提交唯一修改文件为 `docs/s26-runtime-recovery.md`，将
 | `python tools/run_tests.py` | 0 | S26 原语言黑盒 287/287；S27 工具测试不加入此集 |
 | `python tools/check_project_integrity.py` | 0 | `cases=287; matrix_links=384; referenced_cases=287` |
 | `python -m compileall -q lwt tests tools bench app` | 0 | 无编译错误 |
-| `python -m unittest discover -s tests -p "test_static_checker.py" -v` | 0 | 20 项通过 |
+| `python -m unittest discover -s tests -p "test_static_checker.py" -q` | 0 | 20 项通过 |
 | `python -m unittest discover -s tests -p "test_cli.py" -q` | 0 | 108 项通过 |
 | `python tools/run_semantic_properties.py` | 0 | seed `20261028`；150 个表达式 + 6 项语义性质，156 checks / 7 个 CLI 程序通过 |
 | `python tools/audit_semantic_mutants.py` | 0 | 9 killed、1 survived、0 equivalent、0 invalid；存活项仍是既有对称参数顺序探针，不是 S27 造成的变化 |
