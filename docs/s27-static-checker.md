@@ -7,14 +7,16 @@
 - S26 原最终提交：`451f55a4c60dbb50a21f30788a3b79463d9c0b4d`。
 - 在 S26 原分支单独补写其自身提交记录中的最终 SHA，提交为 `9006119fc6c98f151244ef06608d72730da1071e`（`docs: make S26 final SHA self-contained`）。该提交只修正 `docs/s26-runtime-recovery.md`，未改写 S26 历史。
 - S27 分支：`stage/s27-static-checker`，从更正后的 S26 tip `9006119fc6c98f151244ef06608d72730da1071e` 创建；S27 工作开始时工作区干净。
-- S27 分层提交如下；最终报告提交之后的最终 HEAD 以执行窗口交接中的 `git rev-parse HEAD` 为准。
+- S27 实现与交付在 `bf7bb01684144bbc392191cb0c92580dc9e2c416` 收尾；当时分支为 `stage/s27-static-checker`，工作区干净。该 tip 是 S28 开始前核实到的 S27 最终提交。
 
 | 提交 | 内容 |
 |---|---|
 | `9daf5a0b3c8ed908872032a82eaa4e9049781a33` | `feat: add module-aware static checker CLI` |
 | `6ac25ed7cae0af565ad8c532490c9f8de05f09ef` | `test: cover static checker and check CLI` |
 | `16da1bf541cca818990a52fc737ec08f655e2d7b` | `test: add stable static diagnostic fixture` |
-| 后续阶段提交 | 本报告与文档状态同步；SHA 见执行交接的 `git log` |
+| `041bf52af7cd0c8150efca1d4e71eee672038a6d` | `docs: record S27 static checker delivery` |
+| `600f1e72a6d6ba0d1960327348a2210531ad2b28` | `docs: align S27 test command with execution` |
+| `bf7bb01684144bbc392191cb0c92580dc9e2c416` | `docs: correct S27 markdown audit counts` |
 
 本阶段没有 fetch、pull、push、merge、rebase 或改写已有提交。远端未同步；S12 未开始。
 
@@ -133,4 +135,4 @@ S26 独立修正提交唯一修改文件为 `docs/s26-runtime-recovery.md`，将
 
 本轮只在 Windows CPython 3.13.7 实测。Python 3.10、Linux、远端 GitHub Actions 未运行；没有制作 PPT、没有同步远端、没有进行 GUI 验收，也没有开始 S12。S23/S26 固定 seed 性质与变异工具已在本轮复跑，保留 1 个原存活变异的事实，不将其改写为 S27 缺陷。
 
-最终阶段报告的提交 SHA 和提交后工作区状态由执行交接中的 `git rev-parse HEAD`、`git log` 与 `git status -sb` 给出；阶段分支保持 `stage/s27-static-checker`，不合并、不推送。
+S27 阶段交付结束时，`stage/s27-static-checker` 指向上表最后一项，工作区干净。为满足后续阶段的基线自包含要求，本报告的 SHA/提交表修订作为独立文档提交追加在该 tip 之上，不改写 S27 实现历史；S28 以这个修订后的提交作为分支基线。S27 未合并、未推送。
