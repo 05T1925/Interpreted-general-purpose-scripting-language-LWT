@@ -233,6 +233,30 @@ class StaticAnalyzerTests(unittest.TestCase):
 
 
 class StaticCheckerCliTests(unittest.TestCase):
+    def test_checked_in_invalid_fixture_has_stable_text_and_json_contracts(self) -> None:
+        source = "tests/fixtures/static-checker/undefined-function.lwt"
+        text_result = run_lwt("--check", source)
+        self.assertEqual(text_result.returncode, 2)
+        self.assertEqual(text_result.stdout, b"")
+        self.assertEqual(
+            text_result.stderr,
+            (source + ":1:6: StaticError[STC010]: undefined function 'missing'\n").encode(),
+        )
+
+        json_result = run_lwt("--check", "--format=json", source)
+        self.assertEqual(json_result.returncode, 2)
+        self.assertEqual(json_result.stderr, b"")
+        self.assertEqual(
+            json_result.stdout,
+            (
+                '{"schema_version":1,"ok":false,"files_checked":1,"diagnostics":'
+                '[{"code":"STC010","severity":"error","category":"StaticError",'
+                '"message":"undefined function \'missing\'","source":"'
+                + source
+                + '","line":1,"column":6}]}\n'
+            ).encode("utf-8"),
+        )
+
     def test_check_error_json_preserves_codes_categories_locations_and_exit_codes(self) -> None:
         cases = (
             ("@", 2, "LexError", "LEX001", 1, 1),
