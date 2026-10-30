@@ -1,0 +1,12 @@
+import "math.lwt" as math;
+
+let values = [6, 0, 3];
+each (value in values) {
+    attempt {
+        emit math.divide(12, value);
+    } recover (problem) {
+        emit problem.message;
+        emit str(problem);
+    }
+}
+emit "remaining values processed";

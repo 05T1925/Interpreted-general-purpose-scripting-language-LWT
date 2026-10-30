@@ -20,7 +20,7 @@ description: Use when creating, editing, debugging, or validating an LWT `.lwt` 
 
 ## 边界
 
-- LWT 0.1 支持规范第 9 节定义的静态函数库模块；不支持模块值、动态加载、from/star 导入、循环依赖或模块顶层初始化。另不支持浮点、字典、类、闭包、函数值、异常捕获、带标签循环跳转、语言级线程或 REPL。无标签 `break;`/`continue;` 已支持，受最近循环和函数边界规则限制。只有规范和当前实现确认的功能才可使用。
+- LWT 0.1 支持规范第 9 节定义的静态函数库模块；不支持模块值、动态加载、from/star 导入、循环依赖或模块顶层初始化。第 10 节支持有限的 `attempt`/`recover`，仅捕获 LWT `RuntimeError`/3；不支持 `throw`、类型过滤、多个 handler、`finally` 或事务回滚。另不支持浮点、字典、类、闭包、函数值、带标签循环跳转、语言级线程或 REPL。无标签 `break;`/`continue;` 已支持，受最近循环和函数边界规则限制。只有规范和当前实现确认的功能才可使用。
 - `read_text(path)` 的相对路径以进程工作目录为基准；`args()` 只返回 CLI `--` 后参数。
 - 不要无条件安装依赖；仓库解释器和测试使用 Python 标准库。
 - 不要绕过 `python -m lwt`，不要把 LWT 源码输入宿主 Python 执行器。

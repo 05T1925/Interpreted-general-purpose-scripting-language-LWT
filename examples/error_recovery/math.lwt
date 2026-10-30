@@ -1,0 +1,3 @@
+fn divide(left, right) {
+    return left / right;
+}

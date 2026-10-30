@@ -71,6 +71,22 @@ tests/cases/cli-errors/lex-location-invalid-character.lwt:1:6: LexError: unexpec
 
 实际错误消息和触发位置由输入决定；完整规则见规范第 7 节。
 
+### 恢复运行时错误
+
+`attempt`/`recover` 只捕获 LWT 执行期的 `RuntimeError`（退出码 3）。词法、语法、命令行和模块加载错误仍在执行前失败。`recover` 变量绑定为只读字段的错误值；错误发生前的输出、修改和输入消费不会回滚。
+
+```lwt
+attempt {
+    emit 10 / 0;
+} recover (problem) {
+    emit problem.category;
+    emit problem.message;
+}
+emit "continued";
+```
+
+预期 stdout 为 `RuntimeError`、`division by zero`、`continued` 各一行，stderr 为空，退出码为 0。错误值还提供 `source`、`line`、`column`；显示格式和嵌套 handler 规则见[规范第 10 节](language-spec.md#10-运行时错误恢复s26)。
+
 ## 2. 从小程序开始
 
 ### 值、变量、表达式和注释
@@ -210,7 +226,7 @@ stderr 为空，退出码为 0。示例展示 while 跳过当前迭代并提前�
 
 ### 不支持的能力
 
-LWT 0.1 只支持规范第 9 节定义的静态函数库模块，不支持模块值、动态加载、`from`/通配符导入、循环依赖或模块顶层初始化。也不支持浮点、字典、类、闭包、函数值、异常捕获、带标签的循环跳转、语言级线程或 REPL。不要从 Python 的能力推断 LWT 也支持某个结构；遇到未列出的语义，先查规范、实现和黑盒证据。
+LWT 0.1 只支持规范第 9 节定义的静态函数库模块，不支持模块值、动态加载、`from`/通配符导入、循环依赖或模块顶层初始化。第 10 节的 `attempt`/`recover` 只处理退出码为 3 的 LWT `RuntimeError`；不支持 `throw`、类型过滤、多个 handler、`finally` 或回滚。也不支持浮点、字典、类、闭包、函数值、带标签的循环跳转、语言级线程或 REPL。不要从 Python 的能力推断 LWT 也支持某个结构；遇到未列出的语义，先查规范、实现和黑盒证据。
 
 ## 4. 调试和验证
 
@@ -224,7 +240,7 @@ python -m compileall -q lwt tests tools
 
 第一条运行解释器模块及测试工具的 unittest；第二条通过 `python -m lwt` 执行完整黑盒用例并精确比较退出码、stdout、stderr；第三条检查 Python 文件是否可编译。运行单个程序时直接执行 `python -m lwt path/to/file.lwt`。每次修改后都要运行与修改相关的 CLI 示例或测试；有条件时再运行完整套件。
 
-遇到错误时，先确认命令是在仓库根目录运行，`SOURCE` 和 `read_text` 的路径均按当前工作目录解析；再核对 `--`、分号、保留字和严格类型规则。语法错误不能执行程序；运行时错误会终止程序，但此前已完成的 stdout 保留。规范示例是预期语义，是否实测通过要以实际命令为准。
+遇到错误时，先确认命令是在仓库根目录运行，`SOURCE` 和 `read_text` 的路径均按当前工作目录解析；再核对 `--`、分号、保留字和严格类型规则。词法、语法与模块加载检查先于普通语句执行；`attempt` 只捕获执行期 LWT `RuntimeError`，并把不可变 `Error` 值交给 `recover` 块。未捕获的运行时错误仍终止程序，且此前已完成的 stdout 保留。规范示例是预期语义，是否实测通过要以实际命令为准。
 
 ## 5. 项目资料
 

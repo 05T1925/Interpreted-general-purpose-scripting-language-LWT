@@ -1,6 +1,6 @@
 # LWT 0.1 黑盒覆盖矩阵（S8 主窗口审查通过）
 
-> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24 和 S25 的实测快照分列于 §4。远端 GitHub Actions 尚未触发。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
+> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24、S25 和 S26 的实测快照分列于 §4。远端 GitHub Actions 尚未触发。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
 
 ## 1. 课程要求对应关系
 
@@ -13,7 +13,7 @@
 | 分支循环 | [`when-otherwise`](../tests/cases/control-functions/when-otherwise.lwt)、[`while-break`](../tests/cases/control-functions/while-break.lwt)、[`each-continue-snapshot`](../tests/cases/control-functions/each-continue-snapshot.lwt) | §3、§5 | 分支循环是课程硬要求；`break`/`continue` 是本方案增加的循环控制扩展。 |
 | 函数定义和调用 | [`function-forward-call`](../tests/cases/control-functions/function-forward-call.lwt)、[`recursive-factorial`](../tests/cases/control-functions/recursive-factorial.lwt) | §3、§5 | 课程硬要求；前向调用、递归和具体作用域是规范规则。 |
 | 静态跨文件函数库 | §9 的 `import`、别名限定调用、相对路径和模块错误规则 | §3、§5、§9 | 方案扩展，不是课程硬性最低要求；用于 Agent 维护较大的多文件程序。 |
-| 完整黑盒测试集及一条命令 | S25 当前 247 对 `.lwt`/JSON 测试用例，由 `python tools/run_tests.py` 运行；242 项执行配对 LWT 源程序，5 项仅测试 CLI argv 契约 | §2–§9 | 课程交付要求；模块是可选扩展，不改变课程硬性功能边界。 |
+| 完整黑盒测试集及一条命令 | S26 当前 287 对 `.lwt`/JSON 测试用例，由 `python tools/run_tests.py` 运行；282 项执行配对 LWT 源程序，5 项仅测试 CLI argv 契约 | §2–§10 | 课程交付要求；模块和错误恢复是可选扩展，不改变课程硬性功能边界。 |
 | 性能报告、开发指南、Agent 应用、Git 历史、PPT 和线下答辩 | 未作为 LWT 语言语义覆盖 | 不适用 | 属项目后续交付，不伪装为 S8 测试；性能、指南、应用和答辩资料留待后续阶段。 |
 
 ## 2. 用例格式、发现和比较规则
@@ -139,7 +139,7 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | §6 `emit` 恰好输出显示值和 LF；成功无状态文本、诊断不进 stdout | [emit-and-str-match](../tests/cases/builtins-text-io/emit-and-str-match.lwt)；[integrated-input-text-and-args](../tests/cases/integrated/integrated-input-text-and-args.lwt) | [empty-program](../tests/cases/lexer-parser/empty-program.lwt) | [integrated-runtime-failure-preserves-stdout](../tests/cases/integrated/integrated-runtime-failure-preserves-stdout.lwt) | 可适用；stdout/stderr 分流和运行时错误前的已输出内容均精确比较；通过。 |
 | §6 CLI 参数分隔、源路径、缺失路径和程序参数边界 | [cli-empty-argument-preserved](../tests/cases/cli-errors/cli-empty-argument-preserved.lwt)；[cli-double-separator-data](../tests/cases/cli-errors/cli-double-separator-data.lwt) | [cli-bare-separator](../tests/cases/cli-errors/cli-bare-separator.lwt) | [cli-no-arguments](../tests/cases/cli-errors/cli-no-arguments.lwt)；[cli-args-require-separator](../tests/cases/cli-errors/cli-args-require-separator.lwt)；[cli-missing-source-file](../tests/cases/cli-errors/cli-missing-source-file.lwt)；[cli-source-is-directory](../tests/cases/cli-errors/cli-source-is-directory.lwt) | 可适用；CLI override 用例仅计 CLI 行为；通过。 |
 | §7 成功/词法或语法/runtime/CLI 或源文件错误退出码 0/2/3/4 | [empty-program](../tests/cases/lexer-parser/empty-program.lwt) | [syntax-eof-location](../tests/cases/cli-errors/syntax-eof-location.lwt) | [lex-location-invalid-character](../tests/cases/cli-errors/lex-location-invalid-character.lwt)；[runtime-location-operator](../tests/cases/cli-errors/runtime-location-operator.lwt)；[invalid-utf8-source](../tests/cases/cli-errors/invalid-utf8-source.lwt)；[cli-no-arguments](../tests/cases/cli-errors/cli-no-arguments.lwt) | 可适用；四种退出码均由 CLI 端到端实测；通过。 |
-| §7 诊断路径/行列、EOF、错误触发位置、首个运行时错误、无 traceback | [diagnostic-path-keeps-cli-argument](../tests/cases/cli-errors/diagnostic-path-keeps-cli-argument.lwt)；[unicode-codepoint-error-column](../tests/cases/lexer-parser/unicode-codepoint-error-column.lwt)；[runtime-location-accessor](../tests/cases/cli-errors/runtime-location-accessor.lwt) | [syntax-eof-location](../tests/cases/cli-errors/syntax-eof-location.lwt) | [integrated-runtime-failure-preserves-stdout](../tests/cases/integrated/integrated-runtime-failure-preserves-stdout.lwt) | 可适用；S8 历史运行的 194 项完整 stderr 均无意外 traceback；S24 当前 217 项实测见 §4.3。 |
+| §7 诊断路径/行列、EOF、错误触发位置、首个未处理运行时错误、无 traceback | [diagnostic-path-keeps-cli-argument](../tests/cases/cli-errors/diagnostic-path-keeps-cli-argument.lwt)；[unicode-codepoint-error-column](../tests/cases/lexer-parser/unicode-codepoint-error-column.lwt)；[runtime-location-accessor](../tests/cases/cli-errors/runtime-location-accessor.lwt) | [syntax-eof-location](../tests/cases/cli-errors/syntax-eof-location.lwt) | [integrated-runtime-failure-preserves-stdout](../tests/cases/integrated/integrated-runtime-failure-preserves-stdout.lwt) | 可适用；S8 历史运行的 194 项完整 stderr 均无意外 traceback；S26 保留未捕获行为并增加第 10 节恢复覆盖，实测见 §4.5。 |
 | §7 禁止 Python `eval`/`exec` 执行 LWT；实现约束而非语言语义 | — | — | — | 运行结果不可观察，矩阵不伪造黑盒覆盖；通过源码审查约束验证（runner 不导入 LWT 前端/运行时作为被测路径）。 |
 
 ### §9 静态函数库模块
@@ -151,6 +151,14 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | [module-top-level-let](../tests/cases/modules/module-top-level-let.lwt)；[module-top-level-record](../tests/cases/modules/module-top-level-record.lwt)；[module-top-level-emit](../tests/cases/modules/module-top-level-emit.lwt)；[module-module-lexer-source-location](../tests/cases/modules/module-lexer-source-location.lwt)；[module-module-parser-source-location](../tests/cases/modules/module-parser-source-location.lwt)；[module-runtime-source-location](../tests/cases/modules/module-runtime-source-location.lwt) | 模块只含 import/fn；词法、语法、运行时诊断保留实际模块来源路径 | 6 项 CLI 黑盒；错误位置与退出码精确匹配。 |
 | [module-same-name-namespaces](../tests/cases/modules/same-name-namespaces.lwt)；[module-forward-recursion](../tests/cases/modules/forward-recursion.lwt)；[module-unqualified-import-is-not-visible](../tests/cases/modules/unqualified-import-is-not-visible.lwt)；[module-undefined-alias-link-error](../tests/cases/modules/undefined-alias-link-error.lwt)；[module-undefined-member-link-error](../tests/cases/modules/undefined-member-link-error.lwt)；[module-alias-is-not-value](../tests/cases/modules/module-alias-is-not-value.lwt)；[module-call-result-not-callable](../tests/cases/modules/module-call-result-not-callable.lwt)；[module-cannot-call-main-function](../tests/cases/modules/module-cannot-call-main-function.lwt)；[module-cannot-read-main-global](../tests/cases/modules/module-cannot-read-main-global.lwt) | 独立命名空间、前向调用/递归、别名/成员解析、调用结果不可继续调用和非闭包边界 | 9 项 CLI 黑盒；链接失败在入口执行前报告，运行时命名错误使用 RuntimeError/3。 |
 | [module-array-record-aliasing](../tests/cases/modules/array-record-aliasing.lwt)；[module-process-io](../tests/cases/modules/module-process-io.lwt) | 数组和 record 引用参数；模块中的 `args()`/`input()`/`read_text()` 仍使用进程级语义 | 2 项 CLI 黑盒；`read_text` 仍以进程 cwd 为基准。另有定向临时目录测试覆盖绝对路径、非法 UTF-8、同一规范文件多 alias。 |
+
+### §10 运行时错误恢复
+
+| 规则与用例 | 覆盖目的 | 实测范围 |
+|---|---|---|
+| [attempt-comments-between-blocks](../tests/cases/error-recovery/attempt-comments-between-blocks.lwt)；[attempt-empty-blocks](../tests/cases/error-recovery/attempt-empty-blocks.lwt)；[attempt-missing-recover](../tests/cases/error-recovery/attempt-missing-recover.lwt)；[attempt-normal-flow](../tests/cases/error-recovery/attempt-normal-flow.lwt)；[attempt-requires-blocks](../tests/cases/error-recovery/attempt-requires-blocks.lwt)；[attempt-semicolon-rejected](../tests/cases/error-recovery/attempt-semicolon-rejected.lwt)；[recover-standalone-rejected](../tests/cases/error-recovery/recover-standalone-rejected.lwt)；[recover-parameter-required](../tests/cases/error-recovery/recover-parameter-required.lwt)；[recover-parameter-one-only](../tests/cases/error-recovery/recover-parameter-one-only.lwt)；[attempt-reserved-variable](../tests/cases/error-recovery/attempt-reserved-variable.lwt)；[attempt-reserved-module-alias](../tests/cases/error-recovery/attempt-reserved-module-alias.lwt)；[recover-reserved-function](../tests/cases/error-recovery/recover-reserved-function.lwt) | 关键字保留、注释、块、参数数目、分号边界、缺少/孤立 recover、无错路径 | 12 项 CLI 黑盒；语法错误位置和首错诊断精确比较。 |
+| [recover-array-bounds](../tests/cases/error-recovery/recover-array-bounds.lwt)；[recover-division-by-zero](../tests/cases/error-recovery/recover-division-by-zero.lwt)；[recover-type-error](../tests/cases/error-recovery/recover-type-error.lwt)；[recover-undefined-variable](../tests/cases/error-recovery/recover-undefined-variable.lwt)；[recover-error-display-unicode](../tests/cases/error-recovery/recover-error-display-unicode.lwt)；[recover-error-fields-display](../tests/cases/error-recovery/recover-error-fields-display.lwt)；[recover-error-identity](../tests/cases/error-recovery/recover-error-identity.lwt)；[recover-error-index-type](../tests/cases/error-recovery/recover-error-index-type.lwt)；[recover-error-len-type](../tests/cases/error-recovery/recover-error-len-type.lwt)；[recover-error-not-record-type](../tests/cases/error-recovery/recover-error-not-record-type.lwt)；[recover-readonly-error-fields](../tests/cases/error-recovery/recover-readonly-error-fields.lwt)；[recover-unknown-error-field](../tests/cases/error-recovery/recover-unknown-error-field.lwt) | 代表性 RuntimeError、Error 五字段、稳定显示/Unicode 转义、身份相等、只读字段、未知字段与不匹配类型 | 12 项 CLI 黑盒；包括成功捕获和严格类型/字段错误结果。 |
+| [recover-each-break](../tests/cases/error-recovery/recover-each-break.lwt)；[recover-each-continue](../tests/cases/error-recovery/recover-each-continue.lwt)；[recover-handler-error-not-self-caught](../tests/cases/error-recovery/recover-handler-error-not-self-caught.lwt)；[recover-handler-error-outer](../tests/cases/error-recovery/recover-handler-error-outer.lwt)；[recover-import-error-not-caught](../tests/cases/error-recovery/recover-import-error-not-caught.lwt)；[recover-lex-error-not-caught](../tests/cases/error-recovery/recover-lex-error-not-caught.lwt)；[recover-module-chain-source](../tests/cases/error-recovery/recover-module-chain-source.lwt)；[recover-nearest-handler](../tests/cases/error-recovery/recover-nearest-handler.lwt)；[recover-preserves-side-effects](../tests/cases/error-recovery/recover-preserves-side-effects.lwt)；[recover-return](../tests/cases/error-recovery/recover-return.lwt)；[recover-syntax-error-not-caught](../tests/cases/error-recovery/recover-syntax-error-not-caught.lwt)；[recover-unhandled-runtime-keeps-output](../tests/cases/error-recovery/recover-unhandled-runtime-keeps-output.lwt)；[recover-user-function](../tests/cases/error-recovery/recover-user-function.lwt)；[recover-variable-scope](../tests/cases/error-recovery/recover-variable-scope.lwt)；[recover-while-break](../tests/cases/error-recovery/recover-while-break.lwt)；[recover-while-continue](../tests/cases/error-recovery/recover-while-continue.lwt) | 最近动态 handler、嵌套处理、函数/模块传播、静态预检边界、return/break/continue、作用域、输出和修改副作用 | 16 项 CLI 黑盒；错误码、完整 stdout/stderr 和模块来源位置端到端比较。 |
 
 ## 4. 本次实测摘要、未覆盖边界和 CI
 
@@ -177,11 +185,15 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 
 Windows 11 build 26200、CPython 3.13.7 下，S24 阶段集合为 217 项：`lexer-parser` 52、`values-operators` 31、`control-functions` 43、`arrays-records-each` 32、`builtins-text-io` 43、`cli-errors` 13、`integrated` 3。212 项由公开 CLI 执行配对 LWT 源程序，另 5 项为 CLI argv override。该值是 S24 的历史快照，不覆盖后续扩展；S23 的 195/195 仍保留在 §4.2。
 
-### 4.4 S25 当前本地实测
+### 4.4 S25 阶段实测快照
 
 Windows CPython 3.13.7 的 S25 集合共 247 项：`arrays-records-each` 32、`builtins-text-io` 43、`cli-errors` 13、`control-functions` 43、`integrated` 3、`lexer-parser` 52、`modules` 30、`values-operators` 31。242 项执行配对 `.lwt` 程序，另 5 项为 CLI argv override。完整命令输出、实际完整性链接数与 unittest 数见 [S25 阶段报告](s25-modules.md)；该本地结果不代表 Python 3.10、Linux 或远端 Actions 已运行。
 
-### 4.5 明确未覆盖或不属于本阶段
+### 4.5 S26 当前本地实测
+
+Windows CPython 3.13.7 的 S26 集合共 287 项：`arrays-records-each` 32、`builtins-text-io` 43、`cli-errors` 13、`control-functions` 43、`error-recovery` 40、`integrated` 3、`lexer-parser` 52、`modules` 30、`values-operators` 31。282 项执行配对 `.lwt` 程序，另 5 项为 CLI argv override。完整性链接数为 384；详细命令、测试结果、保护文件核对及环境限制见 [S26 阶段报告](s26-runtime-recovery.md)。该结果不代表 Python 3.10、Linux 或远端 Actions 已运行。
+
+### 4.6 明确未覆盖或不属于本阶段
 
 - `input()` 底层流读取失败：普通子进程管道难以跨 Windows/Linux 稳定触发该 OS 错误；非法 UTF-8、空输入 EOF、空行及 CRLF 已测。
 - `read_text()` 权限拒绝：权限/管理员身份/Windows ACL 差异不适合作为可移植黑盒前置条件；缺失路径、目录路径、非法 UTF-8 均已测，三者都要求 RuntimeError/3。
@@ -190,7 +202,7 @@ Windows CPython 3.13.7 的 S25 集合共 247 项：`arrays-records-each` 32、`b
 - 解释器递归耗尽、内存耗尽、外部强制终止不属于语言正常错误契约；不设置固定递归深度黑盒承诺。
 - 项目性能脚本、Agent 指南/盲测、≥200 行应用、最终 PPT/新克隆验收属于后续阶段，不列为 S8 已覆盖功能。
 
-### 4.6 CI 工作流
+### 4.7 CI 工作流
 
 [`tests.yml`](../.github/workflows/tests.yml) 在 `push`、`pull_request` 和 `workflow_dispatch` 触发；Python 3.10/3.13 × `ubuntu-latest`/`windows-latest` 共四格，每格首先运行同一 `python tools/run_tests.py`，随后运行旧 unittest 和 compileall。工作流只授予 `contents: read`，无 secrets，job 超时为 15 分钟。动作引用为官方稳定发布 `actions/checkout@v7.0.1` 和 `actions/setup-python@v7.0.0`。
 
