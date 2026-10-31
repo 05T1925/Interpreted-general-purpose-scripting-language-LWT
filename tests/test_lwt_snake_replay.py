@@ -71,6 +71,7 @@ class ReplayTests(unittest.TestCase):
         self.assertEqual(verified.states[-1].phase,'GAME_OVER')
         win=record([('START',()),('TICK',())],4,1,1)
         self.assertEqual(r.reconstruct(win).states[-1].phase,'WON')
+        with self.assertRaisesRegex(r.VerificationError,'terminal'):r.reconstruct(win,keep=True)
 
     def test_pending_turn_rng_prefix_takeover_and_independent_branch(self):
         recorder=r.Recorder(4,2,4)
@@ -147,6 +148,13 @@ class ReplayTests(unittest.TestCase):
         with patch('app.lwt_snake.replay.LwtSnakeBridge',Tracked):
             with self.assertRaisesRegex(r.VerificationError,'cancel'):r.reconstruct(replay,cancel=cancel)
             with self.assertRaises(r.VerificationError):r.reconstruct(replay,total_timeout=.00001)
+            base=record([])
+            transactions=list(base.transactions)
+            for index in range(2,1200):
+                transactions.append(r.Transaction(f'LWS1|{index:06d}|TICK|-|-|-',base.transactions[0].response.replace('000001',f'{index:06d}',1)))
+            with self.assertRaisesRegex(r.VerificationError,'deadline'):
+                r.reconstruct(replace(base,transactions=tuple(transactions)),total_timeout=.15)
+            self.assertTrue(any(bridge.pid is not None for bridge in owned))
         for bridge in owned:
             self.assertTrue(bridge._closed)
             if bridge.pid:self.assertIsNotNone(bridge.returncode)
