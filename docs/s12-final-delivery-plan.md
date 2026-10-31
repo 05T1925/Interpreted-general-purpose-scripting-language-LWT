@@ -1,6 +1,6 @@
 # S12 最终验收、答辩准备与交付规划
 
-状态：**S21、S22 已通过主窗口复核并合入本地 `main`；S23–S30 已实施、等待主窗口审查，且均未合入本地 `main`；S12 待派发且仍是最后阶段。** S22 的真实 Tk 控件/合成事件回归不替代桌面人工验收；S23 是黑盒充分性审计，S24 补足循环跳转语义，S25 增加静态函数模块，S26 增加受限的 RuntimeError 恢复，S27 增加静态检查 CLI，S28 增加源码执行档案，S29 增加不执行 LWT 的 stdio Language Server 子集，S30 增加执行真实程序的源码级交互调试器但不改变语言语义。S23–S30 审查通过后进入 S12，不再追加应用/语言功能阶段。本规划把《大作业内容.md》的八项交付、课程验收和 GUI 遗留整合为一个可逐项核验的收尾任务。阶段报告见 [`s23-test-adequacy.md`](s23-test-adequacy.md)、[`s24-loop-control.md`](s24-loop-control.md)、[`s25-modules.md`](s25-modules.md)、[`s26-runtime-recovery.md`](s26-runtime-recovery.md)、[`s27-static-checker.md`](s27-static-checker.md)、[`s28-execution-observability.md`](s28-execution-observability.md)、[`s29-language-server.md`](s29-language-server.md) 和 [`s30-debugger.md`](s30-debugger.md)。
+状态：**S21、S22 已通过主窗口复核并合入本地 `main`；S23–S31 已实施、等待主窗口审查，且均未合入本地 `main`；S12 待派发且仍是最后阶段。** S22 的真实 Tk 控件/合成事件回归不替代桌面人工验收；S23 是黑盒充分性审计，S24 补足循环跳转语义，S25 增加静态函数模块，S26 增加受限的 RuntimeError 恢复，S27 增加静态检查 CLI，S28 增加源码执行档案，S29 增加不执行 LWT 的 stdio Language Server 子集，S30 增加执行真实程序的源码级交互调试器，S31 通过 VS Code 接入已有开发工具；这些阶段都不增加课程语言评分功能。S31 是用户授权追加的最后集成阶段，不再追加 S32 或其他应用/语言功能。S23–S31 分别通过主窗口审查后进入 S12。本规划把《大作业内容.md》的八项交付、课程验收和 GUI 遗留整合为一个可逐项核验的收尾任务。阶段报告见 [`s23-test-adequacy.md`](s23-test-adequacy.md)、[`s24-loop-control.md`](s24-loop-control.md)、[`s25-modules.md`](s25-modules.md)、[`s26-runtime-recovery.md`](s26-runtime-recovery.md)、[`s27-static-checker.md`](s27-static-checker.md)、[`s28-execution-observability.md`](s28-execution-observability.md)、[`s29-language-server.md`](s29-language-server.md)、[`s30-debugger.md`](s30-debugger.md) 和 [`s31-vscode-extension.md`](s31-vscode-extension.md)。
 
 ## 一、目标和评分对应
 
@@ -29,7 +29,7 @@ S21 报告中的 A/B/C GUI 项均未验证。S22 已通过隔离 Tk 根窗口、
 
 ## 三、新克隆、兼容性与 CI
 
-1. 先确认 S12 阶段分支包含最新已审查 `main`，并确认 S23–S30 的主窗口审查结论和各自合入状态；工作区无用户改动。不要只把本地阶段分支存在视为已合入。
+1. 先确认 S12 阶段分支包含最新已审查 `main`，并确认 S23–S31 的主窗口审查结论和各自合入状态；工作区无用户改动。不要只把本地阶段分支存在视为已合入。
 2. 使用独立临时目录创建干净克隆/检出，禁止依赖原工作区未跟踪文件、缓存或本地导入路径。记录准确的 candidate SHA、克隆来源、Python 和操作系统。
 3. 在该克隆运行 README 中的实际安装/运行流程、静态检查示例 `python -m lwt --check --format=json examples/modules/main.lwt`、黑盒测试、完整性检查、全量 unittest、compileall、应用 CLI 示例与 LWT 行数工具。静态检查通过不等于程序运行成功，还要执行对应 CLI 示例；对每个命令记录退出码和关键输出。
    同时核对 `python -m lwt.debugger --help` 和脚本化调试示例的 stdout/stderr 分流、退出码及文件路径，确保文档示例可在新克隆复现；调试器测试不替代语言黑盒测试，也不改变正式语言语义。

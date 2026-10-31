@@ -290,6 +290,10 @@ python -m lwt.debugger --commands examples/debugger/session.txt --program-stdin 
 - [LWT 语义实验室](../app/language_lab.py)：以 Python/Tkinter 显示固定白名单源码，并通过公开 `python -m lwt` 实际运行分支/循环、递归、集合快照、文本/参数、stdin 和错误定位示例。S20 加入先作答、再运行、最后对照实际 CLI 结果和语言解释的流程；预测正确性与 CLI 契约核对分开展示。它不执行任意源码，也不是 LWT 编写的应用。运行 `python -m app.language_lab`；无 GUI 时可运行 `python -m unittest discover -s tests -p "test_language_lab.py" -v` 和 `python -m unittest discover -s tests -p "test_language_lab_entry.py" -v`，或逐个直接运行示例 CLI。Tk/Tcl 无法启动时命令以非零码退出并报告原因。课堂演示和验证证据见 [S20 报告](s20-teaching-demo.md)。
 - [完整语言规范](language-spec.md)：语法和可观察语义的权威来源。
 - [S30 调试器说明](debugger.md)：源码断点、步进、变量查看、I/O 分离和限制。
+
+### VS Code 开发工作流（S31）
+
+本仓库提供可本地打包的 VS Code 扩展，注册 `.lwt` 文件并复用现有 LSP、静态检查、普通 CLI 和 S30 调试器。新建/编辑时可用基础词法高亮、诊断、符号、hover 与定义跳转；扩展不实现补全、格式化、DAP 或新的语言功能。Run/Check/Debug 由进程型任务调用公开 Python CLI，参数按 argv 数组传递；Run/Debug 使用集成终端以保留 stdin，Check 只执行静态检查。设置说明、打包和限制见[VS Code 扩展指南](vscode-extension.md)。
 - [黑盒覆盖矩阵](test-matrix.md)：规范条款、用例和已知未验证项。
 - [仓库 README](../README.md)：常用运行和测试入口。
 - [项目状态](../project.md)：阶段进度及证据。
