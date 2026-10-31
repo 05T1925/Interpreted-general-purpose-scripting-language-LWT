@@ -1,13 +1,13 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S33 黑盒测试工作台已通过主窗口复核并进入本地 `main`；下一阶段 [S34 LWT 驱动贪吃蛇](docs/s34-lwt-snake-plan.md)已规划、尚未实施，S12 保留为最终交付阶段。当前状态见 [project.md](project.md) 与 [S33 主窗口复核](docs/s33-main-review.md)。现有课程 LWT 应用仍是 app/log_report.lwt。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S33 黑盒测试工作台已通过主窗口复核并进入本地 `main`；[S34 LWT 驱动贪吃蛇](docs/s34-lwt-snake.md)已实施完成，等待主窗口审查，S12 保留为最终交付阶段。当前状态见 [project.md](project.md) 与 [S33 主窗口复核](docs/s33-main-review.md)。现有课程 LWT 应用仍是 app/log_report.lwt。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：阶段接力与审查门槛；S33 实施后等待复核，再进入最终收尾 S12。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：阶段接力与审查门槛；S34 实施后等待复核，再进入最终收尾 S12。
 5. [正式语言规范](docs/language-spec.md)：LWT 语法和语义；S24 循环控制和 S25 静态模块的规则以此为准。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
@@ -205,3 +205,7 @@ python tools/render_lwt_profile.py reports/run.json --output reports/run.html
 ## S31 VS Code 扩展
 
 本地 VS Code 扩展源位于 `editors/vscode-lwt/`，关联 `.lwt` 文件，复用 S29 LSP、S27 Check、普通 CLI、S30 CLI debugger 和 S32 DAP adapter。Run/Check 使用参数数组，Check 不执行程序；终端 CLI Debug 仍可运行文本调试会话，F5 使用 VS Code 原生 DAP。S33 在 `feature/testing-workbench` 增加官方 Test Explorer API：runner 仍是唯一黑盒事实来源，测试结果 JSON 用 Base64 保留原始输出字节；Debug 仅面向能忠实复现的成功 case，debug session 不等于测试通过。该分支等待主窗口审查，自动 Extension Host 测试不替代人工编辑器验收。扩展限制见[说明](docs/vscode-extension.md)，阶段证据见[S33 报告](docs/s33-testing-workbench.md)，DAP 用法见[DAP 文档](docs/dap.md)。
+
+## S34 LWT 驱动贪吃蛇
+
+从仓库根运行 `python -m app.lwt_snake`。新游戏的移动、食物、随机、计分、碰撞、暂停和复位由 313 行有效 LWT 的 `app/lwt_snake/game.lwt` 计算；Python 只启动一个长期 LWT 进程、校验协议并绘图。原 `python -m app.snake_game` 仍是独立 Python 演示。使用方法见 [应用说明](app/README.md)，[协议](app/lwt_snake/protocol.md)和[阶段报告](docs/s34-lwt-snake.md)。

@@ -172,3 +172,15 @@ python tools/run_app_profile_scenarios.py
 ```
 
 该 runner 使用公开 `python -m lwt --profile ...` 子进程，固定执行默认样例和 `WARN + retry + top=2`，逐字比较普通模式与 profile 模式的 stdout、stderr、退出码，再合并两次独立运行并渲染 HTML。预生成的 [档案 JSON](../reports/app-lwt-profile.json) 与[离线 HTML](../reports/app-lwt-profile.html) 可直接查看。profile 是解释器开发工具，不属于 LWT 应用能力；额外开销使其不适合作为 S11 性能测量模式，也不刷新 S10 并发记录。数据结构和证据细节见 [执行档案说明](../docs/execution-profile.md) 与 [S28 报告](../docs/s28-execution-observability.md)。
+
+## S34 LWT 驱动贪吃蛇
+
+运行 `python -m app.lwt_snake`。窗口明确标为“LWT 驱动贪吃蛇”；游戏状态来自单个长期 `python -u -m lwt app/lwt_snake/game.lwt` 子进程。方向键/WASD 转向，Space 开始、暂停或继续，R/“重新开始”复位；终局主按钮先回到准备状态，再点击开始。失去窗口焦点自动暂停，恢复焦点后手动继续。等待响应时忽略普通输入，TICK 不重叠；规则进程故障后点击“重试引擎”。
+
+默认棋盘 24×18、种子 1。RESET 重放同一初始食物序列。固定命令脚本 `app/lwt_snake/demo.commands` 在 4×1 小棋盘演示吃食物并获胜，预期逐行输出见 [demo.expected](lwt_snake/demo.expected)。跨平台 CLI 后退演示：
+
+```powershell
+python -c "import subprocess,sys,pathlib; p=subprocess.run([sys.executable,'-u','-m','lwt','app/lwt_snake/game.lwt'],input=pathlib.Path('app/lwt_snake/demo.commands').read_bytes()); sys.exit(p.returncode)"
+```
+
+新游戏规则由 LWT 编写，Python bridge/GUI 仅负责进程、输入事件、响应校验和绘图。原 Python Snake 入口及规则保持独立；完整协议、状态与错误行为见 [冻结文档](lwt_snake/protocol.md)。定向回归：`python -m unittest discover -s tests -p "test_lwt_snake*.py" -v`。Tk 用例使用真实控件与合成事件，不能替代人工键鼠/输入法/视觉验收；证据与限制见 [S34 报告](../docs/s34-lwt-snake.md)。

@@ -6,6 +6,7 @@
 
 - Python 以参数数组启动一个长期进程：`sys.executable -u -m lwt <仓库内游戏源码>`，`cwd` 为仓库根目录，`shell=False`。GUI 生命周期内不按帧重启解释器。
 - stdin/stdout/stderr 均为 UTF-8 字节流。Python 每次写一条 ASCII 请求并附 LF、flush；stdout 每个 LF 帧必须是 ASCII。stderr 仅作诊断，不并入协议 stdout。LWT `input()` 在 EOF 返回 `null` 并静默退出；收到 `QUIT` 时先响应再正常退出。
+- bridge 始终发送 LF；直接从公开 CLI 输入 CRLF 时，沿用正式 `input()` 剥除终止 CRLF 的行为。该兼容性不允许响应使用 CRLF，或字段内含 CR。
 - 请求帧不含 LF 最多 128 字节；响应帧不含 LF 最多 4096 字节。超长、非 UTF-8/非 ASCII、超时、EOF、额外输出、协议错误均由 bridge 作为失败处理，保留最近的 stderr 诊断，不伪造游戏状态。
 - 所有请求恰好 6 个 `|` 分隔字段：`LWS1|SSSSSS|COMMAND|A|B|C`。版本固定 `LWS1`；序号是从 `000001` 开始、每请求递增的 6 位 ASCII 十进制数，每进程最多 999999 个请求。
 - 除字段个数不同的错误帧外，字段内禁止 `|`、CR 和 LF。输入严格限 ASCII；协议不接受用户文本。游戏源码/异常诊断走 stderr，不在响应中插入额外文字。

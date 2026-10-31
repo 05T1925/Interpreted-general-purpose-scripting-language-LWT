@@ -247,3 +247,10 @@
 - **实现和复核：** 新增 Content-Length UTF-8 DAP codec 与 `lwt.dap_server`；server reader 线程解析请求，主线程作为唯一 writer 处理请求/写帧，LWT 在独立执行线程运行，队列传递输出/停止事件。调试控制层新增 event-driven pause/resume/frame/scope/variable API，CLI 文本调试入口保留。VS Code manifest 注册 `lwt` debugger 和当前文件配置，provider/factory 用 executable + argv 启动 adapter。长程序输出按 UTF-8 字节分片；大长度 header、协议错误、EOF、launch 语法/文件错误、循环取消均有明确终止路径。复核将控制层 `next`/`finish` 暂停原因统一映射为标准 DAP `step`，不暴露非标准 reason。无 Evaluate、SetVariable、条件/函数断点、TCP、交互式 Debug Console stdin。
 - **测试证据：** 21 项 DAP 定向 unittest（codec 7、控制层 5、真实子进程 9）全通过；子进程覆盖断点/模块与空格 Unicode 路径、递归栈与遮蔽变量、continue/stepIn/next/stepOut、复合 Error/record/array/cycle、args/stdin、运行错误 exit 3、语法预检 exit 2、缺源文件 exit 4、协议畸形、512 KiB 分片输出及无界循环 terminate。Node 单测 11 项、真实 Extension Host 4 项均通过且 skip 0；Host 实际启动 adapter、命中 gutter `SourceBreakpoint`、读取 stack/scopes/variables、continue 并核对输出/退出事件。人工 VSIX 安装和真实桌面视觉/键鼠操作未执行，不能由 Host 代替。
 - **结果和未验证项：** Python 黑盒 287/287、全量 unittest 442 项、完整性、compileall、S30 调试器 28 项和固定脚本 CLI 通过；`app/log_report.lwt` 仍 246 行。VSIX 本地打包 391 文件、约 686 KiB，未包含 tests；打包有 LICENSE 缺失和未 bundle 性能提示。远端 S31 合流 commit 的 feature Actions 四格成功；S32 远端 push/Actions 和人工 VSIX 安装未验证（远端访问错误、具体记录见报告）。S12 未开始。
+
+## S34｜Agent 编写 LWT 游戏规则引擎（2026-10-31）
+
+- **实际需求：** 用户要求从 `9d562b717ba82fc322ff152e6e1b7d5ff4b5c36c` 实现第二款真实 LWT 应用；蛇身、方向、食物、种子、计分、暂停/复位、碰撞、胜利全部在 LWT，Python 仅做长期 CLI 进程桥接和 Tk 绘图。先冻结协议；覆盖真实 CLI、规则对照、故障、Tk 事件与 100 TICK 时延；保留原 Python Snake、日志应用与全部历史证据，不推送/合并或开始 S12。
+- **生成内容：** Codex 执行窗口先提交协议/规则，再编写 `app/lwt_snake/game.lwt`，实测 313 行有效 LWT；生成严格字节协议 parser、单进程 bridge、串行 worker、Tk 独立入口、固定获胜命令/预期输出及测试。没有要求或使用其他 Agent 并行生成。
+- **复核与修正：** 执行窗口逐项核对 LWT 规则、EOF、错误不消费/消费序号边界、尾格、种子、协议大小/队列及线程清理；移除未使用的格式辅助函数，将内部不变量失败保留为真实 RuntimeError。首个测量脚本在终局误发 PAUSE 得到约定 BAD_STATE，修正测量轨迹保持活动。真实 Tk 测试复现“焦点移到同窗按钮误暂停”，改为 idle 后检查焦点所属顶层窗口；回归验证按钮焦点方向键、WASD/Space/R、外部失焦、复位和请求中关闭。这里的复核是 Agent 执行窗口代码/自动验证，不冒称人类已完成桌面验收。
+- **证据与状态：** 临时 echo 程序在 Python 3.13.7 与 3.11.16 通过无缓冲逐行往返/EOF；3.10 未安装。命令、完整 SHA、独立规则适配边界、13 项新增回归、活动 100 TICK 数据与未验证项见 [S34 实施报告](s34-lwt-snake.md)。实施完成，等待主窗口审查；S12 未开始。
