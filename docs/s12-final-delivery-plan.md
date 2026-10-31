@@ -1,6 +1,6 @@
 # S12 最终验收、答辩准备与交付规划
 
-状态：**S21、S22 已通过主窗口复核并合入本地 `main`；S23–S28 已实施、等待主窗口审查，且均未合入本地 `main`；S12 待派发且仍是最后阶段。** S22 的真实 Tk 控件/合成事件回归不替代桌面人工验收；S23 是黑盒充分性审计，S24 补足循环跳转语义，S25 增加静态函数模块，S26 增加受限的 RuntimeError 恢复，S27 增加只读静态检查 CLI，S28 增加非语言语义的源码执行档案工具。S23–S28 审查通过后进入 S12，不再追加应用/语言功能阶段。本规划把《大作业内容.md》的八项交付、课程验收和 GUI 遗留整合为一个可逐项核验的收尾任务。阶段报告见 [`s23-test-adequacy.md`](s23-test-adequacy.md)、[`s24-loop-control.md`](s24-loop-control.md)、[`s25-modules.md`](s25-modules.md)、[`s26-runtime-recovery.md`](s26-runtime-recovery.md)、[`s27-static-checker.md`](s27-static-checker.md) 和 [`s28-execution-observability.md`](s28-execution-observability.md)。
+状态：**S21、S22 已通过主窗口复核并合入本地 `main`；S23–S29 已实施、等待主窗口审查，且均未合入本地 `main`；S12 待派发且仍是最后阶段。** S22 的真实 Tk 控件/合成事件回归不替代桌面人工验收；S23 是黑盒充分性审计，S24 补足循环跳转语义，S25 增加静态函数模块，S26 增加受限的 RuntimeError 恢复，S27 增加静态检查 CLI，S28 增加源码执行档案，S29 增加不执行 LWT 的 stdio Language Server 子集。S23–S29 审查通过后进入 S12，不再追加应用/语言功能阶段。本规划把《大作业内容.md》的八项交付、课程验收和 GUI 遗留整合为一个可逐项核验的收尾任务。阶段报告见 [`s23-test-adequacy.md`](s23-test-adequacy.md)、[`s24-loop-control.md`](s24-loop-control.md)、[`s25-modules.md`](s25-modules.md)、[`s26-runtime-recovery.md`](s26-runtime-recovery.md)、[`s27-static-checker.md`](s27-static-checker.md)、[`s28-execution-observability.md`](s28-execution-observability.md) 和 [`s29-language-server.md`](s29-language-server.md)。
 
 ## 一、目标和评分对应
 

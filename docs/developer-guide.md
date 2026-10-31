@@ -109,6 +109,17 @@ python tools/render_lwt_profile.py reports/modules-profile.json --output reports
 
 profile 记录 LWT 控制流事件与 AST 覆盖摘要，不保存变量、参数、stdin 或数组/record 值。渲染器会严格验证 JSON，并在本地源码可解析时核验 SHA-256。该功能是解释器开发工具，不属于 LWT 语义；额外记录会增加运行开销，不能用于 S11 性能比较。覆盖率只反映给定场景到达的节点，不能作为正确性证明。详细 schema、事件字段、输出错误边界和合并用法见[执行档案说明](execution-profile.md)。
 
+### 编辑器静态辅助（S29 开发工具）
+
+本仓库还提供仅走 stdio 的 LWT Language Server：
+
+```powershell
+python -m lwt.lsp_server
+python tools/run_lsp_smoke.py
+```
+
+它提供 push diagnostics、顶层符号、源码 hover 和 definition，复用 `--check` 的 parser/module/analyzer 路径并支持打开文档 overlay。服务只读源码和索引，不调用 runtime，不执行程序；lexer/parser 仍只报告首错。Smoke 会启动真实 server 子进程，但不等于连接真实编辑器。当前没有 Marketplace 插件，也不支持补全、格式化、重命名和引用查找。能力、UTF-16、错误边界和通用 client 示例见[Language Server 使用说明](language-server.md)。
+
 ## 2. 从小程序开始
 
 ### 值、变量、表达式和注释

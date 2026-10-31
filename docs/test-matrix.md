@@ -215,3 +215,7 @@ Windows CPython 3.13.7 的 S26 集合共 287 项：`arrays-records-each` 32、`b
 ## 6. 执行档案工具验证（S28，不计入语言黑盒）
 
 `tests/test_execution_profile.py` 覆盖 profile CLI 边界、运行时控制事件、AST 覆盖分母、模块哈希、隐私边界、RuntimeError/recover、输出等价、严格 JSON/schema 校验、合并和离线 HTML 转义/确定性。真实 CLI 测试只在临时文件夹创建受控程序，应用场景通过独立 runner 对照公开 CLI 的有/无 profile 输出。此类测试检验开发工具实现，不加入 `tests/cases/`，不改变 S26 的 287 项语言黑盒基数，也不应计作新语言语义覆盖。定向命令为 `python -m unittest discover -s tests -p "test_execution_profile.py" -v`；详细模型和本轮实测见 [S28 报告](s28-execution-observability.md)。
+
+## 7. Language Server 工具验证（S29，不计入语言黑盒）
+
+S29 的协议 codec、文档 overlay/位置换算、language service 和真实 server 子进程测试分别位于 `tests/test_lsp_protocol.py`、`tests/test_language_service.py`、`tests/test_lsp_server.py`。测试覆盖 Content-Length/UTF-8/JSON-RPC 边界、UTF-16 非 BMP 列、作用域/模块定义、诊断清理、完整文档版本和真实 `python -m lwt.lsp_server` 生命周期。`python tools/run_lsp_smoke.py` 另外启动真实子进程并验证固定 transcript。全部均为开发工具 unittest，不加入 `tests/cases/`、不更改 S26 的 287 项语言黑盒，也不证明真实编辑器 UI/输入集成。命令结果和环境见 [S29 报告](s29-language-server.md)。

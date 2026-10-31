@@ -18,7 +18,8 @@ description: Use when creating, editing, debugging, or validating an LWT `.lwt` 
 6. 再使用公开 CLI 运行程序：`python -m lwt path/to/program.lwt`。如程序需要输入，提供 stdin；如需要程序参数，使用 `python -m lwt path/to/program.lwt -- arg1 arg2`。从实际工作目录核对相对文件路径。
 7. 检查 stdout、stderr、退出码和报错行列位置；将实际结果与任务预期逐项比较。修正后重新运行受影响的命令；不要只依赖静态检查，也不要声称未运行的验证通过。
 8. 需要追踪固定场景的控制流时，可选用开发工具 `python -m lwt --profile profile.json path/to/program.lwt`，再用 `python tools/render_lwt_profile.py profile.json --output profile.html` 查看。profile 不属于 LWT 语言语义，不记录变量/实参/stdin/复合值；`fail(message)` 的用户消息在档案里脱敏。此模式有额外开销，不能用于性能比较。普通应用实现仍先 `--check` 再运行公开 CLI。
-9. 最终报告列出改动文件、实际执行的命令及结果、尚未验证的环境或边界。若怀疑解释器缺陷，保留最小复现及规范预期；除非用户当前明确派发解释器修复任务，不要在应用任务里改变解释器语义。
+9. 若使用仓库的静态 Language Server，可通过 `python -m lwt.lsp_server` 以 stdio 启动，或运行 `python tools/run_lsp_smoke.py` 检查固定协议流程。它提供 diagnostics、符号、hover 和 definition，不运行 LWT 程序；协议 smoke 不等于真实编辑器集成。当前不提供补全、格式化或重命名。
+10. 最终报告列出改动文件、实际执行的命令及结果、尚未验证的环境或边界。若怀疑解释器缺陷，保留最小复现及规范预期；除非用户当前明确派发解释器修复任务，不要在应用任务里改变解释器语义。
 
 ## 边界
 

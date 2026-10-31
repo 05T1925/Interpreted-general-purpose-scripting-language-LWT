@@ -159,6 +159,8 @@ S27 增加独立的开发工具命令 `python -m lwt --check SOURCE` 和 `python
 
 S28 增加独立开发工具 `python -m lwt --profile PROFILE SOURCE [-- PROGRAM_ARGS...]`，可选生成 schema v1 控制流档案。它观察已加载 LWT AST 的语句、函数、decision、recover 与运行错误，不记录用户变量/实参/stdin/复合值，也不改变 LWT 源语言语法。profile 模式的运行开销不可用于 S11 性能比较。JSON、事件、覆盖率口径、输出文件边界与离线 HTML 工具见[执行档案说明](execution-profile.md)；这些是解释器工具契约，不是 LWT 用户程序语义。
 
+S29 增加独立开发工具 `python -m lwt.lsp_server`，通过 stdio 提供明确受限的 LSP 子集：文档同步、静态 diagnostics、document symbols、hover 和 definition。它复用 lexer/parser、模块加载和 S27 analyzer，不调用 runtime `execute()`，不执行被分析程序，不新增 LWT 源语法或修改普通执行、`--check`、`--profile` 契约。UTF-16 位置、overlay、协议生命周期和能力边界见[Language Server 说明](language-server.md)。当前 parser 仍只报告首个词法/语法错误，Language Server 不提供容错 AST 或不完整源码的完整语义结果；本工具不属于 LWT 语言语义。
+
 ## 7. 错误、退出码与实现约束
 
 | 类别 | 典型情况 | 退出码 |
