@@ -82,6 +82,10 @@ class _ContinueSignal(Exception):
         self.location = location
 
 
+class _DebugHookFailure(Exception):
+    """Keep debugger implementation failures out of the LWT error model."""
+
+
 @dataclass(frozen=True, slots=True, eq=False)
 class _ErrorValue:
     """An immutable, identity-compared LWT value made by a recover handler."""
@@ -121,6 +125,8 @@ class _RuntimeContext:
         "source_path",
         "observer",
         "profile_source",
+        "debug_hook",
+        "module_unit",
     )
 
     def __init__(
@@ -134,6 +140,8 @@ class _RuntimeContext:
         source_path: str | None = None,
         observer: object | None = None,
         profile_source: str | None = None,
+        debug_hook: object | None = None,
+        module_unit: ModuleUnit | None = None,
     ) -> None:
         self.input_stream = input_stream
         self.output_stream = output_stream
@@ -145,6 +153,8 @@ class _RuntimeContext:
         self.source_path = source_path
         self.observer = observer
         self.profile_source = profile_source
+        self.debug_hook = debug_hook
+        self.module_unit = module_unit
 
 
 class Environment:
@@ -208,6 +218,7 @@ def execute(
     module_graph: ModuleGraph | None = None,
     source_path: str | None = None,
     observer: object | None = None,
+    debug_hook: object | None = None,
 ) -> None:
     """Execute a supported LWT program or raise a located LWT error.
 
@@ -281,6 +292,8 @@ def execute(
                     if observer is not None and hasattr(observer, "source_for")
                     else unit.display_path or source_path
                 ),
+                debug_hook=debug_hook,
+                module_unit=unit,
             )
 
         for unit, context in contexts.items():
@@ -291,6 +304,8 @@ def execute(
             _validate_module_calls(unit.program, unit)
 
         runtime = contexts[graph.entry]
+        if debug_hook is not None:
+            _notify_debug_hook(debug_hook, "program_start", runtime)
         for item in program.items:
             if isinstance(
                 item, (ImportDeclaration, FunctionDeclaration, RecordDeclaration)
@@ -327,6 +342,15 @@ def _notify_observer(observer: object, method: str, *arguments: object) -> None:
         getattr(observer, method)(*arguments)
     except Exception:
         raise LwtError("FileError", "execution profile collection failed", 4) from None
+
+
+def _notify_debug_hook(debug_hook: object, method: str, *arguments: object) -> None:
+    try:
+        getattr(debug_hook, method)(*arguments)
+    except Exception as error:
+        if getattr(error, "lwt_debugger_control", False):
+            raise
+        raise _DebugHookFailure from None
 
 
 def _first_unsupported(program: Program) -> SourceLocation | None:
@@ -491,6 +515,10 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
 def _execute_statement(
     statement: Statement, environment: Environment, runtime: _RuntimeContext
 ) -> None:
+    if runtime.debug_hook is not None and not isinstance(statement, Block):
+        _notify_debug_hook(
+            runtime.debug_hook, "before_statement", statement, environment, runtime
+        )
     if runtime.observer is not None and not isinstance(statement, Block):
         source = runtime.profile_source or runtime.source_path or "entry.lwt"
         _notify_observer(runtime.observer, "statement", statement, source)
@@ -1075,6 +1103,20 @@ def _invoke_user_function(
         activation.values[parameter.name] = argument
 
     observer = runtime.observer
+    debug_hook = runtime.debug_hook
+    debug_entered = False
+    if debug_hook is not None:
+        _notify_debug_hook(
+            debug_hook,
+            "enter_function",
+            declaration,
+            activation,
+            runtime,
+            caller_runtime,
+            call_location,
+            qualified_name,
+        )
+        debug_entered = True
     if observer is not None:
         _notify_observer(
             observer,
@@ -1115,6 +1157,8 @@ def _invoke_user_function(
             )
         return None
     finally:
+        if debug_entered:
+            _notify_debug_hook(debug_hook, "leave_function")
         if observer is not None:
             _notify_observer(observer, "leave_function")
 
