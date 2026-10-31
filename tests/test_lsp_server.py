@@ -70,6 +70,8 @@ class LspServerSubprocessTests(unittest.TestCase):
                 {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}},
                 {"jsonrpc": "2.0", "method": "initialized", "params": {}},
                 {"jsonrpc": "2.0", "method": "textDocument/didOpen", "params": {"textDocument": {"uri": uri, "languageId": "lwt", "version": 1, "text": text}}},
+                {"jsonrpc": "2.0", "method": "textDocument/didChange", "params": {"textDocument": {"uri": uri, "version": 2}, "contentChanges": [{"range": {"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 0}}, "text": changed}]}},
+                {"jsonrpc": "2.0", "method": "textDocument/didChange", "params": {"textDocument": {"uri": uri, "version": 1}, "contentChanges": [{"text": changed}]}},
                 {"jsonrpc": "2.0", "id": 2, "method": "textDocument/documentSymbol", "params": {"textDocument": {"uri": uri}}},
                 {"jsonrpc": "2.0", "id": 3, "method": "textDocument/hover", "params": {"textDocument": {"uri": uri}, "position": {"line": 2, "character": codepoint_to_utf16_character(text.splitlines()[2], text.splitlines()[2].index("greet"))}}},
                 {"jsonrpc": "2.0", "id": 4, "method": "textDocument/definition", "params": {"textDocument": {"uri": uri}, "position": {"line": 2, "character": codepoint_to_utf16_character(text.splitlines()[2], text.splitlines()[2].index("greet"))}}},
