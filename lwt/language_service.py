@@ -576,12 +576,22 @@ def _function_hover(declaration: ast.FunctionDeclaration) -> str:
 
 def _visit_statement_list_full(statements, scope, visit_expression, add_use, definition, hovers, definitions):
     direct_lets = [s for s in statements if isinstance(s, ast.LetStatement)]
+    preexisting = set(scope.definitions)
+    encountered: set[str] = set()
     for item in direct_lets:
-        scope.definitions.setdefault(item.name.name, definition(item.name))
-        hovers.setdefault((item.name.location.line, item.name.location.column), f"variable {item.name.name}")
+        ref = scope.definitions.setdefault(item.name.name, definition(item.name))
+        key = (item.name.location.line, item.name.location.column)
+        definitions[key] = ref
+        hovers.setdefault(key, f"variable {item.name.name}")
     for statement in statements:
         if isinstance(statement, ast.LetStatement):
-            visit_expression(statement.initializer, scope, hidden_here=statement.name.name)
+            duplicate = statement.name.name in preexisting or statement.name.name in encountered
+            visit_expression(
+                statement.initializer,
+                scope,
+                hidden_here=None if duplicate else statement.name.name,
+            )
+            encountered.add(statement.name.name)
         else:
             _visit_statement_full(statement, scope, visit_expression, add_use, definition, hovers, definitions)
 
@@ -592,13 +602,17 @@ def _visit_statement_full(statement, scope, visit_expression, add_use, definitio
     elif isinstance(statement, ast.AttemptStatement):
         _visit_statement_full(statement.body, scope, visit_expression, add_use, definition, hovers, definitions)
         error_ref = definition(statement.error_name)
-        hovers[(error_ref.line, error_ref.column)] = f"variable {statement.error_name.name} (recover error)"
+        error_key = (error_ref.line, error_ref.column)
+        definitions[error_key] = error_ref
+        hovers[error_key] = f"variable {statement.error_name.name} (recover error)"
         handler = _Scope(scope, {statement.error_name.name: error_ref})
         _visit_statement_list_full(statement.recover_body.statements, _Scope(handler), visit_expression, add_use, definition, hovers, definitions)
     elif isinstance(statement, ast.EachStatement):
         visit_expression(statement.iterable, scope)
         loop_ref = definition(statement.variable)
-        hovers[(loop_ref.line, loop_ref.column)] = f"variable {statement.variable.name} (each item)"
+        loop_key = (loop_ref.line, loop_ref.column)
+        definitions[loop_key] = loop_ref
+        hovers[loop_key] = f"variable {statement.variable.name} (each item)"
         iteration = _Scope(scope, {statement.variable.name: loop_ref})
         _visit_statement_list_full(statement.body.statements, _Scope(iteration), visit_expression, add_use, definition, hovers, definitions)
     elif isinstance(statement, ast.WhenStatement):

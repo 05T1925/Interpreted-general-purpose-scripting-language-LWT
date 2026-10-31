@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import os
 from pathlib import Path
 
 from lwt.language_service import LanguageService
@@ -164,6 +165,8 @@ class LanguageServiceTests(unittest.TestCase):
         self.assertEqual(self.service.analyze_open_documents()[doc.uri], [])
         line, character = position_of(text, "local", 1)
         self.assertEqual(self.service.definition(doc.uri, line, character)["range"]["start"]["line"], 1)
+        line, character = position_of(text, "local")
+        self.assertEqual(self.service.definition(doc.uri, line, character)["range"]["start"]["line"], 1)
         line, character = position_of(text, "item", 1)
         self.assertEqual(self.service.definition(doc.uri, line, character)["range"]["start"]["line"], 2)
         line, character = position_of(text, "problem", 1)
@@ -183,6 +186,13 @@ class LanguageServiceTests(unittest.TestCase):
         self.assertIn("%20", uri)
         self.assertIn("%E4%B8%AD", uri)
 
+    @unittest.skipUnless(os.name == "nt", "Windows drive URI behavior is platform-specific")
+    def test_windows_drive_file_uri(self) -> None:
+        path = path_from_file_uri("file:///C:/Program%20Files/LWT%20%E9%9B%AA/main.lwt")
+        self.assertEqual(path.drive.lower(), "c:")
+        self.assertIn("Program Files", str(path))
+        self.assertIn("雪", str(path))
+
     def test_crlf_and_lf_positions_agree(self) -> None:
         for ending in ("\n", "\r\n"):
             with self.subTest(ending=repr(ending)):
@@ -199,6 +209,13 @@ class LanguageServiceTests(unittest.TestCase):
             self.service.change_document(doc.uri, 1, "emit 2;\n")
         with self.assertRaises(ValueError):
             self.service.change_document(doc.uri, 0, "emit 3;\n")
+        self.assertEqual(doc.text, "emit 1;\n")
+
+    def test_duplicate_open_does_not_replace_existing_overlay(self) -> None:
+        doc = self.open("duplicate.lwt", "emit 1;\n")
+        with self.assertRaises(ValueError):
+            self.service.open_document(doc.uri, "lwt", 9, "emit 9;\n")
+        self.assertIs(self.service.documents[doc.key], doc)
         self.assertEqual(doc.text, "emit 1;\n")
 
     def test_utf16_helpers(self) -> None:
