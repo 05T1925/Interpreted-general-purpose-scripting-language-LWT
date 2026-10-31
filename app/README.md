@@ -184,3 +184,19 @@ python -c "import subprocess,sys,pathlib; p=subprocess.run([sys.executable,'-u',
 ```
 
 新游戏规则由 LWT 编写，Python bridge/GUI 仅负责进程、输入事件、响应校验和绘图。原 Python Snake 入口及规则保持独立；完整协议、状态与错误行为见 [冻结文档](lwt_snake/protocol.md)。定向回归：`python -m unittest discover -s tests -p "test_lwt_snake*.py" -v`。Tk 用例使用真实控件与合成事件，不能替代人工键鼠/输入法/视觉验收；证据与限制见 [S34 报告](../docs/s34-lwt-snake.md)。
+
+## S35 保存、验证、复盘与接管
+
+在同一 LWT Snake 窗口点击“保存本局”，通过工作线程事务边界保存完整前缀；文件对话框可能引发的 PAUSE 同样按真实响应录制。取消对话框不会保存。文件只写到玩家明确选择的位置，不自动加入 Git 或上传。达到 5000 条录制上限会提示仅保留前缀，原子写失败不会破坏已有目标。
+
+点击“载入记录”会先回收实时引擎，再启动新的公开 LWT CLI 逐条验证；验证成功后才能上一条/下一条或播放，速度为慢/中/快。位置按事务计数，TURN、PAUSE、RESET、ERR 也占位置，不保证每条都移动。视觉暂停不发 PAUSE。可以取消验证、连续载入另一记录或返回实时游戏。
+
+选定非终态位置后点击“从此接管”，系统再从 INIT 重执行到该前缀，保留随机状态和待转向状态。READY 等待开始，PAUSED 等待继续，RUNNING 在明确接管后恢复游戏时钟；终态需选较早位置或返回实时新局。新子局含完整前缀及后续事务，另选文件保存即可独立验证，父文件不变。
+
+```powershell
+python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-parent.json
+python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-child.json
+python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-divergent.json
+```
+
+前两条成功退出 0（10/12 笔）；第三条故意篡改，退出 3 并报告第 3 笔 TICK 分数不同。文件/版本/源码不兼容退出 2。工具退出码不改变 LWT CLI。完整[格式说明](../docs/snake-replay-format.md)与[实际验证记录](../docs/s35-replay.md)说明 16 MiB/5000 条上限、固定可信源码、超时/取消及自动/人工边界。S34 时钟已改为独立截止时间，持续转向不会重设移动时间。

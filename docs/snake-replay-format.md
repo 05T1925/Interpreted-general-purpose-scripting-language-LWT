@@ -6,7 +6,7 @@
 {
   "schema_version": 1,
   "protocol_version": "LWS1",
-  "source": {"algorithm": "lwt-utf8-lf-sha256-v1", "sha256": "64个小写十六进制字符"},
+  "source": {"algorithm": "lwt-utf8-lf-sha256-v1", "sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d"},
   "settings": {"width": 4, "height": 1, "seed": 1},
   "transactions": [
     {"request": "LWS1|000001|INIT|4|1|0000000001", "response": "LWS1|000001|STATE|READY|0|R|3|0|3|2,0;1,0;0,0"}
@@ -16,7 +16,7 @@
 }
 ```
 
-上例摘要位置是说明占位符；可运行有效样例会以真实源码摘要写入 examples。无效样例：把 schema_version 写成 true、重复 settings 键、删除第 2 笔却保留第 3 笔序号、增加 source_path 字段、写 NaN，均拒绝；合法范围内篡改 score/food 可能通过结构检查，但必须在真实 LWT 验证中报告首个分歧。
+上例使用当前可信 game.lwt 的真实摘要；有效样例见 [minimal.json](../app/lwt_snake/replays/minimal.json)，无效 bool 版本见 [invalid-version.json](../app/lwt_snake/replays/invalid-version.json)。无效样例：把 schema_version 写成 true、重复 settings 键、删除第 2 笔却保留第 3 笔序号、增加 source_path 字段、写 NaN，均拒绝；合法范围内篡改 score/food 可能通过结构检查，但必须在真实 LWT 验证中报告首个分歧。
 
 source 摘要严格 UTF-8 解码、仅去掉开头一个 BOM、将 CRLF/CR 变 LF，其余内容不变，再对 UTF-8 编码计算 SHA-256。算法名和摘要必须匹配仓库固定 game.lwt；记录文件不能提供源码路径、解释器命令或内嵌源码。摘要是兼容标识，不是防作弊签名。
 

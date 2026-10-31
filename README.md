@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S33 黑盒测试工作台已通过主窗口复核并进入本地 `main`；S34 LWT 驱动贪吃蛇已实施，但[主窗口复核](docs/s34-main-review.md)发现移动时钟缺陷和失焦测试不稳定，需修复复审。课程应用包括日志分析器与新增 LWT Snake；[S35 对局回放与接管](docs/s35-replay-handoff.md)仅为下一步规划，先完成修复门槛。S12 保留为最终交付阶段，当前状态见 [project.md](project.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S33 黑盒测试工作台已通过主窗口复核并进入本地 `main`；S34 LWT 驱动贪吃蛇已实施，但[主窗口复核](docs/s34-main-review.md)发现移动时钟缺陷和失焦测试不稳定，需修复复审。课程应用包括日志分析器与新增 LWT Snake；[S35 对局回放与接管](docs/s35-replay.md)已先修复门槛问题并完成实现与验证，等待主窗口审查。S12 保留为最终交付阶段，当前状态见 [project.md](project.md)。
 
 ## 阅读入口
 
@@ -209,3 +209,7 @@ python tools/render_lwt_profile.py reports/run.json --output reports/run.html
 ## S34 LWT 驱动贪吃蛇
 
 从仓库根运行 `python -m app.lwt_snake`。新游戏的移动、食物、随机、计分、碰撞、暂停和复位由 313 行有效 LWT 的 `app/lwt_snake/game.lwt` 计算；Python 只启动一个长期 LWT 进程、校验协议并绘图。原 `python -m app.snake_game` 仍是独立 Python 演示。使用方法见 [应用说明](app/README.md)，[协议](app/lwt_snake/protocol.md)和[阶段报告](docs/s34-lwt-snake.md)。
+
+## S35 可验证对局
+
+LWT Snake 新增“保存本局/载入记录”、真实 LWT 验证、按事务单步/播放以及指定前缀接管。记录包含 INIT、真实 STATE/ERR 和 RESET，接管从新进程重建隐藏状态；坐标缓存只用于已验证的复盘展示。运行 `python -m app.lwt_snake`；无 GUI 验证：`python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-parent.json`。文件边界见[格式说明](docs/snake-replay-format.md)，修复与证据见[S35 报告](docs/s35-replay.md)。
