@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "server": {
+    "name": "lwt-language-server",
+    "version": "0.1"
+  },
+  "transcript": [
+    "initialize",
+    "initialized",
+    "didOpen",
+    "documentSymbol",
+    "hover",
+    "definition",
+    "didChange(STC010)",
+    "didChange(clear)",
+    "didClose",
+    "shutdown",
+    "exit"
+  ],
+  "capabilities": [
+    "utf-16",
+    "full-sync",
+    "hover",
+    "definition",
+    "documentSymbol"
+  ],
+  "entry": "examples/modules/main.lwt",
+  "symbols": [
+    "stats",
+    "Batch",
+    "batch"
+  ],
+  "hover": "fn summarize(batch)",
+  "definition": {
+    "uri": "examples/modules/stats_utils.lwt",
+    "line": 12,
+    "character": 3
+  },
+  "diagnostic_codes_by_publication": [
+    [],
+    [
+      "STC010"
+    ],
+    [],
+    []
+  ],
+  "response_ids_in_order": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "stdout_is_lsp_framed": true,
+  "stderr_traceback": false,
+  "exit_code": 0
+}
