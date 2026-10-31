@@ -6,7 +6,13 @@ import {
   LanguageClientOptions,
   ServerOptions,
 } from "vscode-languageclient/node";
-import { buildLaunchSpec, WorkflowMode, WorkflowConfigurationError } from "./workflow";
+import {
+  buildDapAdapterSpec,
+  buildDapLaunchConfiguration,
+  buildLaunchSpec,
+  WorkflowMode,
+  WorkflowConfigurationError,
+} from "./workflow";
 
 const LANGUAGE_ID = "lwt";
 const TASK_TYPE = "lwt";
@@ -17,6 +23,7 @@ const activeTasks = new Map<string, Promise<vscode.TaskExecution>>();
 
 export interface ExtensionTestApi {
   createTask(mode: WorkflowMode, document: vscode.TextDocument): vscode.Task;
+  createDebugConfiguration(document: vscode.TextDocument): vscode.DebugConfiguration;
 }
 
 export function activate(context: vscode.ExtensionContext): ExtensionTestApi {
@@ -102,6 +109,78 @@ export function activate(context: vscode.ExtensionContext): ExtensionTestApi {
     vscode.workspace.onDidChangeWorkspaceFolders(() => void restartLanguageClient()),
   );
 
+  context.subscriptions.push(
+    vscode.debug.registerDebugConfigurationProvider("lwt", {
+      resolveDebugConfiguration: async (folder, configuration) => {
+        const workspaceFolder = folder ?? singleWorkspaceFolder();
+        if (!workspaceFolder) {
+          void vscode.window.showErrorMessage("LWT debugging requires one open workspace folder.");
+          return undefined;
+        }
+        if (configuration.request !== "launch") {
+          void vscode.window.showErrorMessage("LWT supports launch debugging only.");
+          return undefined;
+        }
+
+        let program = typeof configuration.program === "string" ? configuration.program : "";
+        if (!program) {
+          const editor = vscode.window.activeTextEditor;
+          if (!editor || editor.document.languageId !== LANGUAGE_ID || editor.document.isUntitled) {
+            void vscode.window.showErrorMessage("Open a saved .lwt file before starting LWT debugging.");
+            return undefined;
+          }
+          if (!(await editor.document.save())) {
+            void vscode.window.showErrorMessage("Save the current LWT file before starting debugging.");
+            return undefined;
+          }
+          program = editor.document.uri.fsPath;
+        }
+
+        const settings = vscode.workspace.getConfiguration("lwt");
+        try {
+          const resolved = buildDapLaunchConfiguration(
+            program,
+            workspaceFolder.uri.fsPath,
+            {
+              pythonPath: configuration.python ?? settings.get("pythonPath", "python"),
+              workingDirectory: configuration.cwd ?? settings.get("workingDirectory", ""),
+              programArgs: configuration.args ?? settings.get("programArgs", []),
+              programStdin: configuration.stdinFile ?? settings.get("programStdin", ""),
+            },
+          );
+          return {
+            ...configuration,
+            ...resolved,
+            name: typeof configuration.name === "string" ? configuration.name : resolved.name,
+          };
+        } catch (error) {
+          const message = error instanceof WorkflowConfigurationError ? error.message : errorMessage(error);
+          output.appendLine(message);
+          void vscode.window.showErrorMessage(message);
+          return undefined;
+        }
+      },
+    }),
+    vscode.debug.registerDebugAdapterDescriptorFactory("lwt", {
+      createDebugAdapterDescriptor: (session, descriptor) => {
+        if (descriptor) return descriptor;
+        const workspaceFolder = session.workspaceFolder ?? singleWorkspaceFolder();
+        if (!workspaceFolder) {
+          throw new WorkflowConfigurationError("LWT debugging requires one open workspace folder.");
+        }
+        const settings = vscode.workspace.getConfiguration("lwt");
+        const spec = buildDapAdapterSpec(
+          settings.get<string>("pythonPath", "python"),
+          workspaceFolder.uri.fsPath,
+          { pythonPath: session.configuration.python },
+        );
+        output.appendLine(`DAP adapter argv: ${JSON.stringify([spec.executable, ...spec.args])}`);
+        output.appendLine(`DAP adapter cwd: ${spec.cwd}`);
+        return new vscode.DebugAdapterExecutable(spec.executable, [...spec.args], { cwd: spec.cwd });
+      },
+    }),
+  );
+
   for (const [command, mode] of [
     ["lwt.runCurrentFile", "run"],
     ["lwt.checkCurrentFile", "check"],
@@ -157,7 +236,32 @@ export function activate(context: vscode.ExtensionContext): ExtensionTestApi {
     }
   }
 
-  return { createTask: (mode, document) => createWorkflowTask(mode, document, output) };
+  return {
+    createTask: (mode, document) => createWorkflowTask(mode, document, output),
+    createDebugConfiguration: (document) => createDebugConfiguration(document),
+  };
+}
+
+function singleWorkspaceFolder(): vscode.WorkspaceFolder | undefined {
+  const folders = vscode.workspace.workspaceFolders ?? [];
+  return folders.length === 1 ? folders[0] : undefined;
+}
+
+function createDebugConfiguration(document: vscode.TextDocument): vscode.DebugConfiguration {
+  if (document.languageId !== LANGUAGE_ID || document.isUntitled) {
+    throw new WorkflowConfigurationError("Open a saved .lwt file before starting LWT debugging.");
+  }
+  const folder = singleWorkspaceFolder();
+  if (!folder) {
+    throw new WorkflowConfigurationError("LWT debugging requires one open workspace folder.");
+  }
+  const config = vscode.workspace.getConfiguration("lwt");
+  return buildDapLaunchConfiguration(document.uri.fsPath, folder.uri.fsPath, {
+    pythonPath: config.get("pythonPath", "python"),
+    workingDirectory: config.get("workingDirectory", ""),
+    programArgs: config.get("programArgs", []),
+    programStdin: config.get("programStdin", ""),
+  });
 }
 
 function createWorkflowTask(mode: WorkflowMode, document: vscode.TextDocument, channel: vscode.OutputChannel): vscode.Task {

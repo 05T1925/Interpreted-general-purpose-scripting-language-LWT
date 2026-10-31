@@ -18,6 +18,23 @@ export interface LaunchSpec {
   readonly sourcePath: string;
 }
 
+export interface DapAdapterSpec {
+  readonly executable: string;
+  readonly args: readonly string[];
+  readonly cwd: string;
+}
+
+export interface DapLaunchConfiguration {
+  readonly type: "lwt";
+  readonly request: "launch";
+  readonly name: string;
+  readonly program: string;
+  readonly python: string;
+  readonly cwd: string;
+  readonly args: readonly string[];
+  readonly stdinFile: string;
+}
+
 export class WorkflowConfigurationError extends Error {
   constructor(message: string) {
     super(message);
@@ -53,6 +70,44 @@ function resolveDirectory(workspaceRoot: string, configured: string): string {
     throw new WorkflowConfigurationError(`LWT working directory is not a directory: ${candidate}`);
   }
   return candidate;
+}
+
+export function buildDapAdapterSpec(
+  pythonPath: string,
+  workspaceRoot: string,
+  settings: WorkflowSettings = {},
+): DapAdapterSpec {
+  const executable = nonEmptyString(settings.pythonPath, pythonPath, "lwt.pythonPath");
+  return {
+    executable,
+    args: ["-m", "lwt.dap_server"],
+    cwd: resolveDirectory(workspaceRoot, ""),
+  };
+}
+
+export function buildDapLaunchConfiguration(
+  programPath: string,
+  workspaceRoot: string,
+  settings: WorkflowSettings = {},
+): DapLaunchConfiguration {
+  if (!programPath) {
+    throw new WorkflowConfigurationError("The LWT program path must not be empty.");
+  }
+  const python = nonEmptyString(settings.pythonPath, "python", "lwt.pythonPath");
+  const workingDirectory = nonEmptyString(settings.workingDirectory, "", "lwt.workingDirectory");
+  const cwd = resolveDirectory(workspaceRoot, workingDirectory);
+  const args = configuredProgramArgs(settings.programArgs);
+  const stdinFile = nonEmptyString(settings.programStdin, "", "lwt.programStdin");
+  return {
+    type: "lwt",
+    request: "launch",
+    name: "LWT: Debug Current File",
+    program: path.resolve(workspaceRoot, programPath),
+    python,
+    cwd,
+    args,
+    stdinFile: stdinFile ? path.resolve(cwd, stdinFile) : "",
+  };
 }
 
 export function buildLaunchSpec(

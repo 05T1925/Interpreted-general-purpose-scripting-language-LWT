@@ -1,7 +1,7 @@
 {
   "name": "lwt-language-tools",
   "displayName": "LWT Language Tools",
-  "description": "Syntax highlighting, static language services, and CLI workflows for LWT.",
+  "description": "Syntax highlighting, static language services, CLI workflows, and native debugging for LWT.",
   "version": "0.1.0",
   "publisher": "05t1925",
   "license": "UNLICENSED",
@@ -26,7 +26,9 @@
     "workspaceContains:**/*.lwt",
     "onCommand:lwt.runCurrentFile",
     "onCommand:lwt.checkCurrentFile",
-    "onCommand:lwt.debugCurrentFile"
+    "onCommand:lwt.debugCurrentFile",
+    "onDebugResolve:lwt",
+    "onDebugInitialConfigurations:lwt"
   ],
   "contributes": {
     "languages": [
@@ -70,6 +72,57 @@
         "command": "lwt.debugCurrentFile",
         "title": "LWT: Debug Current File in Terminal",
         "category": "LWT"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "lwt",
+        "label": "LWT",
+        "languages": ["lwt"],
+        "initialConfigurations": [
+          {
+            "type": "lwt",
+            "request": "launch",
+            "name": "LWT: Debug Current File",
+            "program": "${file}",
+            "python": "${config:lwt.pythonPath}",
+            "cwd": "${workspaceFolder}",
+            "args": [],
+            "stdinFile": ""
+          }
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "required": ["program"],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Saved LWT source file to run under the debugger."
+              },
+              "python": {
+                "type": "string",
+                "default": "${config:lwt.pythonPath}",
+                "description": "Python executable that starts the LWT DAP server."
+              },
+              "cwd": {
+                "type": "string",
+                "default": "${workspaceFolder}",
+                "description": "Working directory used by the LWT program and relative input paths."
+              },
+              "args": {
+                "type": "array",
+                "items": {"type": "string"},
+                "default": [],
+                "description": "Arguments returned by LWT args()."
+              },
+              "stdinFile": {
+                "type": "string",
+                "default": "",
+                "description": "Optional UTF-8 file for LWT input(); an empty value means EOF."
+              }
+            }
+          }
+        }
       }
     ],
     "configuration": {

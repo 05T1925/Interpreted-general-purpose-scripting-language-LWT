@@ -7,7 +7,8 @@ import os
 from pathlib import Path
 import re
 import shlex
-from typing import TextIO
+from threading import Condition
+from typing import Callable, TextIO
 
 from .ast_nodes import (
     AttemptStatement,
@@ -115,6 +116,7 @@ class DebuggerController:
         stderr: TextIO,
         *,
         scripted: bool,
+        pause_handler: Callable[[str, DebugFrame, Statement], None] | None = None,
     ) -> None:
         self.graph = graph
         self.entry_path = entry_path
@@ -135,6 +137,120 @@ class DebuggerController:
         self._step_plan: StepPlan | None = None
         self._running = False
         self._has_stopped = False
+        self._is_paused = False
+        self._cancelled = False
+        self._pause_handler = pause_handler
+        self._pause_condition = Condition()
+        self._resume_requested = False
+
+    @property
+    def is_paused(self) -> bool:
+        return self._is_paused
+
+    def start(self) -> None:
+        """Let the next statement run unless a configured breakpoint matches."""
+
+        self._running = True
+
+    def resume(self, action: str) -> None:
+        """Resume with a DAP-style execution action, without CLI text commands."""
+
+        if not self._is_paused or not self._frames:
+            raise ValueError("the LWT program is not paused")
+        frame = self._frames[-1]
+        if action == "continue":
+            self._step_plan = None
+        elif action == "stepIn":
+            self._step_plan = StepPlan("step", frame.frame_id)
+        elif action == "next":
+            self._step_plan = StepPlan("next", frame.frame_id)
+        elif action == "stepOut":
+            if frame.declaration is None:
+                raise ValueError("stepOut is unavailable in the entry frame")
+            self._step_plan = StepPlan("finish", frame.frame_id)
+        else:
+            raise ValueError(f"unsupported execution action {action!r}")
+        self._running = True
+        self._is_paused = False
+        if self._pause_handler is not None:
+            with self._pause_condition:
+                self._resume_requested = True
+                self._pause_condition.notify_all()
+
+    def cancel(self) -> None:
+        """Request safe cancellation at the next LWT statement boundary."""
+
+        self._cancelled = True
+        self._is_paused = False
+        with self._pause_condition:
+            self._resume_requested = True
+            self._pause_condition.notify_all()
+
+    def set_breakpoints(self, source_path: str, lines: list[int]) -> list[Breakpoint]:
+        """Replace all breakpoints for one source, retaining exact-line mapping."""
+
+        key = self._path_key(source_path)
+        self._breakpoints = [
+            breakpoint
+            for breakpoint in self._breakpoints
+            if breakpoint.canonical_key != key
+        ]
+        unit = self._units_by_path.get(key)
+        result: list[Breakpoint] = []
+        for line in lines:
+            statements = self._statements_by_path.get(key, {}).get(line, ())
+            statement = statements[0] if unit is not None and statements else None
+            if unit is None:
+                status = "unmapped"
+                detail = "source is not in the loaded module graph"
+                display = None
+            elif statement is None:
+                status = "unmapped"
+                detail = "line has no executable statement"
+                display = self._display_path(unit)
+            else:
+                status = "verified"
+                detail = "first executable statement on the exact line"
+                display = self._display_path(unit)
+            breakpoint = Breakpoint(
+                self._next_breakpoint_id,
+                source_path,
+                line,
+                key,
+                status,
+                detail,
+                statement,
+                display,
+            )
+            self._next_breakpoint_id += 1
+            self._breakpoints.append(breakpoint)
+            result.append(breakpoint)
+        return result
+
+    def frames(self) -> tuple[DebugFrame, ...]:
+        """Return the current LWT frames, newest first, while paused."""
+
+        if not self._is_paused:
+            return ()
+        return tuple(reversed(self._frames))
+
+    def frame(self, frame_id: int) -> DebugFrame | None:
+        if not self._is_paused:
+            return None
+        return next((frame for frame in self._frames if frame.frame_id == frame_id), None)
+
+    def frame_position(self, frame: DebugFrame) -> tuple[str, int, int]:
+        return self._frame_position(frame)
+
+    def locals_for_frame(self, frame: DebugFrame) -> dict[str, object]:
+        return self._local_bindings(frame)
+
+    @staticmethod
+    def globals_for_frame(frame: DebugFrame) -> dict[str, object]:
+        return frame.global_environment.values
+
+    def display_value(self, value: object) -> str:
+        return self._display_value(value)
 
     @staticmethod
     def _path_key(path: str | Path) -> str:
@@ -236,6 +352,8 @@ class DebuggerController:
     def before_statement(
         self, statement: Statement, environment: Environment, runtime: _RuntimeContext
     ) -> None:
+        if self._cancelled:
+            raise DebugAbort("debug session terminated")
         if isinstance(statement, Block):
             return
         if not self._frames:
@@ -285,6 +403,17 @@ class DebuggerController:
     def _pause(self, reason: str, statement: Statement, frame: DebugFrame) -> None:
         self._running = False
         self._has_stopped = True
+        self._is_paused = True
+        if self._pause_handler is not None:
+            with self._pause_condition:
+                self._resume_requested = False
+            self._pause_handler(reason, frame, statement)
+            with self._pause_condition:
+                while not self._resume_requested and not self._cancelled:
+                    self._pause_condition.wait()
+            if self._cancelled:
+                raise DebugAbort("debug session terminated")
+            return
         path = self._display_path(frame.module_unit)
         location = statement.location
         self._write(
@@ -335,16 +464,14 @@ class DebuggerController:
             if arguments:
                 self._write("DebugError: continue takes no arguments")
                 return False
-            self._step_plan = None
-            self._running = True
+            self.resume("continue")
             return True
         if command in {"step", "s", "next", "n"}:
             if arguments:
                 self._write(f"DebugError: {command} takes no arguments")
                 return False
-            kind = "step" if command in {"step", "s"} else "next"
-            self._step_plan = StepPlan(kind, frame.frame_id)
-            self._running = True
+            action = "stepIn" if command in {"step", "s"} else "next"
+            self.resume(action)
             return True
         if command in {"finish", "out"}:
             if arguments:
@@ -353,8 +480,7 @@ class DebuggerController:
             if frame.declaration is None:
                 self._write("DebugError: finish is unavailable in the entry frame")
                 return False
-            self._step_plan = StepPlan("finish", frame.frame_id)
-            self._running = True
+            self.resume("stepOut")
             return True
         if command in {"break", "b"}:
             if len(arguments) != 1:
