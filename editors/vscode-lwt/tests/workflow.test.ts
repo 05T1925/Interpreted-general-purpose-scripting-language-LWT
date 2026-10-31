@@ -4,7 +4,11 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { test } from "node:test";
-import { buildLaunchSpec } from "../src/workflow";
+import {
+  buildDapAdapterSpec,
+  buildDapLaunchConfiguration,
+  buildLaunchSpec,
+} from "../src/workflow";
 
 const repositoryRoot = path.resolve(__dirname, "..", "..", "..", "..");
 const python = process.env.LWT_TEST_PYTHON || "python";
@@ -125,4 +129,50 @@ test("debug CLI runs the checked-in S30 session with separate program stdin and 
   assert.equal(result.stdout, "demo:5\n");
   assert.match(result.stderr, /Breakpoint/);
   assert.doesNotMatch(result.stdout, /Breakpoint|locals|Paused/);
+});
+
+test("native DAP adapter uses an argv list and starts from the workspace root", () => {
+  const directory = temporaryDirectory();
+  try {
+    const spec = buildDapAdapterSpec("C:\\Program Files\\Python\\python.exe", directory);
+    assert.equal(spec.executable, "C:\\Program Files\\Python\\python.exe");
+    assert.deepEqual(spec.args, ["-m", "lwt.dap_server"]);
+    assert.equal(spec.cwd, directory);
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("DAP launch configuration resolves Unicode paths, cwd, args and stdin separately", () => {
+  const directory = temporaryDirectory();
+  try {
+    const cwd = path.join(directory, "运行目录 λ");
+    fs.mkdirSync(cwd);
+    const source = path.join(directory, "程序 with spaces.lwt");
+    const stdin = path.join(cwd, "输入 数据.txt");
+    fs.writeFileSync(source, "emit args();\n", "utf8");
+    fs.writeFileSync(stdin, "line\n", "utf8");
+    const config = buildDapLaunchConfiguration(source, directory, {
+      pythonPath: "python with spaces",
+      workingDirectory: "运行目录 λ",
+      programArgs: ["one value", "参数"],
+      programStdin: "输入 数据.txt",
+    });
+    assert.deepEqual(config, {
+      type: "lwt",
+      request: "launch",
+      name: "LWT: Debug Current File",
+      program: source,
+      python: "python with spaces",
+      cwd,
+      args: ["one value", "参数"],
+      stdinFile: stdin,
+    });
+    assert.throws(
+      () => buildDapLaunchConfiguration(source, directory, { programArgs: "not an array" }),
+      /array of strings/,
+    );
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
 });

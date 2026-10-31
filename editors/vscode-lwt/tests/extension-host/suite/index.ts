@@ -44,6 +44,49 @@ function waitForTaskEnd(mode: string): Promise<number | undefined> {
   });
 }
 
+type TrackedMessage = Record<string, unknown>;
+
+function debugMessageWaiter() {
+  const messages: TrackedMessage[] = [];
+  const waiters: Array<{
+    predicate: (message: TrackedMessage) => boolean;
+    resolve: (message: TrackedMessage) => void;
+    reject: (error: Error) => void;
+    timeout: NodeJS.Timeout;
+  }> = [];
+  const waitFor = (predicate: (message: TrackedMessage) => boolean): Promise<TrackedMessage> => {
+    const existing = messages.find(predicate);
+    if (existing) return Promise.resolve(existing);
+    return new Promise((resolve, reject) => {
+      const waiter = {
+        predicate,
+        resolve,
+        reject,
+        timeout: setTimeout(() => {
+          const index = waiters.indexOf(waiter);
+          if (index >= 0) waiters.splice(index, 1);
+          reject(new Error("Timed out waiting for a native LWT DAP message."));
+        }, 15000),
+      };
+      waiters.push(waiter);
+    });
+  };
+  const record = (message: unknown): void => {
+    if (typeof message !== "object" || message === null) return;
+    const value = message as TrackedMessage;
+    messages.push(value);
+    for (let index = waiters.length - 1; index >= 0; index -= 1) {
+      const waiter = waiters[index];
+      if (waiter.predicate(value)) {
+        clearTimeout(waiter.timeout);
+        waiters.splice(index, 1);
+        waiter.resolve(value);
+      }
+    }
+  };
+  return { waitFor, record };
+}
+
 suite("LWT VS Code extension host", () => {
   test("activates and registers the language and commands", async () => {
     assert.ok(workspaceRoot?.includes(" ") && workspaceRoot.includes("λ"), "host workspace should contain spaces and Unicode");
@@ -145,5 +188,108 @@ suite("LWT VS Code extension host", () => {
       file, "--", "two words", "--flag", "雪",
     ]);
     assert.equal(factoryDebugProcess.options?.cwd, workspaceRoot);
+  });
+
+  test("native DAP hits a VS Code source breakpoint and serves stack, variables, output and exit", async () => {
+    assert.ok(workspaceRoot);
+    const file = path.join(workspaceRoot, "native DAP program λ.lwt");
+    fs.writeFileSync(
+      file,
+      "fn increment(value) {\n  let local = value + 1;\n  return local;\n}\nlet global = 41;\nlet result = increment(global);\nemit result;\n",
+      "utf8",
+    );
+    const uri = vscode.Uri.file(file);
+    const document = await vscode.workspace.openTextDocument(uri);
+    await vscode.window.showTextDocument(document);
+    assert.ok(await document.save());
+    const breakpoint = new vscode.SourceBreakpoint(
+      new vscode.Location(uri, new vscode.Position(1, 0)),
+      true,
+    );
+    vscode.debug.addBreakpoints([breakpoint]);
+
+    const tracked = debugMessageWaiter();
+    const trackerFactory = vscode.debug.registerDebugAdapterTrackerFactory("lwt", {
+      createDebugAdapterTracker: () => ({
+        onWillReceiveMessage: (message) => tracked.record(message),
+        onDidSendMessage: (message) => tracked.record(message),
+      }),
+    });
+    let session: vscode.DebugSession | undefined;
+    try {
+      const stoppedPromise = tracked.waitFor((message) => message.type === "event" && message.event === "stopped");
+      const started = await vscode.debug.startDebugging(vscode.workspace.workspaceFolders?.[0], {
+        type: "lwt",
+        request: "launch",
+        name: "S32 native DAP Extension Host",
+        program: file,
+        python,
+        cwd: workspaceRoot,
+        args: [],
+        stdinFile: "",
+      });
+      assert.ok(started, "VS Code refused to start the LWT DAP session");
+      session = vscode.debug.activeDebugSession;
+      assert.ok(session, "the native DAP session did not become active");
+      await tracked.waitFor((message) => message.type === "request" && message.command === "configurationDone");
+
+      const setBreakpointResponse = await tracked.waitFor((message) =>
+        message.type === "response" && message.command === "setBreakpoints",
+      );
+      const responseBody = setBreakpointResponse.body as { breakpoints?: Array<{ verified?: boolean }> };
+      assert.equal(responseBody.breakpoints?.[0]?.verified, true);
+      const stopped = await stoppedPromise;
+      const stoppedBody = stopped.body as { threadId?: number; reason?: string };
+      assert.equal(stoppedBody.threadId, 1);
+      assert.equal(stoppedBody.reason, "breakpoint");
+
+      const threads = await session.customRequest("threads") as { threads: Array<{ id: number }> };
+      assert.deepEqual(threads.threads, [{ id: 1, name: "LWT program" }]);
+      const stack = await session.customRequest("stackTrace", { threadId: 1 }) as {
+        stackFrames: Array<{ id: number; name: string; line: number }>;
+      };
+      assert.equal(stack.stackFrames[0].name, "increment");
+      assert.equal(stack.stackFrames[0].line, 2);
+      assert.equal(stack.stackFrames.length, 2);
+      const scopes = await session.customRequest("scopes", {
+        frameId: stack.stackFrames[0].id,
+      }) as { scopes: Array<{ name: string; variablesReference: number }> };
+      const locals = scopes.scopes.find((item) => item.name === "Locals");
+      assert.ok(locals);
+      const variables = await session.customRequest("variables", {
+        variablesReference: locals.variablesReference,
+      }) as { variables: Array<{ name: string; value: string }> };
+      assert.deepEqual(variables.variables.map((item) => item.name), ["value"]);
+      assert.equal(variables.variables[0].value, "41");
+
+      const continuedPromise = tracked.waitFor((message) => message.type === "event" && message.event === "continued");
+      const stdoutPromise = tracked.waitFor((message) => {
+        if (message.type !== "event" || message.event !== "output") return false;
+        const body = message.body as { category?: string; output?: string };
+        return body.category === "stdout";
+      });
+      const exitedPromise = tracked.waitFor((message) => message.type === "event" && message.event === "exited");
+      const terminatedPromise = tracked.waitFor((message) => message.type === "event" && message.event === "terminated");
+      const continued = await session.customRequest("continue", { threadId: 1 }) as {
+        allThreadsContinued?: boolean;
+      };
+      assert.equal(continued.allThreadsContinued, true);
+      await continuedPromise;
+      const stdout = await stdoutPromise;
+      assert.equal((stdout.body as { output: string }).output, "42\n");
+      const exited = await exitedPromise;
+      assert.equal((exited.body as { exitCode: number }).exitCode, 0);
+      await terminatedPromise;
+    } catch (error) {
+      console.error("native DAP Extension Host test failed:", error);
+      throw error;
+    } finally {
+      if (session && vscode.debug.activeDebugSession?.id === session.id) {
+        await Promise.resolve(vscode.debug.stopDebugging(session)).catch(() => false);
+      }
+      trackerFactory.dispose();
+      vscode.debug.removeBreakpoints([breakpoint]);
+      await vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+    }
   });
 });

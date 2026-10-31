@@ -18,6 +18,12 @@ interface PackageManifest {
     grammars: Array<{ language: string; scopeName: string; path: string }>;
     snippets: Array<{ language: string; path: string }>;
     commands: Array<{ command: string; title: string }>;
+    debuggers: Array<{
+      type: string;
+      languages: string[];
+      initialConfigurations: Array<Record<string, unknown>>;
+      configurationAttributes: { launch: { required: string[]; properties: Record<string, unknown> } };
+    }>;
     configuration: { properties: Record<string, { type: string; default: unknown }> };
   };
   dependencies: Record<string, string>;
@@ -43,11 +49,32 @@ test("manifest, language id, commands, configuration and launcher are consistent
   for (const name of ["lwt.pythonPath", "lwt.workingDirectory", "lwt.programArgs", "lwt.programStdin"]) {
     assert.ok(name in manifest.contributes.configuration.properties, `missing ${name}`);
   }
+  const [dapContribution] = manifest.contributes.debuggers;
+  assert.equal(dapContribution.type, "lwt");
+  assert.deepEqual(dapContribution.languages, ["lwt"]);
+  assert.deepEqual(dapContribution.configurationAttributes.launch.required, ["program"]);
+  assert.deepEqual(
+    Object.keys(dapContribution.initialConfigurations[0]).sort(),
+    ["args", "cwd", "name", "program", "python", "request", "stdinFile", "type"].sort(),
+  );
+  assert.deepEqual(dapContribution.initialConfigurations[0], {
+    type: "lwt",
+    request: "launch",
+    name: "LWT: Debug Current File",
+    program: "${file}",
+    python: "${config:lwt.pythonPath}",
+    cwd: "${workspaceFolder}",
+    args: [],
+    stdinFile: "",
+  });
+  assert.ok(manifest.activationEvents.includes("onDebugResolve:lwt"));
   assert.deepEqual(lock.packages[""].dependencies, manifest.dependencies);
   assert.deepEqual(lock.packages[""].devDependencies, manifest.devDependencies);
   const source = fs.readFileSync(path.join(extensionRoot, "src", "extension.ts"), "utf8");
   assert.match(source, /\["-m", "lwt\.lsp_server"\]/);
   assert.match(source, /new vscode\.ProcessExecution\(spec\.executable, \[\.\.\.spec\.args\], \{ cwd: spec\.cwd \}\)/);
+  assert.match(source, /new vscode\.DebugAdapterExecutable\(spec\.executable, \[\.\.\.spec\.args\], \{ cwd: spec\.cwd \}\)/);
+  assert.match(source, /buildDapAdapterSpec\(/);
   assert.doesNotMatch(source, /shell\s*:\s*true|child_process|spawn\s*\(/);
 });
 
