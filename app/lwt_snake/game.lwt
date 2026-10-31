@@ -1,0 +1,439 @@
+# LWT Snake protocol server.  This file owns every game-rule transition.
+
+record Point { x, y };
+record GameState {
+    initialized,
+    width,
+    height,
+    original_seed,
+    rng_state,
+    snake,
+    direction,
+    pending_direction,
+    has_pending,
+    food,
+    score,
+    phase,
+    next_sequence
+};
+
+let game = GameState{
+    initialized: false,
+    width: 0,
+    height: 0,
+    original_seed: 1,
+    rng_state: 1,
+    snake: [],
+    direction: "R",
+    pending_direction: "",
+    has_pending: false,
+    food: null,
+    score: 0,
+    phase: "READY",
+    next_sequence: 1
+};
+
+fn remove_all(text, marker) {
+    let pieces = split(text, marker);
+    let result = "";
+    each (piece in pieces) {
+        result = result + piece;
+    }
+    return result;
+}
+
+fn is_ascii_decimal(text) {
+    when (len(text) == 0) {
+        return false;
+    }
+    let remaining = text;
+    let digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    each (digit in digits) {
+        remaining = remove_all(remaining, digit);
+    }
+    return remaining == "";
+}
+
+fn is_sequence(text) {
+    when (len(text) != 6) {
+        return false;
+    }
+    return is_ascii_decimal(text);
+}
+
+fn sequence_from_line(line) {
+    let fields = split(line, "|");
+    when (len(fields) < 2) {
+        return "000000";
+    }
+    when (not(is_sequence(fields[1]))) {
+        return "000000";
+    }
+    return fields[1];
+}
+
+fn emit_protocol_error(sequence_text, code) {
+    emit "LWS1|ERR|" + sequence_text + "|" + code;
+}
+
+fn opposite(first, second) {
+    when (first == "U" and second == "D") { return true; }
+    when (first == "D" and second == "U") { return true; }
+    when (first == "L" and second == "R") { return true; }
+    when (first == "R" and second == "L") { return true; }
+    return false;
+}
+
+fn direction_x(direction) {
+    when (direction == "R") { return 1; }
+    when (direction == "L") { return -1; }
+    return 0;
+}
+
+fn direction_y(direction) {
+    when (direction == "D") { return 1; }
+    when (direction == "U") { return -1; }
+    return 0;
+}
+
+fn is_occupied(x, y) {
+    let index = 0;
+    while (index < len(game.snake)) {
+        let part = game.snake[index];
+        when (part.x == x and part.y == y) {
+            return true;
+        }
+        index = index + 1;
+    }
+    return false;
+}
+
+fn choose_food() {
+    let empty_count = game.width * game.height - len(game.snake);
+    when (empty_count <= 0) {
+        game.food = null;
+        return false;
+    }
+
+    # Park-Miller's state is always positive after INIT.
+    game.rng_state = (game.rng_state * 48271) % 2147483647;
+    let selected = game.rng_state % empty_count;
+    let seen = 0;
+    let y = 0;
+    while (y < game.height) {
+        let x = 0;
+        while (x < game.width) {
+            when (not(is_occupied(x, y))) {
+                when (seen == selected) {
+                    game.food = Point{x: x, y: y};
+                    return true;
+                }
+                seen = seen + 1;
+            }
+            x = x + 1;
+        }
+        y = y + 1;
+    }
+    fail("internal food selection invariant failed");
+}
+
+fn initialize_board() {
+    game.rng_state = game.original_seed;
+    game.snake = [];
+    let head_x = game.width / 2;
+    let head_y = game.height / 2;
+    push(game.snake, Point{x: head_x, y: head_y});
+    push(game.snake, Point{x: head_x - 1, y: head_y});
+    push(game.snake, Point{x: head_x - 2, y: head_y});
+    game.direction = "R";
+    game.pending_direction = "";
+    game.has_pending = false;
+    game.food = null;
+    game.score = 0;
+    game.phase = "READY";
+    choose_food();
+}
+
+fn requested_direction() {
+    when (game.has_pending) {
+        return game.pending_direction;
+    }
+    return game.direction;
+}
+
+fn emit_state(sequence_text) {
+    let food_x = "-";
+    let food_y = "-";
+    when (game.food != null) {
+        food_x = str(game.food.x);
+        food_y = str(game.food.y);
+    }
+
+    let body = "";
+    let index = 0;
+    while (index < len(game.snake)) {
+        when (index > 0) {
+            body = body + ";";
+        }
+        let part = game.snake[index];
+        body = body + str(part.x) + "," + str(part.y);
+        index = index + 1;
+    }
+    emit "LWS1|" + sequence_text + "|STATE|" + game.phase + "|" +
+        str(game.score) + "|" + requested_direction() + "|" + food_x + "|" +
+        food_y + "|" + str(len(game.snake)) + "|" + body;
+}
+
+fn valid_idle_arguments(fields) {
+    return fields[3] == "-" and fields[4] == "-" and fields[5] == "-";
+}
+
+fn handle_init(fields, sequence_text) {
+    when (game.initialized) {
+        emit_protocol_error(sequence_text, "BAD_STATE");
+        return false;
+    }
+    when (not(is_ascii_decimal(fields[3])) or not(is_ascii_decimal(fields[4]))) {
+        emit_protocol_error(sequence_text, "BAD_ARGUMENT");
+        return false;
+    }
+    when (len(fields[5]) != 10 or not(is_ascii_decimal(fields[5]))) {
+        emit_protocol_error(sequence_text, "BAD_ARGUMENT");
+        return false;
+    }
+
+    let width = to_int(fields[3]);
+    let height = to_int(fields[4]);
+    let seed = to_int(fields[5]);
+    when (str(width) != fields[3] or str(height) != fields[4]) {
+        emit_protocol_error(sequence_text, "BAD_ARGUMENT");
+        return false;
+    }
+    when (width < 4 or width > 24 or height < 1 or height > 18) {
+        emit_protocol_error(sequence_text, "BAD_ARGUMENT");
+        return false;
+    }
+    when (width * height > 432 or seed < 1 or seed > 2147483646) {
+        emit_protocol_error(sequence_text, "BAD_ARGUMENT");
+        return false;
+    }
+
+    game.width = width;
+    game.height = height;
+    game.original_seed = seed;
+    game.initialized = true;
+    initialize_board();
+    emit_state(sequence_text);
+    return false;
+}
+
+fn handle_turn(fields, sequence_text) {
+    when (game.phase != "RUNNING") {
+        emit_protocol_error(sequence_text, "BAD_STATE");
+        return false;
+    }
+    when (fields[4] != "-" or fields[5] != "-") {
+        emit_protocol_error(sequence_text, "BAD_ARGUMENT");
+        return false;
+    }
+    let selected = fields[3];
+    when (selected != "U" and selected != "R" and selected != "D" and selected != "L") {
+        emit_protocol_error(sequence_text, "BAD_TURN");
+        return false;
+    }
+    let current = game.direction;
+    when (game.has_pending) {
+        current = game.pending_direction;
+    }
+    when (opposite(current, selected)) {
+        emit_protocol_error(sequence_text, "BAD_TURN");
+        return false;
+    }
+    game.pending_direction = selected;
+    game.has_pending = true;
+    emit_state(sequence_text);
+    return false;
+}
+
+fn advance_one_tick() {
+    when (game.phase != "RUNNING") {
+        return;
+    }
+    when (game.has_pending) {
+        game.direction = game.pending_direction;
+        game.pending_direction = "";
+        game.has_pending = false;
+    }
+
+    let head = game.snake[0];
+    let next_x = head.x + direction_x(game.direction);
+    let next_y = head.y + direction_y(game.direction);
+    when (next_x < 0 or next_x >= game.width or next_y < 0 or next_y >= game.height) {
+        game.phase = "GAME_OVER";
+        return;
+    }
+
+    let will_eat = next_x == game.food.x and next_y == game.food.y;
+    let index = 0;
+    while (index < len(game.snake)) {
+        let skip_vacating_tail = not(will_eat) and index == len(game.snake) - 1;
+        let part = game.snake[index];
+        when (not(skip_vacating_tail) and part.x == next_x and part.y == next_y) {
+            game.phase = "GAME_OVER";
+            return;
+        }
+        index = index + 1;
+    }
+
+    let next_snake = [Point{x: next_x, y: next_y}];
+    index = 0;
+    while (index < len(game.snake)) {
+        when (will_eat or index < len(game.snake) - 1) {
+            push(next_snake, game.snake[index]);
+        }
+        index = index + 1;
+    }
+    game.snake = next_snake;
+
+    when (will_eat) {
+        game.score = game.score + 10;
+        when (not(choose_food())) {
+            game.phase = "WON";
+        }
+    }
+}
+
+fn process_request(line) {
+    let sequence_text = sequence_from_line(line);
+    when (len(line) > 128) {
+        emit_protocol_error(sequence_text, "FRAME_TOO_LONG");
+        return false;
+    }
+
+    let fields = split(line, "|");
+    when (len(fields) != 6) {
+        emit_protocol_error(sequence_text, "BAD_FIELD_COUNT");
+        return false;
+    }
+    when (fields[0] != "LWS1") {
+        emit_protocol_error(sequence_text, "BAD_VERSION");
+        return false;
+    }
+    when (not(is_sequence(fields[1]))) {
+        emit_protocol_error("000000", "BAD_SEQUENCE");
+        return false;
+    }
+    let sequence_value = to_int(fields[1]);
+    when (sequence_value != game.next_sequence) {
+        emit_protocol_error(fields[1], "BAD_SEQUENCE");
+        return false;
+    }
+    game.next_sequence = game.next_sequence + 1;
+
+    let command = fields[2];
+    when (command != "INIT" and command != "START" and command != "TURN" and
+        command != "TICK" and command != "PAUSE" and command != "RESUME" and
+        command != "RESET" and command != "QUIT") {
+        emit_protocol_error(fields[1], "BAD_COMMAND");
+        return false;
+    }
+    when (command == "INIT") {
+        return handle_init(fields, fields[1]);
+    }
+    when (not(game.initialized)) {
+        emit_protocol_error(fields[1], "NOT_INITIALIZED");
+        return false;
+    }
+
+    when (command == "START") {
+        when (not(valid_idle_arguments(fields))) {
+            emit_protocol_error(fields[1], "BAD_ARGUMENT");
+            return false;
+        }
+        when (game.phase != "READY") {
+            emit_protocol_error(fields[1], "BAD_STATE");
+            return false;
+        }
+        game.phase = "RUNNING";
+        emit_state(fields[1]);
+        return false;
+    }
+
+    when (command == "TURN") {
+        return handle_turn(fields, fields[1]);
+    }
+
+    when (command == "TICK") {
+        when (not(valid_idle_arguments(fields))) {
+            emit_protocol_error(fields[1], "BAD_ARGUMENT");
+            return false;
+        }
+        advance_one_tick();
+        emit_state(fields[1]);
+        return false;
+    }
+
+    when (command == "PAUSE") {
+        when (not(valid_idle_arguments(fields))) {
+            emit_protocol_error(fields[1], "BAD_ARGUMENT");
+            return false;
+        }
+        when (game.phase != "RUNNING") {
+            emit_protocol_error(fields[1], "BAD_STATE");
+            return false;
+        }
+        game.phase = "PAUSED";
+        game.pending_direction = "";
+        game.has_pending = false;
+        emit_state(fields[1]);
+        return false;
+    }
+
+    when (command == "RESUME") {
+        when (not(valid_idle_arguments(fields))) {
+            emit_protocol_error(fields[1], "BAD_ARGUMENT");
+            return false;
+        }
+        when (game.phase != "PAUSED") {
+            emit_protocol_error(fields[1], "BAD_STATE");
+            return false;
+        }
+        game.phase = "RUNNING";
+        emit_state(fields[1]);
+        return false;
+    }
+
+    when (command == "RESET") {
+        when (not(valid_idle_arguments(fields))) {
+            emit_protocol_error(fields[1], "BAD_ARGUMENT");
+            return false;
+        }
+        initialize_board();
+        emit_state(fields[1]);
+        return false;
+    }
+
+    when (command == "QUIT") {
+        when (not(valid_idle_arguments(fields))) {
+            emit_protocol_error(fields[1], "BAD_ARGUMENT");
+            return false;
+        }
+        emit_state(fields[1]);
+        return true;
+    }
+
+    fail("internal command dispatch invariant failed");
+}
+
+fn serve_protocol() {
+    let finished = false;
+    while (not(finished)) {
+        let line = input();
+        when (line == null) {
+            return;
+        }
+        finished = process_request(line);
+    }
+}
+
+serve_protocol();
