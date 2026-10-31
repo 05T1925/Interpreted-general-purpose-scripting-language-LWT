@@ -10,7 +10,7 @@ import threading
 import unittest
 from unittest.mock import patch
 
-from app.lwt_snake.bridge import GAME_SOURCE, LwtSnakeBridge
+from app.lwt_snake.bridge import GAME_SOURCE, LwtSnakeBridge, BridgeFailure
 from app.lwt_snake.protocol import CommandRejected
 from app.lwt_snake import replay as r
 
@@ -36,8 +36,10 @@ class ReplayTests(unittest.TestCase):
         worker.start();replies.get(timeout=5)
         worker.submit(1,'START');replies.get(timeout=5)
         completed=threading.Event();release=threading.Event()
+        fail_next=threading.Event()
         original=worker.bridge.request
         def controlled(command,*args):
+            if command=='TICK' and fail_next.is_set():raise BridgeFailure('controlled transport interruption')
             result=original(command,*args)
             if command=='TURN':
                 completed.set()
@@ -54,6 +56,13 @@ class ReplayTests(unittest.TestCase):
                     reply=replies.get(timeout=5)
                     self.assertEqual([t.request.split('|')[2] for t in reply.record.transactions],['INIT','START','TURN','RESET'])
                     r.reconstruct(r.load(path))
+                    fail_next.set();worker.submit(5,'TICK')
+                    self.assertTrue(replies.get(timeout=5).fatal)
+                    self.assertTrue(worker.finished.wait(5))
+                    prefix=worker.recorder.snapshot()
+                    self.assertEqual(prefix.transactions,reply.record.transactions)
+                    self.assertIn('controlled transport interruption',prefix.interruption)
+                    r.save(path,prefix);r.reconstruct(r.load(path))
         finally:
             release.set();worker.stop();worker.join(7)
             self.assertFalse(worker.is_alive());self.assertEqual(worker.bridge.returncode,0)
