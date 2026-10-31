@@ -6,8 +6,8 @@
 
 - S28 原最终 HEAD：658e37e6c86f0ccb8424055f213f068b482f6826。
 - 为使 S28 报告包含最终 SHA、分支和干净状态，先在 S28 分支单独提交报告自包含修正：6aa198a402aaaec1f95806af78548a82abdfd854。修正只涉及 docs/s28-execution-observability.md；S29 从该 tip 建立，没有用较旧的远端分支覆盖本地历史。
-- S29 分支：stage/s29-language-server。本文档提交的父提交为 ccfaadb354500c42c5d213295e26d985da6bac5d；本文档提交后即为阶段最终 tip，完整 SHA 由执行交接中的 git rev-parse HEAD 给出。
-- 未修改 main，未 fetch/pull/push、合并、变基、重置、打标签或发布。最终提交后检查工作区状态。
+- S29 分支最终 HEAD：5eaacccd04cb8b2d00865114424099f6983fa13c，分支名为 stage/s29-language-server。该提交后的 S29 工作区干净；本报告不表示 S29 已通过主窗口审查或合入 main。
+- 未修改 main，未 fetch/pull/push、合并、变基、重置、打标签或发布。
 
 S29 功能与测试分层提交：
 
