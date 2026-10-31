@@ -1,5 +1,6 @@
 """Real Tk controls/events with real background LWT subprocesses."""
 from pathlib import Path
+import gc
 import tempfile
 import threading
 import time
@@ -15,6 +16,7 @@ from app.lwt_snake.bridge import GAME_SOURCE
 
 class LwtSnakeTkTests(unittest.TestCase):
     def setUp(self):
+        gc.collect()  # Collect retired Tk cycles on their owning main thread.
         if tk is None: self.skipTest('Tkinter unavailable')
         try:
             self.root = tk.Tk()
@@ -31,6 +33,9 @@ class LwtSnakeTkTests(unittest.TestCase):
             self.assertFalse(self.app.worker.is_alive())
             self.assertIsNotNone(self.app.worker.bridge.returncode)
         else: self.root.destroy()
+        self.app = None
+        self.root = None
+        gc.collect()
 
     def pump(self, predicate, timeout=10):
         until = time.monotonic() + timeout

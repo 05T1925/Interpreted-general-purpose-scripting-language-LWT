@@ -69,6 +69,16 @@ class ReplayTests(unittest.TestCase):
         verified=r.reconstruct(replay)
         self.assertEqual(len(verified.states),len(replay.transactions))
         self.assertEqual(verified.states[-1].phase,'GAME_OVER')
+        rejected_index=next(i for i,tx in enumerate(replay.transactions,1) if '|ERR|' in tx.response)
+        resumed=r.reconstruct(replay,prefix=rejected_index,keep=True)
+        try:
+            state=resumed.bridge.request('TICK')
+            self.assertEqual(state.sequence,rejected_index+1)
+            r.reconstruct(resumed.recorder.snapshot())
+        finally:resumed.bridge.close()
+        paused=record([('START',()),('TURN',('U',)),('PAUSE',()),('RESUME',()),('TICK',())],8,5,1)
+        states=r.reconstruct(paused).states
+        self.assertEqual((states[2].direction,states[3].direction,states[-1].snake[0]),('U','R',(5,2)))
         win=record([('START',()),('TICK',())],4,1,1)
         self.assertEqual(r.reconstruct(win).states[-1].phase,'WON')
         with self.assertRaisesRegex(r.VerificationError,'terminal'):r.reconstruct(win,keep=True)
@@ -125,6 +135,8 @@ class ReplayTests(unittest.TestCase):
             path.write_bytes(before)
             with patch('app.lwt_snake.replay.MAX_FILE_BYTES',10):
                 with self.assertRaises(r.ReplayError):r.load(path)
+            with path.open('wb') as stream:stream.truncate(r.MAX_FILE_BYTES+1)
+            with self.assertRaises(r.ReplayError):r.load(path)
 
     def test_hash_normalization_and_real_divergence_not_self_report(self):
         self.assertEqual(r.source_digest(b'a\nb\n'),r.source_digest(b'\xef\xbb\xbfa\r\nb\r'))
@@ -138,6 +150,8 @@ class ReplayTests(unittest.TestCase):
         with self.assertRaises(r.VerificationError):r.reconstruct(r.decode_document(data))
         data=r.document(parent);del data['transactions'][1]
         with self.assertRaises(r.ReplayError):r.decode_document(data)
+        data=r.document(parent);data['transactions'][1]['request']='LWS1|000002|TICK|-|-|-'
+        with self.assertRaises(r.VerificationError):r.reconstruct(r.decode_document(data))
 
     def test_cancel_total_deadline_and_recording_limit(self):
         replay=record([('START',()),('TICK',())])
@@ -148,12 +162,10 @@ class ReplayTests(unittest.TestCase):
         with patch('app.lwt_snake.replay.LwtSnakeBridge',Tracked):
             with self.assertRaisesRegex(r.VerificationError,'cancel'):r.reconstruct(replay,cancel=cancel)
             with self.assertRaises(r.VerificationError):r.reconstruct(replay,total_timeout=.00001)
-            base=record([])
-            transactions=list(base.transactions)
-            for index in range(2,1200):
-                transactions.append(r.Transaction(f'LWS1|{index:06d}|TICK|-|-|-',base.transactions[0].response.replace('000001',f'{index:06d}',1)))
             with self.assertRaisesRegex(r.VerificationError,'deadline'):
-                r.reconstruct(replace(base,transactions=tuple(transactions)),total_timeout=.15)
+                r.reconstruct(replay,total_timeout=.15,progress=lambda n,total:threading.Event().wait(.25))
+            def interrupt(n,total):raise KeyboardInterrupt()
+            with self.assertRaisesRegex(r.VerificationError,'cancel'):r.reconstruct(replay,progress=interrupt)
             self.assertTrue(any(bridge.pid is not None for bridge in owned))
         for bridge in owned:
             self.assertTrue(bridge._closed)

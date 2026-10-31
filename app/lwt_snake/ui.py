@@ -15,6 +15,13 @@ from app.lwt_snake.clock import GameClock, focus_is_external
 from app.lwt_snake.replay import save
 
 
+def _install_key_tag(widget, key_tag):
+    # Module-level recursion avoids a local recursive closure retaining the app.
+    widget.bindtags((key_tag, *widget.bindtags()))
+    for child in widget.winfo_children():
+        _install_key_tag(child, key_tag)
+
+
 class LwtSnakeApp:
     def __init__(self, root: tk.Tk, *, source: Path = GAME_SOURCE, tick_ms: int = 140) -> None:
         self.root, self.source, self.tick_ms = root, source, tick_ms
@@ -83,11 +90,7 @@ class LwtSnakeApp:
         ttk.Label(replay_controls, textvariable=self.position_var, wraplength=330).grid(row=2,column=1,columnspan=3,sticky='w')
         self.key_tag = f"LwtSnakeKeys{id(self)}"
         root.bind_class(self.key_tag, "<KeyPress>", self.on_key)
-        def install_key_tag(widget):
-            widget.bindtags((self.key_tag, *widget.bindtags()))
-            for child in widget.winfo_children():
-                install_key_tag(child)
-        install_key_tag(root)
+        _install_key_tag(root, self.key_tag)
         root.bind("<FocusOut>", self.on_focus_out, add="+")
         root.protocol("WM_DELETE_WINDOW", self.close)
         self._start_worker()

@@ -1,5 +1,6 @@
 """Real widgets, worker boundaries and real LWT replay/handoff processes."""
 from pathlib import Path
+import gc
 import tempfile
 import threading
 import time
@@ -15,6 +16,7 @@ from tests.test_lwt_snake_replay import record
 
 class ReplayTkTests(unittest.TestCase):
     def setUp(self):
+        gc.collect()
         if tk is None: self.skipTest('Tkinter unavailable')
         try:
             self.root=tk.Tk(); self.root.withdraw()
@@ -31,6 +33,9 @@ class ReplayTkTests(unittest.TestCase):
         self.assertFalse(self.app.worker.is_alive())
         if self.app.worker.bridge.pid:self.assertIsNotNone(self.app.worker.bridge.returncode)
         self.folder.cleanup()
+        self.app=None
+        self.root=None
+        gc.collect()
 
     def pump(self,condition,timeout=12):
         until=time.monotonic()+timeout

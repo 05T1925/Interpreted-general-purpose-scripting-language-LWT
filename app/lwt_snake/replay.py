@@ -5,6 +5,7 @@ import argparse
 from dataclasses import dataclass
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -213,6 +214,8 @@ class Verified:
 
 
 def reconstruct(replay: Replay, *, prefix=None, keep=False, cancel=None, progress=None, total_timeout=TOTAL_TIMEOUT, on_bridge=None) -> Verified:
+    if not math.isfinite(total_timeout) or total_timeout <= 0: raise VerificationError('total deadline must be finite and positive')
+    deadline = time.monotonic() + total_timeout
     replay = decode_document(document(replay))
     count = len(replay.transactions) if prefix is None else _integer(prefix, 1, len(replay.transactions))
     cancel = cancel or threading.Event()
@@ -220,7 +223,7 @@ def reconstruct(replay: Replay, *, prefix=None, keep=False, cancel=None, progres
                         origin=Origin(replay_digest(replay), count) if keep else replay.origin)
     bridge = LwtSnakeBridge(repository_root=ROOT, width=replay.width, height=replay.height, seed=replay.seed, on_transaction=recorder.append)
     if on_bridge: on_bridge(bridge)
-    stopped = threading.Event(); deadline = time.monotonic() + total_timeout
+    stopped = threading.Event()
     def watchdog():
         while not stopped.wait(.02):
             if cancel.is_set() or time.monotonic() >= deadline:
@@ -244,10 +247,12 @@ def reconstruct(replay: Replay, *, prefix=None, keep=False, cancel=None, progres
         if keep and last.phase in {'GAME_OVER', 'WON'}: raise VerificationError('terminal prefix cannot be taken over; select an earlier prefix')
         if not keep: bridge.close()
         return Verified(replay, tuple(states), bridge if keep else None, recorder if keep else None)
-    except Exception as error:
+    except BaseException as error:
         bridge.cancel()
         try: bridge.close()
         except Exception: pass
+        if isinstance(error, KeyboardInterrupt): raise VerificationError('verification cancelled') from error
+        if not isinstance(error, Exception): raise
         if cancel.is_set(): raise VerificationError('verification cancelled') from error
         if time.monotonic() >= deadline: raise VerificationError('verification total deadline exceeded') from error
         raise VerificationError(str(error)) from error
@@ -260,8 +265,10 @@ def main(argv=None):
     parser.add_argument('--verify', required=True, type=Path)
     options = parser.parse_args(argv)
     try: replay = load(options.verify)
+    except KeyboardInterrupt: print('verification cancelled', file=sys.stderr); return 3
     except (ReplayError, OSError) as error: print(str(error), file=sys.stderr); return 2
     try: result = reconstruct(replay)
+    except KeyboardInterrupt: print('verification cancelled', file=sys.stderr); return 3
     except (ReplayError, OSError) as error: print(str(error), file=sys.stderr); return 2
     except VerificationError as error: print(str(error), file=sys.stderr); return 3
     sys.stdout.buffer.write(f'Verified {len(result.states)} transactions.\n'.encode('ascii'))
