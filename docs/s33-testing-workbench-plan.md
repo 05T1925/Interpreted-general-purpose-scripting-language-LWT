@@ -13,7 +13,7 @@
 1. 保留无参数 `python tools/run_tests.py` 的输出和退出码。新增 `--list-json`、`--case ID`（可重复）、可选 `--category NAME` 和 `--format json`。先对完整 inventory 做严格配对/元数据/重复 ID 检查，再筛选；不存在的 ID/类别返回配置错误，不静默跑 0 项。
 2. JSON schema 要有版本号、所选用例、仓库相对路径、类别、标签/规范引用、运行状态、退出码、耗时、失败细节；stdout/stderr 的原始字节用 Base64 表示，避免错误解码丢失黑盒字节契约。标准输出只含 JSON，配置诊断走 stderr。文本与 JSON 结果应来自同一 `run_case` 比较逻辑。
 3. Test Explorer 使用官方 `TestController` / `TestItem` / `TestRunProfile`，在可识别的 LWT 仓库工作区注册。发现结果以 runner 的 `--list-json` 为权威；文件变动后刷新。Run 全部、类别、单项时精确处理 include/exclude、取消与进程失败，报告真实通过/失败/跳过状态。批量运行须避免为每项重复扫描完整 inventory；取消后不能留下仍在运行的被测 LWT 子进程。
-4. Debug 首版仅用于预期成功且使用标准 `python -m lwt SOURCE` 入口的 `.lwt` 配对案例；从已验证元数据构造 program、args、cwd 和 stdinFile，并交给 S32 DAP。5 个 `cli_args_override` 案例及预期错误案例不显示或禁用调试入口并说明原因。临时 stdin 文件需清理；不得把 raw stdin 或其他敏感输入写入日志。
+4. Debug 首版仅用于预期成功、使用标准 `python -m lwt SOURCE` 入口、且 stdin 字节可严格 UTF-8 解码的 `.lwt` 配对案例；从已验证元数据构造 program、args、cwd 和 stdinFile，并交给 S32 DAP。5 个 `cli_args_override` 案例、预期错误案例及二进制非法 UTF-8 stdin 案例不显示或禁用调试入口并说明原因。临时 stdin 文件需清理；不得把 raw stdin 或其他敏感输入写入日志。调试启动本身不算测试通过，只有 runner 的比较结果可标为通过。
 5. 不新增第三方 Python 依赖、不修改 LWT 解释器语义、不重写 287 个现有用例、不覆盖 S10/S11/S28/S29 原始证据。
 
 ## 验收
