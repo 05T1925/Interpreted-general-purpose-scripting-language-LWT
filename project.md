@@ -1,14 +1,14 @@
 # LWT 项目上下文
 
-> Agent 当前状态入口。核对日期：2026-10-31。本文按当前工作树记录；每次开始任务都重新检查 Git 和远端。阶段历史与提交关系见[仓库工作流](docs/repository-workflow.md)，总览见[阶段路线图](阶段执行与审查路线图.md)。
+> Agent 当前状态入口。核对日期：2026-11-01。本文按当前工作树记录；每次开始任务都重新检查 Git 和远端。阶段历史与提交关系见[仓库工作流](docs/repository-workflow.md)，总览见[阶段路线图](阶段执行与审查路线图.md)。
 
-> **最新复核（2026-10-31）：** S33 黑盒测试工作台已通过主窗口复核，在功能分支补修批量错误终态并经精确 SHA 远端 CI 四格验证，现已快进进入本地 `main`；远端 `main` 位置须以实时 Git 查询为准。详见 [S33 主窗口复核](docs/s33-main-review.md)。[S34 LWT 驱动贪吃蛇](docs/s34-lwt-snake.md)已实施完成，等待主窗口审查；S12 保留为最终交付阶段。下方 S33“待审”句子是执行窗口历史快照。
+> **最新复核（2026-11-01）：** S34 需修复复审：连续 TURN 可饿死移动时钟，失焦测试整组运行失败而单跑通过；见 [S34 主窗口复核](docs/s34-main-review.md)。当前功能分支 `feature/lwt-snake-game` 的产品 tip 为 `f87e8b8`，其后为本轮审查/规划文档；未合入、未推送。实时远端 main 为 `9d562b7`。S35 仅规划为“先修复、再录制/验证/回放/接管”，完整 [派发提示](docs/s35-replay-handoff.md)已有内部修复门槛。S12 未开始。历史执行结果不等于本轮审查结论。
 
 ## 目标与课程评分
 
 依据[作业原文](大作业内容.md)，交付 LWT 解释型通用脚本语言及解释器、完整黑盒测试、LWT/Python 性能比较、人类与 Agent 开发指南、至少 200 行的 Agent 编写 LWT 应用及开发记录、Git 历史、介绍 PPT 和线下答辩。评分为解释器 20、测试 20、性能 10、指南 20、LWT 应用 30 分。
 
-课程应用包括 app/log_report.lwt（246 行有效 LWT）以及 S34 新增 app/lwt_snake/game.lwt（313 行有效 LWT，等待审查）。Python/Tkinter 前端、原 Python 贪吃蛇和编辑器插件是展示/开发工具；新 LWT Snake 的 Python 部分仅作桥接与绘图。
+课程应用包括 app/log_report.lwt（246 行有效 LWT）以及 S34 新增 app/lwt_snake/game.lwt（执行窗口统计 313 行有效 LWT，需修复复审）。Python/Tkinter 前端、原 Python 贪吃蛇和编辑器插件是展示/开发工具；新 LWT Snake 的 Python 部分仅作桥接与绘图。
 
 ## 当前 Git 快照
 
@@ -28,8 +28,9 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - S31：VS Code 扩展已通过主窗口复核（带明确未验证项），保留原提交并集成到 main；合并提交 `ddf1759fa4239eabc15488730917daec990da390`。人工 VSIX 安装/完整桌面操作和依赖线上 advisory 复核仍未验证。历史审查见[S31 主窗口复核](docs/s31-main-review.md)。
 - S32：原生 DAP 已通过主窗口复核、快进进入本地 `main`；精确提交的远端 CI 四格成功。执行窗口报告黑盒 287/287、全量 unittest 442 项；主窗口复跑 DAP 与 S30 定向 49 项及 VS Code Node 11 项／Extension Host 4 项。人工 VSIX 安装和桌面调试 UI 未执行。详见[执行报告](docs/s32-native-dap.md)与[审查记录](docs/s32-main-review.md)。
 - S33：黑盒 runner 选择与 UTF-8/Base64 JSON 契约、VS Code Test Explorer Run/Debug profile 已通过主窗口复核并集成到本地 `main`；修复批量错误终态，精确功能分支 SHA 的远端 CI 四格通过。人工鼠标/键盘编辑器验收仍未验证。详见[主窗口复核](docs/s33-main-review.md)及[执行报告](docs/s33-testing-workbench.md)。
-- S34：313 行有效 LWT 游戏规则、长期进程 bridge 与独立 Tk 入口已实施完成，等待主窗口审查；真实 CLI/bridge 与 Tk 合成事件证据见[阶段报告](docs/s34-lwt-snake.md)。原 Python Snake 与 246 行日志分析器保留。
-- S12：保留为最后交付阶段，在 S34 审查与集成后执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
+- S34：已实施，主窗口结论为需修复复审。独立定向 13 项中 12 通过、1 失焦失败；单独重跑该项通过。另独立复现转向饿死 TICK 缺陷；黑盒 287/287、完整性检查通过。详见[主窗口记录](docs/s34-main-review.md)，不要将[历史执行报告](docs/s34-lwt-snake.md)的全绿结果当成本轮通过。
+- S35：仅规划，沿用游戏大功能分支，先修复上述问题并独立提交，再开发可验证对局录制、回放与接管；若内部修复门槛不能满足，停在修复交接。见[完整派发提示](docs/s35-replay-handoff.md)。未实现，未合入 main。
+- S12：保留为最后交付阶段，在游戏阶段修复、审查与集成后执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
 
 ## 常用验证入口
 
