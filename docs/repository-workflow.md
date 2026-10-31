@@ -23,7 +23,7 @@
 | `milestone/language-extensions` | S23–S26 测试充分性、循环控制、模块、错误恢复 | `9006119fc6c98f151244ef06608d72730da1071e` |
 | `milestone/developer-tools` | S27–S30 检查、档案、LSP 与调试器 | `5cc109a4302212a772a4fe6589cd15d36a55b055` |
 
-这些分支是已有线性历史中的命名检查点，不额外复制提交。下一功能分支 `feature/editor-integration` 用于 S31；S12 是最终验收交付阶段。
+这些分支是已有线性历史中的命名检查点，不额外复制提交。`feature/editor-integration` 已从整理后的主线创建，用于 S31；创建分支不代表扩展已经实现。S12 是最终验收交付阶段。
 
 ## 本次集成核对
 
@@ -37,4 +37,4 @@
 
 推送前重新只读查询 `origin/main`，确认它仍是本地 `main` 的祖先。使用正常 `git push origin main` 和按需 `git push origin milestone/<功能>`；绝不使用强推、`--force-with-lease`、禁用证书校验或用远端旧 tip 覆盖本地。远端变化、TLS/鉴权失败时保留本地结果并报告。推送后的 SHA 和分支核对结果追加在此节。
 
-当前远端推送结果：**待本次整理完成后核验**。
+2026-10-31 推送核验：正常快进推送后，实时 `ls-remote` 显示远端 `main=42695ea6ecfbbf2400c6a8cc3fce1737bf64d4ea`；五个 `milestone/*` 分支均与上表 SHA 一致。`feature/editor-integration` 也已创建并推送，起点同为 `42695ea6ecfbbf2400c6a8cc3fce1737bf64d4ea`。本节的结果是同步当时的快照；此后以实时远端查询为准。远端 Actions 和新克隆验收仍待 S12 核验。
