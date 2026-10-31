@@ -62,7 +62,8 @@ class ModuleCliBoundaryTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 4)
         self.assertEqual(result.stdout, b"")
-        self.assertIn(b"ImportError: module path", result.stderr)
+        self.assertIn(b"ImportError:", result.stderr)
+        self.assertIn(b"module path", result.stderr)
         self.assertNotIn(b"Traceback", result.stderr)
 
     def test_invalid_utf8_dependency_is_load_error_before_output(self) -> None:

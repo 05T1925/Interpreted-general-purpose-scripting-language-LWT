@@ -38,3 +38,11 @@
 推送前重新只读查询 `origin/main`，确认它仍是本地 `main` 的祖先。使用正常 `git push origin main` 和按需 `git push origin milestone/<功能>`；绝不使用强推、`--force-with-lease`、禁用证书校验或用远端旧 tip 覆盖本地。远端变化、TLS/鉴权失败时保留本地结果并报告。推送后的 SHA 和分支核对结果追加在此节。
 
 2026-10-31 推送核验：先将 `main` 和 `feature/editor-integration` 推至 `42695ea6ecfbbf2400c6a8cc3fce1737bf64d4ea`，五个 `milestone/*` 分支按上表 SHA 建立；随后将远端 `main` 与 `feature/editor-integration` 正常快进至 `c2228d3fb40dc7bc0d64d5634ad0aacca0ac674a`，用于记录最终远端同步状态。最后一次推送后远端核验到这两个分支均为 `c2228d3`，五个里程碑分支仍与上表 SHA 一致。此处只记录 Git 引用；远端 Actions 和新克隆验收仍待 S12 核验。后续以实时远端查询为准。
+
+## 2026-10-31 GitHub Actions 失败复核
+
+提交 `42695ea`、`c2228d3`、`e9d3f10` 推送本身均成功；GitHub 页面上的红叉是 Actions 结果，不是 Git 提交或推送失败。相关失败 run 的四格矩阵都在完整 unittest 步骤退出码 1；此前的完整性检查、287 项语言黑盒测试和 Linux GUI 集成步骤均通过。最新失败详情可在[Actions 运行列表](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions)查看。
+
+日志揭示了两项测试断言问题：`tests/test_modules.py` 把模块路径错误消息的词序写死，但不同 OS/Python 给出 `ImportError: invalid module path ...` 或 `ImportError: module path ... is not a readable file`；`tests/test_lsp_server.py` 把 definition 返回 URI 与输入 URI 作字面相等比较，但 Windows 临时目录的 8.3 短路径会被规范化成完整路径。LSP 规范和实现都要求返回规范化 URI。修复分支 `fix/ci-cross-platform-assertions` 已放宽错误断言为稳定类别/主题检查，并把 LSP 期望值改为 `Path.resolve(strict=False).as_uri()`。
+
+在 Windows CPython 3.13.7 上，两个失败测试定向复验通过，全量 unittest **421 项通过**。提交修复后，应再检查当前 `main` SHA 的四格 Actions；本机测试不能替代 Linux、Python 3.10 和 Windows CI 结果。

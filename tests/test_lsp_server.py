@@ -64,6 +64,7 @@ class LspServerSubprocessTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="LWT LSP 中文 ") as directory:
             source_path = Path(directory) / "hello space.lwt"
             uri = source_path.as_uri()
+            expected_definition_uri = source_path.resolve(strict=False).as_uri()
             text = 'let mark = "😀";\nfn greet(name) { return name; }\nlet out = greet(mark);\nemit input();\n'
             changed = text + "missing();\n"
             messages = [
@@ -106,7 +107,7 @@ class LspServerSubprocessTests(unittest.TestCase):
         self.assertEqual([item["name"] for item in symbols], ["mark", "greet", "out"])
         self.assertEqual(responses[3]["result"]["contents"]["value"], "fn greet(name)")
         definition = responses[4]["result"]
-        self.assertEqual(definition["uri"], uri)
+        self.assertEqual(definition["uri"], expected_definition_uri)
         self.assertEqual(definition["range"]["start"], {"line": 1, "character": 3})
         self.assertIsNone(responses[5]["result"])
         self.assertEqual(responses[6]["error"]["code"], -32600)
