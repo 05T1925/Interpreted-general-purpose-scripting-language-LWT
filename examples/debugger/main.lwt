@@ -1,0 +1,6 @@
+import "math helpers.lwt" as math;
+
+let label = input();
+let values = [2, 3];
+let total = math.sum(values);
+emit label + ":" + str(total);

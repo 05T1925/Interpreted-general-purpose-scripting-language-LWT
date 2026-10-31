@@ -1,0 +1,7 @@
+fn sum(items) {
+    let total = 0;
+    each (item in items) {
+        total = total + item;
+    }
+    return total;
+}
