@@ -215,7 +215,9 @@ class LanguageService:
         for document in sorted(self.documents.values(), key=lambda item: item.uri):
             try:
                 graph = load_module_graph(
-                    str(document.path), source_overlays=self._overlays()
+                    str(document.path),
+                    source_overlays=self._overlays(),
+                    include_sources=True,
                 )
             except LwtError as error:
                 uri = self._error_uri(document, error)
@@ -256,12 +258,9 @@ class LanguageService:
         return diagnostics
 
     def _source_for(self, unit: ModuleUnit) -> str:
-        document = self.documents.get(path_key(unit.canonical_path))
-        if document is not None:
-            return document.text
-        # ModuleUnit retains only the parsed tree; on-disk text is read only for
-        # source-position features and never interpreted or executed here.
-        return unit.canonical_path.read_text(encoding="utf-8", errors="strict")
+        if unit.source_text is not None:
+            return unit.source_text
+        raise RuntimeError("source text was not retained by the language loader")
 
     @staticmethod
     def _static_uri(
@@ -319,6 +318,9 @@ class LanguageService:
             opened = self.documents.get(path_key(path))
             if opened is not None:
                 return opened.text
+            feature = self.features.get(path_key(path))
+            if feature is not None:
+                return feature.text
             return path.read_text(encoding="utf-8", errors="strict")
         except (OSError, UnicodeError, ValueError):
             return fallback.text
@@ -378,6 +380,9 @@ class LanguageService:
         document = self.documents.get(path_key(path))
         if document is not None:
             return document.text
+        feature = self.features.get(path_key(path))
+        if feature is not None:
+            return feature.text
         return path.read_text(encoding="utf-8", errors="strict")
 
     def _feature(self, uri: str) -> DocumentFeatures | None:

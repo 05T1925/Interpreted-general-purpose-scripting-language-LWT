@@ -23,6 +23,7 @@ class ModuleUnit:
     program: Program
     imports: dict[str, ModuleUnit] = field(default_factory=dict)
     source_sha256: str | None = None
+    source_text: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,11 +68,13 @@ def load_module_graph(
     *,
     include_hashes: bool = False,
     source_overlays: Mapping[Path, str] | None = None,
+    include_sources: bool = False,
 ) -> ModuleGraph:
     """Read, scan, parse, and link all static imports before execution.
 
     ``source_overlays`` is an optional editor-facing source provider keyed by
-    canonical paths. Normal CLI callers omit it and retain disk-only behavior.
+    canonical paths. ``include_sources`` retains decoded text for editor ranges;
+    normal CLI callers omit both and retain disk-only behavior.
     """
     overlays = source_overlays or {}
 
@@ -90,6 +93,7 @@ def load_module_graph(
         None,
         _parse(entry_text, None, module_mode=False),
         source_sha256=entry_sha256,
+        source_text=entry_text if include_sources else None,
     )
     by_path: dict[Path, ModuleUnit] = {entry_canonical: entry}
     ordered: list[ModuleUnit] = [entry]
@@ -145,7 +149,11 @@ def load_module_graph(
                     ) from None
                 program = _parse(source, display, module_mode=True)
                 imported = ModuleUnit(
-                    target, display, program, source_sha256=source_sha256
+                    target,
+                    display,
+                    program,
+                    source_sha256=source_sha256,
+                    source_text=source if include_sources else None,
                 )
                 by_path[target] = imported
                 ordered.append(imported)
