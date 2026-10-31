@@ -1,6 +1,6 @@
 # S31 规划：VS Code 扩展与统一开发工作流
 
-状态：S31 实施完成并经主窗口复核通过（带明确未验证项），尚未合入 main。该计划记录 S31 原始范围；S31 不实现 DAP。S32 原生 DAP 作为编辑器集成大阶段的后续提案，见 [S32 规划](s32-native-dap-plan.md)。
+原阶段状态：S31 实施完成并经主窗口复核通过（带明确未验证项），当时尚未合入 main。当前状态：S31 已通过正常非快进合并集成到 `feature/editor-integration`，并快进至 main；合并提交为 `ddf1759fa4239eabc15488730917daec990da390`。该计划记录 S31 原始范围；S31 不实现 DAP。S32 原生 DAP 的实际实现和证据见 [S32 执行报告](s32-native-dap.md)，设计契约见 [S32 规划](s32-native-dap-plan.md)。
 
 ## 目标
 

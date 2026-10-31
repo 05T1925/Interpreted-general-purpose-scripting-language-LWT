@@ -1,6 +1,6 @@
 # LWT Language Tools for VS Code
 
-Local VSIX extension sources for `.lwt` syntax highlighting, the existing LWT Language Server, and process tasks for run/check/CLI debug.
+Local VSIX extension sources for `.lwt` syntax highlighting, the existing LWT Language Server, Run/Check tasks, terminal CLI debugging, and a native DAP adapter for F5/Run and Debug.
 
 ## Build and test
 
@@ -22,4 +22,4 @@ code --install-extension .\lwt-language-tools-0.1.0.vsix
 
 No Marketplace publishing is configured. Remove the generated VSIX after local validation; it is a build artifact, not source.
 
-The repository's [extension guide](../../docs/vscode-extension.md) describes capabilities, settings, workflow semantics, and limitations.
+The repository's [extension guide](../../docs/vscode-extension.md) describes installation, settings, and workflow boundaries. The [DAP guide](../../docs/dap.md) covers launch configuration, source breakpoints, stepping, variables, stdin, and adapter limits.

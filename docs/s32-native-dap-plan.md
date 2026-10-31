@@ -1,10 +1,10 @@
-# S32 提案：LWT 的 VS Code 原生 Debug Adapter Protocol
+# S32 规划与验收契约：LWT 的 VS Code 原生 Debug Adapter Protocol
 
-状态：**提案已形成，尚未实现或派发。** S32 作为编辑器集成大阶段中的后续工作；S31 需先按仓库工作流保留原提交并合入功能分支。S12 仍为最后交付阶段。
+状态：**已在 `feature/editor-integration` 实现，等待主窗口审查。** 已审查 S31 的三个原始提交通过正常合并保留并集成，合并提交为 `ddf1759fa4239eabc15488730917daec990da390`；S32 实施证据见 [S32 阶段报告](s32-native-dap.md)。S12 仍为最后交付阶段。
 
 ## 目标与价值
 
-S31 已把 LWT Run、Check 和 CLI Debug 接入 VS Code，但 Debug 仍在集成终端使用文本命令。S32 拟实现原生 DAP 适配，使 VS Code 标准调试界面可以设置源码断点、单步、查看 LWT 调用栈和只读变量。它复用 S30 真实 LWT runtime hook，不再解析或模拟 LWT 语义。
+S31 把 LWT Run、Check 和 CLI Debug 接入 VS Code；S32 在此基础上实现原生 DAP，使 VS Code 标准调试界面可以设置源码断点、单步、查看 LWT 调用栈和只读变量。它复用 S30 真实 LWT runtime hook，不解析或模拟 LWT 语义。本文件保留设计边界与验收契约，实际实现结论以阶段报告为准。
 
 这是开发工具创新，不新增课程语言语法，不替代 30 分的 LWT 课程应用，也不能作为解释器评分的新增语言能力。答辩时应展示“源程序—断点—栈帧—变量”的可复现实证，同时清楚说明局限。
 
@@ -64,8 +64,8 @@ S31 已把 LWT Run、Check 和 CLI Debug 接入 VS Code，但 Debug 仍在集成
 ## Git 与交付边界
 
 - 开始前核对工作树、stage/s31、main、origin/main、feature/editor-integration 的实际 SHA 和远端 Actions，不因旧报告照抄基线。
-- 先把已审查 S31 保留原提交地集成到 feature/editor-integration 大阶段，再在该大阶段完成 S32；不能把 S31 实现丢掉或只复制当前工作区文件。
-- 集成前后记录提交关系。main 与 S31 当前已分叉；若发生与本方案不同的远端变化或冲突，停止破坏性操作，保留提交并报告。
+- 已在 `feature/editor-integration` 通过正常非快进合并集成 S31，保留了 S31 三个原始实现/测试/报告提交与 main 侧历史；完整关系见阶段报告。
+- S32 完成后保留在功能分支，等待主窗口复审；不得把未复审的 S32 合入 main。
 - 不强推、不 squash、不覆盖用户改动。保持 S31 与 S32 报告可单独追踪。
 - S32 完成后更新 README、project.md、AGENTS.md 中仅需长期保留的协作规则、VS Code/调试器说明、路线图、S12 规划、开发记录和验收矩阵。
 - S32 先经主窗口审查并按用户既有授权集成；S12 仍是最后的新克隆、CI、现场验收、PPT 与交付阶段。

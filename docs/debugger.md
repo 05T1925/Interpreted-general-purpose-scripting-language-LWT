@@ -1,4 +1,4 @@
-# LWT 源码级调试器（S30）
+# LWT 源码级调试器（S30/S32）
 
 调试器是 Python 实现的显式运行工具。它通过 LWT AST/runtime 的独立 hook，在 LWT 语句开始前暂停；它不会使用 Python pdb、sys.settrace 或宿主调用栈推测 LWT 状态。调试器会执行被调试程序。
 
@@ -11,6 +11,7 @@
 | python -m lwt --profile PROFILE SOURCE | 是 | 记录确定性运行档案，不交互 |
 | python -m lwt.lsp_server | 否 | stdio 静态编辑器辅助 |
 | python -m lwt.debugger SOURCE | 是 | 语句级交互调试 |
+| VS Code `type: lwt` DAP | 是 | 原生断点、单步、LWT 栈和只读变量 |
 
 调试器不增加 LWT 语法，不改变普通 CLI 输出/退出码，不修改 profile schema。调试信息写到 stderr；LWT emit 输出只写到 stdout。
 
@@ -104,6 +105,6 @@ print 只接受一个 ASCII LWT 标识符并通过 Environment.resolve 读取已
 
 ## 限制与故障排查
 
-当前不支持条件断点、命中计数条件、变量写入、表达式 watch、远程/线程调试、time-travel、异常停点或编辑器调试适配器。调试能力是 LWT 源码语句级，不是 Python 源码调试。
+当前 CLI 调试器不支持条件断点、命中计数条件、变量写入、表达式 watch、远程/线程调试、time-travel 或异常停点。VS Code 原生 DAP 范围与 launch 配置见 [DAP 使用说明](dap.md)；它复用同一调试控制层，不提供任意 Evaluate/Watch 或 SetVariable。调试能力是 LWT 源码语句级，不是 Python 源码调试。
 
 断点显示 unmapped 时先核对路径是否是当前工作目录下的加载模块，以及指定行是否确有可执行语句。调试脚本 EOF 表示脚本没有提供继续/单步命令，程序会按设计取消并返回 1。若程序需要 input()，总是用 --program-stdin 指定独立文件；调试命令脚本不会传给 LWT 程序。

@@ -47,3 +47,9 @@ S31 主窗口复核已通过并带明确遗留。下一次集成前必须再次�
 由于 S31 与当前 main 分叉，推荐在 feature/editor-integration 上从最新 main 开始，用保留原提交的正常非快进合并集成 S31；不要 cherry-pick 后误称原始 SHA 未变，也不要 reset、rebase 或强推。解决冲突后复核文档状态、运行相关回归，再让 main 快进到经过审查的功能分支 tip。任何远端变化、冲突或验证失败都保留本地提交并报告，不猜测、不覆盖。
 
 S32 若获用户派发，仍属于编辑器集成大阶段，可继续使用 feature/editor-integration，不必新建 stage/s32 分支。S12 仍是最后交付阶段。推送只用正常 push；推送后再以 git ls-remote 与 Actions run SHA 核对远端事实。
+
+## S31 集成与 S32 执行快照（2026-10-31）
+
+S31 主窗口复核通过（带明确未验证项）后，按正常非快进合并保留两侧提交：S31 原始实现/测试/报告提交 `938d029`、`21506b1`、`d257154`，以及文档更正提交 `007c774` 均在祖先历史中；集成提交为 `ddf1759fa4239eabc15488730917daec990da390`。该提交将本地和远端 `main`、`feature/editor-integration` 汇合，S31 原提交未 squash、未重写。集成前后的黑盒/单元测试、完整性、Extension Host、VSIX 与 Actions 见 [S32 执行报告](s32-native-dap.md)。
+
+S32 在 `feature/editor-integration` 继续完成，未合入 main。S32 最终实现 SHA、分层提交和测试报告以 [S32 执行报告](s32-native-dap.md)为准。S32 执行期间一次 `git ls-remote --heads origin main feature/editor-integration stage/s31-vscode-extension` 只读复核因 Schannel TLS 握手失败而未取得新的实时结果；此前成功核实的两条主分支均指向 `ddf1759`。网络错误不是远端分支未变化的证据，必须在报告中单独保留。
