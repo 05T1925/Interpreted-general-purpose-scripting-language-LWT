@@ -127,7 +127,9 @@ class BridgeFaultTests(unittest.TestCase):
         scripts = ["import sys; sys.stdout.buffer.write(b'\\xff\\n'); sys.stdout.flush()", "print('x'*5000)", "import sys; sys.stdout.write('partial'); sys.stdout.flush()", f"import sys; sys.stdout.buffer.write({valid!r}+{valid!r}); sys.stdout.flush()", f"import sys; sys.stdout.buffer.write({valid.replace(b'000001', b'000002')!r}); sys.stdout.flush()"]
         for script in scripts:
             with self.subTest(script=script[:60]):
-                bridge = self.fault(script)
+                # Wait for INIT, then keep the child alive so rejection cannot
+                # pass merely because an already-dead child was observed.
+                bridge = self.fault('import sys; sys.stdin.buffer.readline(); ' + script + '; import time; time.sleep(5)')
                 with self.assertRaises(BridgeFailure):
                     bridge.start()
                     bridge.request('START')
