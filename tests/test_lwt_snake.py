@@ -33,6 +33,9 @@ class LwtSnakeRuleTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.replace(b'\r\n', b'\n'), expected.replace(b'\r\n', b'\n'))
         self.assertEqual(result.stderr, b'')
+        rules = subprocess.run([sys.executable, '-u', '-m', 'lwt', str(GAME_SOURCE)], cwd=ROOT, input=(ROOT/'app/lwt_snake/rules.commands').read_bytes(), capture_output=True, timeout=10)
+        self.assertEqual((rules.returncode, rules.stderr), (0, b''))
+        self.assertEqual(rules.stdout.replace(b'\r\n', b'\n'), (ROOT/'app/lwt_snake/rules.expected').read_bytes().replace(b'\r\n', b'\n'))
         empty = subprocess.run([sys.executable, '-u', '-m', 'lwt', str(GAME_SOURCE)], cwd=ROOT, input=b'', capture_output=True, timeout=10)
         self.assertEqual((empty.returncode, empty.stdout, empty.stderr), (0, b'', b''))
 
