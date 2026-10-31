@@ -1,0 +1,47 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "LWT",
+  "scopeName": "source.lwt",
+  "patterns": [
+    {
+      "name": "comment.line.number-sign.lwt",
+      "match": "#.*$"
+    },
+    {
+      "name": "string.quoted.double.lwt",
+      "match": "\"(?:\\\\[\\\\\"nt]|[^\"\\\\\\n])*\""
+    },
+    {
+      "name": "constant.numeric.integer.lwt",
+      "match": "(?<![A-Za-z0-9_])[0-9]+(?![A-Za-z0-9_])"
+    },
+    {
+      "name": "constant.language.boolean.null.lwt",
+      "match": "\\b(?:true|false|null)\\b"
+    },
+    {
+      "name": "keyword.control.lwt",
+      "match": "\\b(?:record|fn|let|when|otherwise|while|each|in|return|emit|and|or|not|break|continue|import|attempt|recover)\\b"
+    },
+    {
+      "name": "support.function.builtin.lwt",
+      "match": "\\b(?:input|args|read_text|len|split|trim|to_int|str|fail|push)\\b(?=\\s*\\()"
+    },
+    {
+      "name": "entity.name.function.lwt",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\([^)]*\\)\\s*\\{)"
+    },
+    {
+      "name": "keyword.operator.lwt",
+      "match": "==|!=|<=|>=|[+*/%<>=-]"
+    },
+    {
+      "name": "punctuation.separator.lwt",
+      "match": "[(){}\\[\\],:;.]"
+    },
+    {
+      "name": "variable.other.lwt",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+    }
+  ]
+}

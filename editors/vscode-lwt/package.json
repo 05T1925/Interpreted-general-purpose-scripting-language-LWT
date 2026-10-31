@@ -1,0 +1,123 @@
+{
+  "name": "lwt-language-tools",
+  "displayName": "LWT Language Tools",
+  "description": "Syntax highlighting, static language services, and CLI workflows for LWT.",
+  "version": "0.1.0",
+  "publisher": "05t1925",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT.git",
+    "directory": "editors/vscode-lwt"
+  },
+  "engines": {
+    "vscode": "^1.144.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "lwt",
+    "language-server"
+  ],
+  "main": "./out/src/extension.js",
+  "activationEvents": [
+    "onLanguage:lwt",
+    "workspaceContains:**/*.lwt",
+    "onCommand:lwt.runCurrentFile",
+    "onCommand:lwt.checkCurrentFile",
+    "onCommand:lwt.debugCurrentFile"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "lwt",
+        "aliases": [
+          "LWT",
+          "lwt"
+        ],
+        "extensions": [
+          ".lwt"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "lwt",
+        "scopeName": "source.lwt",
+        "path": "./syntaxes/lwt.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "lwt",
+        "path": "./snippets/lwt.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "lwt.runCurrentFile",
+        "title": "LWT: Run Current File",
+        "category": "LWT"
+      },
+      {
+        "command": "lwt.checkCurrentFile",
+        "title": "LWT: Check Current File",
+        "category": "LWT"
+      },
+      {
+        "command": "lwt.debugCurrentFile",
+        "title": "LWT: Debug Current File in Terminal",
+        "category": "LWT"
+      }
+    ],
+    "configuration": {
+      "title": "LWT",
+      "properties": {
+        "lwt.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Python executable used to start the LWT language server and CLI."
+        },
+        "lwt.workingDirectory": {
+          "type": "string",
+          "default": "",
+          "description": "Working directory for Run, Check, and Debug tasks. Empty uses the single workspace folder; relative paths resolve from that folder."
+        },
+        "lwt.programArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Arguments passed to the LWT program after the CLI -- separator."
+        },
+        "lwt.programStdin": {
+          "type": "string",
+          "default": "",
+          "description": "Optional UTF-8 input file for Debug. Relative paths resolve from the configured working directory; without it the program receives EOF."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "test:unit": "npm run compile && node --test out/tests/workflow.test.js out/tests/manifest.test.js",
+    "test:host": "npm run compile && node ./out/tests/run-host-tests.js",
+    "test": "npm run test:unit && npm run test:host",
+    "package": "npm run compile && vsce package"
+  },
+  "dependencies": {
+    "vscode-languageclient": "11.0.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "10.0.10",
+    "@types/node": "24.10.0",
+    "@types/vscode": "1.144.0",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "4.1.0",
+    "mocha": "12.0.3",
+    "typescript": "7.0.2"
+  }
+}

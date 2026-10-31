@@ -1,14 +1,14 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库包含 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。用户授权后，S23–S30 的实现提交已按顺序快进纳入 `main`，保留原始历史；各阶段报告中的审查状态仍需单独核对。S31 编辑器集成尚无已提交实现，最后的 S12 负责新克隆、CI、PPT 和答辩交付。当前入口见[项目上下文](project.md)、[仓库分支与同步记录](docs/repository-workflow.md)及[最终交付规划](docs/s12-final-delivery-plan.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。当前主线与远端 main 为 f9db64d；S0–S30 的提交已在 main 历史，S31 在独立阶段分支完成并经主窗口复核（带遗留），尚未集成。S31 的扩展接入现有 LSP、Check、Run 和终端 CLI Debug；S32 原生 DAP 仍是未开始的提案。S12 保留为最后交付阶段。精确分支快照见 [project.md](project.md)，Git 关系见 [仓库工作流](docs/repository-workflow.md)。课程 LWT 应用仍是 app/log_report.lwt。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：历史阶段与审查记录；S23–S30 的代码已在本地主线，逐阶段审查记录仍待整理。
-5. [正式语言规范](docs/language-spec.md)：LWT 语法和语义；S24 循环控制及 S25 静态模块补充等待主窗口审查。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：阶段接力与审查门槛；S31 已复核待集成，S32 为未开始提案，随后进入最终收尾 S12。
+5. [正式语言规范](docs/language-spec.md)：LWT 语法和语义；S24 循环控制和 S25 静态模块的规则以此为准。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
 8. [Agent Skill](.agents/skills/lwt-app/SKILL.md)：仓库内 LWT 应用编写/调试工作流；是否被其他 Agent 平台自动发现取决于该平台。
@@ -55,7 +55,7 @@ python -m lwt --check examples/modules/main.lwt
 python -m lwt --check --format=json examples/modules/main.lwt
 ```
 
-该工具检查可确定的名字、调用参数数量和 record 字段集合，不做完整类型或控制流证明。它不是新的源语言语法，普通 `python -m lwt SOURCE [-- ARGS...]` 执行行为保持不变。诊断码、JSON schema 和边界见[静态检查器说明](docs/static-checker.md)。S27 等待主窗口审查；S12 尚未开始。
+该工具检查可确定的名字、调用参数数量和 record 字段集合，不做完整类型或控制流证明。它不是新的源语言语法，普通 `python -m lwt SOURCE [-- ARGS...]` 执行行为保持不变。诊断码、JSON schema 和边界见[静态检查器说明](docs/static-checker.md)。S27 已进入 main；历史阶段状态以报告时间为准。
 
 运行仓库结构完整性检查：
 
@@ -160,11 +160,9 @@ S15–S18 已通过主窗口审查并合入本地 `main`。S17 主窗口实际�
 
 S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/Tkinter 附加演示，并非第二个 LWT 应用**；不会替代 `app/log_report.lwt`，也不计入课程要求的 LWT 有效代码行数。S17 为两个 GUI 提取共享主题并修复 Snake 结束态重开；S18 没有改变 Snake 规则。桌面复核状态见[S18 工作报告](docs/s18-workbench.md)。
 
-应用测试经公开 CLI 运行，不纳入语言黑盒矩阵；S8 历史基线为 194 项，S23 阶段实测为 195 项，S24 当前实测为 217 项。并发工具使用固定输入分别同时启动 1、2、4 个独立操作系统进程，不代表 LWT 线程支持；原始逐试次结果位于[`reports/app-concurrency.json`](reports/app-concurrency.json)。
+应用测试经公开 CLI 运行，不纳入语言黑盒矩阵；S8 历史基线为 194 项，S23 阶段实测为 195 项，S24 阶段实测为 217 项，后续阶段报告记录的当前基数为 287 项。并发工具使用固定输入分别同时启动 1、2、4 个独立操作系统进程，不代表 LWT 线程支持；原始逐试次结果位于[`reports/app-concurrency.json`](reports/app-concurrency.json)。
 
 ## S11 性能实验
-
-S11–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互仍未验证，详见[主窗口复核](docs/s21-main-review.md)。S22 控件/事件回归不等于人工桌面验收。S23–S30 的代码已按用户授权纳入本地 `main`，其逐阶段审查记录仍须整理。S31 编辑器集成完成并审查后，进入最后的 S12；见[最终交付规划](docs/s12-final-delivery-plan.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
@@ -182,7 +180,7 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现支持标量、变量/块、I/O、分支循环、函数、数组/record、文本内置函数、静态函数模块与受限错误恢复。S27 `--check`、S28 `--profile`、S29 Language Server 和 S30 调试器都是开发工具，不属于 LWT 语言语义；LSP 不执行被分析源码，调试器会执行它。语言黑盒仍为 S26 的 287 项；S29/S30 工具测试单列于 unittest。S12 尚未开始。Python 3.10、Linux、远端 Actions、真实编辑器集成和 S30 主窗口复审均未由此分支证明；S29 协议 smoke 不代表编辑器集成通过。详见各阶段报告与[最终交付规划](docs/s12-final-delivery-plan.md)。
+当前实现支持标量、变量/块、I/O、分支循环、函数、数组/record、文本内置函数、静态函数模块与受限错误恢复。S27 `--check`、S28 `--profile`、S29 Language Server、S30 调试器和 S31 VS Code 扩展都是开发工具，不属于 LWT 语言语义；LSP 不执行被分析源码，调试器会执行它。语言黑盒仍为 S26 的 287 项；工具测试单列于 unittest。S31 Extension Host 在 Windows 上实测通过；S31 分支自身的 Python 3.10/Linux/远端 CI 与人工编辑器安装验收仍未验证。main 的 f9db64d 四格 CI 已通过，但不覆盖 S31。S12 尚未开始。详见各阶段报告与[最终交付规划](docs/s12-final-delivery-plan.md)。
 
 ## S28 执行档案与覆盖率报告
 
@@ -193,12 +191,16 @@ python -m lwt --profile reports/run.json examples/modules/main.lwt
 python tools/render_lwt_profile.py reports/run.json --output reports/run.html
 ```
 
-日志应用的两个固定 profile 场景及合并报告可用 `python tools/run_app_profile_scenarios.py` 重新生成；已提交的 [JSON](reports/app-lwt-profile.json) 和[离线 HTML](reports/app-lwt-profile.html) 保留默认与 `WARN + retry + top=2` 两次运行的独立事件。覆盖率不证明正确性；profile 模式有额外运行开销，不得用于 S11 性能对照。该工具不修改 `app/log_report.lwt`，也不更新 S10 并发证据。实现/schema/限制见[执行档案说明](docs/execution-profile.md)，阶段实现、实测与保护文件检查见[S28 报告](docs/s28-execution-observability.md)。当前 S28 实施完成、等待主窗口审查；S12 未开始。
+日志应用的两个固定 profile 场景及合并报告可用 `python tools/run_app_profile_scenarios.py` 重新生成；已提交的 [JSON](reports/app-lwt-profile.json) 和[离线 HTML](reports/app-lwt-profile.html) 保留默认与 `WARN + retry + top=2` 两次运行的独立事件。覆盖率不证明正确性；profile 模式有额外运行开销，不得用于 S11 性能对照。该工具不修改 `app/log_report.lwt`，也不更新 S10 并发证据。实现/schema/限制见[执行档案说明](docs/execution-profile.md)，阶段实现、实测与保护文件检查见[S28 报告](docs/s28-execution-observability.md)。S28 已在 main 历史中；固定 profile 证据仍受保护。
 
 ## S29 LWT Language Server
 
-`python -m lwt.lsp_server` 启动仅用 stdio 的静态语言服务，提供文档同步、诊断、document symbols、hover 和 definition。它复用 lexer/parser、模块 overlay loader 与 S27 analyzer；不调用 runtime、不执行 LWT 程序，不提供补全/格式化/重命名，也不是完整 VS Code 扩展。协议子集和通用 client 启动方式见[Language Server 使用说明](docs/language-server.md)；`python tools/run_lsp_smoke.py` 会启动真实 server 子进程并生成脱敏固定证据。协议 smoke 不等同真实编辑器集成。S29 等待主窗口审查，S12 尚未开始。
+`python -m lwt.lsp_server` 启动仅用 stdio 的静态语言服务，提供文档同步、诊断、document symbols、hover 和 definition。它复用 lexer/parser、模块 overlay loader 与 S27 analyzer；不调用 runtime、不执行 LWT 程序，不提供补全/格式化/重命名，也不是完整 VS Code 扩展。协议子集和通用 client 启动方式见[Language Server 使用说明](docs/language-server.md)；`python tools/run_lsp_smoke.py` 会启动真实 server 子进程并生成脱敏固定证据。协议 smoke 不等同真实编辑器集成。S29 已在 main 历史中；编辑器集成见 S31/S32 状态。
 
 ## S30 LWT 源码级交互调试器
 
-`python -m lwt.debugger [--commands COMMAND_FILE] [--program-stdin INPUT_FILE] SOURCE [-- ARGS...]` 使用 AST/runtime 调试钩子逐条运行真实 LWT 程序，提供精确行断点、step/next/finish、LWT 调用栈和只读变量查看。调试命令 stdin 与程序 stdin 分离；调试信息写 stderr，LWT `emit` 保持 stdout。它不使用 Python `pdb`/`sys.settrace`，不增加 LWT 语法，也不改变普通 CLI 或 S28 profile。说明、可复现示例和限制见[调试器文档](docs/debugger.md)；S30 等待主窗口审查，S12 尚未开始。
+`python -m lwt.debugger [--commands COMMAND_FILE] [--program-stdin INPUT_FILE] SOURCE [-- ARGS...]` 使用 AST/runtime 调试钩子逐条运行真实 LWT 程序，提供精确行断点、step/next/finish、LWT 调用栈和只读变量查看。调试命令 stdin 与程序 stdin 分离；调试信息写 stderr，LWT `emit` 保持 stdout。它不使用 Python `pdb`/`sys.settrace`，不增加 LWT 语法，也不改变普通 CLI 或 S28 profile。说明、可复现示例和限制见[调试器文档](docs/debugger.md)；S30 已在 main 历史中；VS Code 原生 DAP 仍是 S32 提案。
+
+## S31 VS Code 扩展
+
+本地 VS Code 扩展源位于 editors/vscode-lwt/，关联 .lwt 文件，复用 S29 LSP、S27 Check、普通 CLI 和 S30 CLI debugger。Run、Check、Debug 使用参数数组；Check 不执行程序，S31 Debug 是终端 CLI 调试器，不是原生 DAP。S31 已通过主窗口复核（带遗留）但尚未集成；S32 原生 DAP 已规划、未开始。扩展限制见[说明](docs/vscode-extension.md)，审查证据见[S31 主窗口复核](docs/s31-main-review.md)。
