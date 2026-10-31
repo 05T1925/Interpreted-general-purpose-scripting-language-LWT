@@ -41,7 +41,7 @@ test("manifest, language id, commands, configuration and launcher are consistent
   assert.equal(manifest.contributes.grammars[0].language, "lwt");
   assert.equal(manifest.contributes.snippets[0].language, "lwt");
   assert.deepEqual(manifest.contributes.commands.map((item) => item.command), [
-    "lwt.runCurrentFile", "lwt.checkCurrentFile", "lwt.debugCurrentFile",
+    "lwt.runCurrentFile", "lwt.checkCurrentFile", "lwt.debugCurrentFile", "lwt.refreshTests",
   ]);
   for (const command of manifest.contributes.commands) {
     assert.ok(manifest.activationEvents.includes(`onCommand:${command.command}`));
@@ -68,6 +68,7 @@ test("manifest, language id, commands, configuration and launcher are consistent
     stdinFile: "",
   });
   assert.ok(manifest.activationEvents.includes("onDebugResolve:lwt"));
+  assert.ok(manifest.activationEvents.includes("onStartupFinished"));
   assert.deepEqual(lock.packages[""].dependencies, manifest.dependencies);
   assert.deepEqual(lock.packages[""].devDependencies, manifest.devDependencies);
   const source = fs.readFileSync(path.join(extensionRoot, "src", "extension.ts"), "utf8");
@@ -75,6 +76,8 @@ test("manifest, language id, commands, configuration and launcher are consistent
   assert.match(source, /new vscode\.ProcessExecution\(spec\.executable, \[\.\.\.spec\.args\], \{ cwd: spec\.cwd \}\)/);
   assert.match(source, /new vscode\.DebugAdapterExecutable\(spec\.executable, \[\.\.\.spec\.args\], \{ cwd: spec\.cwd \}\)/);
   assert.match(source, /buildDapAdapterSpec\(/);
+  assert.match(source, /createTestingWorkbench\(/);
+  assert.match(source, /lwt\.refreshTests/);
   assert.doesNotMatch(source, /shell\s*:\s*true|child_process|spawn\s*\(/);
 });
 

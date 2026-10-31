@@ -1,7 +1,7 @@
 {
   "name": "lwt-language-tools",
   "displayName": "LWT Language Tools",
-  "description": "Syntax highlighting, static language services, CLI workflows, and native debugging for LWT.",
+  "description": "Syntax highlighting, static language services, CLI workflows, black-box Test Explorer, and native debugging for LWT.",
   "version": "0.1.0",
   "publisher": "05t1925",
   "license": "UNLICENSED",
@@ -22,11 +22,13 @@
   ],
   "main": "./out/src/extension.js",
   "activationEvents": [
+    "onStartupFinished",
     "onLanguage:lwt",
     "workspaceContains:**/*.lwt",
     "onCommand:lwt.runCurrentFile",
     "onCommand:lwt.checkCurrentFile",
     "onCommand:lwt.debugCurrentFile",
+    "onCommand:lwt.refreshTests",
     "onDebugResolve:lwt",
     "onDebugInitialConfigurations:lwt"
   ],
@@ -71,6 +73,11 @@
       {
         "command": "lwt.debugCurrentFile",
         "title": "LWT: Debug Current File in Terminal",
+        "category": "LWT"
+      },
+      {
+        "command": "lwt.refreshTests",
+        "title": "LWT: Refresh Black-box Tests",
         "category": "LWT"
       }
     ],
@@ -156,7 +163,7 @@
   },
   "scripts": {
     "compile": "tsc -p .",
-    "test:unit": "npm run compile && node --test out/tests/workflow.test.js out/tests/manifest.test.js",
+    "test:unit": "npm run compile && node --test out/tests/workflow.test.js out/tests/manifest.test.js out/tests/testing.test.js",
     "test:host": "npm run compile && node ./out/tests/run-host-tests.js",
     "test": "npm run test:unit && npm run test:host",
     "package": "npm run compile && vsce package"

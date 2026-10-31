@@ -84,7 +84,7 @@ function debugMessageWaiter() {
       }
     }
   };
-  return { waitFor, record };
+  return { waitFor, record, messages: () => [...messages] };
 }
 
 suite("LWT VS Code extension host", () => {
@@ -95,10 +95,182 @@ suite("LWT VS Code extension host", () => {
     assert.ok(extension, `extension ${extensionId} was not found`);
     await extension.activate();
     const commands = await vscode.commands.getCommands(true);
-    for (const command of ["lwt.runCurrentFile", "lwt.checkCurrentFile", "lwt.debugCurrentFile"]) {
+    for (const command of ["lwt.runCurrentFile", "lwt.checkCurrentFile", "lwt.debugCurrentFile", "lwt.refreshTests"]) {
       assert.ok(commands.includes(command), `missing command ${command}`);
     }
     assert.ok((await vscode.languages.getLanguages()).includes("lwt"));
+  });
+
+  test("Test Explorer discovers, selects, reports failure, cancels and refreshes runner cases", async () => {
+    assert.ok(workspaceRoot);
+    const extension = vscode.extensions.getExtension(extensionId);
+    assert.ok(extension);
+    const api = (await extension.activate()) as { testing: {
+      controller: vscode.TestController;
+      refresh(): Promise<void>;
+      snapshot(): { cases: number; categories: number };
+      diagnostic(): string | undefined;
+      getCaseItem(id: string): vscode.TestItem | undefined;
+      runIds(ids: readonly string[], options?: {
+        exclude?: readonly string[];
+        token?: vscode.CancellationToken;
+        onRunnerStarted?: () => void;
+      }): Promise<readonly { id: string; status: string; failureKind?: string }[]>;
+    } };
+    await api.testing.refresh();
+    assert.equal(api.testing.diagnostic(), undefined, `Test Explorer discovery failed: ${api.testing.diagnostic()}`);
+    assert.deepEqual(api.testing.snapshot(), { cases: 287, categories: 9 });
+    assert.equal(api.testing.controller.items.size, 9);
+    const integratedCategory = api.testing.controller.items.get("category:integrated");
+    assert.ok(integratedCategory);
+    assert.ok(integratedCategory.children.get("case:integrated-control-and-record"));
+    const sourceItem = api.testing.getCaseItem("args-empty");
+    assert.ok(sourceItem?.uri);
+    await vscode.commands.executeCommand("vscode.open", sourceItem.uri);
+    assert.equal(vscode.window.activeTextEditor?.document.uri.toString(), sourceItem.uri.toString());
+
+    const single = await api.testing.runIds(["args-empty"]);
+    assert.deepEqual(single.map((item) => [item.id, item.status]), [["args-empty", "passed"]]);
+    const batch = await api.testing.runIds(
+      ["integrated", "integrated-control-and-record", "integrated-control-and-record"],
+      { exclude: ["integrated-runtime-failure-preserves-stdout"] },
+    );
+    assert.equal(batch.length, 2);
+    assert.equal(new Set(batch.map((item) => item.id)).size, 2);
+    assert.ok(batch.every((item) => item.status === "passed"));
+
+    const temporaryCategory = path.join(workspaceRoot, "tests", "cases", "s33-host");
+    fs.mkdirSync(temporaryCategory, { recursive: true });
+    const addCase = (id: string, source: string, stdout: string): void => {
+      fs.writeFileSync(path.join(temporaryCategory, `${id}.lwt`), source, "utf8");
+      fs.writeFileSync(path.join(temporaryCategory, `${id}.json`), JSON.stringify({
+        id,
+        spec_refs: ["4"],
+        tags: ["host-test"],
+        args: [],
+        stdin: { text: "" },
+        expected: { exit_code: 0, stdout, stderr: "" },
+        timeout_seconds: 30,
+      }), "utf8");
+    };
+    try {
+      addCase("s33-host-failure", 'emit "actual";\n', "expected\n");
+      addCase("s33-host-cancel", "while (true) { }\n", "");
+      await api.testing.refresh();
+      assert.deepEqual(api.testing.snapshot(), { cases: 289, categories: 10 });
+      const failure = await api.testing.runIds(["s33-host-failure"]);
+      assert.equal(failure[0].status, "failed");
+      assert.equal(failure[0].failureKind, "assertion_failure");
+
+      const token = new vscode.CancellationTokenSource();
+      let runnerStarted!: () => void;
+      const started = new Promise<void>((resolve) => { runnerStarted = resolve; });
+      const cancellationRun = api.testing.runIds(["s33-host-cancel"], {
+        token: token.token,
+        onRunnerStarted: runnerStarted,
+      });
+      await started;
+      token.cancel();
+      const cancelled = await cancellationRun;
+      token.dispose();
+      assert.equal(cancelled[0].status, "cancelled");
+    } finally {
+      fs.rmSync(temporaryCategory, { recursive: true, force: true });
+      await api.testing.refresh();
+      assert.deepEqual(api.testing.snapshot(), { cases: 287, categories: 9 });
+    }
+  });
+
+  test("Debug profile runs an eligible case through DAP and never marks it passed", async () => {
+    assert.ok(workspaceRoot);
+    const extension = vscode.extensions.getExtension(extensionId);
+    assert.ok(extension);
+    const api = (await extension.activate()) as { testing: {
+      refresh(): Promise<void>;
+      getCaseItem(id: string): vscode.TestItem | undefined;
+      debugCase(id: string): Promise<{ id: string; status: string }>;
+    } };
+    await api.testing.refresh();
+    for (const id of ["cli-no-arguments", "division-by-zero", "input-invalid-utf8"]) {
+      const item = api.testing.getCaseItem(id);
+      assert.ok(item);
+      assert.ok(!item.tags.some((tag) => tag.id === "lwt-debuggable"), `${id} must not offer Debug`);
+      assert.equal((await api.testing.debugCase(id)).status, "unsupported");
+    }
+
+    const temporaryCategory = path.join(workspaceRoot, "tests", "cases", "s33-debug");
+    fs.mkdirSync(temporaryCategory, { recursive: true });
+    const id = "s33-debug-eligible";
+    const source = "let value = input();\nemit value;\nemit args();\n";
+    fs.writeFileSync(path.join(temporaryCategory, `${id}.lwt`), source, "utf8");
+    fs.writeFileSync(path.join(temporaryCategory, `${id}.json`), JSON.stringify({
+      id,
+      spec_refs: ["4"],
+      tags: ["host-debug"],
+      args: ["two words", "雪"],
+      stdin: { text: "debug λ\n" },
+      expected: { exit_code: 0, stdout: 'debug λ\n["two words", "雪"]\n', stderr: "" },
+      timeout_seconds: 30,
+    }), "utf8");
+    const tracked = debugMessageWaiter();
+    const trackerFactory = vscode.debug.registerDebugAdapterTrackerFactory("lwt", {
+      createDebugAdapterTracker: () => ({
+        onWillReceiveMessage: (message) => tracked.record(message),
+        onDidSendMessage: (message) => tracked.record(message),
+      }),
+    });
+    let breakpoint: vscode.SourceBreakpoint | undefined;
+    let debugSession: vscode.DebugSession | undefined;
+    const sessionStarted = new Promise<vscode.DebugSession>((resolve) => {
+      const subscription = vscode.debug.onDidStartDebugSession((session) => {
+        if (session.type === "lwt" && session.configuration.name?.startsWith("LWT Test Debug ")) {
+          debugSession = session;
+          subscription.dispose();
+          resolve(session);
+        }
+      });
+    });
+    try {
+      await api.testing.refresh();
+      const item = api.testing.getCaseItem(id);
+      assert.ok(item?.uri);
+      assert.ok(item.tags.some((tag) => tag.id === "lwt-debuggable"));
+      breakpoint = new vscode.SourceBreakpoint(new vscode.Location(item.uri, new vscode.Position(0, 0)), true);
+      vscode.debug.addBreakpoints([breakpoint]);
+      const launchPromise = tracked.waitFor((message) => message.type === "request" && message.command === "launch");
+      const stoppedPromise = tracked.waitFor((message) => message.type === "event" && message.event === "stopped");
+      const debugCompletion = api.testing.debugCase(id);
+      const launch = await launchPromise;
+      const session = await sessionStarted;
+      const launchArguments = launch.arguments as Record<string, unknown>;
+      assert.equal(launchArguments.program, item.uri.fsPath);
+      assert.equal(launchArguments.cwd, workspaceRoot);
+      assert.deepEqual(launchArguments.args, ["two words", "雪"]);
+      const stdinFile = launchArguments.stdinFile as string;
+      assert.ok(fs.existsSync(stdinFile));
+      const breakpointResponse = await tracked.waitFor((message) => message.type === "response" && message.command === "setBreakpoints");
+      assert.equal((breakpointResponse.body as { breakpoints: Array<{ verified: boolean }> }).breakpoints[0].verified, true);
+      const stopped = await stoppedPromise;
+      assert.equal((stopped.body as { reason: string }).reason, "breakpoint");
+      const terminatedPromise = tracked.waitFor((message) => message.type === "event" && message.event === "terminated");
+      await session.customRequest("continue", { threadId: 1 });
+      await terminatedPromise;
+      const stdout = tracked.messages()
+        .filter((message) => message.type === "event" && message.event === "output")
+        .map((message) => message.body as { category?: string; output?: string })
+        .filter((body) => body.category === "stdout")
+        .map((body) => body.output ?? "")
+        .join("");
+      assert.equal(stdout, 'debug λ\n["two words", "雪"]\n');
+      assert.equal((await debugCompletion).status, "debug_completed_unverified");
+      assert.equal(fs.existsSync(stdinFile), false);
+    } finally {
+      if (debugSession) await Promise.resolve(vscode.debug.stopDebugging(debugSession)).catch(() => false);
+      if (breakpoint) vscode.debug.removeBreakpoints([breakpoint]);
+      trackerFactory.dispose();
+      fs.rmSync(temporaryCategory, { recursive: true, force: true });
+      await api.testing.refresh();
+    }
   });
 
   test("real LSP subprocess publishes and clears diagnostics, hover and definition", async () => {

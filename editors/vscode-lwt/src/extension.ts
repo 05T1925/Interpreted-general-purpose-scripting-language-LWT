@@ -13,6 +13,7 @@ import {
   WorkflowMode,
   WorkflowConfigurationError,
 } from "./workflow";
+import { createTestingWorkbench, WorkbenchApi } from "./testing";
 
 const LANGUAGE_ID = "lwt";
 const TASK_TYPE = "lwt";
@@ -20,16 +21,27 @@ let activeClient: LanguageClient | undefined;
 let restartQueue = Promise.resolve();
 let disposed = false;
 const activeTasks = new Map<string, Promise<vscode.TaskExecution>>();
+let activeTestingWorkbench: WorkbenchApi | undefined;
 
 export interface ExtensionTestApi {
   createTask(mode: WorkflowMode, document: vscode.TextDocument): vscode.Task;
   createDebugConfiguration(document: vscode.TextDocument): vscode.DebugConfiguration;
+  testing: WorkbenchApi;
 }
 
 export function activate(context: vscode.ExtensionContext): ExtensionTestApi {
   disposed = false;
   const output = vscode.window.createOutputChannel("LWT", { log: true });
   context.subscriptions.push(output);
+  const testing = createTestingWorkbench(
+    vscode,
+    context,
+    () => vscode.workspace.workspaceFolders ?? [],
+    () => vscode.workspace.getConfiguration("lwt").get<string>("pythonPath", "python"),
+    output,
+  );
+  activeTestingWorkbench = testing;
+  context.subscriptions.push(vscode.commands.registerCommand("lwt.refreshTests", () => testing.refresh()));
   context.subscriptions.push(
     vscode.tasks.registerTaskProvider(TASK_TYPE, {
       provideTasks: () => [],
@@ -102,11 +114,17 @@ export function activate(context: vscode.ExtensionContext): ExtensionTestApi {
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration("lwt.pythonPath")) void restartLanguageClient();
+      if (event.affectsConfiguration("lwt.pythonPath")) {
+        void restartLanguageClient();
+        void testing.refresh();
+      }
     }),
   );
   context.subscriptions.push(
-    vscode.workspace.onDidChangeWorkspaceFolders(() => void restartLanguageClient()),
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      void restartLanguageClient();
+      void testing.refresh();
+    }),
   );
 
   context.subscriptions.push(
@@ -239,6 +257,7 @@ export function activate(context: vscode.ExtensionContext): ExtensionTestApi {
   return {
     createTask: (mode, document) => createWorkflowTask(mode, document, output),
     createDebugConfiguration: (document) => createDebugConfiguration(document),
+    testing,
   };
 }
 
@@ -319,6 +338,8 @@ export async function deactivate(): Promise<void> {
     }
   }));
   activeTasks.clear();
+  await activeTestingWorkbench?.stop();
+  activeTestingWorkbench = undefined;
   await activeClient?.stop();
   activeClient = undefined;
 }

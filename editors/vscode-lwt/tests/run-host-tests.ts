@@ -40,6 +40,11 @@ async function main(): Promise<void> {
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "lwt vscode user data "));
   const extensionsDir = fs.mkdtempSync(path.join(os.tmpdir(), "lwt vscode extensions "));
   fs.writeFileSync(path.join(workspaceRoot, "main.lwt"), "let answer = 42;\nemit answer;\n", "utf8");
+  fs.mkdirSync(path.join(workspaceRoot, "tools"), { recursive: true });
+  fs.mkdirSync(path.join(workspaceRoot, "tests"), { recursive: true });
+  fs.cpSync(path.join(repositoryRoot, "tools", "run_tests.py"), path.join(workspaceRoot, "tools", "run_tests.py"), { recursive: true });
+  fs.cpSync(path.join(repositoryRoot, "lwt"), path.join(workspaceRoot, "lwt"), { recursive: true });
+  fs.cpSync(path.join(repositoryRoot, "tests", "cases"), path.join(workspaceRoot, "tests", "cases"), { recursive: true });
   if (!process.env.LWT_TEST_PYTHON) {
     const probe = spawnSync("python", ["-c", "import sys; print(sys.executable)"], {
       encoding: "utf8",
