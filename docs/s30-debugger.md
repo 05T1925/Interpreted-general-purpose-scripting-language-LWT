@@ -6,10 +6,11 @@
 
 - S30 基线：`744d0ca0aa6e2d96c7bf211ff842365b7827f891`。这是 S29 执行报告 SHA 自包含修正提交；S30 从该提交建立独立分支。
 - 初始执行分支：`stage/s30-source-debugger`，起始工作区干净；未改写或覆盖 `main`。
+- S30 实施阶段最终提交：`4a19905094b8824f9a29ee0f372839bfd691ff77`；分支为 `stage/s30-source-debugger`，该提交后工作区干净。S30 尚未合入本地 `main`，仍等待主窗口审查。
 - S29 分支此前从 `5eaacccd04cb8b2d00865114424099f6983fa13c` 继续，并先提交报告修正 `744d0ca0aa6e2d96c7bf211ff842365b7827f891`。记录此来源不代表本报告代替主窗口审查 S29。
 - 环境：Windows，CPython 3.13.7，Tk/Tcl 8.6（本阶段无 Tk GUI 工作）。
 - 运行 `git ls-remote --heads origin main` 做只读远端核查时，GitHub HTTPS 的 Schannel TLS 握手失败，未取得 `origin/main` tip。没有 fetch、pull、push 或以远端覆盖本地状态。
-- S30 完成前最后一个非报告提交为 `25057dbff8a8619a906ca152e3d307e809c83b0b`；本报告是阶段最后一个文档提交。最终分支 tip 的完整 SHA 在执行窗口交接中给出。
+- S30 完成前最后一个非报告提交为 `25057dbff8a8619a906ca152e3d307e809c83b0b`。本次为报告自包含性追加独立文档修正，不修改 S30 实现；该修正也不代表主窗口审查或合并。
 
 ## 2. 实现内容与关键决策
 
