@@ -1,13 +1,13 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S31 VS Code 扩展和 S32 原生 DAP 已通过主窗口复核并进入本地 `main`；S32 的精确提交通过远端 CI 四格。下一功能阶段 S33 测试工作台已规划、尚未实施；S12 保留为最后交付阶段。当前状态见 [project.md](project.md)、[S32 主窗口复核](docs/s32-main-review.md) 与 [S33 规划](docs/s33-testing-workbench-plan.md)。课程 LWT 应用仍是 app/log_report.lwt。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S31 VS Code 扩展和 S32 原生 DAP 已审查并进入本地 `main`；S33 黑盒测试工作台已在独立功能分支实施，等待主窗口审查，尚未合并或推送；S12 保留为最后交付阶段。当前状态见 [project.md](project.md)、[S33 执行报告](docs/s33-testing-workbench.md) 与 [S33 计划](docs/s33-testing-workbench-plan.md)。课程 LWT 应用仍是 app/log_report.lwt。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：阶段接力与审查门槛；S32 已审查，S33 规划后进入最终收尾 S12。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：阶段接力与审查门槛；S33 实施后等待复核，再进入最终收尾 S12。
 5. [正式语言规范](docs/language-spec.md)：LWT 语法和语义；S24 循环控制和 S25 静态模块的规则以此为准。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
@@ -45,6 +45,7 @@
 39. [S30 调试器计划](docs/s30-debugger-plan.md)：源码级调试器的设计决策、范围和验收对应。
 40. [S30 调试器说明](docs/debugger.md)：运行命令、断点/单步/变量查看、I/O 边界与限制。
 41. [S30 调试器执行报告](docs/s30-debugger.md)：实现、测试证据、保护路径和阶段交接。
+42. [S33 测试工作台执行报告](docs/s33-testing-workbench.md)：runner JSON/字节契约、Test Explorer 与真实 Extension Host/DAP 验收。
 
 ### LWT 静态检查器（S27）
 
@@ -180,7 +181,7 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现支持标量、变量/块、I/O、分支循环、函数、数组/record、文本内置函数、静态函数模块与受限错误恢复。S27 `--check`、S28 `--profile`、S29 Language Server、S30 调试器和 S31/S32 VS Code 集成都属于开发工具，不属于 LWT 语言语义；LSP 不执行被分析源码，调试器会执行它。语言黑盒保持 287 项；工具测试单列于 unittest。S32 在本机 Windows Extension Host 上实测，S32 分支对应远端 CI 与人工 VSIX 安装/桌面操作仍需审查后复核；S23–S30 独立审查记录不完整。S12 尚未开始。详见 [S32 执行报告](docs/s32-native-dap.md) 与[最终交付规划](docs/s12-final-delivery-plan.md)。
+当前实现支持标量、变量/块、I/O、分支循环、函数、数组/record、文本内置函数、静态函数模块与受限错误恢复。S27 `--check`、S28 `--profile`、S29 Language Server、S30 调试器和 S31–S33 VS Code 集成都属于开发工具，不属于 LWT 语言语义；LSP 不执行被分析源码，调试器会执行它。语言黑盒保持 287 项；工具测试单列于 unittest。S33 在本机 Windows VS Code Extension Host 中实测 287 项发现、选择运行、失败差异、取消刷新和 DAP 断点；本阶段 SHA 的远端 CI、人工鼠标/键盘操作和 VSIX 安装未验证。S23–S30 独立审查记录不完整。S12 尚未开始。详见 [S33 执行报告](docs/s33-testing-workbench.md) 与[最终交付规划](docs/s12-final-delivery-plan.md)。
 
 ## S28 执行档案与覆盖率报告
 
@@ -203,4 +204,4 @@ python tools/render_lwt_profile.py reports/run.json --output reports/run.html
 
 ## S31 VS Code 扩展
 
-本地 VS Code 扩展源位于 `editors/vscode-lwt/`，关联 `.lwt` 文件，复用 S29 LSP、S27 Check、普通 CLI、S30 CLI debugger 和 S32 DAP adapter。Run/Check 使用参数数组，Check 不执行程序；终端 CLI Debug 仍可运行文本调试会话，F5 使用 VS Code 原生 DAP。S31/S32 已审查集成；扩展限制见[说明](docs/vscode-extension.md)，DAP 用法见[DAP 文档](docs/dap.md)。S33 将规划 Test Explorer，目前尚未实现。
+本地 VS Code 扩展源位于 `editors/vscode-lwt/`，关联 `.lwt` 文件，复用 S29 LSP、S27 Check、普通 CLI、S30 CLI debugger 和 S32 DAP adapter。Run/Check 使用参数数组，Check 不执行程序；终端 CLI Debug 仍可运行文本调试会话，F5 使用 VS Code 原生 DAP。S33 在 `feature/testing-workbench` 增加官方 Test Explorer API：runner 仍是唯一黑盒事实来源，测试结果 JSON 用 Base64 保留原始输出字节；Debug 仅面向能忠实复现的成功 case，debug session 不等于测试通过。该分支等待主窗口审查，自动 Extension Host 测试不替代人工编辑器验收。扩展限制见[说明](docs/vscode-extension.md)，阶段证据见[S33 报告](docs/s33-testing-workbench.md)，DAP 用法见[DAP 文档](docs/dap.md)。

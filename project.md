@@ -2,7 +2,7 @@
 
 > Agent 当前状态入口。核对日期：2026-10-31。本文按当前工作树记录；每次开始任务都重新检查 Git 和远端。阶段历史与提交关系见[仓库工作流](docs/repository-workflow.md)，总览见[阶段路线图](阶段执行与审查路线图.md)。
 
-> **最新复核（2026-10-31）：** S32 原生 DAP 已通过主窗口复核，精确实现 SHA `236d94f92f402d0ef50333e518e6167711960b8b` 的远端 Actions 四格成功，已快进合入本地 `main`；远端最终位置须以实时 Git 查询为准。详见 [S32 主窗口复核](docs/s32-main-review.md)。用户新增 S33 测试工作台功能阶段，当前仅有[规划](docs/s33-testing-workbench-plan.md)，尚未实施；S12 保留为最终交付阶段。下方 S32 执行时的 TLS 失败、待审状态仅是历史快照，不再代表当前结论。
+> **最新复核（2026-10-31）：** S32 原生 DAP 已通过主窗口复核，精确实现 SHA `236d94f92f402d0ef50333e518e6167711960b8b` 的远端 Actions 四格成功，已快进合入本地 `main`；远端最终位置须以实时 Git 查询为准。S33 已在 `feature/testing-workbench` 实施并提交（未合并、未推送），当前等待主窗口审查；本轮 Extension Host 实测 Windows UTF-8 JSON 和 Test Explorer/DAP 交互。详见 [S33 执行报告](docs/s33-testing-workbench.md)。S12 保留为最终交付阶段。下方 S32 执行时的 TLS 失败、待审状态仅是历史快照，不再代表当前结论。
 
 ## 目标与课程评分
 
@@ -27,7 +27,7 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - S0–S30：提交在 main；各阶段的范围和证据索引见[阶段路线图](阶段执行与审查路线图.md)。S23–S30 的历史状态文字不等同于本次逐阶段独立审计。
 - S31：VS Code 扩展已通过主窗口复核（带明确未验证项），保留原提交并集成到 main；合并提交 `ddf1759fa4239eabc15488730917daec990da390`。人工 VSIX 安装/完整桌面操作和依赖线上 advisory 复核仍未验证。历史审查见[S31 主窗口复核](docs/s31-main-review.md)。
 - S32：原生 DAP 已通过主窗口复核、快进进入本地 `main`；精确提交的远端 CI 四格成功。执行窗口报告黑盒 287/287、全量 unittest 442 项；主窗口复跑 DAP 与 S30 定向 49 项及 VS Code Node 11 项／Extension Host 4 项。人工 VSIX 安装和桌面调试 UI 未执行。详见[执行报告](docs/s32-native-dap.md)与[审查记录](docs/s32-main-review.md)。
-- S33：黑盒测试工作台与 VS Code Test Explorer，已[规划](docs/s33-testing-workbench-plan.md)，尚未实施。
+- S33：黑盒 runner 选择与 UTF-8/Base64 JSON 契约、VS Code Test Explorer Run/Debug profile 已实施并提交在 `feature/testing-workbench`，等待主窗口审查；Extension Host 和真实 DAP 自动化通过，人工鼠标/键盘编辑器验收与本阶段 SHA 的远端 CI 未验证。详细测试/限制见[执行报告](docs/s33-testing-workbench.md)，范围见[计划](docs/s33-testing-workbench-plan.md)。
 - S12：保留为最后交付阶段，在 S33 审查与集成后执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
 
 ## 常用验证入口
@@ -41,4 +41,4 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - Agent LWT 应用：python -m lwt app/log_report.lwt -- app/fixtures/sample.log
 - 有效 LWT 行数：python tools/count_lwt_lines.py app/log_report.lwt
 
-语言开发工具边界见[正式规范](docs/language-spec.md)、[静态检查](docs/static-checker.md)、[Language Server](docs/language-server.md)、[调试器](docs/debugger.md)和[VS Code 扩展](docs/vscode-extension.md)。发生冲突时以作业原文、正式语义和当前实测证据为准。
+语言开发工具边界见[正式规范](docs/language-spec.md)、[静态检查](docs/static-checker.md)、[Language Server](docs/language-server.md)、[调试器](docs/debugger.md)、[VS Code 扩展](docs/vscode-extension.md)和[S33 测试工作台报告](docs/s33-testing-workbench.md)。发生冲突时以作业原文、正式语义和当前实测证据为准。

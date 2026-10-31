@@ -120,6 +120,21 @@ python tools/run_lsp_smoke.py
 
 它提供 push diagnostics、顶层符号、源码 hover 和 definition，复用 `--check` 的 parser/module/analyzer 路径并支持打开文档 overlay。服务只读源码和索引，不调用 runtime，不执行程序；lexer/parser 仍只报告首错。Smoke 会启动真实 server 子进程，但不等于连接真实编辑器。当前没有 Marketplace 插件，也不支持补全、格式化、重命名和引用查找。能力、UTF-16、错误边界和通用 client 示例见[Language Server 使用说明](language-server.md)。
 
+### 黑盒测试工作台与 Test Explorer（S33 开发工具）
+
+公开 CLI 黑盒的 `.lwt` 程序和 JSON metadata 仍是测试事实来源。无需 VS Code 也可列出经过完整验证的测试库存、选单项或类别并获取版本化 JSON：
+
+```powershell
+python tools/run_tests.py
+python tools/run_tests.py --list-json
+python tools/run_tests.py --case args-empty --format json
+python tools/run_tests.py --category arrays-records-each --format json
+```
+
+`--list-json` 不运行 LWT；重复/未知用例、未知类别和空选择都会报配置错误。JSON 结果中的 stdout/stderr 是 Base64 原始字节，避免 Windows 编码或文本解码更改测试证据。旧无参数入口仍保留人读逐案输出。扩展在 VS Code Testing 视图中以“类别 → 用例”展示同一 inventory；Run 批量选中项时只调用一次 runner。
+
+在单根 LWT 仓库 workspace 中选择 Run 或 Debug。Debug 只对标准源码入口、预期成功且 stdin 为严格 UTF-8 的 case 开放；预期错误、CLI 参数覆盖和二进制 stdin 不可忠实调试。DAP 调试启动不会被计作测试通过，仍须由 runner 的比较 oracle 标记。Test Explorer 自动化包含真实 VS Code Extension Host 和 LWT 子进程，但不等于用户桌面的鼠标/键盘验收。S33 的 JSON schema、选择规则、进程取消、宿主证据和限制见[阶段报告](s33-testing-workbench.md)及[扩展使用说明](vscode-extension.md)。
+
 ## 2. 从小程序开始
 
 ### 值、变量、表达式和注释
