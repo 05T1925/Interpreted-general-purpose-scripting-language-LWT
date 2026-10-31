@@ -90,6 +90,8 @@ Debug 的 Host 断言最初把 `args()` 的展示格式写成了不带空格的 
 
 Extension Host 自动化是真实 VS Code Extension Host 和真实 runner/LWT/DAP 子进程证据，不是人工鼠标/键盘操作；真实编辑器 Test Explorer 视觉布局、用户键盘/焦点和鼠标操作未在本阶段手工验收。远端 Actions 未对 S33 SHA 运行（本阶段不推送），记为未验证。`package.json` 保留原 `UNLICENSED`；打包警告如实记录，未选择新许可证、引入 bundler 或宣称 Marketplace 发布。扩展目录在开工前已有一个同名 `.vsix`，打包改用唯一临时输出路径并清理新生成包，没有覆盖已有文件。
 
+最终 `npm test` 的 VS Code 启动日志还出现 `Error mutex already exists` 及内置扩展 API proposal/deprecation 提示；Extension Host 随后正常启动，6 项测试完成并以 `0` 退出。本报告记录了这些宿主日志，不将其描述为无警告运行，也没有把它们归因于 LWT 扩展代码。
+
 ## 保护范围和未决事项
 
 - `app/log_report.lwt` 继续为 246 行有效 LWT。
