@@ -319,6 +319,17 @@ class DebuggerCliTests(unittest.TestCase):
         self.assertEqual(result.stdout, b"done\n")
         self.assertIn(b"finish is unavailable in the entry frame", result.stderr)
 
+    def test_finish_at_program_end_completes_without_synthetic_stop(self) -> None:
+        source = "fn answer() {\n  return 42;\n}\nlet result = answer();\n"
+        with tempfile.TemporaryDirectory(prefix="LWT debugger ") as temp:
+            result = self.make_workspace(
+                Path(temp), source, 'break "{source}:2"\ncontinue\nfinish\n'
+            )
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, b"")
+        self.assertIn(b"Stopped (breakpoint 1)", result.stderr)
+        self.assertNotIn(b"Stopped (finish)", result.stderr)
+
     def test_module_breakpoint_supports_windows_colon_unicode_path_and_stack(self) -> None:
         with tempfile.TemporaryDirectory(prefix="LWT 调试 space ") as temp:
             root = Path(temp)
