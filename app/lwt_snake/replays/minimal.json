@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "protocol_version": "LWS1",
+  "source": {
+    "algorithm": "lwt-utf8-lf-sha256-v1",
+    "sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d"
+  },
+  "settings": {
+    "width": 4,
+    "height": 1,
+    "seed": 1
+  },
+  "transactions": [
+    {
+      "request": "LWS1|000001|INIT|4|1|0000000001",
+      "response": "LWS1|000001|STATE|READY|0|R|3|0|3|2,0;1,0;0,0"
+    }
+  ],
+  "interruption": null,
+  "origin": null
+}

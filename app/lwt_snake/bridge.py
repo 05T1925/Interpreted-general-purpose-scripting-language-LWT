@@ -59,6 +59,7 @@ class LwtSnakeBridge:
         timeout: float = DEFAULT_TIMEOUT,
         python_executable: str = sys.executable,
         process_factory: ProcessFactory = subprocess.Popen,
+        on_transaction: Callable[[str, str], None] | None = None,
     ) -> None:
         self.repository_root = repository_root.resolve()
         candidate = source_path if source_path.is_absolute() else self.repository_root / source_path
@@ -69,6 +70,8 @@ class LwtSnakeBridge:
         self.timeout = timeout
         self.python_executable = python_executable
         self._process_factory = process_factory
+        self.on_transaction = on_transaction
+        self.last_response: str | None = None
         self._process: subprocess.Popen[bytes] | None = None
         self._stdout_events: queue.Queue[bytes | _ReaderFault | object] = queue.Queue(maxsize=4)
         self._stderr_lock = threading.Lock()
@@ -209,13 +212,24 @@ class LwtSnakeBridge:
                 )
             except CommandRejected:
                 self._reject_extra_after_response(command)
+                self._record_transaction(command, frame, event)
                 raise
             except ProtocolError as error:
                 self._abort_process()
                 raise self._process_failure(f"invalid response for request {sequence:06d}: {error}") from error
 
             self._reject_extra_after_response(command)
+            self._record_transaction(command, frame, event)
             return snapshot
+
+    def _record_transaction(self, command: str, frame: bytes, response: bytes) -> None:
+        self.last_response = response.decode('ascii')
+        if command != 'QUIT' and self.on_transaction is not None:
+            self.on_transaction(frame[:-1].decode('ascii'), self.last_response)
+
+    def cancel(self) -> None:
+        """Interrupt an owned outstanding exchange; no Tk or request lock involved."""
+        self._abort_process()
 
     @staticmethod
     def _command_fields(command: str, arguments: tuple[object, ...]) -> tuple[str, str, str]:
