@@ -163,6 +163,7 @@ class ReplayTests(unittest.TestCase):
         with self.assertRaises(r.VerificationError):r.reconstruct(r.decode_document(data))
 
     def test_cancel_total_deadline_and_recording_limit(self):
+        existing_threads=set(threading.enumerate())
         replay=record([('START',()),('TICK',())])
         owned=[]
         class Tracked(LwtSnakeBridge):
@@ -179,6 +180,7 @@ class ReplayTests(unittest.TestCase):
         for bridge in owned:
             self.assertTrue(bridge._closed)
             if bridge.pid:self.assertIsNotNone(bridge.returncode)
+        self.assertFalse([thread for thread in threading.enumerate() if thread not in existing_threads and thread.name=='lwt-replay-deadline'])
         with patch('app.lwt_snake.replay.MAX_TRANSACTIONS',2):
             recorder=r.Recorder();recorder.append('a','b');recorder.append('c','d');recorder.append('e','f')
             self.assertEqual(len(recorder.snapshot().transactions),2)

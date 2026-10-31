@@ -257,7 +257,11 @@ def reconstruct(replay: Replay, *, prefix=None, keep=False, cancel=None, progres
         if time.monotonic() >= deadline: raise VerificationError('verification total deadline exceeded') from error
         raise VerificationError(str(error)) from error
     finally:
-        stopped.set(); monitor.join(timeout=1)
+        stopped.set()
+        # Windows tree termination itself has a bounded 2s subprocess wait.
+        # Wait past that cleanup budget before returning ownership to the caller.
+        monitor.join(timeout=5)
+        if monitor.is_alive(): raise VerificationError('verification cleanup monitor did not finish')
 
 
 def main(argv=None):
