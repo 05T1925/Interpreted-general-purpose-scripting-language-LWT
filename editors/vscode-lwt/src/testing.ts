@@ -735,6 +735,7 @@ export function createTestingWorkbench(
     activeRunTokens.add(effectiveCancellation);
     const runToken = effectiveCancellation.token;
     const outcomes: WorkbenchOutcome[] = [];
+    let selectedCaseItems: vscode.TestItem[] = [];
     try {
       if (!inventory) await refresh();
       if (!inventory) throw new TestingWorkbenchError("Test inventory is unavailable. Read the discovery error shown in Test Explorer.");
@@ -743,6 +744,7 @@ export function createTestingWorkbench(
       const selectedIds = caseIdsForRequest(request);
       if (debug && selectedIds.length !== 1) throw new TestingWorkbenchError("Debug profile accepts exactly one selected case.");
       const selected = selectedIds.map((id) => casesById.get(id)!).filter(Boolean);
+      selectedCaseItems = selected.map((testCase) => testItemsByCaseId.get(testCase.id)!).filter(Boolean);
       if (debug) {
         const testCase = selected[0];
         if (!testCase.debug.available) throw new TestingWorkbenchError(testCase.debug.reason ?? "This case cannot be debugged faithfully.");
@@ -856,12 +858,14 @@ export function createTestingWorkbench(
       const message = sanitizeWorkspacePath(errorMessage(error), currentRoot?.uri.fsPath ?? "");
       output.appendLine(`Test Explorer request failed: ${message}`);
       void api.window.showErrorMessage(message);
-      if (request.include?.length === 1) {
-        const testCaseId = itemIdToCaseId.get(request.include[0].id);
-        const item = testCaseId ? testItemsByCaseId.get(testCaseId) : undefined;
-        if (item) run.errored(item, new api.TestMessage(message));
+      for (const item of selectedCaseItems) {
+        const caseId = itemIdToCaseId.get(item.id);
+        if (!caseId || outcomes.some((outcome) => outcome.id === caseId)) continue;
+        run.errored(item, new api.TestMessage(message));
+        outcomes.push({ id: caseId, status: "error", message });
       }
-      return [{ id: request.include?.[0]?.id ?? "selection", status: "error", message }];
+      if (outcomes.length === 0) outcomes.push({ id: request.include?.[0]?.id ?? "selection", status: "error", message });
+      return outcomes;
     } finally {
       run.end();
       forwardCancellation.dispose();

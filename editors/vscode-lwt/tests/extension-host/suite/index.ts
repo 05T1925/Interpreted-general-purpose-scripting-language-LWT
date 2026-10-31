@@ -181,6 +181,44 @@ suite("LWT VS Code extension host", () => {
     }
   });
 
+  test("a stale batch inventory reports an error for every selected case", async () => {
+    assert.ok(workspaceRoot);
+    const extension = vscode.extensions.getExtension(extensionId);
+    assert.ok(extension);
+    const api = (await extension.activate()) as { testing: {
+      refresh(): Promise<void>;
+      runIds(ids: readonly string[], options?: { onRunnerStarted?: () => void }): Promise<readonly { id: string; status: string }[]>;
+    } };
+    const temporaryCategory = path.join(workspaceRoot, "tests", "cases", "s33-stale-batch");
+    fs.mkdirSync(temporaryCategory, { recursive: true });
+    const ids = ["s33-stale-first", "s33-stale-second"];
+    for (const [index, id] of ids.entries()) {
+      fs.writeFileSync(path.join(temporaryCategory, `${id}.lwt`), `emit ${index + 1};\n`, "utf8");
+      fs.writeFileSync(path.join(temporaryCategory, `${id}.json`), JSON.stringify({
+        id,
+        spec_refs: ["4"],
+        args: [],
+        stdin: { text: "" },
+        expected: { exit_code: 0, stdout: `${index + 1}\n`, stderr: "" },
+      }), "utf8");
+    }
+    try {
+      await api.testing.refresh();
+      const outcomes = await api.testing.runIds(ids, {
+        onRunnerStarted: () => {
+          const metadataPath = path.join(temporaryCategory, `${ids[0]}.json`);
+          const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8")) as { expected: { stdout: string } };
+          metadata.expected.stdout = "changed\n";
+          fs.writeFileSync(metadataPath, JSON.stringify(metadata), "utf8");
+        },
+      });
+      assert.deepEqual(outcomes.map((item) => [item.id, item.status]), ids.map((id) => [id, "error"]));
+    } finally {
+      fs.rmSync(temporaryCategory, { recursive: true, force: true });
+      await api.testing.refresh();
+    }
+  });
+
   test("Debug profile runs an eligible case through DAP and never marks it passed", async () => {
     assert.ok(workspaceRoot);
     const extension = vscode.extensions.getExtension(extensionId);
