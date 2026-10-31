@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import queue
+import time
 import tkinter as tk
 from tkinter import ttk
 
@@ -10,11 +11,14 @@ from app.lwt_snake.bridge import GAME_SOURCE
 from app.lwt_snake.protocol import GameSnapshot
 from app.lwt_snake.session import EngineWorker, Reply
 from app.ui_theme import COLORS, apply_theme
+from app.lwt_snake.clock import GameClock
 
 
 class LwtSnakeApp:
     def __init__(self, root: tk.Tk, *, source: Path = GAME_SOURCE, tick_ms: int = 140) -> None:
         self.root, self.source, self.tick_ms = root, source, tick_ms
+        self.clock = GameClock(tick_ms / 1000)
+        self.last_command = 'INIT'
         self.repository_root = Path(__file__).resolve().parents[2]
         self.snapshot: GameSnapshot | None = None
         self.replies: queue.Queue[Reply] = queue.Queue(maxsize=16)
@@ -77,10 +81,15 @@ class LwtSnakeApp:
     def send(self, command: str, *args: object, replace: bool = False) -> None:
         if self.closing or self.failed or (self.busy and not replace):
             return
-        self.cancel_tick()
+        if command == 'TURN' and self.clock.due(time.monotonic()):
+            command, args = 'TICK', ()
+        if command in {'PAUSE', 'RESET'}:
+            self.clock.stop()
+            self.cancel_tick()
         next_id = self.request_id + 1
         if self.worker.submit(next_id, command, *args, replace=replace):
             self.request_id = next_id
+            self.last_command = command
             self.busy = True
             self.status_var.set("等待 LWT 规则引擎响应…")
             self.sync_controls()
@@ -159,9 +168,19 @@ class LwtSnakeApp:
                 self.status_var.set("引擎错误：" + reply.error)
             elif reply.snapshot:
                 self.snapshot = reply.snapshot
+                if reply.snapshot.phase != 'RUNNING':
+                    self.clock.stop()
+                    self.cancel_tick()
+                elif self.last_command == 'TICK':
+                    self.clock.completed(time.monotonic())
+                else:
+                    self.clock.start(time.monotonic())
                 self.status_var.set({"READY": "准备开始", "RUNNING": "游戏进行中", "PAUSED": "已暂停，按 Space 或继续", "GAME_OVER": "碰撞结束，按 R 复位", "WON": "棋盘填满，胜利！按 R 复位"}[reply.snapshot.phase])
                 self.score_var.set(f"得分：{reply.snapshot.score}")
             self.sync_controls()
+            if self.failed:
+                self.clock.stop()
+                self.cancel_tick()
             self.draw()
             self.schedule_tick()
         self.poll_id = self.root.after(10, self.poll)
@@ -176,7 +195,9 @@ class LwtSnakeApp:
 
     def schedule_tick(self) -> None:
         if not self.closing and not self.failed and not self.busy and self.snapshot and self.snapshot.phase == "RUNNING" and self.tick_id is None:
-            self.tick_id = self.root.after(self.tick_ms, self.tick)
+            self.clock.start(time.monotonic())
+            delay = max(0, int((self.clock.deadline - time.monotonic()) * 1000))
+            self.tick_id = self.root.after(delay, self.tick)
 
     def cancel_tick(self) -> None:
         if self.tick_id is not None:
@@ -185,7 +206,10 @@ class LwtSnakeApp:
 
     def tick(self) -> None:
         self.tick_id = None
-        self.send("TICK")
+        if self.clock.due(time.monotonic()):
+            self.send("TICK")
+        else:
+            self.schedule_tick()
 
     def draw(self) -> None:
         self.canvas.delete("all")
@@ -207,6 +231,7 @@ class LwtSnakeApp:
         if self.closing:
             return
         self.closing = True
+        self.clock.stop()
         self.cancel_tick()
         if self.focus_id:
             self.root.after_cancel(self.focus_id)

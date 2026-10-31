@@ -58,8 +58,11 @@ class LwtSnakeTkTests(unittest.TestCase):
         app.start_button.invoke()
         self.pump(lambda: not app.busy)
         other = tk.Toplevel(self.root)
+        # Mapping must complete before Windows accepts focus_force on a new window.
+        self.pump(lambda: bool(other.winfo_ismapped()))
         other.focus_force()
-        self.root.update()
+        self.pump(lambda: self.root.focus_displayof() is not None and self.root.focus_displayof().winfo_toplevel() is other)
+        self.assertIs(self.root.focus_displayof().winfo_toplevel(), other)
         self.root.event_generate('<FocusOut>', when='now')
         self.pump(lambda: not app.busy and app.snapshot.phase == 'PAUSED')
         other.destroy()
@@ -69,6 +72,23 @@ class LwtSnakeTkTests(unittest.TestCase):
         app.close()
         self.assertIsNone(app.poll_id)
         self.assertIsNone(app.tick_id)
+
+    def test_continuous_turn_responses_cannot_starve_real_lwt_ticks(self):
+        self.app = app = self.app_class(self.root, tick_ms=250)
+        self.pump(lambda: app.snapshot is not None and not app.busy)
+        app.start_button.invoke()
+        self.pump(lambda: not app.busy)
+        original = app.snapshot.snake[0]
+        until = time.monotonic() + 1.15
+        next_turn = 0.0
+        while time.monotonic() < until:
+            self.root.update()
+            if not app.busy and time.monotonic() >= next_turn:
+                app.send('TURN', 'R')
+                next_turn = time.monotonic() + 0.04
+            threading.Event().wait(0.002)
+        self.pump(lambda: not app.busy)
+        self.assertNotEqual(app.snapshot.snake[0], original)
 
     def test_tick_timer_and_reset_discard_old_reply(self):
         self.app = app = self.app_class(self.root, tick_ms=20)
