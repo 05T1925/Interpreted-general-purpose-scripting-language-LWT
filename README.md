@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S31 VS Code 扩展和 S32 原生 DAP 已审查并进入本地 `main`；S33 黑盒测试工作台已在独立功能分支实施，等待主窗口审查，尚未合并或推送；S12 保留为最后交付阶段。当前状态见 [project.md](project.md)、[S33 执行报告](docs/s33-testing-workbench.md) 与 [S33 计划](docs/s33-testing-workbench-plan.md)。课程 LWT 应用仍是 app/log_report.lwt。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S33 黑盒测试工作台已通过主窗口复核并进入本地 `main`；下一阶段 [S34 LWT 驱动贪吃蛇](docs/s34-lwt-snake-plan.md)已规划、尚未实施，S12 保留为最终交付阶段。当前状态见 [project.md](project.md) 与 [S33 主窗口复核](docs/s33-main-review.md)。现有课程 LWT 应用仍是 app/log_report.lwt。
 
 ## 阅读入口
 

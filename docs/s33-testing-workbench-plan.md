@@ -1,6 +1,6 @@
 # S33 提案：LWT 黑盒测试工作台
 
-状态：阶段范围与原计划一致；S33 已在 `feature/testing-workbench` 实施并提交，等待主窗口审查。实测和提交证据见 [S33 执行报告](s33-testing-workbench.md)。S12 仍负责最终新克隆、PPT、现场验收和交付。
+状态：阶段范围与原计划一致；S33 已通过主窗口复核并快进进入本地 `main`。实测、修复和交接见 [S33 主窗口复核](s33-main-review.md)及[执行报告](s33-testing-workbench.md)。后续先执行 [S34](s34-lwt-snake-plan.md)，S12 仍负责最终新克隆、PPT、现场验收和交付。
 
 ## 价值与范围
 
