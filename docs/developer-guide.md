@@ -275,10 +275,21 @@ python -m compileall -q lwt tests tools
 
 遇到错误时，先确认命令是在仓库根目录运行，`SOURCE` 和 `read_text` 的路径均按当前工作目录解析；再核对 `--`、分号、保留字和严格类型规则。词法、语法与模块加载检查先于普通语句执行；`attempt` 只捕获执行期 LWT `RuntimeError`，并把不可变 `Error` 值交给 `recover` 块。未捕获的运行时错误仍终止程序，且此前已完成的 stdout 保留。规范示例是预期语义，是否实测通过要以实际命令为准。
 
+### 源码级交互调试（S30）
+
+调试真实 LWT 程序可用：
+
+```powershell
+python -m lwt.debugger --commands examples/debugger/session.txt --program-stdin examples/debugger/program-input.txt examples/debugger/main.lwt
+```
+
+该入口使用 LWT AST/runtime 的专用语句钩子，支持精确行断点、`step`/`next`/`finish`、LWT 调用栈及只读局部/全局变量检查。`--commands` 文件和 `--program-stdin` 文件各司其职；未指定程序输入时 `input()` 读到 EOF。若省略 `--commands`，控制台 stdin 用于输入调试命令。LWT 的 `emit` 仍写 stdout，调试信息写 stderr；完整命令、断点映射、退出码和能力边界见[调试器说明](debugger.md)。普通错误排查仍可直接运行 CLI，调试器不会改变语言规则或普通 CLI/profile 行为。
+
 ## 5. 项目资料
 
 - [LWT 语义实验室](../app/language_lab.py)：以 Python/Tkinter 显示固定白名单源码，并通过公开 `python -m lwt` 实际运行分支/循环、递归、集合快照、文本/参数、stdin 和错误定位示例。S20 加入先作答、再运行、最后对照实际 CLI 结果和语言解释的流程；预测正确性与 CLI 契约核对分开展示。它不执行任意源码，也不是 LWT 编写的应用。运行 `python -m app.language_lab`；无 GUI 时可运行 `python -m unittest discover -s tests -p "test_language_lab.py" -v` 和 `python -m unittest discover -s tests -p "test_language_lab_entry.py" -v`，或逐个直接运行示例 CLI。Tk/Tcl 无法启动时命令以非零码退出并报告原因。课堂演示和验证证据见 [S20 报告](s20-teaching-demo.md)。
 - [完整语言规范](language-spec.md)：语法和可观察语义的权威来源。
+- [S30 调试器说明](debugger.md)：源码断点、步进、变量查看、I/O 分离和限制。
 - [黑盒覆盖矩阵](test-matrix.md)：规范条款、用例和已知未验证项。
 - [仓库 README](../README.md)：常用运行和测试入口。
 - [项目状态](../project.md)：阶段进度及证据。
