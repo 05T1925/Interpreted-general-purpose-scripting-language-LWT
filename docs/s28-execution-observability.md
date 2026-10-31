@@ -15,8 +15,9 @@
 | `dfa44b79748ff7cb1685722405f1933fefc18030` | renderer、merge、固定 app runner；修正变异工具短路探针锚点 |
 | `e65cb881d9a5304ee268f49c8a2105f037e74cb7` | 19 项 profile 定向测试与固定 JSON/HTML 证据 |
 | `a0158762eff25b6e885c5dfb2cfcf3802ef9cba6` | 使用文档、指南、项目状态和 S12 交接规则 |
+| `658e37e6c86f0ccb8424055f213f068b482f6826` | S28 最终报告与路线图状态；这是 S28 分支最终 HEAD |
 
-本报告与路线图 S28 结果段作为最终文档提交，接在上表最后一项之后；最终完整分支 tip SHA 与 clean status 由本次执行交接中的 `git rev-parse HEAD` / `git status -sb` 给出。该报告提交不改写以上历史。
+最终报告与路线图状态提交为 `658e37e6c86f0ccb8424055f213f068b482f6826`；S28 最终分支为 `stage/s28-execution-observability`，该提交时工作区干净。该自包含性修正只补入实际最终 SHA、分支和 clean 状态，不改写 S28 实现历史。
 
 ## 2. 实现设计与行为边界
 
@@ -147,4 +148,4 @@ HTML renderer 与 merge 共用严格 validator。安全性测试还核对重复 
 
 profile 记录与写盘会产生显著额外开销，绝不用于 S11 性能结论；S11 原始测量不与 profile 模式混合。profile 的计数模型不含 MC/DC、路径覆盖和隐式异常边。Python 3.10、Linux 和远端 Actions 是否运行均需以本环境能否实际调用为准；没有实测时会明确列为未验证。S10 并发证据保持历史状态。S28 不做桌面 GUI 人工验收，不制作 PPT，不合并/推送，不开始 S12。
 
-阶段完成后停止在 `stage/s28-execution-observability`，保持工作区干净，结论为“实施完成，等待主窗口审查”。S12 仍未开始。
+S28 最终状态：分支 `stage/s28-execution-observability`，HEAD `658e37e6c86f0ccb8424055f213f068b482f6826`，工作区干净；结论为“实施完成，等待主窗口审查”。S12 仍未开始。
