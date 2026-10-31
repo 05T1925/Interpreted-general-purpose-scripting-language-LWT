@@ -4,6 +4,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 try:
     import tkinter as tk
 except ImportError:
@@ -76,19 +77,25 @@ class LwtSnakeTkTests(unittest.TestCase):
     def test_continuous_turn_responses_cannot_starve_real_lwt_ticks(self):
         self.app = app = self.app_class(self.root, tick_ms=250)
         self.pump(lambda: app.snapshot is not None and not app.busy)
-        app.start_button.invoke()
-        self.pump(lambda: not app.busy)
-        original = app.snapshot.snake[0]
-        until = time.monotonic() + 1.15
-        next_turn = 0.0
-        while time.monotonic() < until:
-            self.root.update()
-            if not app.busy and time.monotonic() >= next_turn:
-                app.send('TURN', 'R')
-                next_turn = time.monotonic() + 0.04
-            threading.Event().wait(0.002)
-        self.pump(lambda: not app.busy)
-        self.assertNotEqual(app.snapshot.snake[0], original)
+        self.root.deiconify();self.root.update();app.canvas.focus_force();self.root.update()
+        for key in ('Right','Left'):
+            app.reset_button.invoke();self.pump(lambda:not app.busy)
+            app.start_button.invoke();self.pump(lambda:not app.busy)
+            original = app.snapshot.snake[0]
+            start_count=len(app.worker.recorder.snapshot().transactions)
+            until = time.monotonic() + 1.15
+            next_turn = 0.0
+            while time.monotonic() < until:
+                self.root.update()
+                if not app.busy and time.monotonic() >= next_turn:
+                    app.canvas.event_generate('<KeyPress>',keysym=key,when='now')
+                    next_turn = time.monotonic() + 0.04
+                threading.Event().wait(0.002)
+            self.pump(lambda: not app.busy)
+            transactions=app.worker.recorder.snapshot().transactions[start_count:]
+            self.assertGreater(sum('|TURN|' in tx.request for tx in transactions),5)
+            if key=='Left':self.assertGreater(sum('|ERR|' in tx.response for tx in transactions),5)
+            self.assertNotEqual(app.snapshot.snake[0], original)
 
     def test_tick_timer_and_reset_discard_old_reply(self):
         self.app = app = self.app_class(self.root, tick_ms=20)
@@ -102,6 +109,31 @@ class LwtSnakeTkTests(unittest.TestCase):
         self.root.update()
         self.assertEqual(app.snapshot.sequence, sequence)
         self.assertIsNone(app.tick_id)
+
+    def test_due_tick_waits_for_busy_turn_without_catchup_burst(self):
+        self.app = app = self.app_class(self.root, tick_ms=250)
+        self.pump(lambda:app.snapshot is not None and not app.busy)
+        app.start_button.invoke();self.pump(lambda:not app.busy)
+        completed=threading.Event();release=threading.Event()
+        original=app.worker.bridge.request
+        def blocked(command,*args):
+            result=original(command,*args)
+            if command=='TURN':
+                completed.set()
+                if not release.wait(4):raise TimeoutError('controlled release missing')
+            return result
+        try:
+            with patch.object(app.worker.bridge,'request',side_effect=blocked):
+                app.send('TURN','U');self.pump(completed.is_set)
+                elapsed=[];self.root.after(400,lambda:elapsed.append(True));self.pump(lambda:bool(elapsed))
+                self.assertTrue(app.busy)
+                self.assertTrue(app.clock.due(time.monotonic()))
+                self.assertEqual(sum('|TICK|' in t.request for t in app.worker.recorder.snapshot().transactions),0)
+                release.set()
+                self.pump(lambda:not app.busy and sum('|TICK|' in t.request for t in app.worker.recorder.snapshot().transactions)==1)
+                app.pause_button.invoke();self.pump(lambda:not app.busy)
+                self.assertIsNone(app.clock.deadline)
+        finally:release.set()
 
     def test_engine_failure_and_real_retry_with_unicode_source(self):
         with tempfile.TemporaryDirectory(prefix='GUI 雪 ') as folder:

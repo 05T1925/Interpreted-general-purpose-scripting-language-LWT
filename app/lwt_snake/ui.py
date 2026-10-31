@@ -5,13 +5,14 @@ from pathlib import Path
 import queue
 import time
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
 
 from app.lwt_snake.bridge import GAME_SOURCE
 from app.lwt_snake.protocol import GameSnapshot
 from app.lwt_snake.session import EngineWorker, Reply
 from app.ui_theme import COLORS, apply_theme
-from app.lwt_snake.clock import GameClock
+from app.lwt_snake.clock import GameClock, focus_is_external
+from app.lwt_snake.replay import save
 
 
 class LwtSnakeApp:
@@ -19,6 +20,12 @@ class LwtSnakeApp:
         self.root, self.source, self.tick_ms = root, source, tick_ms
         self.clock = GameClock(tick_ms / 1000)
         self.last_command = 'INIT'
+        self.mode = 'live'
+        self.verified = None
+        self.replay_index = 0
+        self.play_id = None
+        self.next_worker = None
+        self.pending_save = None
         self.repository_root = Path(__file__).resolve().parents[2]
         self.snapshot: GameSnapshot | None = None
         self.replies: queue.Queue[Reply] = queue.Queue(maxsize=16)
@@ -58,6 +65,22 @@ class LwtSnakeApp:
         self.status_var = tk.StringVar(value="正在启动 LWT 规则引擎…")
         ttk.Label(footer, textvariable=self.status_var, wraplength=430).grid(row=1, column=0, columnspan=4, sticky="w", pady=6)
         ttk.Label(footer, text="方向键 / WASD：转向　Space：开始/暂停/继续　R：复位\n失焦自动暂停；回到窗口后手动继续。", wraplength=430).grid(row=2, column=0, columnspan=4, sticky="w")
+        replay_controls = ttk.Frame(footer)
+        replay_controls.grid(row=3, column=0, columnspan=4, sticky='ew', pady=4)
+        self.save_button = ttk.Button(replay_controls, text='保存本局', command=self.save_game)
+        self.load_button = ttk.Button(replay_controls, text='载入记录', command=self.load_game)
+        self.cancel_button = ttk.Button(replay_controls, text='取消验证', command=self.cancel_verify)
+        self.live_button = ttk.Button(replay_controls, text='返回实时', command=self.return_live)
+        self.previous_button = ttk.Button(replay_controls, text='上一条', command=lambda: self.show_replay(self.replay_index-1))
+        self.next_button = ttk.Button(replay_controls, text='下一条', command=lambda: self.show_replay(self.replay_index+1))
+        self.play_button = ttk.Button(replay_controls, text='播放/暂停', command=self.toggle_play)
+        self.take_button = ttk.Button(replay_controls, text='从此接管', command=self.take_over)
+        for i, button in enumerate((self.save_button,self.load_button,self.cancel_button,self.live_button,self.previous_button,self.next_button,self.play_button,self.take_button)):
+            button.grid(row=i//4, column=i%4, sticky='ew')
+        self.speed = ttk.Combobox(replay_controls, state='readonly', values=('慢','中','快'), width=4)
+        self.speed.set('中'); self.speed.grid(row=2,column=0)
+        self.position_var = tk.StringVar(value='实时对局')
+        ttk.Label(replay_controls, textvariable=self.position_var, wraplength=330).grid(row=2,column=1,columnspan=3,sticky='w')
         self.key_tag = f"LwtSnakeKeys{id(self)}"
         root.bind_class(self.key_tag, "<KeyPress>", self.on_key)
         def install_key_tag(widget):
@@ -70,16 +93,16 @@ class LwtSnakeApp:
         self._start_worker()
         self.poll_id = root.after(10, self.poll)
 
-    def _start_worker(self) -> None:
+    def _start_worker(self, **options) -> None:
         self.generation += 1
         self.request_id = 0
         self.busy, self.failed = True, False
-        self.worker = EngineWorker(self.repository_root, self.replies, self.generation, self.source)
+        self.worker = EngineWorker(self.repository_root, self.replies, self.generation, self.source, **options)
         self.worker.start()
         self.sync_controls()
 
     def send(self, command: str, *args: object, replace: bool = False) -> None:
-        if self.closing or self.failed or (self.busy and not replace):
+        if self.mode != 'live' or self.closing or self.failed or (self.busy and not replace):
             return
         if command == 'TURN' and self.clock.due(time.monotonic()):
             command, args = 'TICK', ()
@@ -122,6 +145,8 @@ class LwtSnakeApp:
         self._start_worker()
 
     def on_key(self, event: tk.Event) -> str | None:
+        if self.mode != 'live':
+            return None
         key = str(event.keysym).lower()
         directions = {"up": "U", "w": "U", "right": "R", "d": "R", "down": "D", "s": "D", "left": "L", "a": "L"}
         if key in directions:
@@ -148,13 +173,17 @@ class LwtSnakeApp:
         if self.closing:
             return
         focused = self.root.focus_displayof()
-        if focused is None or focused.winfo_toplevel() is not self.root:
+        if self.mode == 'live' and focus_is_external(self.root, focused):
             self.pause()
 
     def poll(self) -> None:
         self.poll_id = None
         if self.closing:
             return
+        if self.next_worker is not None and self.worker.finished.is_set():
+            options = self.next_worker
+            self.next_worker = None
+            self._start_worker(**options)
         while True:
             try:
                 reply = self.replies.get_nowait()
@@ -162,12 +191,25 @@ class LwtSnakeApp:
                 break
             if reply.generation != self.generation or reply.request_id != self.request_id:
                 continue
+            if reply.progress:
+                self.status_var.set(f'真实 LWT 验证 {reply.progress[0]}/{reply.progress[1]}')
+                continue
             self.busy = False
+            if reply.verified:
+                self.verified = reply.verified
+                self.mode = 'replay'
+                self.show_replay(0)
+            if reply.record:
+                self.status_var.set(f'已保存完整前缀：{len(reply.record.transactions)} 条' + (('；'+reply.record.interruption) if reply.record.interruption else ''))
             if reply.error:
                 self.failed = reply.fatal
                 self.status_var.set("引擎错误：" + reply.error)
             elif reply.snapshot:
+                if self.mode == 'handoff': self.mode = 'live'
                 self.snapshot = reply.snapshot
+                if self.mode == 'live':
+                    branched = self.worker.recorder is not None and self.worker.recorder.origin is not None
+                    self.position_var.set('实时对局 · 接管分支' if branched else '实时对局')
                 if reply.snapshot.phase != 'RUNNING':
                     self.clock.stop()
                     self.cancel_tick()
@@ -183,18 +225,38 @@ class LwtSnakeApp:
                 self.cancel_tick()
             self.draw()
             self.schedule_tick()
+        if self.mode in {'loading','handoff'} and not self.busy:
+            if self.failed:
+                self.mode = 'idle'; self.position_var.set('未验证')
+        if self.mode in {'loading','handoff'} and self.worker.stopping.is_set() and self.worker.finished.is_set() and self.next_worker is None:
+            self.mode = 'idle'; self.busy = False
+            self.position_var.set('已取消 · 未验证')
+            self.status_var.set('已取消验证/重建')
+        if self.pending_save is not None and not self.busy and self.mode == 'live':
+            if not self.failed or self.worker.finished.is_set():
+                path, self.pending_save = self.pending_save, None
+                if self.failed: self.save_interrupted(path)
+                else: self.send('SAVE', path)
+        self.sync_controls()
+        if self.mode == 'live' and not self.failed and self.worker.recorder is not None and self.worker.recorder.reason:
+            self.status_var.set(self.worker.recorder.reason)
         self.poll_id = self.root.after(10, self.poll)
 
     def sync_controls(self) -> None:
-        ready = self.snapshot is not None and not self.busy and not self.failed
+        ready = self.mode == 'live' and self.snapshot is not None and not self.busy and not self.failed
         phase = self.snapshot.phase if self.snapshot else ""
         self.start_button.configure(text="继续" if phase == "PAUSED" else "开始", state="normal" if ready and phase != "RUNNING" else "disabled")
         self.pause_button.configure(state="normal" if ready and phase == "RUNNING" else "disabled")
-        self.reset_button.configure(state="normal" if self.snapshot is not None and not self.failed else "disabled")
-        self.retry_button.configure(state="normal" if self.failed else "disabled")
+        self.reset_button.configure(state="normal" if self.mode == 'live' and self.snapshot is not None and not self.failed else "disabled")
+        self.retry_button.configure(state="normal" if self.mode == 'live' and self.failed else "disabled")
+        replay = self.mode == 'replay' and self.verified is not None
+        for button in (self.previous_button,self.next_button,self.play_button): button.configure(state='normal' if replay else 'disabled')
+        self.take_button.configure(state='normal' if replay and self.snapshot.phase not in {'GAME_OVER','WON'} else 'disabled')
+        self.save_button.configure(state='normal' if self.mode == 'live' and self.worker.recorder is not None else 'disabled')
+        self.cancel_button.configure(state='normal' if self.mode in {'loading','handoff'} else 'disabled')
 
     def schedule_tick(self) -> None:
-        if not self.closing and not self.failed and not self.busy and self.snapshot and self.snapshot.phase == "RUNNING" and self.tick_id is None:
+        if self.mode == 'live' and not self.closing and not self.failed and not self.busy and self.snapshot and self.snapshot.phase == "RUNNING" and self.tick_id is None:
             self.clock.start(time.monotonic())
             delay = max(0, int((self.clock.deadline - time.monotonic()) * 1000))
             self.tick_id = self.root.after(delay, self.tick)
@@ -210,6 +272,75 @@ class LwtSnakeApp:
             self.send("TICK")
         else:
             self.schedule_tick()
+
+    def save_game(self) -> None:
+        path = filedialog.asksaveasfilename(parent=self.root, defaultextension='.json', filetypes=[('对局 JSON','*.json')], confirmoverwrite=True)
+        if not path or self.closing: return
+        if self.failed and self.worker.finished.is_set():
+            self.save_interrupted(Path(path))
+        else:
+            self.pending_save = Path(path)
+
+    def save_interrupted(self, path):
+        try:
+            record = self.worker.recorder.snapshot(); save(Path(path), record)
+            self.status_var.set(f'已保存中断前缀：{len(record.transactions)} 条')
+        except (OSError, ValueError) as error: self.status_var.set('保存失败：'+str(error))
+
+    def load_game(self) -> None:
+        path = filedialog.askopenfilename(parent=self.root, filetypes=[('对局 JSON','*.json')])
+        if path: self.load_path(Path(path))
+
+    def load_path(self, path: Path) -> None:
+        self.transition('loading', replay_path=path)
+
+    def transition(self, mode, **options):
+        self.clock.stop(); self.cancel_tick(); self.stop_play()
+        self.pending_save = None
+        self.mode = mode; self.busy = True; self.failed = False
+        self.position_var.set({'loading':'验证中','handoff':'接管重建中','live':'返回实时中'}[mode])
+        self.generation += 1  # Invalidate messages before waiting for the old owner.
+        self.worker.stop()
+        self.next_worker = options
+        self.status_var.set('正在回收旧引擎并启动真实 LWT 验证…')
+        self.sync_controls()
+
+    def cancel_verify(self):
+        self.next_worker = None
+        self.worker.stop()
+        self.generation += 1
+        self.status_var.set('正在取消并回收进程…')
+
+    def return_live(self):
+        self.transition('live')
+
+    def show_replay(self, index):
+        if self.mode != 'replay' or self.verified is None: return
+        self.replay_index = max(0,min(index,len(self.verified.states)-1))
+        self.snapshot = self.verified.states[self.replay_index]
+        tx = self.verified.replay.transactions[self.replay_index]
+        self.position_var.set(f'已验证 {self.replay_index+1}/{len(self.verified.states)} · {tx.request.split("|")[2]}' + (' · 拒绝' if '|ERR|' in tx.response else ''))
+        self.score_var.set(f'得分：{self.snapshot.score}')
+        self.status_var.set('复盘：按事务前进；转向/暂停不一定移动')
+        self.draw(); self.sync_controls()
+
+    def stop_play(self):
+        if self.play_id is not None:
+            self.root.after_cancel(self.play_id); self.play_id = None
+
+    def toggle_play(self):
+        if self.play_id is not None: self.stop_play()
+        elif self.mode == 'replay': self.play_next()
+
+    def play_next(self):
+        self.play_id = None
+        if self.mode != 'replay' or self.replay_index >= len(self.verified.states)-1: return
+        self.show_replay(self.replay_index+1)
+        self.play_id = self.root.after({'慢':1000,'中':500,'快':150}[self.speed.get()],self.play_next)
+
+    def take_over(self):
+        if self.mode == 'replay' and self.snapshot.phase not in {'GAME_OVER','WON'}:
+            self.transition('handoff', replay=self.verified.replay, prefix=self.replay_index+1)
 
     def draw(self) -> None:
         self.canvas.delete("all")
@@ -231,6 +362,8 @@ class LwtSnakeApp:
         if self.closing:
             return
         self.closing = True
+        self.next_worker = None
+        self.stop_play()
         self.clock.stop()
         self.cancel_tick()
         if self.focus_id:

@@ -1,4 +1,8 @@
 """A single bounded movement deadline, independent of input responses."""
+def focus_is_external(root, focused):
+    return focused is None or focused.winfo_toplevel() is not root
+
+
 class GameClock:
     def __init__(self, period):
         self.period = period

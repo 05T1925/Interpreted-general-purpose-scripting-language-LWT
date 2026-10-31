@@ -46,13 +46,17 @@ def main() -> int:
     suite = unittest.defaultTestLoader.discover(
         str(REPOSITORY_ROOT / "tests"), pattern="test_gui_integration.py"
     )
+    suite.addTests(unittest.defaultTestLoader.discover(
+        str(REPOSITORY_ROOT / 'tests'), pattern='test_lwt_snake*gui.py'
+    ))
+    discovered = suite.countTestCases()
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     failures = len(result.failures) + len(result.errors)
     skipped = len(result.skipped)
     passed = result.testsRun - failures - skipped
     print(
         "GUI integration summary: "
-        f"discovered={suite.countTestCases()} run={result.testsRun} "
+        f"discovered={discovered} run={result.testsRun} "
         f"pass={passed} fail={failures} skip={skipped}"
     )
     for test, reason in result.skipped:

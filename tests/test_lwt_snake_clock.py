@@ -1,7 +1,15 @@
 import unittest
-from app.lwt_snake.clock import GameClock
+from app.lwt_snake.clock import GameClock, focus_is_external
 
 class ClockTests(unittest.TestCase):
+    def test_controlled_focus_judgement_is_separate_from_window_manager(self):
+        root=object();other=object()
+        class Focused:
+            def __init__(self,top):self.top=top
+            def winfo_toplevel(self):return self.top
+        self.assertFalse(focus_is_external(root,Focused(root)))
+        self.assertTrue(focus_is_external(root,Focused(other)))
+        self.assertTrue(focus_is_external(root,None))
     def test_turns_busy_and_slow_completion_keep_one_due_intent(self):
         clock = GameClock(.25)
         clock.start(0)
