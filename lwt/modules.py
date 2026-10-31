@@ -6,6 +6,7 @@ import hashlib
 import os
 from dataclasses import dataclass, field
 from pathlib import Path, PureWindowsPath
+from collections.abc import Mapping
 
 from .ast_nodes import FunctionDeclaration, ImportDeclaration, ModuleCallExpression, Program
 from .errors import LwtError
@@ -61,15 +62,24 @@ def resolve_module_call(
     return ModuleCallResolution(target, declaration, None)
 
 
-def load_module_graph(entry_path: str, *, include_hashes: bool = False) -> ModuleGraph:
-    """Read, scan, parse, and link all static imports before execution."""
+def load_module_graph(
+    entry_path: str,
+    *,
+    include_hashes: bool = False,
+    source_overlays: Mapping[Path, str] | None = None,
+) -> ModuleGraph:
+    """Read, scan, parse, and link all static imports before execution.
+
+    ``source_overlays`` is an optional editor-facing source provider keyed by
+    canonical paths. Normal CLI callers omit it and retain disk-only behavior.
+    """
+    overlays = source_overlays or {}
 
     try:
         entry_canonical = Path(entry_path).resolve()
-        if include_hashes:
-            entry_text, entry_sha256 = _decode_file_with_hash(entry_canonical, entry=True)
-        else:
-            entry_text, entry_sha256 = _decode_file(entry_canonical, entry=True), None
+        entry_text, entry_sha256 = _decode_source(
+            entry_canonical, entry=True, include_hash=include_hashes, overlays=overlays
+        )
     except LwtError:
         raise
     except (OSError, ValueError, RuntimeError):
@@ -99,7 +109,7 @@ def load_module_graph(entry_path: str, *, include_hashes: bool = False) -> Modul
                     item.alias.location,
                 )
             aliases.add(alias_name)
-            target = _resolve_import(unit, item)
+            target = _resolve_import(unit, item, overlay_paths=set(overlays))
             if target in [active.canonical_path for active in visiting]:
                 start = next(
                     index
@@ -120,10 +130,12 @@ def load_module_graph(entry_path: str, *, include_hashes: bool = False) -> Modul
             if imported is None:
                 display = _display_path(target, entry_canonical.parent)
                 try:
-                    if include_hashes:
-                        source, source_sha256 = _decode_file_with_hash(target, entry=False)
-                    else:
-                        source, source_sha256 = _decode_file(target, entry=False), None
+                    source, source_sha256 = _decode_source(
+                        target,
+                        entry=False,
+                        include_hash=include_hashes,
+                        overlays=overlays,
+                    )
                 except LwtError as error:
                     raise LwtError(
                         "ImportError",
@@ -151,7 +163,12 @@ def load_module_graph(entry_path: str, *, include_hashes: bool = False) -> Modul
     return ModuleGraph(entry, tuple(ordered))
 
 
-def _resolve_import(unit: ModuleUnit, declaration: ImportDeclaration) -> Path:
+def _resolve_import(
+    unit: ModuleUnit,
+    declaration: ImportDeclaration,
+    *,
+    overlay_paths: set[Path] | None = None,
+) -> Path:
     raw_path = declaration.path
     windows_path = PureWindowsPath(raw_path)
     if (
@@ -170,6 +187,8 @@ def _resolve_import(unit: ModuleUnit, declaration: ImportDeclaration) -> Path:
         raise LwtError(
             "ImportError", f"invalid module path {raw_path!r}", 4, declaration.location
         ) from None
+    if overlay_paths is not None and target in overlay_paths:
+        return target
     try:
         is_file = target.is_file()
     except (OSError, ValueError):
@@ -208,6 +227,25 @@ def _decode_file_with_hash(path: Path, *, entry: bool) -> tuple[str, str]:
     except UnicodeDecodeError:
         message = "source file is not valid UTF-8" if entry else "module file is not valid UTF-8"
         raise LwtError("FileError", message, 4) from None
+
+
+def _decode_source(
+    path: Path,
+    *,
+    entry: bool,
+    include_hash: bool,
+    overlays: Mapping[Path, str],
+) -> tuple[str, str | None]:
+    """Read a canonical module path from an editor overlay or strict UTF-8 disk."""
+    overlay = overlays.get(path)
+    if overlay is not None:
+        if include_hash:
+            return overlay, hashlib.sha256(overlay.encode("utf-8")).hexdigest()
+        return overlay, None
+    if include_hash:
+        source, digest = _decode_file_with_hash(path, entry=entry)
+        return source, digest
+    return _decode_file(path, entry=entry), None
 
 
 def _parse(source: str, display_path: str | None, *, module_mode: bool) -> Program:
