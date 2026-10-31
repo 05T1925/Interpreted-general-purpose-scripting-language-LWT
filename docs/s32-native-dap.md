@@ -13,7 +13,8 @@
 |---|---|
 | `33eca1dc1ab011ffe61dea40ac33f795553ebd4f` | stdio DAP codec/server、共享 debugger control API、VS Code debugger contribution/provider |
 | `4ad6422d7ce3e3e06b3b7090ae4897c2b1028b94` | DAP codec/engine/真实子进程测试与 VS Code manifest/workflow/Extension Host 回归 |
-| 文档阶段提交 | DAP/调试器/扩展使用说明、阶段状态和本报告；完整最终 HEAD 由最终执行交接列出 |
+| `006e024` | DAP/调试器/扩展使用说明、阶段状态和本报告初稿 |
+| 报告状态更正提交 | 记录正常 push 与最终远端读取失败；完整最终 HEAD 由执行交接列出 |
 
 ## 实现内容与关键选择
 
@@ -60,7 +61,8 @@ Extension Host 有少量上游 VS Code agent-host/PTY 日志噪声；它不影�
 
 - S31 合流 tip `ddf1759...` 的 `feature/editor-integration` Actions run `41190959253` 已成功，4/4 个矩阵 job 完成；[run 41190959253](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41190959253)。该验证发生在 S32 修改前。
 - S32 完成后新一次 `git ls-remote --heads origin main feature/editor-integration stage/s31-vscode-extension` 失败：`fatal: unable to access 'https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT.git/': schannel: failed to receive handshake, SSL/TLS connection failed`。没有改 TLS 校验设置，也没有以旧 SHA 假装已重新核实。
-- S32 feature branch 的正常 push 和最终远端 SHA/Actions 状态将在分层提交完成后再核验；不得把 S31 Actions run 外推到 S32。若 push 仍因同一 TLS 错误失败，保留本地提交，不强推/不切换绕过验证的传输方式，并将 S32 远端 CI 留为未验证。
+- 文档分层提交后实际执行 `git push origin feature/editor-integration`，同样因上述 Schannel TLS 握手错误失败。随后再次只读执行 `git ls-remote --heads origin main feature/editor-integration stage/s31-vscode-extension`，仍得到相同错误。没有改变 TLS 校验、强推或切换传输方式。
+- 最近一次成功核实的远端 `main` 和 `feature/editor-integration` 是 S32 开始前的 `ddf1759...`；当前远端 tip 无法从本执行环境确认。S32 未取得远端 SHA，也没有可绑定到 S32 SHA 的 Actions run；S31 的成功 Actions 不能外推到 S32。
 
 ## 保护范围核对
 
@@ -90,7 +92,7 @@ Extension Host 有少量上游 VS Code agent-host/PTY 日志噪声；它不影�
 ## 遗留和 S12 交接
 
 - 等待主窗口审查后，才按已授权集成流程处理 S32；本执行窗口不合入 main。
-- S32 远端 push/Actions 若受 TLS 网络故障影响，将保持未验证；不得把 S31 的 run 外推到 S32。
+- S32 正常 push 和只读远端核验均因 TLS 握手失败，远端 SHA/Actions 未验证；不得把 S31 的 run 外推到 S32。
 - 用户桌面安装 VSIX、实际 F5、视觉可读性和真实硬件键鼠仍未验证；S12 现场预检时记录可归因步骤。
 - S23–S30 不是每阶段都有独立主窗口审查记录；不因本轮回归把这些历史缺口改写为“全部审查通过”。
 - S12 新克隆、Python 3.10/CI 矩阵、PPT、最终答辩和发布继续保留；本阶段未开始这些工作。

@@ -52,4 +52,4 @@ S32 若获用户派发，仍属于编辑器集成大阶段，可继续使用 fea
 
 S31 主窗口复核通过（带明确未验证项）后，按正常非快进合并保留两侧提交：S31 原始实现/测试/报告提交 `938d029`、`21506b1`、`d257154`，以及文档更正提交 `007c774` 均在祖先历史中；集成提交为 `ddf1759fa4239eabc15488730917daec990da390`。该提交将本地和远端 `main`、`feature/editor-integration` 汇合，S31 原提交未 squash、未重写。集成前后的黑盒/单元测试、完整性、Extension Host、VSIX 与 Actions 见 [S32 执行报告](s32-native-dap.md)。
 
-S32 在 `feature/editor-integration` 继续完成，未合入 main。S32 最终实现 SHA、分层提交和测试报告以 [S32 执行报告](s32-native-dap.md)为准。S32 执行期间一次 `git ls-remote --heads origin main feature/editor-integration stage/s31-vscode-extension` 只读复核因 Schannel TLS 握手失败而未取得新的实时结果；此前成功核实的两条主分支均指向 `ddf1759`。网络错误不是远端分支未变化的证据，必须在报告中单独保留。
+S32 在 `feature/editor-integration` 继续完成，未合入 main。S32 最终实现 SHA、分层提交和测试报告以 [S32 执行报告](s32-native-dap.md)为准。S32 执行期间 `git ls-remote --heads origin main feature/editor-integration stage/s31-vscode-extension` 只读复核和 `git push origin feature/editor-integration` 均因 Schannel TLS 握手失败而未完成；此前成功核实的两条主分支均指向 `ddf1759`。网络错误不是远端分支未变化的证据，远端 SHA/Actions 保持未验证，详见阶段报告。
