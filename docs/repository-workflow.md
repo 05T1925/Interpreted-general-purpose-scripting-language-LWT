@@ -2,6 +2,8 @@
 
 核对日期：2026-10-31。远端引用会变化；每次合并或推送前重新查询，不把本文快照当作实时状态。
 
+> **后续状态更新：** S32 执行时 Schannel TLS 失败是真实的历史事件；主窗口复核时网络恢复，`feature/editor-integration` 正常推送至 `236d94f92f402d0ef50333e518e6167711960b8b`，对应 [Actions run 41200279217](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41200279217) 的 Ubuntu/Windows × Python 3.10/3.13 四格均成功。S32 已快进合入本地 `main`；最终远端位置仍须以实时 Git 查询为准。见 [S32 主窗口复核](s32-main-review.md)。新增 S33 计划使用 `feature/testing-workbench` 大阶段分支；实施与集成尚未发生。本文下方旧“当前”段落为当时快照。
+
 ## 命名与用途
 
 | 前缀 | 用途 |

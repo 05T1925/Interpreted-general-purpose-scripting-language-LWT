@@ -1,6 +1,6 @@
 # LWT 0.1 黑盒覆盖矩阵（S8 主窗口审查通过）
 
-> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24、S25 和 S26 的实测快照分列于 §4。远端 GitHub Actions 尚未触发。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
+> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24、S25 和 S26 的实测快照分列于 §4。S8 当时尚无远端 GitHub Actions 结果；S32 精确 SHA 的四格结果见 [主窗口复核](s32-main-review.md)。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
 
 ## 1. 课程要求对应关系
 

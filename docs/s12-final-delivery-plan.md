@@ -1,6 +1,8 @@
 # S12 最终验收、答辩准备与交付规划
 
-状态：S21/S22 已通过历史复核；S23–S30 在用户授权下进入 main，但阶段报告仍需按证据核对；S31 已审查并合入 main；S32 已在 `feature/editor-integration` 实施、等待主窗口审查。S12 仍是最后的新克隆、兼容性/CI、GUI 现场预检、PPT、答辩与交付阶段。详见 [project.md](../project.md)、[S31 主窗口复核](s31-main-review.md)、[S32 规划](s32-native-dap-plan.md)、[S32 执行报告](s32-native-dap.md) 与下方验收项。
+> 2026-10-31 更新：S32 已通过主窗口复核并快进进入本地 `main`，精确 S32 SHA 的远端 CI 四格通过；参见 [复核记录](s32-main-review.md)。用户要求在 S12 前新增 S33 测试工作台阶段，见 [S33 规划](s33-testing-workbench-plan.md)。S33 尚未实施，S12 仍为最后交付阶段。下方原 S32 待审描述仅反映制定本计划时的状态。
+
+状态：S21/S22 已通过历史复核；S23–S30 在用户授权下进入 main，但阶段报告仍需按证据核对；S31/S32 已审查并合入本地 main；S33 处于规划阶段。S12 仍是最后的新克隆、兼容性/CI、GUI 现场预检、PPT、答辩与交付阶段。详见 [project.md](../project.md)、[S31 主窗口复核](s31-main-review.md)、[S32 主窗口复核](s32-main-review.md)、[S33 规划](s33-testing-workbench-plan.md) 与下方验收项。
 
 ## 一、目标和评分对应
 

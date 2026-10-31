@@ -1,5 +1,7 @@
 # S32 规划与验收契约：LWT 的 VS Code 原生 Debug Adapter Protocol
 
+> 后续复核：S32 已通过主窗口审查、远端精确 SHA 四格 CI 成功，并快进进入本地 `main`。详见 [S32 主窗口复核](s32-main-review.md)。本文件其余“待审”文字为原实施契约的历史记录。
+
 状态：**已在 `feature/editor-integration` 实现，等待主窗口审查。** 已审查 S31 的三个原始提交通过正常合并保留并集成，合并提交为 `ddf1759fa4239eabc15488730917daec990da390`；S32 实施证据见 [S32 阶段报告](s32-native-dap.md)。S12 仍为最后交付阶段。
 
 ## 目标与价值
