@@ -18,7 +18,7 @@
 | 分支 | 覆盖重点 | 指向的已有提交 |
 |---|---|---|
 | `milestone/language-core` | S1–S7 规范、解释器与基础语义 | `4f11b80cc900f64dfa02c9cb2c9f16f81b2d971d` |
-| `milestone/course-deliverables` | S8–S14 测试、Agent 指南和应用、性能与质量审计 | `f2dda1f7085b7c6dc56aa90cb490c4cc9b1c4e33` |
+| `milestone/course-deliverables` | S8–S11、S13–S14 测试、Agent 指南和应用、性能与质量审计；S12 最终验收尚未执行 | `f2dda1f7085b7c6dc56aa90cb490c4cc9b1c4e33` |
 | `milestone/interactive-apps` | S15–S22 GUI、工作台、教学交互与回归 | `761ce331b0257fe0128a6ba9b190c2ba6f9f30e1` |
 | `milestone/language-extensions` | S23–S26 测试充分性、循环控制、模块、错误恢复 | `9006119fc6c98f151244ef06608d72730da1071e` |
 | `milestone/developer-tools` | S27–S30 检查、档案、LSP 与调试器 | `5cc109a4302212a772a4fe6589cd15d36a55b055` |
@@ -37,4 +37,4 @@
 
 推送前重新只读查询 `origin/main`，确认它仍是本地 `main` 的祖先。使用正常 `git push origin main` 和按需 `git push origin milestone/<功能>`；绝不使用强推、`--force-with-lease`、禁用证书校验或用远端旧 tip 覆盖本地。远端变化、TLS/鉴权失败时保留本地结果并报告。推送后的 SHA 和分支核对结果追加在此节。
 
-2026-10-31 推送核验：正常快进推送后，实时 `ls-remote` 显示远端 `main=42695ea6ecfbbf2400c6a8cc3fce1737bf64d4ea`；五个 `milestone/*` 分支均与上表 SHA 一致。`feature/editor-integration` 也已创建并推送，起点同为 `42695ea6ecfbbf2400c6a8cc3fce1737bf64d4ea`。本节的结果是同步当时的快照；此后以实时远端查询为准。远端 Actions 和新克隆验收仍待 S12 核验。
+2026-10-31 推送核验：先将 `main` 和 `feature/editor-integration` 推至 `42695ea6ecfbbf2400c6a8cc3fce1737bf64d4ea`，五个 `milestone/*` 分支按上表 SHA 建立；随后将远端 `main` 与 `feature/editor-integration` 正常快进至 `c2228d3fb40dc7bc0d64d5634ad0aacca0ac674a`，用于记录最终远端同步状态。最后一次推送后远端核验到这两个分支均为 `c2228d3`，五个里程碑分支仍与上表 SHA 一致。此处只记录 Git 引用；远端 Actions 和新克隆验收仍待 S12 核验。后续以实时远端查询为准。
