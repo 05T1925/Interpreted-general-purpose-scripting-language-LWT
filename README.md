@@ -1,13 +1,13 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S1–S11、S13–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C 桌面交互仍未验证。S23–S30 已实施、等待主窗口审查，尚未合入 `main`：S23 加入固定种子性质检查和变异审计，S24 加入循环跳转，S25 加入静态函数库模块，S26 增加受限运行时错误恢复，S27 增加静态检查 CLI，S28 增加源码执行档案，S29 增加不执行 LWT 的 stdio Language Server 子集，S30 增加执行真实 LWT 程序的源码级交互调试器。课程 LWT 应用仍由 `app/log_report.lwt` 负责日志统计。S23–S30 审查后进入最后的 S12。状态见 [`project.md`](project.md)、各阶段报告、[S29 Language Server 说明](docs/language-server.md)、[S30 调试器说明](docs/debugger.md)、[S30 执行报告](docs/s30-debugger.md)、[S12 最终交付规划](docs/s12-final-delivery-plan.md)和[阶段路线图](阶段执行与审查路线图.md)。
+本仓库包含 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。用户授权后，S23–S30 的实现提交已按顺序快进纳入本地 `main`，保留原始历史；各阶段报告中的审查状态仍需单独核对。S31 的编辑器集成尚未实现，最后的 S12 负责新克隆、CI、PPT 和答辩交付。当前入口见[项目上下文](project.md)、[仓库分支与同步记录](docs/repository-workflow.md)及[最终交付规划](docs/s12-final-delivery-plan.md)。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：两个聊天窗口的接力方式与阶段门槛；S23–S30 等待主窗口审查，随后进入最终收尾 S12。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：历史阶段与审查记录；S23–S30 的代码已在本地主线，逐阶段审查记录仍待整理。
 5. [正式语言规范](docs/language-spec.md)：LWT 语法和语义；S24 循环控制及 S25 静态模块补充等待主窗口审查。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
@@ -164,7 +164,7 @@ S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/
 
 ## S11 性能实验
 
-S11–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互仍未验证，详见[主窗口复核](docs/s21-main-review.md)。S22 控件/事件回归不等于人工桌面验收。S23–S30 尚未合入 `main`，均等待主窗口审查；S29 增加不执行 LWT 的 stdio 静态 Language Server，S30 增加执行真实 LWT 的源码级交互调试器。各阶段报告和工具边界见项目阅读入口。S23–S30 审查后才进入最后的 S12；S12 规划见[最终交付规划](docs/s12-final-delivery-plan.md)。
+S11–S22 已通过主窗口审查并合入本地 `main`；S21 的 A/B/C GUI 交互仍未验证，详见[主窗口复核](docs/s21-main-review.md)。S22 控件/事件回归不等于人工桌面验收。S23–S30 的代码已按用户授权纳入本地 `main`，其逐阶段审查记录仍须整理。S31 编辑器集成完成并审查后，进入最后的 S12；见[最终交付规划](docs/s12-final-delivery-plan.md)。
 
 从仓库根目录运行正式 LWT/Python 成对实验：
 
