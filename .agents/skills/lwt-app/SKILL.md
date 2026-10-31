@@ -1,36 +1,31 @@
 ---
 name: lwt-app
-description: Use when creating, editing, debugging, or validating an LWT `.lwt` program or small application in this repository. Do not use for language-design questions, interpreter implementation changes, or ordinary Python programs.
+description: Use only to create, edit, debug, or validate LWT source programs (.lwt) or the course LWT application in this repository. Do not use for Python/Tkinter apps, interpreter/runtime changes, language-server or debugger implementation, VS Code extension work, or general language-design discussion.
 ---
 
 # LWT 应用开发
 
-当用户要求在本仓库新建、修改、调试或验证 LWT `.lwt` 程序/小型应用时，按此流程工作。单纯讨论 LWT 概念或语言设计、修改 Python 解释器、编写普通 Python 程序时不使用此应用开发流程。
+该 Skill 只管编写与验证 LWT 源程序，不定义语言语义，也不代替解释器或编辑器工具开发流程。
 
-## 工作步骤
+## 工作流程
 
-1. 阅读[开发指南](../../../docs/developer-guide.md)。涉及语法、值、作用域、内置函数、错误或边界语义时，查阅[正式语言规范](../../../docs/language-spec.md)。需要确认现有黑盒覆盖时，再读[测试覆盖矩阵](../../../docs/test-matrix.md)。不要把计划文档当作比正式规范更高的语义依据。
-2. 先确认用户要求的输入、输出、文件、CLI 参数、stdin 和错误行为。只有缺失信息会改变实现结果时才询问；其他细节按规范选择简单一致的方案。
-3. 只用仓库中已实现且有规范/测试依据的 LWT 能力设计程序。`break;`/`continue;` 只可处于当前函数自身的 while/each 循环体，目标是最近循环；each 的 continue 使用进入循环时的浅快照。不要把 Python 语法、标准库 API 或未实现特性写入 `.lwt`。
-4. 在用户指定的路径创建或修改 `.lwt` 文件；有需要时添加最小 fixture。不要无理由修改解释器、正式规范或 S8 测试。不要通过 Python `eval`/`exec` 执行 LWT。
-   - 若程序拆成多个 LWT 文件，在入口开头使用 `import "相对路径" as alias;`，并以 `alias.function(...)` 调用。路径相对于声明 import 的文件；库文件只写开头 import 和顶层函数，不写顶层执行语句或 record。保持依赖单向以避免循环，示例见 `examples/modules/`。
-5. 先用公开静态检查器检查可确定的名字、调用参数和 record 字段问题：`python -m lwt --check path/to/program.lwt`；需要 Agent/CI 解析时用 `python -m lwt --check --format=json path/to/program.lwt`。它检查入口及静态导入的全部模块，但不执行程序，也不是静态类型证明。
-6. 再使用公开 CLI 运行程序：`python -m lwt path/to/program.lwt`。如程序需要输入，提供 stdin；如需要程序参数，使用 `python -m lwt path/to/program.lwt -- arg1 arg2`。从实际工作目录核对相对文件路径。
-7. 检查 stdout、stderr、退出码和报错行列位置；将实际结果与任务预期逐项比较。修正后重新运行受影响的命令；不要只依赖静态检查，也不要声称未运行的验证通过。
-8. 需要追踪固定场景的控制流时，可选用开发工具 `python -m lwt --profile profile.json path/to/program.lwt`，再用 `python tools/render_lwt_profile.py profile.json --output profile.html` 查看。profile 不属于 LWT 语言语义，不记录变量/实参/stdin/复合值；`fail(message)` 的用户消息在档案里脱敏。此模式有额外开销，不能用于性能比较。普通应用实现仍先 `--check` 再运行公开 CLI。
-9. 若使用仓库的静态 Language Server，可通过 `python -m lwt.lsp_server` 以 stdio 启动，或运行 `python tools/run_lsp_smoke.py` 检查固定协议流程。它提供 diagnostics、符号、hover 和 definition，不运行 LWT 程序；协议 smoke 不等于真实编辑器集成。当前不提供补全、格式化或重命名。
-10. 若使用本地 VS Code 扩展，可通过 `editors/vscode-lwt/` 安装/打包工作流使用 LSP、Run、Check 和 Debug 任务。扩展只调用公开 CLI；Check 不执行程序，Debug 是集成终端里的 S30 CLI 工具，不是原生 Debug Adapter。含空格/Unicode 的程序参数按数组传递；命令行执行结果仍是语义与输出的最终依据。扩展能力/限制见[使用说明](../../../docs/vscode-extension.md)。
-11. 最终报告列出改动文件、实际执行的命令及结果、尚未验证的环境或边界。若怀疑解释器缺陷，保留最小复现及规范预期；除非用户当前明确派发解释器修复任务，不要在应用任务里改变解释器语义。
+1. 阅读[开发指南](../../../docs/developer-guide.md)。遇到语法、求值、作用域、模块、错误或边界问题时查[正式规范](../../../docs/language-spec.md)；需要核对覆盖时再看[测试矩阵](../../../docs/test-matrix.md)。
+2. 先从任务中提取输入、输出、CLI 参数、stdin、文件路径和错误行为。仅在缺失信息会改变结果时提问；其余按规范作简单一致的选择。
+3. 只使用规范和当前实现已支持的 LWT 能力。不要把 Python 语法/API 写入 .lwt，也不要用 Python eval/exec 执行 LWT。
+4. 多文件程序使用规范定义的静态函数模块；import 路径相对声明文件，库模块只含顶部 import 和函数声明，避免循环依赖。详见[模块示例](../../../examples/modules/main.lwt)。
+5. 先运行静态检查，再运行公开 CLI；示例：
+   - python -m lwt --check path/to/program.lwt
+   - python -m lwt path/to/program.lwt -- arg1 arg2
+   - 需要程序输入时，为 CLI 提供对应 stdin；read_text 的相对路径以运行时 cwd 为准。
+6. 核对 stdout、stderr、退出码和诊断位置。修正后重跑受影响命令；静态检查通过不代表程序运行成功。
+7. 只记录真实运行的命令与结果。若怀疑解释器缺陷，提供最小复现和规范预期；不要在普通应用任务中顺手修改解释器。
+8. profile、LSP、CLI debugger 和 VS Code 扩展是独立开发工具。只有任务明确涉及这些工具时才查对应说明；它们不扩大本 Skill 的触发范围。
 
-## 边界
+## 适用与不适用例子
 
-- LWT 0.1 支持规范第 9 节定义的静态函数库模块；不支持模块值、动态加载、from/star 导入、循环依赖或模块顶层初始化。第 10 节支持有限的 `attempt`/`recover`，仅捕获 LWT `RuntimeError`/3；不支持 `throw`、类型过滤、多个 handler、`finally` 或事务回滚。另不支持浮点、字典、类、闭包、函数值、带标签循环跳转、语言级线程或 REPL。无标签 `break;`/`continue;` 已支持，受最近循环和函数边界规则限制。只有规范和当前实现确认的功能才可使用。
-- `read_text(path)` 的相对路径以进程工作目录为基准；`args()` 只返回 CLI `--` 后参数。
-- 不要无条件安装依赖；仓库解释器和测试使用 Python 标准库。
-- 不要绕过 `python -m lwt`，不要把 LWT 源码输入宿主 Python 执行器。
+- 适用：“用 LWT 写一个读取参数、统计文本行数并输出摘要的程序。”
+- 不适用：“修改 Python Tkinter 界面”“实现新的 LWT 语法”“编写 LWT DAP/debug adapter”“给 VS Code 扩展加命令”或“解释闭包设计”。
 
-## References
+## 语言边界
 
-- [人类/Agent 开发指南](../../../docs/developer-guide.md)
-- [LWT 0.1 语言规范](../../../docs/language-spec.md)
-- [黑盒覆盖矩阵](../../../docs/test-matrix.md)
+当前 LWT 支持整数、字符串、布尔/null、数组、record、函数、分支循环、each、静态函数模块、基本输入输出、文本内置函数及有限 attempt/recover。break/continue 只能作用于当前函数中最近的循环。不得使用浮点、字典、类、闭包、函数值、动态模块加载、模块顶层执行、线程或未写入规范的特性。具体边界以正式规范和当前实现为准。
