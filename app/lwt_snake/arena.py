@@ -192,17 +192,18 @@ def atomic_json(path,data):
 def run(args):
     ids,seeds,catalog,paths=config(args)
     digests={name:digest_file(paths[name]) for name in ids}
-    paths=[(name,seed) for name in sorted(ids) for seed in seeds]
+    matches=[(name,seed) for name in sorted(ids) for seed in seeds]
     args.output.mkdir(parents=False)
     (args.output/'replays').mkdir()
     (args.output/'decisions').mkdir()
     cases=[]
     cancellation=threading.Event()
     pool=ThreadPoolExecutor(max_workers=args.workers)
+    futures={}
     try:
         futures={pool.submit(run_case,name,seed,args.width,args.height,args.max_ticks,args.output,
                              cancel=cancellation,strategy_path=paths[name],expected_digest=digests[name],catalog=catalog): (name,seed)
-                 for name,seed in paths}
+                 for name,seed in matches}
         for future in as_completed(futures):cases.append(future.result())
     except BaseException:
         cancellation.set()
