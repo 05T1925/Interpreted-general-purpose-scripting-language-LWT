@@ -137,6 +137,31 @@ class WorkshopTests(unittest.TestCase):
             self.assertEqual(rejected.returncode,3,rejected.stdout)
             self.assertIn(b'source digest mismatch',rejected.stderr)
 
+    def test_relabelled_custom_game_cannot_claim_builtin_policy(self):
+        fixed=ROOT/'reports/s39-demo'
+        source=json.loads((fixed/'result.json').read_text(encoding='utf-8'))
+        original=next(row for row in source['cases'] if row['strategy_id']==CUSTOM and row['seed']==4)
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);(root/'replays').mkdir();(root/'decisions').mkdir()
+            row=dict(original)
+            row['strategy_id']='baseline'
+            row['strategy_sha256']=source['strategies']['baseline']['sha256']
+            row['replay_path']='replays/baseline-4.json'
+            row['decision_path']='decisions/baseline-4.json'
+            shutil.copyfile(fixed/original['replay_path'],root/row['replay_path'])
+            evidence=json.loads((fixed/original['decision_path']).read_text(encoding='utf-8'))
+            evidence['strategy_id']='baseline'
+            evidence['strategy_sha256']=row['strategy_sha256']
+            target=root/row['decision_path'];target.write_text(json.dumps(evidence),encoding='utf-8')
+            row['decision_sha256']=hashlib.sha256(target.read_bytes()).hexdigest()
+            forged=dict(source,seeds=[4],strategies={'baseline':source['strategies']['baseline']},
+                        cases=[row],summary=arena.summary([row]))
+            result=root/'result.json';result.write_text(json.dumps(forged),encoding='utf-8')
+            rejected=self.cli('--verify',result,'--catalog',CATALOG)
+            self.assertEqual(rejected.returncode,3,rejected.stdout)
+            self.assertIn(b'baseline/4: decision 1',rejected.stderr)
+            self.assertIn(b'response/direction/reason mismatch',rejected.stderr)
+
     def test_runtime_source_change_fails_match_with_verified_game_prefix(self):
         manifest,source=self.manifest(name='temporary')
         loaded=catalog.load_catalog(manifest)
