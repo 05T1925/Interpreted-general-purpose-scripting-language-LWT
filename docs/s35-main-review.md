@@ -18,6 +18,14 @@ S34 已发现的两个问题有可复现的修复证据：持续 TURN 不再饿�
 | 严格 GUI 组 | 与全量测试和黑盒并行时曾有 1 项失败：1.15 秒内只收到 4 笔 TURN，旧断言要求超过 5 笔。独立串行复跑 19/19 通过。主窗口发现该测试还受到桌面焦点事件影响；修正为直接调用应用命令入口，独立单测 1/1、严格 GUI 组 19/19、skip 0，均通过。 |
 | Git 差异 | 主窗口修正单独提交为 `7ced2a8`，只改 `tests/test_lwt_snake_gui.py`；`git diff --check` 通过。 |
 
+## 首次远端 CI 失败与跨平台修复
+
+功能分支第一次推送的精确 SHA 为 `d6b6a3b796b2f725e0fa0359d7e4ec269e3f6c02`，[Actions run 41380436598](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41380436598) 的 Windows 3.10/3.13 两格成功，Ubuntu 3.10/3.13 两格在 `Run Tk GUI integration tests (Linux)` 失败。通过 GitHub 原始 job log 核对：19 项中 18 项通过，`test_real_buttons_keys_focus_reset_and_close` 在等待真实失焦后 `PAUSED` 时超时；此前修正的连续 TURN 用例在 Linux 通过。**该次 2/4 不能记为远端全绿。**
+
+主窗口在 WSL Ubuntu 24.04 / Python 3.12.3 + Xvfb/Tk 8.6 复现了同一失败。根因是 Tk 根窗口绑定接收来自焦点子控件的 FocusOut，但 `on_focus_out` 只接受 `event.widget is root`；按钮持有焦点并移到外部窗口时，该事件被丢弃。`33d5c048cbc8e8987041cbcbabb018a5af42bf7a` 移除此错误过滤，保留 idle 后判断焦点是否离开整个游戏窗口，因此同窗子控件切换不会误暂停。测试改为真实转移焦点到已映射的另一 Toplevel，不再人工生成根窗口 FocusOut 充数。
+
+修复后独立运行该用例：WSL/Xvfb 1/1、Windows 1/1；两个环境的 `python tools/run_gui_integration.py --require-no-skips` 均为 19/19、fail 0、skip 0。此处尚未把修复 SHA 的远端 CI 记为通过，需推送后再核实。完整 unittest 与 287 个语言黑盒在修复前的本窗口结果见上表；本修复只涉及 Tk 焦点处理与一条 GUI 测试，后续精确 SHA CI 应覆盖全量。
+
 旧的“1.15 秒内超过 5 笔 TURN”混合了机器负载与功能判定；未映射/焦点转移也能让测试在开始阶段暂停，使 TURN 数为 0。现在该测试断言重复真实 TURN、拒绝逆向 TURN、仍能发生真实 TICK 后蛇头移动；键盘映射和焦点行为由其他独立 Tk 测试负责。修正降低环境敏感性，不改变产品行为。S35 报告里的历史测试结果按当时版本保留，不倒写为本轮结果。
 
 ## 边界与交接
