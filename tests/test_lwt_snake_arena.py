@@ -136,6 +136,16 @@ class ArenaTests(unittest.TestCase):
                     result.write_bytes(raw)
                     self.assertEqual(self.cli('--game-only','--verify',result).returncode,3)
 
+    def test_even_number_of_scores_keeps_finite_median(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output=Path(folder)/'two-seeds'
+            self.assertEqual(self.cli('--strategies','baseline','--seeds','4,7',
+                                      '--max-ticks','12','--workers','2','--output',output).returncode,0)
+            data=json.loads((output/'result.json').read_text(encoding='utf-8'))
+            self.assertEqual(data['summary']['baseline']['score_median'],5.0)
+            checked=self.cli('--verify',output/'result.json')
+            self.assertEqual(checked.returncode,0,checked.stderr)
+
     def test_baseline_public_lwa1_protocol_and_distinct_choice(self):
         from tests.test_lwt_snake_strategy import frame
         inputs=[frame(),frame(2,height=2,direction='L',food=(3,1),body=((1,0),(1,1),(0,1),(0,0))),
@@ -154,7 +164,7 @@ class ArenaTests(unittest.TestCase):
 
     def test_six_real_matches_are_worker_invariant_and_reverified(self):
         with tempfile.TemporaryDirectory(prefix='arena workers 雪 ') as folder:
-            outputs=[]
+            outputs=[];evidence_bytes=[]
             for workers in (1,2,4):
                 directory=Path(folder)/str(workers)
                 result=self.cli('--seeds','4,7,11','--max-ticks','12','--workers',workers,'--output',directory)
@@ -164,6 +174,8 @@ class ArenaTests(unittest.TestCase):
                 self.assertIn(b'Verified 6 matches: game and policy decisions.',verify.stdout)
                 data=(directory/'result.json').read_bytes()
                 outputs.append(data)
+                evidence_bytes.append({str(file.relative_to(directory)):file.read_bytes()
+                                       for file in directory.rglob('*.json')})
                 parsed=json.loads(data)
                 self.assertEqual(len(parsed['cases']),6)
                 self.assertTrue(all(case['game_verified'] and case['policy_verified'] for case in parsed['cases']))
@@ -172,6 +184,8 @@ class ArenaTests(unittest.TestCase):
                     self.assertEqual(case['stop_reason'],'limit')
             self.assertEqual(outputs[0],outputs[1])
             self.assertEqual(outputs[1],outputs[2])
+            self.assertEqual(evidence_bytes[0],evidence_bytes[1])
+            self.assertEqual(evidence_bytes[1],evidence_bytes[2])
 
     def test_tampering_is_located_by_case_and_field_or_transaction(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -223,6 +237,15 @@ class ArenaTests(unittest.TestCase):
                 self.assertFalse(case['policy_verified'])
                 self.assertEqual(len(arena.load(output/case['replay_path']).transactions),2)
                 self.assertIsNotNone(case['error_category'])
+                result={'schema_version':2,'protocol_version':'LWS1','board':{'width':8,'height':5},
+                        'seeds':[4],'max_ticks':5,
+                        'strategies':{'baseline':{'path':'app/lwt_snake/strategy_baseline.lwt',
+                                                'sha256':arena.digest_file(arena.STRATEGIES['baseline']),
+                                                'protocol':'LWA1'}},
+                        'cases':[case],'summary':arena.summary([case])}
+                arena.atomic_json(output/'result.json',result)
+                checked=arena.verify(output/'result.json')
+                self.assertEqual((checked['cases'][0]['game_verified'],checked['cases'][0]['policy_verified']),(True,False))
         with tempfile.TemporaryDirectory() as folder:
             output=Path(folder);(output/'replays').mkdir()
             cancel=threading.Event();cancel.set()
@@ -240,6 +263,9 @@ class ArenaTests(unittest.TestCase):
             self.assertEqual((broken['stop_reason'],broken['game_verified'],broken['replay_path']),
                              ('failed',False,None))
             self.assertIsNotNone(broken['error_category'])
+            result['cases']=[broken];result['summary']=arena.summary([broken])
+            arena.atomic_json(output/'result.json',result)
+            self.assertFalse(arena.verify(output/'result.json')['cases'][0]['game_verified'])
             with patch.object(arena,'save',side_effect=OSError('disk full')):
                 with self.assertRaisesRegex(OSError,'disk full'):
                     arena.run_case('baseline',4,8,5,1,output)

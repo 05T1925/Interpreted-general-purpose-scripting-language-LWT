@@ -5,6 +5,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import statistics
@@ -223,12 +224,18 @@ def _json_integer(raw):
     return int(raw)
 
 
+def _json_float(raw):
+    value=float(raw)
+    if not math.isfinite(value):raise ArenaError('non-finite JSON number')
+    return value
+
+
 def _read_json(path,limit):
     with path.open('rb') as stream:raw=stream.read(limit+1)
     if len(raw)>limit:raise ArenaError(f'{path.name}: JSON exceeds size limit')
     return json.loads(raw.decode('utf-8','strict'),object_pairs_hook=_pairs,
                       parse_int=_json_integer,
-                      parse_float=lambda _:(_ for _ in ()).throw(ArenaError('JSON floats are unsupported')),
+                      parse_float=_json_float,
                       parse_constant=lambda _:(_ for _ in ()).throw(ArenaError('non-finite JSON number')))
 
 
@@ -258,7 +265,8 @@ def verify_case_v2(path,data,row,*,check_flags=True):
     file,raw=_strict_file(path.parent,row['replay_path'],relative,16*1024*1024,label)
     if hashlib.sha256(raw).hexdigest()!=row['replay_sha256']:
         raise ArenaError(f'{label}: replay digest mismatch')
-    record=load(file)
+    try:record=load(file)
+    except Exception as error:raise ArenaError(f'{label}: replay parse: {error}') from error
     board=data['board']
     if (record.width,record.height,record.seed)!=(board['width'],board['height'],seed):
         raise ArenaError(f'{label}: replay board/seed mismatch')
@@ -276,7 +284,8 @@ def verify_case_v2(path,data,row,*,check_flags=True):
     dfile,draw=_strict_file(path.parent,row['decision_path'],f'decisions/{name}-{seed}.json',MAX_DECISIONS,label)
     if hashlib.sha256(draw).hexdigest()!=row['decision_sha256']:
         raise ArenaError(f'{label}: decision digest mismatch')
-    document=_read_json(dfile,MAX_DECISIONS)
+    try:document=_read_json(dfile,MAX_DECISIONS)
+    except Exception as error:raise ArenaError(f'{label}: decision file: {error}') from error
     if type(document)!=dict or set(document)!={'schema_version','protocol_version','strategy_id','strategy_sha256','game_sha256','replay_sha256','decisions'}:
         raise ArenaError(f'{label}: decision schema mismatch')
     if type(document['schema_version'])!=int or document['schema_version']!=1 or document['protocol_version']!='LWA1' or document['strategy_id']!=name or document['strategy_sha256']!=row['strategy_sha256'] or document['game_sha256']!=row['game_sha256'] or document['replay_sha256']!=row['replay_sha256']:
@@ -329,7 +338,8 @@ def verify_case_v2(path,data,row,*,check_flags=True):
             if command!='TICK':raise ArenaError(f'{where}: expected TICK transaction {cursor+1}')
             cursor+=1
     finally:
-        strategy.close()
+        try:strategy.close()
+        except Exception as error:raise ArenaError(f'{label}: fresh LWT strategy close: {error}') from error
     if cursor!=len(transactions):raise ArenaError(f'{label}: extra game transaction {cursor+1}')
     reason=row['stop_reason']
     if reason=='trapped' and (not trapped or last.phase!='RUNNING'):
