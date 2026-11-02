@@ -523,7 +523,7 @@ def main(argv=None):
     parser.add_argument('--output',type=Path)
     args=parser.parse_args(argv)
     try:
-        if args.check_strategy:
+        if args.check_strategy is not None:
             if not args.catalog or args.verify or args.explain or args.output:
                 raise ArenaError('--check-strategy requires --catalog and no run/verify options')
             catalog=load_catalog(args.catalog)
