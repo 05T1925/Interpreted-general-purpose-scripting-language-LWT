@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "purpose": "S36 local strategy latency; not S11 interpreter benchmark",
+  "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+  "os": "Windows-11-10.0.26200-SP0",
+  "samples": [
+    {
+      "width": 8,
+      "height": 5,
+      "pid": 47600,
+      "pid_stable": true,
+      "request_ms": [
+        168.132,
+        13.754,
+        12.522,
+        13.174,
+        14.022,
+        14.096,
+        13.863,
+        14.234,
+        14.345
+      ],
+      "median_ms": 14.022,
+      "max_ms": 168.132,
+      "decisions": [
+        [
+          "R",
+          "FOOD"
+        ],
+        [
+          "R",
+          "FOOD"
+        ],
+        [
+          "R",
+          "FOOD"
+        ],
+        [
+          "R",
+          "FOOD"
+        ],
+        [
+          "R",
+          "FOOD"
+        ],
+        [
+          "R",
+          "FOOD"
+        ],
+        [
+          "R",
+          "FOOD"
+        ],
+        [
+          "R",
+          "FOOD"
+        ],
+        [
+          "R",
+          "FOOD"
+        ]
+      ]
+    },
+    {
+      "width": 24,
+      "height": 18,
+      "pid": 50068,
+      "pid_stable": true,
+      "request_ms": [
+        292.867,
+        138.773,
+        143.064,
+        141.951,
+        140.408,
+        139.481,
+        151.037,
+        145.255,
+        142.124
+      ],
+      "median_ms": 142.124,
+      "max_ms": 292.867,
+      "decisions": [
+        [
+          "U",
+          "FOOD"
+        ],
+        [
+          "U",
+          "FOOD"
+        ],
+        [
+          "U",
+          "FOOD"
+        ],
+        [
+          "U",
+          "FOOD"
+        ],
+        [
+          "U",
+          "FOOD"
+        ],
+        [
+          "U",
+          "FOOD"
+        ],
+        [
+          "U",
+          "FOOD"
+        ],
+        [
+          "U",
+          "FOOD"
+        ],
+        [
+          "U",
+          "FOOD"
+        ]
+      ]
+    }
+  ],
+  "serial_auto": {
+    "ticks": 24,
+    "chain_ms": [
+      175.644,
+      14.938,
+      15.037,
+      10.393,
+      9.647,
+      6.007,
+      10.642,
+      13.3,
+      14.718,
+      15.172,
+      9.611,
+      4.943,
+      6.993,
+      6.854,
+      10.572,
+      14.489,
+      13.874,
+      12.675,
+      14.124,
+      14.948,
+      13.222,
+      13.29,
+      16.003,
+      14.051
+    ],
+    "max_queued_responses": 0,
+    "phase": "RUNNING",
+    "score": 60,
+    "transactions": 36,
+    "final_response": "LWS1|000036|STATE|RUNNING|60|R|7|4|9|5,1;4,1;3,1;2,1;2,2;2,3;3,3;4,3;5,3",
+    "game_pid": 38384,
+    "strategy_pid": 48956
+  }
+}

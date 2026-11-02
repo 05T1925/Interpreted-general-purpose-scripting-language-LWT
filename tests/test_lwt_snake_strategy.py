@@ -150,6 +150,19 @@ class StrategyBridgeTests(unittest.TestCase):
             with self.assertRaises(ProtocolError):parse_advice(output,1,STATE)
 
     def test_auto_record_fresh_cli_verification_and_prefix_branch(self):
+        # Query a real queued TURN before TICK: DIR is effective, not inferred
+        # from old body geometry. The returned R must be accepted and grow.
+        pending=LwtSnakeBridge(repository_root=ROOT,width=4,height=2,seed=4)
+        chooser=StrategyBridge(repository_root=ROOT)
+        pending.start();chooser.start()
+        try:
+            pending.request('START');queued=pending.request('TURN','U')
+            advice=chooser.query(queued)
+            self.assertEqual(advice.direction,'R')
+            pending.request('TURN',advice.direction)
+            grown=pending.request('TICK')
+            self.assertEqual((grown.score,len(grown.snake),grown.phase),(10,4,'RUNNING'))
+        finally:chooser.close();pending.close()
         recorder=r.Recorder(8,5,4)
         game=LwtSnakeBridge(repository_root=ROOT,width=8,height=5,seed=4,on_transaction=recorder.append)
         strategy=StrategyBridge(repository_root=ROOT)
