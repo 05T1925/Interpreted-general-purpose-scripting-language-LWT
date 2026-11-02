@@ -1,0 +1,166 @@
+{
+  "schema_version": 2,
+  "protocol_version": "LWS1",
+  "board": {
+    "width": 8,
+    "height": 5
+  },
+  "seeds": [
+    4,
+    7,
+    11
+  ],
+  "max_ticks": 12,
+  "strategies": {
+    "baseline": {
+      "path": "app/lwt_snake/strategy_baseline.lwt",
+      "sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+      "protocol": "LWA1"
+    },
+    "bfs": {
+      "path": "app/lwt_snake/strategy.lwt",
+      "sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+      "protocol": "LWA1"
+    }
+  },
+  "cases": [
+    {
+      "strategy_id": "baseline",
+      "strategy_sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 4,
+      "ticks": 12,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 10,
+      "replay_path": "replays/baseline-4.json",
+      "replay_sha256": "525f969ff10c6642a00432b0494f0f4b7f4a563aa0a323f14c616d113ab52c48",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/baseline-4.json",
+      "decision_sha256": "3b60a43eb75500bd790a99412417199870b90ae938d30a1bc98befe55b679b95",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "baseline",
+      "strategy_sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 7,
+      "ticks": 12,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 0,
+      "replay_path": "replays/baseline-7.json",
+      "replay_sha256": "8721b115000db5ba2e9cc236bee86168a9121d4e355de64b06c09677b0ae85c6",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/baseline-7.json",
+      "decision_sha256": "49679eeb03d3db88fbd2eb0f9c4e79e0a90d7bb9274dfada1df9f0581b18a7ff",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "baseline",
+      "strategy_sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 11,
+      "ticks": 12,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 0,
+      "replay_path": "replays/baseline-11.json",
+      "replay_sha256": "dfc1ed254fd6077ac73ad6d03eee574ab81b4dc95d2dc7829a985cff525aaa21",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/baseline-11.json",
+      "decision_sha256": "37c32bb6a5d92f79f3d57555076cb94ef98658cdc77172d5e53bc32affa6f761",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "bfs",
+      "strategy_sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 4,
+      "ticks": 12,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 40,
+      "replay_path": "replays/bfs-4.json",
+      "replay_sha256": "64d1494e1fbae953ca7c844190cdf930993a5301a5a029a33c99374329596a5f",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/bfs-4.json",
+      "decision_sha256": "7abe440250b6d36f306ab9b773017d079b4e40e8137366f2eeff0a1c94a74dea",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "bfs",
+      "strategy_sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 7,
+      "ticks": 12,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 30,
+      "replay_path": "replays/bfs-7.json",
+      "replay_sha256": "26d38776dc60e4a9d96bd7235afaee6debc94f55a7f7ef8ee615c3aad8556482",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/bfs-7.json",
+      "decision_sha256": "49614f838bda165e7d24df6a072e4eee6e68e2d1ea3634b936f1abbf5fed85e7",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "bfs",
+      "strategy_sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 11,
+      "ticks": 12,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 20,
+      "replay_path": "replays/bfs-11.json",
+      "replay_sha256": "78ed0d3d11cb17b38cfe819bc5bdcd07ce1494cd8ad5622192aec6fe7f7f9f19",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/bfs-11.json",
+      "decision_sha256": "c5da84e244dc975e30c6a340c6c05ef25b3fdf9cff501b3c22bb52969720a374",
+      "error_category": null,
+      "error_message": null
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "count": 3,
+      "reasons": {
+        "won": 0,
+        "game_over": 0,
+        "trapped": 0,
+        "limit": 3,
+        "failed": 0
+      },
+      "completed": 3,
+      "score_median": 0,
+      "score_min": 0,
+      "score_max": 10
+    },
+    "bfs": {
+      "count": 3,
+      "reasons": {
+        "won": 0,
+        "game_over": 0,
+        "trapped": 0,
+        "limit": 3,
+        "failed": 0
+      },
+      "completed": 3,
+      "score_median": 30,
+      "score_min": 20,
+      "score_max": 40
+    }
+  }
+}

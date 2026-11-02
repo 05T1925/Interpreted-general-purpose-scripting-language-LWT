@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "protocol_version": "LWA1",
+  "strategy_id": "baseline",
+  "strategy_sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+  "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+  "replay_sha256": "525f969ff10c6642a00432b0494f0f4b7f4a563aa0a323f14c616d113ab52c48",
+  "decisions": [
+    {
+      "sequence": 1,
+      "game_transaction": 2,
+      "request": "LWA1|000001|8|5|R|5|2|3|4,2;3,2;2,2",
+      "response": "LWA1|000001|MOVE|R|SPACE"
+    },
+    {
+      "sequence": 2,
+      "game_transaction": 3,
+      "request": "LWA1|000002|8|5|R|4|3|4|5,2;4,2;3,2;2,2",
+      "response": "LWA1|000002|MOVE|R|SPACE"
+    },
+    {
+      "sequence": 3,
+      "game_transaction": 4,
+      "request": "LWA1|000003|8|5|R|4|3|4|6,2;5,2;4,2;3,2",
+      "response": "LWA1|000003|MOVE|R|SPACE"
+    },
+    {
+      "sequence": 4,
+      "game_transaction": 5,
+      "request": "LWA1|000004|8|5|R|4|3|4|7,2;6,2;5,2;4,2",
+      "response": "LWA1|000004|MOVE|U|SPACE"
+    },
+    {
+      "sequence": 5,
+      "game_transaction": 7,
+      "request": "LWA1|000005|8|5|U|4|3|4|7,1;7,2;6,2;5,2",
+      "response": "LWA1|000005|MOVE|U|SPACE"
+    },
+    {
+      "sequence": 6,
+      "game_transaction": 8,
+      "request": "LWA1|000006|8|5|U|4|3|4|7,0;7,1;7,2;6,2",
+      "response": "LWA1|000006|MOVE|L|SPACE"
+    },
+    {
+      "sequence": 7,
+      "game_transaction": 10,
+      "request": "LWA1|000007|8|5|L|4|3|4|6,0;7,0;7,1;7,2",
+      "response": "LWA1|000007|MOVE|L|SPACE"
+    },
+    {
+      "sequence": 8,
+      "game_transaction": 11,
+      "request": "LWA1|000008|8|5|L|4|3|4|5,0;6,0;7,0;7,1",
+      "response": "LWA1|000008|MOVE|L|SPACE"
+    },
+    {
+      "sequence": 9,
+      "game_transaction": 12,
+      "request": "LWA1|000009|8|5|L|4|3|4|4,0;5,0;6,0;7,0",
+      "response": "LWA1|000009|MOVE|L|SPACE"
+    },
+    {
+      "sequence": 10,
+      "game_transaction": 13,
+      "request": "LWA1|000010|8|5|L|4|3|4|3,0;4,0;5,0;6,0",
+      "response": "LWA1|000010|MOVE|L|SPACE"
+    },
+    {
+      "sequence": 11,
+      "game_transaction": 14,
+      "request": "LWA1|000011|8|5|L|4|3|4|2,0;3,0;4,0;5,0",
+      "response": "LWA1|000011|MOVE|L|SPACE"
+    },
+    {
+      "sequence": 12,
+      "game_transaction": 15,
+      "request": "LWA1|000012|8|5|L|4|3|4|1,0;2,0;3,0;4,0",
+      "response": "LWA1|000012|MOVE|L|SPACE"
+    }
+  ]
+}

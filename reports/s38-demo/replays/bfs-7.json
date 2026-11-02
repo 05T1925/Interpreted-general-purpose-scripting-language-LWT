@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "protocol_version": "LWS1",
+  "source": {
+    "algorithm": "lwt-utf8-lf-sha256-v1",
+    "sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d"
+  },
+  "settings": {
+    "width": 8,
+    "height": 5,
+    "seed": 7
+  },
+  "transactions": [
+    {
+      "request": "LWS1|000001|INIT|8|5|0000000007",
+      "response": "LWS1|000001|STATE|READY|0|R|5|1|3|4,2;3,2;2,2"
+    },
+    {
+      "request": "LWS1|000002|START|-|-|-",
+      "response": "LWS1|000002|STATE|RUNNING|0|R|5|1|3|4,2;3,2;2,2"
+    },
+    {
+      "request": "LWS1|000003|TURN|U|-|-",
+      "response": "LWS1|000003|STATE|RUNNING|0|U|5|1|3|4,2;3,2;2,2"
+    },
+    {
+      "request": "LWS1|000004|TICK|-|-|-",
+      "response": "LWS1|000004|STATE|RUNNING|0|U|5|1|3|4,1;4,2;3,2"
+    },
+    {
+      "request": "LWS1|000005|TURN|R|-|-",
+      "response": "LWS1|000005|STATE|RUNNING|0|R|5|1|3|4,1;4,2;3,2"
+    },
+    {
+      "request": "LWS1|000006|TICK|-|-|-",
+      "response": "LWS1|000006|STATE|RUNNING|10|R|6|0|4|5,1;4,1;4,2;3,2"
+    },
+    {
+      "request": "LWS1|000007|TURN|U|-|-",
+      "response": "LWS1|000007|STATE|RUNNING|10|U|6|0|4|5,1;4,1;4,2;3,2"
+    },
+    {
+      "request": "LWS1|000008|TICK|-|-|-",
+      "response": "LWS1|000008|STATE|RUNNING|10|U|6|0|4|5,0;5,1;4,1;4,2"
+    },
+    {
+      "request": "LWS1|000009|TURN|R|-|-",
+      "response": "LWS1|000009|STATE|RUNNING|10|R|6|0|4|5,0;5,1;4,1;4,2"
+    },
+    {
+      "request": "LWS1|000010|TICK|-|-|-",
+      "response": "LWS1|000010|STATE|RUNNING|20|R|5|3|5|6,0;5,0;5,1;4,1;4,2"
+    },
+    {
+      "request": "LWS1|000011|TURN|D|-|-",
+      "response": "LWS1|000011|STATE|RUNNING|20|D|5|3|5|6,0;5,0;5,1;4,1;4,2"
+    },
+    {
+      "request": "LWS1|000012|TICK|-|-|-",
+      "response": "LWS1|000012|STATE|RUNNING|20|D|5|3|5|6,1;6,0;5,0;5,1;4,1"
+    },
+    {
+      "request": "LWS1|000013|TICK|-|-|-",
+      "response": "LWS1|000013|STATE|RUNNING|20|D|5|3|5|6,2;6,1;6,0;5,0;5,1"
+    },
+    {
+      "request": "LWS1|000014|TICK|-|-|-",
+      "response": "LWS1|000014|STATE|RUNNING|20|D|5|3|5|6,3;6,2;6,1;6,0;5,0"
+    },
+    {
+      "request": "LWS1|000015|TURN|L|-|-",
+      "response": "LWS1|000015|STATE|RUNNING|20|L|5|3|5|6,3;6,2;6,1;6,0;5,0"
+    },
+    {
+      "request": "LWS1|000016|TICK|-|-|-",
+      "response": "LWS1|000016|STATE|RUNNING|30|L|7|2|6|5,3;6,3;6,2;6,1;6,0;5,0"
+    },
+    {
+      "request": "LWS1|000017|TURN|D|-|-",
+      "response": "LWS1|000017|STATE|RUNNING|30|D|7|2|6|5,3;6,3;6,2;6,1;6,0;5,0"
+    },
+    {
+      "request": "LWS1|000018|TICK|-|-|-",
+      "response": "LWS1|000018|STATE|RUNNING|30|D|7|2|6|5,4;5,3;6,3;6,2;6,1;6,0"
+    },
+    {
+      "request": "LWS1|000019|TURN|R|-|-",
+      "response": "LWS1|000019|STATE|RUNNING|30|R|7|2|6|5,4;5,3;6,3;6,2;6,1;6,0"
+    },
+    {
+      "request": "LWS1|000020|TICK|-|-|-",
+      "response": "LWS1|000020|STATE|RUNNING|30|R|7|2|6|6,4;5,4;5,3;6,3;6,2;6,1"
+    },
+    {
+      "request": "LWS1|000021|TICK|-|-|-",
+      "response": "LWS1|000021|STATE|RUNNING|30|R|7|2|6|7,4;6,4;5,4;5,3;6,3;6,2"
+    },
+    {
+      "request": "LWS1|000022|TURN|U|-|-",
+      "response": "LWS1|000022|STATE|RUNNING|30|U|7|2|6|7,4;6,4;5,4;5,3;6,3;6,2"
+    },
+    {
+      "request": "LWS1|000023|TICK|-|-|-",
+      "response": "LWS1|000023|STATE|RUNNING|30|U|7|2|6|7,3;7,4;6,4;5,4;5,3;6,3"
+    }
+  ],
+  "interruption": null,
+  "origin": null
+}
