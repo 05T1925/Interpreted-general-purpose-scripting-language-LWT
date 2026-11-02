@@ -6,7 +6,7 @@
 
 开工分支 `feature/lwt-strategy-arena` 干净，HEAD `b8a5bdf2e0295a2f6ef49581b5042d206ff8beee`（主窗口在 S37 tip `3ed956d977f504a8854dac9feb34231fa862dad8` 后追加审查/派发文档）。`main`、`origin/main` 与实时 `git ls-remote origin refs/heads/main` 均为 `65994968732f017e84821bf82a4baf1184637b93`；merge-base 同此。未从旧 main 另建分支，未覆盖用户改动。
 
-分层提交 SHA（最终文档收尾提交另在交接回复列出）：失败回归 `75963353871424719fc4a425a22c21cbcaeb25df`；v2 契约 `ab9074e3a348c51fe5492f0588a8f210063e87a8`；决策链实现 `046138ccf15ef8e13cb4c78d26e9bd612b9d2a43`；固定六局 `120ce1d5b102100d6e6850116e2673eca894349b`；证据断言 `7b6d0e3324c8aecfc40369a4519fa0e95b401786`；有限 median 与失败前缀 `adbaab4362383f932e7d983c74ffaa61c33be69c`。
+分层提交 SHA（最终文档收尾提交另在交接回复列出）：失败回归 `75963353871424719fc4a425a22c21cbcaeb25df`；v2 契约 `ab9074e3a348c51fe5492f0588a8f210063e87a8`；决策链实现 `046138ccf15ef8e13cb4c78d26e9bd612b9d2a43`；固定六局 `120ce1d5b102100d6e6850116e2673eca894349b`；证据断言 `7b6d0e3324c8aecfc40369a4519fa0e95b401786`；有限 median 与失败前缀 `adbaab4362383f932e7d983c74ffaa61c33be69c`；文档交接 `0d0a65483f75a4aa7644a964587895db5c76b8ba`；真实终局反例 `688835b6953168e4e3c9fcf49c4f5422d0bbd730`；伪造 TRAPPED 反例 `e0da694fa386eeeb7cbfb1ec560c193ff5777995`。
 
 先增失败回归：仓库外临时目录复制真实 `baseline/4` 12 TICK 游戏回放（10 分），改标 BFS 与白名单路径/摘要并更新普通 summary，旧 `--verify` 返回 0，输出含 `bfs 4 10 12 limit true`、`Verified 1 matches.`；空策略/种子/cases/summary 的 v1 文件旧版也返回 0。两条测试在原实现分别 exit 1，失败文本为 `relabelled baseline replay passed as BFS` 与 `empty inventory passed verification`。原六局未被指控造假；旧验证器只能证明 LWS1 游戏命令回放。
 
@@ -42,8 +42,8 @@ CLI 无 Tk、断网可用。正常一步和转向吃食物一步均由定向测�
 
 | 命令 | 退出码与结果 |
 |---|---|
-| `python -m unittest tests.test_lwt_snake_arena -q` | 补终局反例前 exit 0，9/9，60.325s；最终补至 10 项后复跑。针对旧实现两条审查反例各 exit 1，修复后同测试通过 |
-| `python -m unittest discover -s tests -q` | 补终局反例前 exit 0，502/502，210.889s；最终增至 503 项后复跑 |
+| `python -m unittest tests.test_lwt_snake_arena -q` | 最终 exit 0，10/10，66.901s。针对旧实现两条审查反例各 exit 1，修复后同测试通过 |
+| `python -m unittest discover -s tests -q` | 最终 exit 0，503/503，208.015s；S37 报告 497，本阶段增 6 项 |
 | `python tools/run_tests.py` | 0，语言黑盒 287/287，九类均通过，52.599s |
 | `python tools/check_project_integrity.py` | 0，287 cases、384 matrix links、287 referenced cases |
 | `python tools/run_gui_integration.py --require-no-skips` | 0，真实 Tk 控件/合成事件 23/23，fail 0、skip 0，35.772s |
