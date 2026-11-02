@@ -1,0 +1,171 @@
+# Independent, deterministic one-step heuristic; no game state is mutated here.
+record Board { width, height, direction, food, body };
+record Reach { distance, space };
+let directions = ["U", "R", "D", "L"];
+let dx = [0, 1, 0, -1];
+let dy = [-1, 0, 1, 0];
+
+fn decimal(text, maximum_digits) {
+    when (len(text) == 0 or len(text) > maximum_digits) { return false; }
+    let remaining = text;
+    each (digit in ["0","1","2","3","4","5","6","7","8","9"]) {
+        let joined = "";
+        each (part in split(remaining, digit)) { joined = joined + part; }
+        remaining = joined;
+    }
+    return remaining == "";
+}
+
+fn number(text) {
+    when (not(decimal(text, 3))) { return -1; }
+    let value = to_int(text);
+    when (str(value) != text) { return -1; }
+    return value;
+}
+
+fn ascii_frame(text) {
+    # All protocol characters are explicitly enumerated; Unicode is not a digit.
+    let remaining = text;
+    each (marker in ["0","1","2","3","4","5","6","7","8","9",
+                    "L","W","A","U","R","D","|",",",";"]) {
+        let joined = "";
+        each (part in split(remaining, marker)) { joined = joined + part; }
+        remaining = joined;
+    }
+    return remaining == "";
+}
+
+fn parse_board(fields) {
+    let width = number(fields[2]);
+    let height = number(fields[3]);
+    let fx = number(fields[5]);
+    let fy = number(fields[6]);
+    let count = number(fields[7]);
+    when (width < 4 or width > 24 or height < 1 or height > 18 or
+          fx < 0 or fx >= width or fy < 0 or fy >= height or
+          count < 3 or count >= width * height) { return null; }
+    let direction = -1;
+    let d = 0;
+    while (d < 4) {
+        when (fields[4] == directions[d]) { direction = d; }
+        d = d + 1;
+    }
+    when (direction < 0) { return null; }
+    let parts = split(fields[8], ";");
+    when (len(parts) != count) { return null; }
+    let occupied = [];
+    let index = 0;
+    while (index < width * height) { push(occupied, false); index = index + 1; }
+    let body = [];
+    let last_x = -1;
+    let last_y = -1;
+    each (part in parts) {
+        let point = split(part, ",");
+        when (len(point) != 2) { return null; }
+        let x = number(point[0]);
+        let y = number(point[1]);
+        when (x < 0 or x >= width or y < 0 or y >= height) { return null; }
+        let cell = y * width + x;
+        when (occupied[cell] or (x == fx and y == fy)) { return null; }
+        when (len(body) > 0) {
+            let difference_x = x - last_x;
+            let difference_y = y - last_y;
+            when (difference_x < 0) { difference_x = -difference_x; }
+            when (difference_y < 0) { difference_y = -difference_y; }
+            when (difference_x + difference_y != 1) { return null; }
+        }
+        occupied[cell] = true;
+        push(body, cell);
+        last_x = x;
+        last_y = y;
+    }
+    return Board{width: width, height: height, direction: direction,
+                 food: fy * width + fx, body: body};
+}
+
+fn flood(board, start, blocked) {
+    # Finite array queue, each cell is visited at most once; no recursive search.
+    let distances = [];
+    let i = 0;
+    while (i < board.width * board.height) { push(distances, -1); i = i + 1; }
+    let queue = [start];
+    distances[start] = 0;
+    let read = 0;
+    while (read < len(queue)) {
+        let cell = queue[read];
+        read = read + 1;
+        let x = cell % board.width;
+        let y = cell / board.width;
+        let d = 0;
+        while (d < 4) {
+            let nx = x + dx[d];
+            let ny = y + dy[d];
+            d = d + 1;
+            when (nx < 0 or nx >= board.width or ny < 0 or ny >= board.height) { continue; }
+            let next = ny * board.width + nx;
+            when (blocked[next] or distances[next] >= 0) { continue; }
+            distances[next] = distances[cell] + 1;
+            push(queue, next);
+        }
+    }
+    return Reach{distance: distances[board.food], space: len(queue)};
+}
+
+fn choose(board, sequence) {
+    let best_food = -1;
+    let best_distance = 433;
+    let best_space = -1;
+    let largest = -1;
+    let d = 0;
+    while (d < 4) {
+        let candidate = d;
+        d = d + 1;
+        when ((candidate + 2) % 4 == board.direction) { continue; }
+        let x = board.body[0] % board.width + dx[candidate];
+        let y = board.body[0] / board.width + dy[candidate];
+        when (x < 0 or x >= board.width or y < 0 or y >= board.height) { continue; }
+        let next = y * board.width + x;
+        let growing = next == board.food;
+        let blocked = [];
+        let i = 0;
+        while (i < board.width * board.height) { push(blocked, false); i = i + 1; }
+        let retained = len(board.body) - 1;
+        when (growing) { retained = len(board.body); }
+        i = 0;
+        while (i < retained) { blocked[board.body[i]] = true; i = i + 1; }
+        when (blocked[next]) { continue; }
+        # Old head remains occupied, departing tail is free only without growth.
+        let reach = flood(board, next, blocked);
+        when (reach.space > largest) { largest = reach.space; best_space = candidate; }
+        when (reach.distance >= 0 and (growing or reach.space >= len(board.body)) and
+              reach.distance < best_distance) {
+            best_food = candidate;
+            best_distance = reach.distance;
+        }
+    }
+    when (best_food >= 0) { emit "LWA1|" + sequence + "|MOVE|" + directions[best_food] + "|FOOD"; }
+    otherwise {
+        when (best_space >= 0) { emit "LWA1|" + sequence + "|MOVE|" + directions[best_space] + "|SPACE"; }
+        otherwise { emit "LWA1|" + sequence + "|NONE|-|TRAPPED"; }
+    }
+}
+
+let next_sequence = 1;
+let line = input();
+while (line != null) {
+    let fields = split(line, "|");
+    let sequence = "000000";
+    when (len(fields) > 1 and len(fields[1]) == 6 and decimal(fields[1], 6)) { sequence = fields[1]; }
+    when (len(line) > 4096 or not(ascii_frame(line)) or len(fields) != 9 or fields[0] != "LWA1") {
+        emit "LWA1|ERR|" + sequence + "|BAD_FRAME";
+    } otherwise {
+        when (sequence == "000000" or to_int(sequence) != next_sequence) {
+            emit "LWA1|ERR|" + sequence + "|BAD_SEQUENCE";
+        } otherwise {
+            let board = parse_board(fields);
+            when (board == null) { emit "LWA1|ERR|" + sequence + "|BAD_SNAPSHOT"; }
+            otherwise { choose(board, sequence); next_sequence = next_sequence + 1; }
+        }
+    }
+    line = input();
+}
