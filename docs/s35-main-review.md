@@ -24,7 +24,9 @@ S34 已发现的两个问题有可复现的修复证据：持续 TURN 不再饿�
 
 主窗口在 WSL Ubuntu 24.04 / Python 3.12.3 + Xvfb/Tk 8.6 复现了同一失败。根因是 Tk 根窗口绑定接收来自焦点子控件的 FocusOut，但 `on_focus_out` 只接受 `event.widget is root`；按钮持有焦点并移到外部窗口时，该事件被丢弃。`33d5c048cbc8e8987041cbcbabb018a5af42bf7a` 移除此错误过滤，保留 idle 后判断焦点是否离开整个游戏窗口，因此同窗子控件切换不会误暂停。测试改为真实转移焦点到已映射的另一 Toplevel，不再人工生成根窗口 FocusOut 充数。
 
-修复后独立运行该用例：WSL/Xvfb 1/1、Windows 1/1；两个环境的 `python tools/run_gui_integration.py --require-no-skips` 均为 19/19、fail 0、skip 0。此处尚未把修复 SHA 的远端 CI 记为通过，需推送后再核实。完整 unittest 与 287 个语言黑盒在修复前的本窗口结果见上表；本修复只涉及 Tk 焦点处理与一条 GUI 测试，后续精确 SHA CI 应覆盖全量。
+修复后独立运行该用例：WSL/Xvfb 1/1、Windows 1/1；两个环境的 `python tools/run_gui_integration.py --require-no-skips` 均为 19/19、fail 0、skip 0。完整 unittest 与 287 个语言黑盒在修复前的本窗口结果见上表；本修复只涉及 Tk 焦点处理与一条 GUI 测试。
+
+功能分支重新推送后，精确 SHA `b8009623f390b0df4cdb53872e43c169b46770e9` 的 [Actions run 41381289893](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41381289893) 已完成：Ubuntu/Windows × Python 3.10/3.13 **四格全部 success**，run conclusion 为 success。主窗口再核对远端 `main` 仍是原祖先 `9d562b7`，将全部 S34/S35 提交从功能分支无损快进合入本地 `main`，其提交 tip 为 `b8009623`。本记录的状态同步提交会形成更新的主线 SHA；应单独查看它的远端推送和 CI，不能把旧 run 冒充新 SHA 的结果。
 
 旧的“1.15 秒内超过 5 笔 TURN”混合了机器负载与功能判定；未映射/焦点转移也能让测试在开始阶段暂停，使 TURN 数为 0。现在该测试断言重复真实 TURN、拒绝逆向 TURN、仍能发生真实 TICK 后蛇头移动；键盘映射和焦点行为由其他独立 Tk 测试负责。修正降低环境敏感性，不改变产品行为。S35 报告里的历史测试结果按当时版本保留，不倒写为本轮结果。
 
@@ -33,5 +35,5 @@ S34 已发现的两个问题有可复现的修复证据：持续 TURN 不再饿�
 - S35 的文件摘要用于识别源码兼容性，不是签名或防篡改保证；故意篡改必须靠真实新进程逐笔验证发现。
 - 保存只保证同目录临时文件替换的正常错误处理，不承诺断电持久性。回放最多 5000 笔、文件最多 16 MiB；复盘缓存有界。
 - 现有自动 Tk 控件与合成事件通过，不等于人工键鼠、中文输入法、窗口缩放和视觉验收。
-- 本轮未完成 Python 3.10、Linux 或精确 S35 SHA 的远端 CI；需在同步后按实际提交核对。S12 仍保留最终新克隆、PPT、现场演示与交付。
+- 已完成精确 S35 功能分支 SHA 的远端四格 CI，以及本机 WSL/Xvfb 的 Linux GUI 定向验证；人工键鼠/视觉仍未完成。S12 仍保留最终新克隆、PPT、现场演示与交付。
 - 若继续新增功能，优先做能直接体现“LWT 编写应用”的独立能力，保持 `game.lwt` 和 S35 回放格式不变，以免无故失效已有固定回放证据。下一候选见 [S36 派发提示](s36-strategy-handoff.md)。

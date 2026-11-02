@@ -1,20 +1,14 @@
 # LWT 项目上下文
 
-> Agent 当前状态入口。核对日期：2026-11-01。本文按当前工作树记录；每次开始任务都重新检查 Git 和远端。阶段历史与提交关系见[仓库工作流](docs/repository-workflow.md)，总览见[阶段路线图](阶段执行与审查路线图.md)。
+> Agent 当前状态入口。核对日期：2026-11-02。每次开始任务都重新检查 Git 和远端；阶段历史见[仓库工作流](docs/repository-workflow.md)，当前关系见[阶段路线图](阶段执行与审查路线图.md)。
 
-> **2026-11-02 主窗口更新：** S34 两项问题随 S35 修复并已独立复核；S35 产品审查未发现阻断问题，另以 `7ced2a8` 单独稳定时钟回归测试。全量 481 项和黑盒 287/287 为测试修正前的本窗口通过记录；修正后定向 1/1 与严格 GUI 19/19 通过，全量未再跑。精确分支 SHA 的远端 CI、人工桌面、Python 3.10 需另核对。[复核证据](docs/s35-main-review.md)。用户要求再规划一个实质应用能力，[S36 LWT 策略助手提示](docs/s36-strategy-handoff.md)已备；S12 仍是最终交付阶段。下方旧段落为历史快照，不能覆盖此更新。
-
-> **远端回归补记：** 首次功能分支推送 `d6b6a3b` 的 Actions 为 Windows 两格成功、Ubuntu 两格失焦测试失败。主窗口在 WSL/Xvfb 复现并以 `33d5c04` 修复子控件 FocusOut 被忽略的问题；WSL/Windows 严格 GUI 各 19/19 通过。修复 SHA 的远端 CI 待重新核验，详见 [S35 主窗口复核](docs/s35-main-review.md)。
-
-> **S35 执行状态（2026-11-01）：** 已先独立修复移动时钟与失焦测试前置条件，再完成事务录制、严格文件保存、真实 LWT 验证、交互复盘和前缀接管；实施完成，等待主窗口审查。当前功能分支保留 main 之外的既有历史；开工远端查询遇 TLS 失败，随后成功只读实查 main 仍为 `9d562b717ba82fc322ff152e6e1b7d5ff4b5c36c`；不复制旧快照。实际结果见 [S35 报告](docs/s35-replay.md)。S12 未开始。
-
-> **此前主窗口复核（2026-11-01，历史）：** S34 需修复复审：连续 TURN 可饿死移动时钟，失焦测试整组运行失败而单跑通过；见 [S34 主窗口复核](docs/s34-main-review.md)。当前功能分支 `feature/lwt-snake-game` 的产品 tip 为 `f87e8b8`，其后为本轮审查/规划文档；未合入、未推送。实时远端 main 为 `9d562b7`。S35 仅规划为“先修复、再录制/验证/回放/接管”，完整 [派发提示](docs/s35-replay-handoff.md)已有内部修复门槛。S12 未开始。历史执行结果不等于本轮审查结论。
+> **当前结论：** S34 时钟与失焦问题已在 S35 修复，S35 的录制、真实验证、复盘和接管已通过主窗口复核。功能分支 `b8009623` 的 [Actions run 41381289893](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41381289893) 四格成功；S34/S35 原提交已无损快进本地 `main`。第一次远端运行 2/4 失败及 Linux 根因见 [S35 主窗口复核](docs/s35-main-review.md)。S36 [LWT 策略助手派发提示](docs/s36-strategy-handoff.md)已备，执行窗口应从最新主线创建 `feature/lwt-snake-strategy`。S12 最终交付仍未开始。人工键鼠/视觉验收仍待做；主线状态同步提交及远端 main 的精确 SHA 需要单独核验。
 
 ## 目标与课程评分
 
 依据[作业原文](大作业内容.md)，交付 LWT 解释型通用脚本语言及解释器、完整黑盒测试、LWT/Python 性能比较、人类与 Agent 开发指南、至少 200 行的 Agent 编写 LWT 应用及开发记录、Git 历史、介绍 PPT 和线下答辩。评分为解释器 20、测试 20、性能 10、指南 20、LWT 应用 30 分。
 
-课程应用包括 app/log_report.lwt（246 行有效 LWT）以及 S34 新增 app/lwt_snake/game.lwt（执行窗口统计 313 行有效 LWT，需修复复审）。Python/Tkinter 前端、原 Python 贪吃蛇和编辑器插件是展示/开发工具；新 LWT Snake 的 Python 部分仅作桥接与绘图。
+课程应用包括 app/log_report.lwt（246 行有效 LWT）以及 app/lwt_snake/game.lwt（313 行有效 LWT）。Python/Tkinter 前端、原 Python 贪吃蛇和编辑器插件是展示/开发工具；LWT Snake 的 Python 部分负责桥接、回放控制与绘图，规则仍由 LWT 计算。
 
 ## 当前 Git 快照
 
@@ -34,8 +28,9 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - S31：VS Code 扩展已通过主窗口复核（带明确未验证项），保留原提交并集成到 main；合并提交 `ddf1759fa4239eabc15488730917daec990da390`。人工 VSIX 安装/完整桌面操作和依赖线上 advisory 复核仍未验证。历史审查见[S31 主窗口复核](docs/s31-main-review.md)。
 - S32：原生 DAP 已通过主窗口复核、快进进入本地 `main`；精确提交的远端 CI 四格成功。执行窗口报告黑盒 287/287、全量 unittest 442 项；主窗口复跑 DAP 与 S30 定向 49 项及 VS Code Node 11 项／Extension Host 4 项。人工 VSIX 安装和桌面调试 UI 未执行。详见[执行报告](docs/s32-native-dap.md)与[审查记录](docs/s32-main-review.md)。
 - S33：黑盒 runner 选择与 UTF-8/Base64 JSON 契约、VS Code Test Explorer Run/Debug profile 已通过主窗口复核并集成到本地 `main`；修复批量错误终态，精确功能分支 SHA 的远端 CI 四格通过。人工鼠标/键盘编辑器验收仍未验证。详见[主窗口复核](docs/s33-main-review.md)及[执行报告](docs/s33-testing-workbench.md)。
-- S34：已实施，主窗口结论为需修复复审。独立定向 13 项中 12 通过、1 失焦失败；单独重跑该项通过。另独立复现转向饿死 TICK 缺陷；黑盒 287/287、完整性检查通过。详见[主窗口记录](docs/s34-main-review.md)，不要将[历史执行报告](docs/s34-lwt-snake.md)的全绿结果当成本轮通过。
-- S35：实施完成，等待主窗口审查；独立修复门槛提交后交付真实事务录制/文件/新进程验证/复盘/指定前缀接管。见[实施报告](docs/s35-replay.md)及[格式说明](docs/snake-replay-format.md)。S34 两项已由执行窗口修复并验证，仍待主窗口复审；未合入 main。
+- S34：LWT Snake 已合入本地 `main`；原主窗口发现的时钟饿死和失焦问题均在 S35 修复，复现及修复证据见[两轮审查](docs/s35-main-review.md)。
+- S35：可验证回放和接管已通过主窗口复核、合入本地 `main`，功能分支精确 SHA 的远端 CI 四格成功。格式见[回放契约](docs/snake-replay-format.md)；人工桌面操作仍未验证。
+- S36：LWT 策略助手、提示和自动驾驶已规划，尚未实施；[完整派发提示](docs/s36-strategy-handoff.md)。
 - S12：保留为最后交付阶段，在游戏阶段修复、审查与集成后执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
 
 ## 常用验证入口
