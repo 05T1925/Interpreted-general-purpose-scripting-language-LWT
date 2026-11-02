@@ -2,7 +2,7 @@
 
 > Agent 当前状态入口。核对日期：2026-11-02。每次开始任务都重新检查 Git 和远端；阶段历史见[仓库工作流](docs/repository-workflow.md)，当前关系见[阶段路线图](阶段执行与审查路线图.md)。
 
-> **当前结论：** S39 已经[主窗口复核](docs/s39-main-review.md)并快进合入本地 `main`；审查修正提交 `0f543e4b12ff45c34deb6167ed82a2363acf9c44` 的[功能分支 Actions](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41434877262)在 Ubuntu/Windows × Python 3.10/3.13 四格成功。S40 正在 `feature/lwt-counterfactual-lab` 独立分支实施，状态为“实施完成，等待主窗口审查”（以最终报告中的实测为准），未合并或推送。S12 新克隆、PPT、人工桌面和最终交付尚未开始。
+> **当前结论：** S40 已通过[主窗口复核](docs/s40-main-review.md)并快进合入本地 `main`；审查修正提交 `707796430d20e21694bd12609e2c0c3fdda3ea76` 的[功能分支 Actions](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41465288484)在 Ubuntu/Windows × Python 3.10/3.13 四格成功。S41 [策略差异自动发现](docs/s41-witness-discovery-plan.md)仅规划，尚未实施；S12 新克隆、PPT、人工桌面和最终交付均未开始。
 
 ## 目标与课程评分
 
@@ -33,8 +33,9 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - S36：LWT 策略助手、提示与串行自动驾驶已通过主窗口复核、合入本地 `main`；功能分支精确提交的 CI 四格成功。见[审查记录](docs/s36-main-review.md)、[冻结协议](docs/snake-strategy-protocol.md)和[执行报告](docs/s36-strategy.md)。
 - S37/S38：双策略擂台、v2 游戏与决策双层验真、逐步解释已通过[联合复审](docs/s37-s38-main-review.md)并合入本地 `main`；精确功能分支的 CI 四格通过。旧 v1 只可 game-only。见[执行报告](docs/s37-arena.md)、[S38 报告](docs/s38-policy-proof.md)。
 - S39：可信本地策略目录、独立 Agent 新 LWT 策略与 v3 双层验真已通过[主窗口复核](docs/s39-main-review.md)，功能分支精确提交的远端 CI 四格成功；见[报告](docs/s39-strategy-workshop.md)和[SDK](docs/strategy-sdk.md)。
-- S40：可验证的多策略同局面比较与单步反事实实验已在独立分支实施，等待主窗口审查；见[冻结契约](docs/s40-counterfactual-contract.md)和[执行报告](docs/s40-counterfactual-lab.md)。
-- S12：保留为 S40 审查后的最终交付阶段，执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
+- S40：可验证的多策略同局面比较与单步反事实实验已通过[主窗口复核](docs/s40-main-review.md)并进入本地 main；精确功能分支 CI 四格成功；见[契约](docs/s40-counterfactual-contract.md)和[执行报告](docs/s40-counterfactual-lab.md)。
+- S41：Agent 策略差异自动发现与可复现反馈仅规划；见[派发规划](docs/s41-witness-discovery-plan.md)。
+- S12：保留为 S41 审查后的最终交付阶段，执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
 
 ## 常用验证入口
 

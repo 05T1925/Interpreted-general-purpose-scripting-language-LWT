@@ -19,4 +19,6 @@
 - `python tools/check_project_integrity.py`：退出 0，287 cases、384 matrix links、287 referenced cases。
 - `git diff --check main...HEAD`：退出 0。
 
-主窗口未完成物理键鼠/视觉验收。固定 Tk 界面是只读文本展示，不能称为棋盘动画；S40 仅证明同一观察轨迹的响应与一步替代效果，不证明整局优势或陌生策略安全。功能分支精确 SHA 的远端 CI、主线集成及 S12 最终交付需在后续核对，不能由本地结果推断。
+审查修正提交 `707796430d20e21694bd12609e2c0c3fdda3ea76` 的[功能分支 Actions run 41465288484](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41465288484)已在 Ubuntu/Windows × Python 3.10/3.13 四格成功。本地 `main` 从共同基线 `fb841f8` 用 `git merge --ff-only` 快进到该提交，原阶段历史未改写。因此 S40 通过主窗口复核。远端 `main` 的同步及新提交 CI 另行核对。
+
+主窗口未完成物理键鼠/视觉验收。固定 Tk 界面是只读文本展示，不能称为棋盘动画；S40 仅证明同一观察轨迹的响应与一步替代效果，不证明整局优势或陌生策略安全。S12 新克隆、PPT 和最终交付仍未开始。
