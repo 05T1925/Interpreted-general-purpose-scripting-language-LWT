@@ -184,7 +184,13 @@ while (line != null) {
     let fields = split(line, "|");
     when (len(line) > 4096 or not ascii_only(line) or
           len(fields) != 9 or fields[0] != "LWA1") {
-        emit "LWA1|ERR|000000|BAD_FRAME";
+        let error_sequence = "000000";
+        when (len(fields) > 1) {
+            when (sequence_number(fields[1]) >= 0) {
+                error_sequence = fields[1];
+            }
+        }
+        emit "LWA1|ERR|" + error_sequence + "|BAD_FRAME";
     } otherwise {
         let seq = sequence_number(fields[1]);
         when (seq < 0) {
