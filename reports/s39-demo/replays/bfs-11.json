@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "protocol_version": "LWS1",
+  "source": {
+    "algorithm": "lwt-utf8-lf-sha256-v1",
+    "sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d"
+  },
+  "settings": {
+    "width": 8,
+    "height": 5,
+    "seed": 11
+  },
+  "transactions": [
+    {
+      "request": "LWS1|000001|INIT|8|5|0000000011",
+      "response": "LWS1|000001|STATE|READY|0|R|2|4|3|4,2;3,2;2,2"
+    },
+    {
+      "request": "LWS1|000002|START|-|-|-",
+      "response": "LWS1|000002|STATE|RUNNING|0|R|2|4|3|4,2;3,2;2,2"
+    },
+    {
+      "request": "LWS1|000003|TURN|D|-|-",
+      "response": "LWS1|000003|STATE|RUNNING|0|D|2|4|3|4,2;3,2;2,2"
+    },
+    {
+      "request": "LWS1|000004|TICK|-|-|-",
+      "response": "LWS1|000004|STATE|RUNNING|0|D|2|4|3|4,3;4,2;3,2"
+    },
+    {
+      "request": "LWS1|000005|TICK|-|-|-",
+      "response": "LWS1|000005|STATE|RUNNING|0|D|2|4|3|4,4;4,3;4,2"
+    },
+    {
+      "request": "LWS1|000006|TURN|L|-|-",
+      "response": "LWS1|000006|STATE|RUNNING|0|L|2|4|3|4,4;4,3;4,2"
+    },
+    {
+      "request": "LWS1|000007|TICK|-|-|-",
+      "response": "LWS1|000007|STATE|RUNNING|0|L|2|4|3|3,4;4,4;4,3"
+    },
+    {
+      "request": "LWS1|000008|TICK|-|-|-",
+      "response": "LWS1|000008|STATE|RUNNING|10|L|7|3|4|2,4;3,4;4,4;4,3"
+    },
+    {
+      "request": "LWS1|000009|TURN|U|-|-",
+      "response": "LWS1|000009|STATE|RUNNING|10|U|7|3|4|2,4;3,4;4,4;4,3"
+    },
+    {
+      "request": "LWS1|000010|TICK|-|-|-",
+      "response": "LWS1|000010|STATE|RUNNING|10|U|7|3|4|2,3;2,4;3,4;4,4"
+    },
+    {
+      "request": "LWS1|000011|TURN|R|-|-",
+      "response": "LWS1|000011|STATE|RUNNING|10|R|7|3|4|2,3;2,4;3,4;4,4"
+    },
+    {
+      "request": "LWS1|000012|TICK|-|-|-",
+      "response": "LWS1|000012|STATE|RUNNING|10|R|7|3|4|3,3;2,3;2,4;3,4"
+    }
+  ],
+  "interruption": null,
+  "origin": null
+}

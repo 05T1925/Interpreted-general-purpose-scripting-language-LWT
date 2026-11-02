@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "protocol_version": "LWA1",
+  "strategy_id": "bfs",
+  "strategy_sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+  "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+  "replay_sha256": "848208e74c8b4abdae3bd1e6e3f8f49bb083b6d83e55325b150ef778ae9f9044",
+  "decisions": [
+    {
+      "sequence": 1,
+      "game_transaction": 2,
+      "request": "LWA1|000001|8|5|R|2|4|3|4,2;3,2;2,2",
+      "response": "LWA1|000001|MOVE|D|FOOD"
+    },
+    {
+      "sequence": 2,
+      "game_transaction": 4,
+      "request": "LWA1|000002|8|5|D|2|4|3|4,3;4,2;3,2",
+      "response": "LWA1|000002|MOVE|D|FOOD"
+    },
+    {
+      "sequence": 3,
+      "game_transaction": 5,
+      "request": "LWA1|000003|8|5|D|2|4|3|4,4;4,3;4,2",
+      "response": "LWA1|000003|MOVE|L|FOOD"
+    },
+    {
+      "sequence": 4,
+      "game_transaction": 7,
+      "request": "LWA1|000004|8|5|L|2|4|3|3,4;4,4;4,3",
+      "response": "LWA1|000004|MOVE|L|FOOD"
+    },
+    {
+      "sequence": 5,
+      "game_transaction": 8,
+      "request": "LWA1|000005|8|5|L|7|3|4|2,4;3,4;4,4;4,3",
+      "response": "LWA1|000005|MOVE|U|FOOD"
+    },
+    {
+      "sequence": 6,
+      "game_transaction": 10,
+      "request": "LWA1|000006|8|5|U|7|3|4|2,3;2,4;3,4;4,4",
+      "response": "LWA1|000006|MOVE|R|FOOD"
+    }
+  ]
+}

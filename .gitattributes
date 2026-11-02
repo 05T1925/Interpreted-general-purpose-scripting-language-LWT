@@ -4,3 +4,4 @@
 /examples/agent-blind/text-filter/fixture.txt -text whitespace=-blank-at-eol
 reports/s37-demo/** -text
 reports/s38-demo/** -text
+reports/s39-demo/** -text

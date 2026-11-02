@@ -1,0 +1,244 @@
+{
+  "schema_version": 3,
+  "protocol_version": "LWS1",
+  "board": {
+    "width": 8,
+    "height": 5
+  },
+  "seeds": [
+    4,
+    7,
+    11
+  ],
+  "max_ticks": 6,
+  "strategies": {
+    "baseline": {
+      "path": "app/lwt_snake/strategy_baseline.lwt",
+      "sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+      "protocol": "LWA1"
+    },
+    "bfs": {
+      "path": "app/lwt_snake/strategy.lwt",
+      "sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+      "protocol": "LWA1"
+    },
+    "mobility-lookahead": {
+      "path": "app/lwt_snake/strategies/mobility-lookahead.lwt",
+      "sha256": "6123507d1dec3d3079aa6d5d3072184a87816545971e63198dde702567a61404",
+      "protocol": "LWA1"
+    }
+  },
+  "cases": [
+    {
+      "strategy_id": "baseline",
+      "strategy_sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 4,
+      "ticks": 6,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 10,
+      "replay_path": "replays/baseline-4.json",
+      "replay_sha256": "56cee4dc75f8029dcfdab3e2e0e98bce94b7fe21f06dfc6c92e9ad8c1bf4e4da",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/baseline-4.json",
+      "decision_sha256": "4947c3cc0b07a4d72726d3e3ac0b98340418f927e97c9c6850961fb28a33bc0d",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "baseline",
+      "strategy_sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 7,
+      "ticks": 6,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 0,
+      "replay_path": "replays/baseline-7.json",
+      "replay_sha256": "4b095fd5a9c47c0194b5c894227d005a682c70c4f474ac75257f7a3c2263b58d",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/baseline-7.json",
+      "decision_sha256": "be5dee0f9f2271a548322464e58b17a596ba2f992a147e69fa6b054acb39973f",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "baseline",
+      "strategy_sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 11,
+      "ticks": 6,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 0,
+      "replay_path": "replays/baseline-11.json",
+      "replay_sha256": "1a6af578e8e05815a8c63ea7ed4c10a70e19834cc9f120d3fc622a887419de67",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/baseline-11.json",
+      "decision_sha256": "def85b3e849dde77fe5f5696f42fec2ea1c3d909e7dd210873bb778c10671917",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "bfs",
+      "strategy_sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 4,
+      "ticks": 6,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 20,
+      "replay_path": "replays/bfs-4.json",
+      "replay_sha256": "18810e45e99a52ce494d2e79c88b193a6c70eda9fe447c7736bdd67cbc846e31",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/bfs-4.json",
+      "decision_sha256": "6a4dd6060c0e08a10b0f5e7e3effc40f027257eef785bde9f98d92a37502b659",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "bfs",
+      "strategy_sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 7,
+      "ticks": 6,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 20,
+      "replay_path": "replays/bfs-7.json",
+      "replay_sha256": "3474c1fec2d49b064394676652a85a2015358294847d88fa7443487c42846758",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/bfs-7.json",
+      "decision_sha256": "85fcc5addde7494a640cd10e6a44e2c4467d4beb41c10a7f4c4c9e9b47ac65a7",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "bfs",
+      "strategy_sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 11,
+      "ticks": 6,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 10,
+      "replay_path": "replays/bfs-11.json",
+      "replay_sha256": "848208e74c8b4abdae3bd1e6e3f8f49bb083b6d83e55325b150ef778ae9f9044",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/bfs-11.json",
+      "decision_sha256": "b312c8306c6d0db7a5fc21458640532c4f0a5da7fbfb49a6ff1e3df0e8e7b781",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "mobility-lookahead",
+      "strategy_sha256": "6123507d1dec3d3079aa6d5d3072184a87816545971e63198dde702567a61404",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 4,
+      "ticks": 6,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 20,
+      "replay_path": "replays/mobility-lookahead-4.json",
+      "replay_sha256": "ecb6c8f0ced16ab7d2520eec0a7f83e7939363180c951278682ad52479cc2656",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/mobility-lookahead-4.json",
+      "decision_sha256": "1e6c3b883595798eb8f66bc04769db468049bf7d3f29329cc551aa8516f95ad9",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "mobility-lookahead",
+      "strategy_sha256": "6123507d1dec3d3079aa6d5d3072184a87816545971e63198dde702567a61404",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 7,
+      "ticks": 6,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 20,
+      "replay_path": "replays/mobility-lookahead-7.json",
+      "replay_sha256": "6461efc53317906cd6d7dfbf5ef6e9bf50a41863ec04cedbb7f98c8864e4a4a2",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/mobility-lookahead-7.json",
+      "decision_sha256": "f9872ee15781372ae0e6880fbf19fb4c6655e76f64dbde7e28b3d6fb401e09bf",
+      "error_category": null,
+      "error_message": null
+    },
+    {
+      "strategy_id": "mobility-lookahead",
+      "strategy_sha256": "6123507d1dec3d3079aa6d5d3072184a87816545971e63198dde702567a61404",
+      "game_sha256": "99083722c6fbb4e0f77afc51378381a53af0444c0ae4a4e45aa9d7f8fccd506d",
+      "seed": 11,
+      "ticks": 6,
+      "phase": "RUNNING",
+      "stop_reason": "limit",
+      "score": 20,
+      "replay_path": "replays/mobility-lookahead-11.json",
+      "replay_sha256": "625e86542bf5703447e8b0e749fca60512da008df442f0514200c0438d7e24e8",
+      "game_verified": true,
+      "policy_verified": true,
+      "decision_path": "decisions/mobility-lookahead-11.json",
+      "decision_sha256": "8d063809d13fdc81f145654a9fa1c442ddebfce7e795356a4f85fc0b164ef1f5",
+      "error_category": null,
+      "error_message": null
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "count": 3,
+      "reasons": {
+        "won": 0,
+        "game_over": 0,
+        "trapped": 0,
+        "limit": 3,
+        "failed": 0
+      },
+      "completed": 3,
+      "score_median": 0,
+      "score_min": 0,
+      "score_max": 10
+    },
+    "bfs": {
+      "count": 3,
+      "reasons": {
+        "won": 0,
+        "game_over": 0,
+        "trapped": 0,
+        "limit": 3,
+        "failed": 0
+      },
+      "completed": 3,
+      "score_median": 20,
+      "score_min": 10,
+      "score_max": 20
+    },
+    "mobility-lookahead": {
+      "count": 3,
+      "reasons": {
+        "won": 0,
+        "game_over": 0,
+        "trapped": 0,
+        "limit": 3,
+        "failed": 0
+      },
+      "completed": 3,
+      "score_median": 20,
+      "score_min": 20,
+      "score_max": 20
+    }
+  },
+  "catalog": {
+    "schema_version": 1,
+    "path": "app/lwt_snake/strategies/strategy-catalog.json",
+    "sha256": "b2cf48dbc807ba3033d99d62d1ae2f12fb5e54c029e491c77acecfb3acde4008"
+  }
+}
