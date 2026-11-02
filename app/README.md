@@ -200,3 +200,21 @@ python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-divergent.jso
 ```
 
 前两条成功退出 0（10/12 笔）；第三条故意篡改，退出 3 并报告第 3 笔 TICK 分数不同。文件/版本/源码不兼容退出 2。工具退出码不改变 LWT CLI。完整[格式说明](../docs/snake-replay-format.md)与[实际验证记录](../docs/s35-replay.md)说明 16 MiB/5000 条上限、固定可信源码、超时/取消及自动/人工边界。S34 时钟已改为独立截止时间，持续转向不会重设移动时间。
+
+## S36 LWT 策略提示与自动驾驶
+
+仍从 `python -m app.lwt_snake` 进入。在 RUNNING 状态点击“提示 / 关闭提示”，独立长驻 `strategy.lwt` 计算方向箭头及 FOOD（食物路线）、SPACE（优先空间）或 TRAPPED（没有合法步）。提示只显示在棋盘下方文字区，不改游戏状态、不写游戏事务；计算中停手动时钟，返回后恢复，下一次快照会清除旧提示。PAUSED 时先“继续”再查询；关闭提示或手动转向可取消。策略是固定 U/R/D/L 平局序的单步 BFS 启发式，不保证最优或胜利。
+
+点击“自动驾驶：关”启用后，手动定时器停用，每链串行执行“LWT 策略 → 必要 TURN → TICK → 新快照”，链间至少 140ms，响应慢时不补发。手动方向键退出自动并接管。暂停、失焦、重置、保存/载入对话框、复盘、接管、关闭均取消旧策略；恢复焦点或继续游戏不会自行恢复自动。策略错误会停止定时推进并保留已确认状态，可重试策略或手动接管；不会回退到 Python 寻路。两个 LWT 进程的 PID、序号与生命周期独立。
+
+自动驾驶真实 TURN/TICK 沿用 S35 录制器，保存时先停止自动并请求 PAUSE，在一致事务边界保存；即使取消文件选择，也不会自动续跑。保存文件可用上述 replay CLI 在全新游戏进程内验证，再选 RUNNING 前缀接管、手动转向并另存子局。固定 S35 样例、game.lwt、原 Python Snake 均保持不变。
+
+无 GUI 的确定性后退演示（仓库根目录）：
+
+```powershell
+python -m lwt --check app/lwt_snake/strategy.lwt
+python -c "import subprocess,sys,pathlib; p=subprocess.run([sys.executable,'-u','-m','lwt','app/lwt_snake/strategy.lwt'],input=pathlib.Path('app/lwt_snake/strategy-demo.commands').read_bytes()); sys.exit(p.returncode)"
+python -m unittest tests.test_lwt_snake_strategy -v
+```
+
+三条响应依次为 `MOVE|R|FOOD`、`MOVE|L|SPACE`、`NONE|-|TRAPPED`；完整预期见 [strategy-demo.expected](lwt_snake/strategy-demo.expected)。两分钟展示：开始并手动转向（20s）→提示及 LWT 算法边界（20s）→自动数步（20s）→保存并用 replay CLI 验证（30s）→载入、选前缀、接管手动分支（30s）。这是可执行演示顺序，未声称人工演示已完成。[冻结协议](../docs/snake-strategy-protocol.md)、[阶段报告](../docs/s36-strategy.md)与[本机时延数据](../reports/s36-strategy-latency.json)说明测试、上限和未验证项；S12 仍未开始。

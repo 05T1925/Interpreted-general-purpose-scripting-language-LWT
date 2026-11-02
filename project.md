@@ -2,7 +2,7 @@
 
 > Agent 当前状态入口。核对日期：2026-11-02。每次开始任务都重新检查 Git 和远端；阶段历史见[仓库工作流](docs/repository-workflow.md)，当前关系见[阶段路线图](阶段执行与审查路线图.md)。
 
-> **当前结论：** S34 时钟与失焦问题已在 S35 修复，S35 的录制、真实验证、复盘和接管已通过主窗口复核。功能分支 `b8009623` 的 [Actions run 41381289893](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41381289893) 四格成功；S34/S35 原提交已无损快进本地 `main`。第一次远端运行 2/4 失败及 Linux 根因见 [S35 主窗口复核](docs/s35-main-review.md)。S36 [LWT 策略助手派发提示](docs/s36-strategy-handoff.md)已备，执行窗口应从最新主线创建 `feature/lwt-snake-strategy`。S12 最终交付仍未开始。人工键鼠/视觉验收仍待做；主线状态同步提交及远端 main 的精确 SHA 需要单独核验。
+> **当前结论：** S36 已在 `feature/lwt-snake-strategy` 实施，等待主窗口审查；[报告](docs/s36-strategy.md)记录真实 LWT 策略、提示、自动驾驶与 S35 回放/接管闭环。开工本地 main、origin/main 与实时远端均为 `7bc0a13524b22eb26a0daaba67a9af3f409effb1`，工作区干净。未合并、未推送 S36；本阶段远端 CI 和人工键鼠/视觉未验证。S34/S35 原审查及远端结果见 [S35 主窗口复核](docs/s35-main-review.md)，不作为 S36 通过证据。S12 最终交付仍未开始。
 
 ## 目标与课程评分
 
@@ -30,7 +30,7 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - S33：黑盒 runner 选择与 UTF-8/Base64 JSON 契约、VS Code Test Explorer Run/Debug profile 已通过主窗口复核并集成到本地 `main`；修复批量错误终态，精确功能分支 SHA 的远端 CI 四格通过。人工鼠标/键盘编辑器验收仍未验证。详见[主窗口复核](docs/s33-main-review.md)及[执行报告](docs/s33-testing-workbench.md)。
 - S34：LWT Snake 已合入本地 `main`；原主窗口发现的时钟饿死和失焦问题均在 S35 修复，复现及修复证据见[两轮审查](docs/s35-main-review.md)。
 - S35：可验证回放和接管已通过主窗口复核、合入本地 `main`，功能分支精确 SHA 的远端 CI 四格成功。格式见[回放契约](docs/snake-replay-format.md)；人工桌面操作仍未验证。
-- S36：LWT 策略助手、提示和自动驾驶已规划，尚未实施；[完整派发提示](docs/s36-strategy-handoff.md)。
+- S36：LWT 策略助手、提示与串行自动驾驶实施完成，等待主窗口审查；[冻结协议](docs/snake-strategy-protocol.md)、[实施报告](docs/s36-strategy.md)。策略在独立 LWT CLI 进程内计算，game.lwt 与 S35 固定回放保持不变。
 - S12：保留为最后交付阶段，在游戏阶段修复、审查与集成后执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
 
 ## 常用验证入口
