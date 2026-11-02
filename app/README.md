@@ -254,3 +254,16 @@ python -m app.lwt_snake.arena --explain 新目录/result.json --catalog app/lwt_
 ```
 
 第三策略 `mobility-lookahead.lwt` 由独立上下文 Agent 根据公开文档提交，以局部两步出口数、直接食物与距离做确定性选择；这不是 BFS，也不保证更高分。上面命令生成 v3 结果；验证与解释必须再提供同一可信 catalog，不能从结果文件自动运行路径。固定[九局 v3 证据](../reports/s39-demo/result.json)、[Agent 产出链](../docs/s39-agent-record.md)和[阶段报告](../docs/s39-strategy-workshop.md)可供离线复查。S37 v1 仍仅 game-only，S38 v2 六局仍可不带 catalog 双层验真。无 GUI/断网时本节就是完整后退路径；人工现场演示待 S12。
+
+## S40 同一观察轨迹的单步反事实实验
+
+从仓库根目录运行以下命令。S40 只接受已双层验真的 S39 v3 结果，候选策略对同一原局观察序列逐次响应；每个 MOVE 都在新 LWT 游戏进程里只推进一步，再由另一个新进程验证。Python 不计算移动、碰撞或分数。`--catalog` 必须显式指定可信本地目录，时间与路径限制不是陌生源码沙箱。
+
+```powershell
+python -m app.lwt_snake.counterfactual --analyze reports/s39-demo/result.json --catalog app/lwt_snake/strategies/strategy-catalog.json --case baseline/4 --step 2 --strategies baseline,bfs,mobility-lookahead --output 新目录
+python -m app.lwt_snake.counterfactual --verify 新目录 --catalog app/lwt_snake/strategies/strategy-catalog.json
+python -m app.lwt_snake.counterfactual --explain 新目录 --catalog app/lwt_snake/strategies/strategy-catalog.json
+python -m app.lwt_snake.counterfactual_ui
+```
+
+固定[方向分歧实验](../reports/s40-divergence/analysis.json)对比 baseline 的 R 与 BFS、新策略的 D；[第 1 步样例](../reports/s40-demo/analysis.json)展示同方向、不同原因，[故意篡改样例](../reports/s40-tampered/analysis.json)必须验真失败。Tk 入口仅是 Python 只读教学界面；没有 GUI 时上述 CLI 能完成全部验真和解释。证据边界见[冻结契约](../docs/s40-counterfactual-contract.md)和[阶段报告](../docs/s40-counterfactual-lab.md)。

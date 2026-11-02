@@ -213,3 +213,7 @@ python tools/render_lwt_profile.py reports/run.json --output reports/run.html
 ## S35 可验证对局
 
 LWT Snake 新增“保存本局/载入记录”、真实 LWT 验证、按事务单步/播放以及指定前缀接管。记录包含 INIT、真实 STATE/ERR 和 RESET，接管从新进程重建隐藏状态；坐标缓存只用于已验证的复盘展示。运行 `python -m app.lwt_snake`；无 GUI 验证：`python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-parent.json`。文件边界见[格式说明](docs/snake-replay-format.md)，修复与证据见[S35 报告](docs/s35-replay.md)。
+
+## S40 LWT 策略反事实实验台
+
+`python -m app.lwt_snake.counterfactual --explain reports/s40-divergence --catalog app/lwt_snake/strategies/strategy-catalog.json` 先重验 S39 v3 原局及三份 LWT 策略，再展示同一观察轨迹第 2 步的方向分歧与各自只推进一步的游戏分支。`python -m app.lwt_snake.counterfactual_ui` 是只读 Tk 展示；无 GUI 可使用 CLI。命令、固定证据与限制见[应用说明](app/README.md)及[S40 报告](docs/s40-counterfactual-lab.md)。
