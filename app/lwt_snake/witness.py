@@ -27,6 +27,10 @@ class WitnessError(ValueError):
     pass
 
 
+class WitnessUsageError(WitnessError):
+    """Invalid command configuration or output destination."""
+
+
 def _sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
@@ -45,9 +49,9 @@ def _source(result, catalog, reference, challengers, budget):
             or len(set(challengers)) != len(challengers)
             or any(type(name) is not str or not ID.fullmatch(name) or name == reference
                    or name not in data['strategies'] for name in challengers)):
-        raise WitnessError('reference/challengers must be distinct bound strategy IDs')
+        raise WitnessUsageError('reference/challengers must be distinct bound strategy IDs')
     if type(budget) is not int or not 1 <= budget <= 32:
-        raise WitnessError('max-observations must be 1..32')
+        raise WitnessUsageError('max-observations must be 1..32')
     return result, catalog, data, trusted, result_rel, catalog_rel, _sha(original)
 
 
@@ -156,16 +160,22 @@ def _atomic_text(path, value):
 def create(result, catalog, reference, challengers, budget, output):
     output = Path(output)
     if output.exists() or output.is_symlink():
-        raise WitnessError('output directory must be new')
+        raise WitnessUsageError('output directory must be new')
     data, result, catalog = search(result, catalog, reference, challengers, budget)
-    output.mkdir(parents=True, exist_ok=False)
+    try:
+        output.mkdir(parents=True, exist_ok=False)
+    except OSError as error:
+        raise WitnessUsageError('cannot create output directory') from error
     if data['found']:
         counterfactual.analyze(result, catalog, data['case'], data['step'],
                                f"{reference},{data['challenger']}", output / 'analysis')
         data['analysis_sha256'] = _sha((output / data['analysis_path']).read_bytes())
-    arena.atomic_json(output / 'witness.json', data)
-    arena.atomic_json(output / 'agent-feedback.json', feedback(data))
-    _atomic_text(output / 'report.md', human(data))
+    try:
+        arena.atomic_json(output / 'witness.json', data)
+        arena.atomic_json(output / 'agent-feedback.json', feedback(data))
+        _atomic_text(output / 'report.md', human(data))
+    except OSError as error:
+        raise WitnessUsageError('cannot write output files') from error
     verify(output, catalog)
     return data
 
@@ -191,6 +201,8 @@ def verify(directory, catalog):
         analysis = directory / 'analysis'
         counterfactual.verify(analysis, catalog)
         expected['analysis_sha256'] = _sha(counterfactual._read(analysis / 'analysis.json'))
+    elif (directory / 'analysis').exists() or (directory / 'analysis').is_symlink():
+        raise WitnessError('no-witness result must not contain branch analysis')
     if data != expected:
         difference = next((key for key in keys if data[key] != expected[key]), 'witness')
         raise WitnessError(f'{difference} witness evidence mismatch')
@@ -214,11 +226,11 @@ def main(argv=None):
     try:
         if args.verify:
             if any((args.result, args.reference, args.challengers, args.output)):
-                raise WitnessError('verify accepts only directory and explicit catalog')
+                raise WitnessUsageError('verify accepts only directory and explicit catalog')
             data = verify(args.verify, args.catalog)
         else:
             if not all((args.result, args.reference, args.challengers, args.output)):
-                raise WitnessError('search requires result, reference, challengers and new output')
+                raise WitnessUsageError('search requires result, reference, challengers and new output')
             data = create(args.result, args.catalog, args.reference,
                           args.challengers.split(','), args.max_observations, args.output)
         print(f"found={str(data['found']).lower()} scanned={data['scanned']}/{data['max_observations']} case={data['case']} step={data['step']} challenger={data['challenger']}")
@@ -226,6 +238,9 @@ def main(argv=None):
     except KeyboardInterrupt:
         print('WitnessError: cancelled', file=sys.stderr)
         return 130
+    except WitnessUsageError as error:
+        print(f'WitnessError: {error}', file=sys.stderr)
+        return 2
     except (WitnessError, arena.ArenaError, ValueError, OSError, UnicodeError, RuntimeError,
             RecursionError, KeyError, TypeError) as error:
         print(f'WitnessError: {error}', file=sys.stderr)

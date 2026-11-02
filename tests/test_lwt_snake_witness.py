@@ -44,10 +44,11 @@ class WitnessTests(unittest.TestCase):
             self.assertEqual(second.returncode, 0, second.stderr)
             self.assertEqual({p.name:p.read_bytes() for p in a.iterdir()},
                              {p.name:p.read_bytes() for p in b.iterdir()})
-            self.assertEqual(self.create(Path(folder)/'bad', budget=0).returncode, 3)
+            self.assertEqual(self.create(Path(folder)/'bad', budget=0).returncode, 2)
             self.assertEqual(self.cli('--result', RESULT, '--catalog', CATALOG,
                                       '--reference', 'baseline', '--challengers', 'baseline',
-                                      '--output', Path(folder)/'invalid').returncode, 3)
+                                      '--output', Path(folder)/'invalid').returncode, 2)
+            self.assertEqual(self.create(a, budget=1).returncode, 2)
             self.assertEqual(self.cli('--verify', a).returncode, 2)
             data = json.loads((a/'witness.json').read_text(encoding='utf-8'))
             data['found'] = True
@@ -67,6 +68,26 @@ class WitnessTests(unittest.TestCase):
         with patch.object(witness.arena, 'verify', return_value=data):
             with self.assertRaisesRegex(witness.WitnessError, 'no completed'):
                 witness.search(ROOT/RESULT, ROOT/CATALOG, 'baseline', ['bfs'], 1)
+
+    def test_no_witness_cannot_contain_branch_analysis(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            for name in ('witness.json', 'agent-feedback.json', 'report.md'):
+                (root/name).write_bytes((ROOT/'reports/s41-none'/name).read_bytes())
+            (root/'analysis').mkdir()
+            self.assertEqual(self.cli('--verify', root, '--catalog', CATALOG).returncode, 3)
+
+    def test_output_creation_and_write_errors_are_usage_errors(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            blocked_parent = root/'file'
+            blocked_parent.write_text('not a directory', encoding='utf-8')
+            with patch.object(witness, 'search', return_value=({'found': False}, None, None)):
+                with self.assertRaisesRegex(witness.WitnessUsageError, 'cannot create'):
+                    witness.create(None, None, 'baseline', ['bfs'], 1, blocked_parent/'out')
+                with patch.object(witness.arena, 'atomic_json', side_effect=PermissionError()):
+                    with self.assertRaisesRegex(witness.WitnessUsageError, 'cannot write'):
+                        witness.create(None, None, 'baseline', ['bfs'], 1, root/'out')
 
 
 if __name__ == '__main__':
