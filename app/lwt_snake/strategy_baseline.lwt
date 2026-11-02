@@ -1,0 +1,134 @@
+# Independent, deterministic one-step heuristic; no game state is mutated here.
+record Board { width, height, direction, food, body };
+let directions = ["U", "R", "D", "L"];
+let dx = [0, 1, 0, -1];
+let dy = [-1, 0, 1, 0];
+
+fn decimal(text, maximum_digits) {
+    when (len(text) == 0 or len(text) > maximum_digits) { return false; }
+    let remaining = text;
+    each (digit in ["0","1","2","3","4","5","6","7","8","9"]) {
+        let joined = "";
+        each (part in split(remaining, digit)) { joined = joined + part; }
+        remaining = joined;
+    }
+    return remaining == "";
+}
+
+fn number(text) {
+    when (not(decimal(text, 3))) { return -1; }
+    let value = to_int(text);
+    when (str(value) != text) { return -1; }
+    return value;
+}
+
+fn ascii_frame(text) {
+    # All protocol characters are explicitly enumerated; Unicode is not a digit.
+    let remaining = text;
+    each (marker in ["0","1","2","3","4","5","6","7","8","9",
+                    "L","W","A","U","R","D","|",",",";"]) {
+        let joined = "";
+        each (part in split(remaining, marker)) { joined = joined + part; }
+        remaining = joined;
+    }
+    return remaining == "";
+}
+
+fn parse_board(fields) {
+    let width = number(fields[2]);
+    let height = number(fields[3]);
+    let fx = number(fields[5]);
+    let fy = number(fields[6]);
+    let count = number(fields[7]);
+    when (width < 4 or width > 24 or height < 1 or height > 18 or
+          fx < 0 or fx >= width or fy < 0 or fy >= height or
+          count < 3 or count >= width * height) { return null; }
+    let direction = -1;
+    let d = 0;
+    while (d < 4) {
+        when (fields[4] == directions[d]) { direction = d; }
+        d = d + 1;
+    }
+    when (direction < 0) { return null; }
+    let parts = split(fields[8], ";");
+    when (len(parts) != count) { return null; }
+    let occupied = [];
+    let index = 0;
+    while (index < width * height) { push(occupied, false); index = index + 1; }
+    let body = [];
+    let last_x = -1;
+    let last_y = -1;
+    each (part in parts) {
+        let point = split(part, ",");
+        when (len(point) != 2) { return null; }
+        let x = number(point[0]);
+        let y = number(point[1]);
+        when (x < 0 or x >= width or y < 0 or y >= height) { return null; }
+        let cell = y * width + x;
+        when (occupied[cell] or (x == fx and y == fy)) { return null; }
+        when (len(body) > 0) {
+            let difference_x = x - last_x;
+            let difference_y = y - last_y;
+            when (difference_x < 0) { difference_x = -difference_x; }
+            when (difference_y < 0) { difference_y = -difference_y; }
+            when (difference_x + difference_y != 1) { return null; }
+        }
+        occupied[cell] = true;
+        push(body, cell);
+        last_x = x;
+        last_y = y;
+    }
+    return Board{width: width, height: height, direction: direction,
+                 food: fy * width + fx, body: body};
+}
+
+# Independent baseline: maintain effective direction when safe, else U/R/D/L.
+fn legal(board, candidate) {
+    when ((candidate + 2) % 4 == board.direction) { return false; }
+    let x = board.body[0] % board.width + dx[candidate];
+    let y = board.body[0] / board.width + dy[candidate];
+    when (x < 0 or x >= board.width or y < 0 or y >= board.height) { return false; }
+    let cell = y * board.width + x;
+    let retained = len(board.body) - 1;
+    when (cell == board.food) { retained = len(board.body); }
+    let i = 0;
+    while (i < retained) {
+        when (board.body[i] == cell) { return false; }
+        i = i + 1;
+    }
+    return true;
+}
+
+fn choose(board, sequence) {
+    let chosen = -1;
+    when (legal(board, board.direction)) { chosen = board.direction; }
+    otherwise {
+        let d = 0;
+        while (d < 4) {
+            when (legal(board, d)) { chosen = d; break; }
+            d = d + 1;
+        }
+    }
+    when (chosen < 0) { emit "LWA1|" + sequence + "|NONE|-|TRAPPED"; }
+    otherwise { emit "LWA1|" + sequence + "|MOVE|" + directions[chosen] + "|SPACE"; }
+}
+
+let next_sequence = 1;
+let line = input();
+while (line != null) {
+    let fields = split(line, "|");
+    let sequence = "000000";
+    when (len(fields) > 1 and len(fields[1]) == 6 and decimal(fields[1], 6)) { sequence = fields[1]; }
+    when (len(line) > 4096 or not(ascii_frame(line)) or len(fields) != 9 or fields[0] != "LWA1") {
+        emit "LWA1|ERR|" + sequence + "|BAD_FRAME";
+    } otherwise {
+        when (sequence == "000000" or to_int(sequence) != next_sequence) {
+            emit "LWA1|ERR|" + sequence + "|BAD_SEQUENCE";
+        } otherwise {
+            let board = parse_board(fields);
+            when (board == null) { emit "LWA1|ERR|" + sequence + "|BAD_SNAPSHOT"; }
+            otherwise { choose(board, sequence); next_sequence = next_sequence + 1; }
+        }
+    }
+    line = input();
+}
