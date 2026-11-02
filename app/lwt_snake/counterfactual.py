@@ -30,11 +30,28 @@ def _sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def _regular_relative(path, base):
+    """Reject links in every component before reading an evidence file."""
+    absolute, base = path.absolute(), base.absolute()
+    try:
+        relative = absolute.relative_to(base)
+    except ValueError as error:
+        raise CounterfactualError('input path escapes its allowed directory') from error
+    if not relative.parts or '..' in relative.parts:
+        raise CounterfactualError('input path is not canonical')
+    current = base
+    for part in relative.parts:
+        current = current / part
+        if current.is_symlink():
+            raise CounterfactualError('input path contains a symbolic link')
+    resolved = absolute.resolve()
+    if not resolved.is_relative_to(base.resolve()) or not resolved.is_file():
+        raise CounterfactualError('input must be a regular local file')
+    return resolved.relative_to(base.resolve()).as_posix()
+
+
 def _inside(path):
-    resolved = path.resolve()
-    if path.is_symlink() or not resolved.is_relative_to(ROOT):
-        raise CounterfactualError('input must be a regular repository-local file')
-    return resolved.relative_to(ROOT).as_posix()
+    return _regular_relative(path, ROOT)
 
 
 def _read(path, limit=MAX_ANALYSIS):
@@ -181,6 +198,8 @@ def verify(directory, catalog_path):
             raise CounterfactualError('analysis path escapes repository')
         return ROOT / path
     result_path = safe(data['result_path'])
+    if _inside(result_path) != data['result_path']:
+        raise CounterfactualError('original result path is not canonical')
     if data['catalog_path'] != _inside(Path(catalog_path)):
         raise CounterfactualError('explicit catalog path mismatch')
     if _sha(_read(result_path)) != data['result_sha256']:
@@ -201,8 +220,8 @@ def verify(directory, catalog_path):
         name = candidate['strategy_id']
         if candidate['replay_path'] is not None:
             path = directory / candidate['replay_path']
-            if path.is_symlink() or not path.resolve().is_relative_to(directory.resolve()):
-                raise CounterfactualError(f'{name}: linked or escaped branch path')
+            if _regular_relative(path, directory) != candidate['replay_path']:
+                raise CounterfactualError(f'{name}: branch path is not canonical')
             raw_branch = _read(path, 16 * 1024 * 1024)
             candidate['replay_sha256'] = _sha(raw_branch)
             if document(load(path)) != document(branches[name]):

@@ -72,6 +72,22 @@ class CounterfactualTests(unittest.TestCase):
         with patch.object(counterfactual, 'DEADLINE', .01), patch.object(sys, 'argv', arguments):
             self.assertEqual(counterfactual.supervised_main(), 3)
 
+    def test_parent_symlink_components_are_rejected(self):
+        original = Path.is_symlink
+        result = ROOT / RESULT
+        branch_root = ROOT / 'reports/s40-divergence'
+        branch = branch_root / 'branches/bfs.json'
+        for linked, path, base in ((ROOT / 'reports', result, ROOT),
+                                   (branch_root / 'branches', branch, branch_root)):
+            with self.subTest(linked=linked):
+                def simulated_symlink(candidate):
+                    return candidate == linked or original(candidate)
+                with patch.object(Path, 'is_symlink', autospec=True,
+                                  side_effect=simulated_symlink):
+                    with self.assertRaisesRegex(counterfactual.CounterfactualError,
+                                                'symbolic link'):
+                        counterfactual._regular_relative(path, base)
+
 
 if __name__ == '__main__':
     unittest.main()
