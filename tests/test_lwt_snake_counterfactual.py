@@ -5,6 +5,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
+
+from app.lwt_snake import counterfactual
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULT = 'reports/s39-demo/result.json'
@@ -62,6 +65,12 @@ class CounterfactualTests(unittest.TestCase):
                               '--case', 'baseline/4', '--step', 1, '--strategies', 'baseline',
                               '--output', Path(parent)/'old')
             self.assertNotEqual(denied.returncode, 0)
+
+    def test_total_deadline_reclaims_real_process_tree(self):
+        arguments = ['counterfactual', '--verify', 'reports/s40-divergence',
+                     '--catalog', CATALOG]
+        with patch.object(counterfactual, 'DEADLINE', .01), patch.object(sys, 'argv', arguments):
+            self.assertEqual(counterfactual.supervised_main(), 3)
 
 
 if __name__ == '__main__':

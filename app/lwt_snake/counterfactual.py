@@ -4,8 +4,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
+import signal
+import subprocess
 import sys
 import time
 
@@ -87,6 +90,7 @@ def compute(result_path, catalog_path, case, step, names):
     for name in names:
         if time.monotonic() - started >= DEADLINE:
             raise CounterfactualError('analysis total deadline exceeded')
+        catalog.assert_unchanged()
         policy = StrategyBridge(repository_root=ROOT, source_path=paths[name])
         try:
             policy.start()
@@ -94,6 +98,9 @@ def compute(result_path, catalog_path, case, step, names):
                 advice = policy.query(state)
         finally:
             policy.close()
+        catalog.assert_unchanged()
+        if arena.digest_file(paths[name]) != data['strategies'][name]['sha256']:
+            raise CounterfactualError(f'{name}: strategy source changed during consultation')
         response = arena._advice_frame(advice, step)
         item = {'strategy_id': name, 'strategy_sha256': data['strategies'][name]['sha256'],
                 'request': decisions[step - 1]['request'], 'response': response,
@@ -244,10 +251,43 @@ def main(argv=None):
             else:
                 explain(args.explain, args.catalog)
         return 0
-    except (CounterfactualError, arena.ArenaError, OSError, UnicodeError, ValueError, RuntimeError, KeyError, TypeError) as error:
+    except KeyboardInterrupt:
+        print('CounterfactualError: cancelled', file=sys.stderr)
+        return 130
+    except (CounterfactualError, arena.ArenaError, OSError, UnicodeError, ValueError,
+            RuntimeError, RecursionError, KeyError, TypeError) as error:
         print(f'CounterfactualError: {error}', file=sys.stderr)
         return 3
 
 
+def supervised_main():
+    """Bound the complete proof, including legacy arena verification, by a process tree."""
+    if os.environ.get('LWT_S40_WORKER') == '1':
+        return main()
+    env = os.environ.copy()
+    env['LWT_S40_WORKER'] = '1'
+    options = {'cwd': ROOT, 'env': env, 'shell': False,
+               'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE}
+    if os.name == 'nt':
+        options['creationflags'] = getattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 0) | getattr(subprocess, 'CREATE_NO_WINDOW', 0)
+    else:
+        options['start_new_session'] = True
+    process = subprocess.Popen([sys.executable, '-m', 'app.lwt_snake.counterfactual', *sys.argv[1:]], **options)
+    try:
+        stdout, stderr = process.communicate(timeout=DEADLINE)
+    except (subprocess.TimeoutExpired, KeyboardInterrupt) as error:
+        if os.name == 'nt':
+            subprocess.run(['taskkill', '/T', '/F', '/PID', str(process.pid)],
+                           capture_output=True, timeout=5, shell=False)
+        else:
+            os.killpg(process.pid, signal.SIGKILL)
+        process.communicate(timeout=5)
+        print('CounterfactualError: total deadline exceeded or cancelled; process tree reclaimed', file=sys.stderr)
+        return 130 if isinstance(error, KeyboardInterrupt) else 3
+    sys.stdout.buffer.write(stdout)
+    sys.stderr.buffer.write(stderr)
+    return process.returncode
+
+
 if __name__ == '__main__':
-    raise SystemExit(main())
+    raise SystemExit(supervised_main())
