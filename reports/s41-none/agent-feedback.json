@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "result_sha256": "ace544846b5920af81009161f27e8841e3e4262cc1e57ab5d4d89768e98b5eb2",
+  "catalog_sha256": "b2cf48dbc807ba3033d99d62d1ae2f12fb5e54c029e491c77acecfb3acde4008",
+  "reference": "baseline",
+  "challengers": [
+    "bfs",
+    "mobility-lookahead"
+  ],
+  "scanned": 1,
+  "max_observations": 1,
+  "found": false,
+  "meaning": "same verified observation trace; prior observations retained; one-step evidence only",
+  "case": null,
+  "step": null,
+  "challenger": null,
+  "reference_response": null,
+  "challenger_response": null,
+  "question": "No direction difference in this bounded scan; inspect the budget or source policy if needed."
+}

@@ -8,3 +8,6 @@ reports/s39-demo/** -text
 reports/s40-demo/** -text
 reports/s40-divergence/** -text
 reports/s40-tampered/** -text
+reports/s41-found/** -text
+reports/s41-none/** -text
+reports/s41-tampered/** -text

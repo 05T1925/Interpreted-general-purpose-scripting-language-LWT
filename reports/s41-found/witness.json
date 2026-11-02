@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "result_path": "reports/s39-demo/result.json",
+  "result_sha256": "ace544846b5920af81009161f27e8841e3e4262cc1e57ab5d4d89768e98b5eb2",
+  "catalog_path": "app/lwt_snake/strategies/strategy-catalog.json",
+  "catalog_sha256": "b2cf48dbc807ba3033d99d62d1ae2f12fb5e54c029e491c77acecfb3acde4008",
+  "reference": "baseline",
+  "challengers": [
+    "bfs",
+    "mobility-lookahead"
+  ],
+  "max_observations": 32,
+  "scanned": 2,
+  "found": true,
+  "case": "baseline/4",
+  "step": 2,
+  "challenger": "bfs",
+  "reference_response": "LWA1|000002|MOVE|R|SPACE",
+  "challenger_response": "LWA1|000002|MOVE|D|FOOD",
+  "analysis_path": "analysis/analysis.json",
+  "analysis_sha256": "d9edcd5e284e92b31cb0095aa97254f6e63c46b2f7f3de3148a6758f4da81e5b"
+}

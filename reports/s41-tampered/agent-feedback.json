@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "result_sha256": "ace544846b5920af81009161f27e8841e3e4262cc1e57ab5d4d89768e98b5eb2",
+  "catalog_sha256": "b2cf48dbc807ba3033d99d62d1ae2f12fb5e54c029e491c77acecfb3acde4008",
+  "reference": "baseline",
+  "challengers": [
+    "bfs",
+    "mobility-lookahead"
+  ],
+  "scanned": 2,
+  "max_observations": 32,
+  "found": true,
+  "meaning": "same verified observation trace; prior observations retained; one-step evidence only",
+  "case": "baseline/4",
+  "step": 2,
+  "challenger": "bfs",
+  "reference_response": "LWA1|000002|MOVE|R|SPACE",
+  "challenger_response": "LWA1|000002|MOVE|R|FOOD",
+  "question": "Which LWT decision condition explains this direction difference on the recorded observation prefix?"
+}

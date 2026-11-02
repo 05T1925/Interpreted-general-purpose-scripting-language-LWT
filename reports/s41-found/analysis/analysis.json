@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "result_path": "reports/s39-demo/result.json",
+  "result_sha256": "ace544846b5920af81009161f27e8841e3e4262cc1e57ab5d4d89768e98b5eb2",
+  "catalog_path": "app/lwt_snake/strategies/strategy-catalog.json",
+  "catalog_sha256": "b2cf48dbc807ba3033d99d62d1ae2f12fb5e54c029e491c77acecfb3acde4008",
+  "case": "baseline/4",
+  "step": 2,
+  "game_transaction": 3,
+  "candidates": [
+    {
+      "strategy_id": "baseline",
+      "strategy_sha256": "01482253e3c9887c121f1a4d52a528e472c7fc3b5fd6779d3412cc3504747327",
+      "request": "LWA1|000002|8|5|R|4|3|4|5,2;4,2;3,2;2,2",
+      "response": "LWA1|000002|MOVE|R|SPACE",
+      "replay_path": "branches/baseline.json",
+      "replay_sha256": "54cbe0c4d55ec94397cdee9bcff33d7bf5b03c71683ab5ca60e5fafa7e559786",
+      "before_score": 10,
+      "after_score": 10,
+      "after_phase": "RUNNING"
+    },
+    {
+      "strategy_id": "bfs",
+      "strategy_sha256": "a5aae877f2b4da5d238e7387b87d439c2509d7c3677d61a116a7d6dc1616d9ec",
+      "request": "LWA1|000002|8|5|R|4|3|4|5,2;4,2;3,2;2,2",
+      "response": "LWA1|000002|MOVE|D|FOOD",
+      "replay_path": "branches/bfs.json",
+      "replay_sha256": "2448a8a89219b9e83c16176912587d9c0913a263f4bc9f3fb30529aba9160055",
+      "before_score": 10,
+      "after_score": 10,
+      "after_phase": "RUNNING"
+    }
+  ]
+}
