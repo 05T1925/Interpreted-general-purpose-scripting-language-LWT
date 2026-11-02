@@ -2,7 +2,7 @@
 
 > Agent 当前状态入口。核对日期：2026-11-02。每次开始任务都重新检查 Git 和远端；阶段历史见[仓库工作流](docs/repository-workflow.md)，当前关系见[阶段路线图](阶段执行与审查路线图.md)。
 
-> **当前结论：** S37 曾有策略归属与空结果验真缺口；S38 已以 v2 决策证据、双新进程验真和严格 inventory 修复。S37/S38 [联合复审通过](docs/s37-s38-main-review.md)，原提交快进合入本地 `main`，精确功能分支提交的 [Actions 四格成功](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41397904378)。历史 v1 仅能明确标为游戏回放验真。用户要求在 S12 前再做最后一个有界功能阶段 S39，详见[策略编程工作坊提示](docs/s39-strategy-workshop-handoff.md)。主分支远端同步与 CI 应单独核实；人工桌面和 S12 最终交付未开始。
+> **当前结论：** S37/S38 [联合复审通过](docs/s37-s38-main-review.md)并合入本地/远端 `main`；精确功能分支 Actions 四格成功，历史 v1 仅能明确标为游戏回放验真。S39 已在 `feature/lwt-strategy-workshop` 实施可信本地 LWT 策略目录、独立 Agent 第三策略、v3 双层验真与工作坊指南，**等待主窗口审查**；见[阶段报告](docs/s39-strategy-workshop.md)、[SDK](docs/strategy-sdk.md)和[Agent 证据](docs/s39-agent-record.md)。S39 尚未合入或推送，其精确 SHA 的远端 CI、人工桌面与 S12 最终交付均未开始。
 
 ## 目标与课程评分
 
@@ -32,7 +32,7 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - S35：可验证回放和接管已通过主窗口复核、合入本地 `main`，功能分支精确 SHA 的远端 CI 四格成功。格式见[回放契约](docs/snake-replay-format.md)；人工桌面操作仍未验证。
 - S36：LWT 策略助手、提示与串行自动驾驶已通过主窗口复核、合入本地 `main`；功能分支精确提交的 CI 四格成功。见[审查记录](docs/s36-main-review.md)、[冻结协议](docs/snake-strategy-protocol.md)和[执行报告](docs/s36-strategy.md)。
 - S37/S38：双策略擂台、v2 游戏与决策双层验真、逐步解释已通过[联合复审](docs/s37-s38-main-review.md)并合入本地 `main`；精确功能分支的 CI 四格通过。旧 v1 只可 game-only。见[执行报告](docs/s37-arena.md)、[S38 报告](docs/s38-policy-proof.md)。
-- S39：Agent 可编写 LWT 策略的工作坊已规划、尚未实施；见[完整派发提示](docs/s39-strategy-workshop-handoff.md)。
+- S39：可信本地策略目录、独立 Agent 新 LWT 策略与 v3 双层验真实施完成，待主窗口审查；见[报告](docs/s39-strategy-workshop.md)、[SDK](docs/strategy-sdk.md)和[派发提示](docs/s39-strategy-workshop-handoff.md)。
 - S12：保留为 S39 审查后的最后交付阶段，执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
 
 ## 常用验证入口

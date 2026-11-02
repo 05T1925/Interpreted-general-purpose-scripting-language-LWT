@@ -314,3 +314,4 @@ python -m lwt.debugger --commands examples/debugger/session.txt --program-stdin 
 - [项目状态](../project.md)：阶段进度及证据。
 - [现有完整示例](../examples/)：输入输出、控制流、函数、集合和文本处理。
 - [课程作业要求](../大作业内容.md)：交付范围和验收要求。
+- [策略 SDK](strategy-sdk.md)：把公开 LWA1 模板扩展为可信本地 LWT 策略，完成静态/协议检查、固定种子对局、v3 双层验真与逐步解释；仅执行明确选择的可信本地源码。

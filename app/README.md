@@ -241,3 +241,16 @@ python -m app.lwt_snake.arena --explain reports/s38-demo/result.json --case bfs/
 解释命令先双层验真，再显示真实查询前快照、LWT 建议、TURN/TICK 和分数变化。固定样例见[结果](../reports/s38-demo/result.json)、[v2 契约](../docs/s38-policy-proof-contract.md)及[实施报告](../docs/s38-policy-proof.md)。无桌面或断网时可直接使用以上 CLI。SHA-256 标识文件字节一致性及当前源码的确定性重算，不能认证历史执行者。
 
 离线 2–3 分钟演示：展示两份 `.lwt` 决策源码（30 秒）→运行固定三 seed 的有界命令（约 1 分钟，实际耗时依设备）→查看结果表（20 秒）→独立验证一局回放（20 秒）→复制到临时目录篡改一笔 score，验证非零退出并定位事务（30 秒）。该顺序是准备材料，人工现场演示尚未完成。相同 seed 仅固定初始随机状态，不保证两策略后续食物完全一致；这个小样本不能证明算法优越性。Python 汇总统计与展示不代算方向、碰撞或得分；无需 GUI 或网络。S12 仍未开始。
+
+## S39 Agent 可编写 LWT 策略工作坊
+
+把[策略模板](lwt_snake/strategies/strategy-template.lwt)复制到同目录新文件，按 [策略 SDK](../docs/strategy-sdk.md)编写无 `import` 的 LWA1 长驻 LWT 程序，并在[可信本地目录](lwt_snake/strategies/strategy-catalog.json)添加 ID、单文件路径、规范化源码 SHA-256 与协议版本。内置 `baseline,bfs` 仍无需 catalog；自定义策略必须显式 `--catalog`，路径限制和超时**不是安全沙箱**，只运行自己信任的本地源码。
+
+```powershell
+python -m app.lwt_snake.arena --check-strategy mobility-lookahead --catalog app/lwt_snake/strategies/strategy-catalog.json
+python -m app.lwt_snake.arena --catalog app/lwt_snake/strategies/strategy-catalog.json --strategies baseline,bfs,mobility-lookahead --seeds 4,7,11 --max-ticks 6 --workers 2 --output 新目录
+python -m app.lwt_snake.arena --verify 新目录/result.json --catalog app/lwt_snake/strategies/strategy-catalog.json
+python -m app.lwt_snake.arena --explain 新目录/result.json --catalog app/lwt_snake/strategies/strategy-catalog.json --case mobility-lookahead/4 --step 1
+```
+
+第三策略 `mobility-lookahead.lwt` 由独立上下文 Agent 根据公开文档提交，以局部两步出口数、直接食物与距离做确定性选择；这不是 BFS，也不保证更高分。上面命令生成 v3 结果；验证与解释必须再提供同一可信 catalog，不能从结果文件自动运行路径。固定[九局 v3 证据](../reports/s39-demo/result.json)、[Agent 产出链](../docs/s39-agent-record.md)和[阶段报告](../docs/s39-strategy-workshop.md)可供离线复查。S37 v1 仍仅 game-only，S38 v2 六局仍可不带 catalog 双层验真。无 GUI/断网时本节就是完整后退路径；人工现场演示待 S12。
