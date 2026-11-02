@@ -5,3 +5,6 @@
 reports/s37-demo/** -text
 reports/s38-demo/** -text
 reports/s39-demo/** -text
+reports/s40-demo/** -text
+reports/s40-divergence/** -text
+reports/s40-tampered/** -text
