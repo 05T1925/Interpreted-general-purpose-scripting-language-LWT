@@ -108,6 +108,24 @@ class ArenaTests(unittest.TestCase):
             rejected=self.cli('--verify',result_file)
             self.assertEqual(rejected.returncode,3,rejected.stdout)
             self.assertIn(b'bfs/4: decision',rejected.stderr)
+            # A limit cannot be relabelled TRAPPED by appending a made-up NONE.
+            copy=root/'false-trapped';shutil.copytree(original,copy)
+            result_file=copy/'result.json';changed=json.loads(result_file.read_text(encoding='utf-8'))
+            item=changed['cases'][0];decision_file=copy/item['decision_path']
+            evidence=json.loads(decision_file.read_text(encoding='utf-8'))
+            replay=arena.load(copy/item['replay_path'])
+            last=arena.reconstruct(replay).states[-1]
+            sequence=len(evidence['decisions'])+1
+            evidence['decisions'].append({'sequence':sequence,'game_transaction':len(replay.transactions),
+                                          'request':arena.encode_snapshot(last,sequence)[:-1].decode('ascii'),
+                                          'response':f'LWA1|{sequence:06d}|NONE|-|TRAPPED'})
+            decision_file.write_text(json.dumps(evidence),encoding='utf-8')
+            item['decision_sha256']=hashlib.sha256(decision_file.read_bytes()).hexdigest()
+            item['stop_reason']='trapped';changed['summary']=arena.summary([item])
+            result_file.write_text(json.dumps(changed),encoding='utf-8')
+            rejected=self.cli('--verify',result_file)
+            self.assertEqual(rejected.returncode,3,rejected.stdout)
+            self.assertIn(b'baseline/4: decision',rejected.stderr)
             for step in (1,2,3):
                 explained=self.cli('--explain',original/'result.json','--case','baseline/4','--step',step)
                 self.assertEqual(explained.returncode,0,explained.stderr)
