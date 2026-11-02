@@ -229,6 +229,15 @@ python -m app.lwt_snake.arena --verify my-arena-result/result.json
 python -m app.lwt_snake.replay --verify my-arena-result/replays/bfs-4.json
 ```
 
-第一条运行 `baseline`（优先保持合法当前方向，否则首个合法方向）与 `bfs`（S36 静态 BFS），各自都是 LWT 源程序；每局独立启动 LWT 游戏与策略子进程。结果按策略和 seed 固定排序，默认参数、范围、退出码及 JSON schema 见[冻结契约](../docs/s37-arena-contract.md)。第二条不相信结果 JSON 自称已验证，会重新核对源码/回放摘要，并用全新 LWT 游戏进程逐笔重放；第三条直接打开某局的 S35 公开回放验证路径。控制台打印每局分数、步数、停止原因与是否验真，也打印每策略完成局的 median/min/max。可查看仓库固定的 [六局结果](../reports/s37-demo/result.json)和[阶段报告](../docs/s37-arena.md)。
+第一条运行 `baseline`（优先保持合法当前方向，否则首个合法方向）与 `bfs`（S36 静态 BFS），各自都是 LWT 源程序；每局独立启动 LWT 游戏与策略子进程。结果按策略和 seed 固定排序。第二条对现行 v2 结果用全新 LWT 游戏与策略进程分别复核游戏回放及决策链；第三条可单独打开某局的 S35 游戏回放。控制台打印每局分数、步数、停止原因及两个证明标志，也打印每策略完成局的 median/min/max。S37 初版范围和历史结果见[原契约](../docs/s37-arena-contract.md)、[六局 v1 结果](../reports/s37-demo/result.json)与[阶段报告](../docs/s37-arena.md)。
+
+**S38 证据口径：** 现行命令生成 v2 结果，额外保存逐步 LWA1 决策证据；`--verify` 分别核对 `game_verified` 和 `policy_verified`。旧 S37 固定结果保持原样，不能证明每步来自所标策略；须显式运行 `python -m app.lwt_snake.arena --game-only --verify reports/s37-demo/result.json`，输出会标注 `strategy decisions unverified`；普通 `--verify` 对 v1 退出 3。新固定样例及可解释命令：
+
+```powershell
+python -m app.lwt_snake.arena --verify reports/s38-demo/result.json
+python -m app.lwt_snake.arena --explain reports/s38-demo/result.json --case bfs/4 --step 3
+```
+
+解释命令先双层验真，再显示真实查询前快照、LWT 建议、TURN/TICK 和分数变化。固定样例见[结果](../reports/s38-demo/result.json)、[v2 契约](../docs/s38-policy-proof-contract.md)及[实施报告](../docs/s38-policy-proof.md)。无桌面或断网时可直接使用以上 CLI。SHA-256 标识文件字节一致性及当前源码的确定性重算，不能认证历史执行者。
 
 离线 2–3 分钟演示：展示两份 `.lwt` 决策源码（30 秒）→运行固定三 seed 的有界命令（约 1 分钟，实际耗时依设备）→查看结果表（20 秒）→独立验证一局回放（20 秒）→复制到临时目录篡改一笔 score，验证非零退出并定位事务（30 秒）。该顺序是准备材料，人工现场演示尚未完成。相同 seed 仅固定初始随机状态，不保证两策略后续食物完全一致；这个小样本不能证明算法优越性。Python 汇总统计与展示不代算方向、碰撞或得分；无需 GUI 或网络。S12 仍未开始。

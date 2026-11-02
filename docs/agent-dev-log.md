@@ -275,3 +275,10 @@
 - **Agent 产出：** 先单独提交[擂台契约](s37-arena-contract.md)，随后编写独立的 `strategy_baseline.lwt`（维持当前合法方向，否则 U/R/D/L）、固定策略清单和 `arena.py`，复用 LWA1 bridge 与 S35 recorder/reconstruct；建立六局固定结果及真实回放。Python 只负责白名单、生命周期、记录和汇总统计。
 - **复核修正：** 篡改 seed 的测试初次发现诊断只称“identity mismatch”，细化为 `seed mismatch` 并复跑。检查固定 JSON 的 SHA-256 时发现 Windows checkout 可能改换行，给 S37 固定样例设置 `-text`；首次属性提交误覆盖原 fixture 属性，紧接独立提交恢复原四条并验证最终 `.gitattributes` 相对 main 只新增一行。故障测试检查完整事务前缀仍可独立验证，错误局不被记作正常零分。
 - **证据边界：** 命令、全量/定向测试、种子结果、进程与保护差异见[阶段报告](s37-arena.md)。自动 Tk 回归不代表人工桌面体验；S37 不推送、不合并、不声明远端 CI 通过，S12 未开始。
+
+## S38｜策略决策链验真（2026-11-02）
+
+- **实际提示：** 主窗口以 [S37 审查反例](s37-main-review.md)要求在同一功能分支先锁定错标策略与空 inventory，再冻结 v2、实现全新 LWT 策略逐步重算及无 GUI 解释命令；不修改原游戏或 LWT 语义。
+- **Agent 产出：** 首先提交两条预期失败的审查回归；随后单独提交 [v2 证据契约](s38-policy-proof-contract.md)；在 `arena.py` 记录每次查询前事务数、规范 LWA1 请求与响应，保存独立决策文件并绑定摘要。`--verify` 用新游戏和新策略进程逐笔核对，`--explain` 只呈现已通过双层验真的一步。新固定六局存于 `reports/s38-demo/`；旧 v1 文件原样保留。
+- **人工复核修正：** 旧版回归分别 exit 1，指出错标和空 inventory 曾得到 exit 0；新增 v2 后调整原单一 `verified` 断言为 `game_verified`/`policy_verified`。攻击测试同步重算普通 SHA 后篡改方向、原因、序号、事务索引及策略归属，仍由新进程或结构链拒绝。扩充 workers 文件字节比对时发现偶数局 median `5.0` 被过严 JSON 解析误拒绝，增加有限小数与真实两种子回归；首次放置测试的缩进错误导致 `NameError`，已定向修复。清点临时文件路径、分支状态、保护差异和无 GUI 降级口径；运行结果见[阶段报告](s38-policy-proof.md)。
+- **责任边界：** 此处证明当前白名单 LWT 源码对记录查询的确定性一致性，不是历史执行者签名。S37/S38 仍待主窗口复审、远端 CI 未验证；S12 未开始。
