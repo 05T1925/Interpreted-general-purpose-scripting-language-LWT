@@ -218,3 +218,17 @@ python -m unittest tests.test_lwt_snake_strategy -v
 ```
 
 三条响应依次为 `MOVE|R|FOOD`、`MOVE|L|SPACE`、`NONE|-|TRAPPED`；完整预期见 [strategy-demo.expected](lwt_snake/strategy-demo.expected)。两分钟展示：开始并手动转向（20s）→提示及 LWT 算法边界（20s）→自动数步（20s）→保存并用 replay CLI 验证（30s）→载入、选前缀、接管手动分支（30s）。这是可执行演示顺序，未声称人工演示已完成。[冻结协议](../docs/snake-strategy-protocol.md)、[阶段报告](../docs/s36-strategy.md)与[本机时延数据](../reports/s36-strategy-latency.json)说明测试、上限和未验证项；S12 仍未开始。
+
+## S37 双 LWT 策略擂台
+
+从仓库根目录执行；输出须是尚不存在的目录，已有目录一律拒绝覆盖：
+
+```powershell
+python -m app.lwt_snake.arena --seeds 4,7,11 --max-ticks 12 --workers 1 --output my-arena-result
+python -m app.lwt_snake.arena --verify my-arena-result/result.json
+python -m app.lwt_snake.replay --verify my-arena-result/replays/bfs-4.json
+```
+
+第一条运行 `baseline`（优先保持合法当前方向，否则首个合法方向）与 `bfs`（S36 静态 BFS），各自都是 LWT 源程序；每局独立启动 LWT 游戏与策略子进程。结果按策略和 seed 固定排序，默认参数、范围、退出码及 JSON schema 见[冻结契约](../docs/s37-arena-contract.md)。第二条不相信结果 JSON 自称已验证，会重新核对源码/回放摘要，并用全新 LWT 游戏进程逐笔重放；第三条直接打开某局的 S35 公开回放验证路径。控制台打印每局分数、步数、停止原因与是否验真，也打印每策略完成局的 median/min/max。可查看仓库固定的 [六局结果](../reports/s37-demo/result.json)和[阶段报告](../docs/s37-arena.md)。
+
+离线 2–3 分钟演示：展示两份 `.lwt` 决策源码（30 秒）→运行固定三 seed 的有界命令（约 1 分钟，实际耗时依设备）→查看结果表（20 秒）→独立验证一局回放（20 秒）→复制到临时目录篡改一笔 score，验证非零退出并定位事务（30 秒）。该顺序是准备材料，人工现场演示尚未完成。相同 seed 仅固定初始随机状态，不保证两策略后续食物完全一致；这个小样本不能证明算法优越性。Python 汇总统计与展示不代算方向、碰撞或得分；无需 GUI 或网络。S12 仍未开始。
