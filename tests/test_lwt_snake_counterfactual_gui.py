@@ -3,8 +3,10 @@ import threading
 import time
 import tkinter as tk
 import unittest
+from unittest.mock import patch
 
 from app.lwt_snake.counterfactual_ui import CounterfactualWindow
+from app.lwt_snake.replay import ROOT
 
 
 class CounterfactualTkTests(unittest.TestCase):
@@ -57,6 +59,20 @@ class CounterfactualTkTests(unittest.TestCase):
         release.set()
         self.until(lambda: not ui.busy)
         self.assertNotIn('stale', ui.text.get('1.0', 'end'))
+        ui.close()
+
+    def test_load_real_s41_witness_with_button_and_reverify(self):
+        ui = CounterfactualWindow(self.root)
+        self.until(lambda: not ui.busy)
+        with patch('app.lwt_snake.counterfactual_ui.filedialog.askdirectory',
+                   return_value=str(ROOT / 'reports/s41-found')):
+            ui.load_button.invoke()
+        self.assertIn('旧结果已清除', ui.text.get('1.0', 'end'))
+        ui.verify_button.invoke()
+        self.until(lambda: not ui.busy, seconds=45)
+        shown = ui.text.get('1.0', 'end')
+        self.assertIn('扫描 2/32', shown)
+        self.assertIn('LWA1|000002|MOVE|D|FOOD', shown)
         ui.close()
 
 

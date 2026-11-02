@@ -1,0 +1,64 @@
+"""S41 real LWT witness search, bounded absence and proof tampering."""
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from app.lwt_snake import witness
+
+ROOT = Path(__file__).resolve().parents[1]
+RESULT = 'reports/s39-demo/result.json'
+CATALOG = 'app/lwt_snake/strategies/strategy-catalog.json'
+
+
+class WitnessTests(unittest.TestCase):
+    def cli(self, *args):
+        return subprocess.run([sys.executable, '-m', 'app.lwt_snake.witness', *map(str, args)],
+                              cwd=ROOT, shell=False, capture_output=True, timeout=125)
+
+    def create(self, output, budget=32):
+        return self.cli('--result', RESULT, '--catalog', CATALOG, '--reference', 'baseline',
+                        '--challengers', 'mobility-lookahead,bfs', '--max-observations', budget,
+                        '--output', output)
+
+    def test_fixed_witness_and_bounded_absence_are_reverified(self):
+        found = self.cli('--verify', 'reports/s41-found', '--catalog', CATALOG)
+        self.assertEqual(found.returncode, 0, found.stderr)
+        self.assertIn(b'found=true scanned=2/32 case=baseline/4 step=2 challenger=bfs', found.stdout)
+        absent = self.cli('--verify', 'reports/s41-none', '--catalog', CATALOG)
+        self.assertEqual(absent.returncode, 0, absent.stderr)
+        self.assertIn(b'found=false scanned=1/1', absent.stdout)
+        rejected = self.cli('--verify', 'reports/s41-tampered', '--catalog', CATALOG)
+        self.assertEqual(rejected.returncode, 3, rejected.stdout)
+        self.assertIn(b'agent feedback evidence mismatch', rejected.stderr)
+
+    def test_repeat_generation_is_byte_identical_and_rejects_bad_inputs(self):
+        with tempfile.TemporaryDirectory() as folder:
+            a, b = Path(folder)/'a', Path(folder)/'b'
+            first = self.create(a, budget=1)
+            second = self.create(b, budget=1)
+            self.assertEqual(first.returncode, 0, first.stderr)
+            self.assertEqual(second.returncode, 0, second.stderr)
+            self.assertEqual({p.name:p.read_bytes() for p in a.iterdir()},
+                             {p.name:p.read_bytes() for p in b.iterdir()})
+            self.assertEqual(self.create(Path(folder)/'bad', budget=0).returncode, 3)
+            self.assertEqual(self.cli('--result', RESULT, '--catalog', CATALOG,
+                                      '--reference', 'baseline', '--challengers', 'baseline',
+                                      '--output', Path(folder)/'invalid').returncode, 3)
+            self.assertEqual(self.cli('--verify', a).returncode, 2)
+            data = json.loads((a/'witness.json').read_text(encoding='utf-8'))
+            data['found'] = True
+            (a/'witness.json').write_text(json.dumps(data), encoding='utf-8')
+            self.assertEqual(self.cli('--verify', a, '--catalog', CATALOG).returncode, 3)
+
+    def test_total_deadline_reclaims_real_child(self):
+        argv = ['witness', '--verify', 'reports/s41-found', '--catalog', CATALOG]
+        with patch.object(witness, 'DEADLINE', .01), patch.object(sys, 'argv', argv):
+            self.assertEqual(witness.supervised_main(), 3)
+
+
+if __name__ == '__main__':
+    unittest.main()
