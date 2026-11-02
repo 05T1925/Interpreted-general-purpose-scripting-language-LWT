@@ -141,7 +141,7 @@ class StrategyBridge(LwtSnakeBridge):
 @dataclass(frozen=True)
 class StrategyReply:
     generation: int
-    state: GameSnapshot
+    state: GameSnapshot | None
     advice: Advice | None=None
     error: str | None=None
 

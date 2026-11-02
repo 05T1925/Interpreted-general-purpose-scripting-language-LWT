@@ -14,6 +14,8 @@ LWA1|000001|WIDTH|HEIGHT|DIR|FOOD_X|FOOD_Y|BODY_LEN|x,y;x,y;...
 
 正常响应恰好五字段：`LWA1|SSSSSS|MOVE|U/R/D/L|FOOD/SPACE`，或 `LWA1|SSSSSS|NONE|-|TRAPPED`。错误四字段：`LWA1|ERR|SSSSSS|BAD_FRAME/BAD_SEQUENCE/BAD_SNAPSHOT`。无法辨认序号用 000000。任何错误均不消费序号、不改变策略状态；合法请求消费一次。非 ASCII、超长、版本/字段数错误为 BAD_FRAME；序号错误为 BAD_SEQUENCE；快照损坏为 BAD_SNAPSHOT。内部异常不捕获成协议成功，由 LWT stderr 和非零退出暴露。
 
+编码边界澄清：上面的非 ASCII 指能严格 UTF-8 解码的 Unicode 文本；非法 UTF-8 在正式 `input()` 层得到 RuntimeError / exit 3，不输出策略帧。bridge 始终写 LF，直接 CLI 的终止 CRLF 按正式 input 语义剥除。提示收到结果后恢复手动时钟；下一份游戏快照会清除已过期建议，若需保留观察时间，可在演示时使用较慢的手动节拍。GUI 不对 PAUSED 坐标另造策略语义。
+
 Python 严格检查响应字节、长度、数量、版本、请求序号、方向/理由配对；不寻路、不重算游戏结果。一次仅一项在途请求，队列容量一；默认响应上限 5 秒，stderr 仅保留最后 8192 字节。额外 stdout、半帧、EOF、坏编码、超时、取消均结束并回收策略进程；不会替换为 Python 方向。重试启动新进程，序号从一开始。旧代结果不得覆盖当前快照。
 
 ## 确定性算法
