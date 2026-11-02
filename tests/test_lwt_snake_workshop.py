@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 import uuid
 
 from app.lwt_snake import arena, catalog
@@ -87,7 +88,11 @@ class WorkshopTests(unittest.TestCase):
         try:
             link.symlink_to(outside)
         except OSError:
-            pass  # Windows may disallow symlink creation; path/resolve checks remain tested above.
+            # Some Windows accounts cannot create links. Still exercise the
+            # explicit symlink rejection branch; Linux CI takes the real path.
+            with patch.object(Path, 'is_symlink', autospec=True, return_value=True):
+                with self.assertRaisesRegex(catalog.CatalogError, 'regular file'):
+                    catalog._source(source, '0'*64)
         else:
             self.addCleanup(lambda:link.unlink(missing_ok=True))
             with self.assertRaises(catalog.CatalogError):catalog._source(link,'0'*64)
