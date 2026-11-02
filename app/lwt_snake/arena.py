@@ -19,6 +19,7 @@ from app.lwt_snake.strategy import SOURCE, StrategyBridge
 from app.lwt_snake.strategy import encode_snapshot, parse_advice
 from app.lwt_snake.replay import Recorder, load, reconstruct, save, source_digest, command_parts
 from app.lwt_snake.protocol import parse_response
+from app.lwt_snake.catalog import CatalogError, load_catalog, smoke_check
 
 ROOT=Path(__file__).resolve().parents[2]
 STRATEGIES={'baseline':Path(__file__).with_name('strategy_baseline.lwt'),'bfs':SOURCE}
@@ -28,6 +29,7 @@ CASE_KEYS={'strategy_id','strategy_sha256','game_sha256','seed','ticks','phase',
            'score','replay_path','replay_sha256','verified','error_category','error_message'}
 CASE_V2_KEYS=(CASE_KEYS-{'verified'})|{'game_verified','policy_verified','decision_path','decision_sha256'}
 RESULT_KEYS={'schema_version','protocol_version','board','seeds','max_ticks','strategies','cases','summary'}
+RESULT_V3_KEYS=RESULT_KEYS|{'catalog'}
 
 
 class ArenaError(ValueError): pass
@@ -46,7 +48,10 @@ def parse_csv(raw, allowed=None):
 
 
 def config(args):
-    ids=parse_csv(args.strategies,STRATEGIES)
+    catalog=load_catalog(args.catalog) if args.catalog else None
+    paths=dict(STRATEGIES)
+    if catalog:paths.update({name:entry.path for name,entry in catalog.entries.items()})
+    ids=parse_csv(args.strategies,paths)
     seeds=[]
     for value in parse_csv(args.seeds):
         if not value.isascii() or not value.isdecimal() or str(int(value))!=value:
@@ -60,9 +65,9 @@ def config(args):
     if not 1<=args.max_ticks<=100 or args.workers not in (1,2,4) or args.workers>len(ids)*len(seeds):
         raise ArenaError('tick/worker limit invalid')
     if args.output.exists():raise ArenaError('output path already exists')
-    if any(not path.is_file() for path in (GAME_SOURCE,*(STRATEGIES[name] for name in ids))):
+    if any(not path.is_file() for path in (GAME_SOURCE,*(paths[name] for name in ids))):
         raise ArenaError('a whitelisted LWT source file is missing')
-    return ids,sorted(seeds)
+    return ids,sorted(seeds),catalog,paths
 
 
 def summary(cases):
@@ -80,9 +85,16 @@ def summary(cases):
 
 
 def run_case(strategy_id,seed,width,height,max_ticks,folder,*,strategy_factory=StrategyBridge,
-             game_factory=LwtSnakeBridge,cancel=None,deadline_seconds=60):
+             game_factory=LwtSnakeBridge,cancel=None,deadline_seconds=60,
+             strategy_path=None,expected_digest=None,catalog=None):
     cancel=cancel or threading.Event()
-    strategy_path=STRATEGIES[strategy_id]
+    strategy_path=strategy_path or STRATEGIES[strategy_id]
+    expected_digest=expected_digest or digest_file(strategy_path)
+    def check_source():
+        if catalog:
+            catalog.assert_unchanged()
+        if digest_file(strategy_path)!=expected_digest:
+            raise CatalogError(f'{strategy_id}/{seed}: strategy source changed during match')
     recorder=Recorder(width,height,seed)
     game=game_factory(repository_root=ROOT,width=width,height=height,seed=seed,on_transaction=recorder.append,timeout=5)
     strategy=strategy_factory(repository_root=ROOT,source_path=strategy_path,timeout=5)
@@ -94,11 +106,13 @@ def run_case(strategy_id,seed,width,height,max_ticks,folder,*,strategy_factory=S
     timer.start()
     try:
         if cancel.is_set():raise ArenaError('match cancelled')
-        state=game.start();state=game.request('START');strategy.start()
+        check_source();state=game.start();state=game.request('START');strategy.start()
         while ticks<max_ticks:
             if cancel.is_set():raise ArenaError('match deadline/cancel reached')
+            check_source()
             preceding=len(recorder.snapshot().transactions)
             advice=strategy.query(state,cancel)
+            check_source()
             sequence=len(decisions)+1
             request=encode_snapshot(state,sequence)[:-1].decode('ascii')
             response=(f'LWA1|{sequence:06d}|NONE|-|TRAPPED' if advice.direction is None else
@@ -124,6 +138,10 @@ def run_case(strategy_id,seed,width,height,max_ticks,folder,*,strategy_factory=S
                     reason='failed';category=type(error).__name__;message=str(error)[:512]
                     recorder.interrupt(f'{category}: {message}')
         timer.join(timeout=5)
+    try:check_source()
+    except Exception as error:
+        reason='failed';category=type(error).__name__;message=str(error)[:512]
+        recorder.interrupt(f'{category}: {message}')
     replay=recorder.snapshot()
     relative=f'replays/{strategy_id}-{seed}.json'
     target=folder/relative
@@ -143,13 +161,13 @@ def run_case(strategy_id,seed,width,height,max_ticks,folder,*,strategy_factory=S
     decision_hash=None
     if replay_hash:
         document={'schema_version':1,'protocol_version':'LWA1','strategy_id':strategy_id,
-                  'strategy_sha256':digest_file(strategy_path),'game_sha256':digest_file(GAME_SOURCE),
+                  'strategy_sha256':expected_digest,'game_sha256':digest_file(GAME_SOURCE),
                   'replay_sha256':replay_hash,'decisions':decisions}
         decision_target=folder/decision_relative
         decision_target.parent.mkdir(exist_ok=True)
         atomic_json(decision_target,document)
         decision_hash=hashlib.sha256(decision_target.read_bytes()).hexdigest()
-    return {'strategy_id':strategy_id,'strategy_sha256':digest_file(strategy_path),
+    return {'strategy_id':strategy_id,'strategy_sha256':expected_digest,
             'game_sha256':digest_file(GAME_SOURCE),'seed':seed,'ticks':ticks,
             'phase':state.phase if state else None,'stop_reason':reason,
             'score':state.score if state else None,'replay_path':relative if replay_hash else None,
@@ -172,7 +190,8 @@ def atomic_json(path,data):
 
 
 def run(args):
-    ids,seeds=config(args)
+    ids,seeds,catalog,paths=config(args)
+    digests={name:digest_file(paths[name]) for name in ids}
     paths=[(name,seed) for name in sorted(ids) for seed in seeds]
     args.output.mkdir(parents=False)
     (args.output/'replays').mkdir()
@@ -181,7 +200,8 @@ def run(args):
     cancellation=threading.Event()
     pool=ThreadPoolExecutor(max_workers=args.workers)
     try:
-        futures={pool.submit(run_case,name,seed,args.width,args.height,args.max_ticks,args.output,cancel=cancellation): (name,seed)
+        futures={pool.submit(run_case,name,seed,args.width,args.height,args.max_ticks,args.output,
+                             cancel=cancellation,strategy_path=paths[name],expected_digest=digests[name],catalog=catalog): (name,seed)
                  for name,seed in paths}
         for future in as_completed(futures):cases.append(future.result())
     except BaseException:
@@ -190,16 +210,19 @@ def run(args):
         raise
     finally:pool.shutdown(wait=True,cancel_futures=True)
     cases.sort(key=lambda case:(case['strategy_id'],case['seed']))
-    result={'schema_version':2,'protocol_version':'LWS1','board':{'width':args.width,'height':args.height},
+    result={'schema_version':3 if catalog else 2,'protocol_version':'LWS1','board':{'width':args.width,'height':args.height},
             'seeds':seeds,'max_ticks':args.max_ticks,
-            'strategies':{name:{'path':str(STRATEGIES[name].relative_to(ROOT)).replace('\\','/'),
-                                'sha256':digest_file(STRATEGIES[name]),'protocol':'LWA1'} for name in sorted(ids)},
+            'strategies':{name:{'path':paths[name].relative_to(ROOT).as_posix(),
+                                'sha256':digests[name],'protocol':'LWA1'} for name in sorted(ids)},
             'cases':cases,'summary':{}}
+    if catalog:
+        result['catalog']={'schema_version':1,'path':catalog.relative_path,'sha256':catalog.sha256}
     # Re-run each independent LWT strategy and game before recording proof flags.
     for row in cases:
         if row['replay_path'] is not None:
             try:
-                verify_case_v2(args.output/'result.json',result,row,check_flags=False)
+                verify_case_v2(args.output/'result.json',result,row,check_flags=False,
+                               strategy_path=paths[row['strategy_id']],catalog=catalog)
                 row['policy_verified']=True
             except Exception as error:
                 if row['stop_reason']!='failed':
@@ -255,8 +278,10 @@ def _advice_frame(advice,sequence):
             f'LWA1|{sequence:06d}|MOVE|{advice.direction}|{advice.reason}')
 
 
-def verify_case_v2(path,data,row,*,check_flags=True):
+def verify_case_v2(path,data,row,*,check_flags=True,strategy_path=None,catalog=None):
     name=row['strategy_id'];seed=row['seed'];label=f'{name}/{seed}'
+    strategy_path=strategy_path or STRATEGIES[name]
+    if catalog:catalog.assert_unchanged()
     relative=f'replays/{name}-{seed}.json'
     if row['replay_path'] is None:
         if row['stop_reason']!='failed' or row['game_verified'] or row['policy_verified'] or row['replay_sha256'] is not None or row['decision_path'] is not None or row['decision_sha256'] is not None or row['ticks']!=0 or row['score'] is not None or row['phase'] is not None:
@@ -296,7 +321,7 @@ def verify_case_v2(path,data,row,*,check_flags=True):
     if len(transactions)<2 or [command_parts(tx)[0] for tx in transactions[:2]]!=['INIT','START'] or states[1].phase!='RUNNING':
         raise ArenaError(f'{label}: game must start with INIT and START')
     cursor=2;trapped=False;pending=False
-    strategy=StrategyBridge(repository_root=ROOT,source_path=STRATEGIES[name])
+    strategy=StrategyBridge(repository_root=ROOT,source_path=strategy_path)
     try:
         strategy.start()
         for number,entry in enumerate(entries,1):
@@ -307,10 +332,12 @@ def verify_case_v2(path,data,row,*,check_flags=True):
                 raise ArenaError(f'{where}: sequence/game_transaction mismatch')
             before=states[cursor-1]
             if before.phase!='RUNNING':raise ArenaError(f'{where}: consultation after terminal state')
+            if catalog:catalog.assert_unchanged()
             expected_request=encode_snapshot(before,number)[:-1].decode('ascii')
             if entry['request']!=expected_request:raise ArenaError(f'{where}: query-before-TURN snapshot/request mismatch')
             try:advice=strategy.query(before)
             except Exception as error:raise ArenaError(f'{where}: fresh LWT strategy: {error}') from error
+            if catalog:catalog.assert_unchanged()
             expected_response=_advice_frame(advice,number)
             if entry['response']!=expected_response:
                 raise ArenaError(f'{where}: LWT strategy response/direction/reason mismatch')
@@ -340,6 +367,7 @@ def verify_case_v2(path,data,row,*,check_flags=True):
     finally:
         try:strategy.close()
         except Exception as error:raise ArenaError(f'{label}: fresh LWT strategy close: {error}') from error
+    if catalog:catalog.assert_unchanged()
     if cursor!=len(transactions):raise ArenaError(f'{label}: extra game transaction {cursor+1}')
     reason=row['stop_reason']
     if reason=='trapped' and (not trapped or last.phase!='RUNNING'):
@@ -354,17 +382,28 @@ def verify_case_v2(path,data,row,*,check_flags=True):
     return policy
 
 
-def verify(path,*,game_only=False):
+def verify(path,*,game_only=False,catalog_path=None):
     data=_read_json(path,MAX_RESULT)
-    if type(data)!=dict or set(data)!=RESULT_KEYS or type(data['schema_version'])!=int or data['schema_version'] not in (1,2) or data['protocol_version']!='LWS1':
+    if type(data)!=dict or type(data.get('schema_version'))!=int or data['schema_version'] not in (1,2,3) or set(data)!=(RESULT_V3_KEYS if data['schema_version']==3 else RESULT_KEYS) or data['protocol_version']!='LWS1':
         raise ArenaError('result schema/version invalid')
     version=data['schema_version']
+    if version==3:
+        if catalog_path is None:raise ArenaError('v3 verification requires explicit --catalog')
+        catalog=load_catalog(catalog_path)
+        expected_catalog={'schema_version':1,'path':catalog.relative_path,'sha256':catalog.sha256}
+        if data['catalog']!=expected_catalog:
+            raise ArenaError('catalog version/path/digest mismatch')
+    else:
+        if catalog_path is not None:raise ArenaError('catalog is only valid for v3 results')
+        catalog=None
+    paths=dict(STRATEGIES)
+    if catalog:paths.update({name:entry.path for name,entry in catalog.entries.items()})
     if version==2 and game_only:
         raise ArenaError('--game-only is only for legacy v1 results')
     if type(data['strategies'])!=dict or type(data['cases'])!=list or type(data['summary'])!=dict:
         raise ArenaError('result inventory/summary field type invalid')
     board=data['board'];ids=list(data['strategies']);seeds=data['seeds']
-    if type(board)!=dict or set(board)!={'width','height'} or type(board['width'])!=int or type(board['height'])!=int or not 4<=board['width']<=24 or not 1<=board['height']<=18 or board['width']*board['height']>432 or not ids or len(ids)>2 or ids!=sorted(ids) or any(name not in STRATEGIES for name in ids):
+    if type(board)!=dict or set(board)!={'width','height'} or type(board['width'])!=int or type(board['height'])!=int or not 4<=board['width']<=24 or not 1<=board['height']<=18 or board['width']*board['height']>432 or not ids or len(ids)>8 or ids!=sorted(ids) or any(name not in paths for name in ids):
         raise ArenaError('result board/strategy inventory invalid')
     if type(data['max_ticks'])!=int or not 1<=data['max_ticks']<=100:
         raise ArenaError('result tick limit invalid')
@@ -375,12 +414,12 @@ def verify(path,*,game_only=False):
         raise ArenaError('v1 game replay only; strategy decisions unverified; use --game-only --verify')
     for name in ids:
         spec=data['strategies'][name]
-        if type(spec)!=dict or set(spec)!={'path','sha256','protocol'} or spec['path']!=str(STRATEGIES[name].relative_to(ROOT)).replace('\\','/') or spec['protocol']!='LWA1' or spec['sha256']!=digest_file(STRATEGIES[name]):
+        if type(spec)!=dict or set(spec)!={'path','sha256','protocol'} or spec['path']!=paths[name].relative_to(ROOT).as_posix() or spec['protocol']!='LWA1' or spec['sha256']!=digest_file(paths[name]):
             raise ArenaError(f'{name}: strategy source digest/path mismatch')
     expected=[(name,seed) for name in ids for seed in seeds]
     for row,(name,seed) in zip(data['cases'],expected):
         label=f'{name}/{seed}'
-        if type(row)!=dict or set(row)!=(CASE_V2_KEYS if version==2 else CASE_KEYS):raise ArenaError(f'{label}: case schema mismatch')
+        if type(row)!=dict or set(row)!=(CASE_V2_KEYS if version in (2,3) else CASE_KEYS):raise ArenaError(f'{label}: case schema mismatch')
         if row['strategy_id']!=name:raise ArenaError(f'{label}: strategy_id mismatch')
         if row['seed']!=seed:raise ArenaError(f'{label}: seed mismatch')
         if type(row['ticks'])!=int or not 0<=row['ticks']<=data['max_ticks'] or (row['score'] is not None and (type(row['score'])!=int or not 0<=row['score']<=4320)) or (row['phase'] is not None and (type(row['phase'])!=str or row['phase'] not in ('READY','RUNNING','WON','GAME_OVER'))):
@@ -393,10 +432,10 @@ def verify(path,*,game_only=False):
             raise ArenaError(f'{label}: error fields mismatch')
         if row['error_category'] is not None and (len(row['error_category'])>80 or len(row['error_message'])>512):
             raise ArenaError(f'{label}: error fields too long')
-        if version==2:
+        if version in (2,3):
             if type(row['game_verified'])!=bool or type(row['policy_verified'])!=bool:
                 raise ArenaError(f'{label}: proof flags invalid')
-            verify_case_v2(path,data,row)
+            verify_case_v2(path,data,row,strategy_path=paths[name],catalog=catalog)
             continue
         relative=f'replays/{name}-{seed}.json'
         if row['replay_path']!=relative:raise ArenaError(f'{label}: replay path mismatch')
@@ -422,7 +461,7 @@ def verify(path,*,game_only=False):
             raise ArenaError(f'{label}: limit reason mismatch')
         if reason=='trapped':
             if last.phase!='RUNNING':raise ArenaError(f'{label}: trapped phase mismatch')
-            strategy=StrategyBridge(repository_root=ROOT,source_path=STRATEGIES[name])
+            strategy=StrategyBridge(repository_root=ROOT,source_path=paths[name])
             try:
                 strategy.start()
                 if strategy.query(last).direction is not None:raise ArenaError(f'{label}: trapped reason mismatch')
@@ -443,9 +482,9 @@ def show(result):
         print(f"{name}: completed={stats['completed']} failed={stats['reasons']['failed']} median={stats['score_median']} min={stats['score_min']} max={stats['score_max']}")
 
 
-def explain(path,case,step):
-    data=verify(path)
-    if data['schema_version']!=2:raise ArenaError('explain requires v2 policy proof')
+def explain(path,case,step,*,catalog_path=None):
+    data=verify(path,catalog_path=catalog_path)
+    if data['schema_version'] not in (2,3):raise ArenaError('explain requires v2/v3 policy proof')
     if type(step)!=int or step<1:raise ArenaError('step must be positive')
     row=next((item for item in data['cases'] if f"{item['strategy_id']}/{item['seed']}"==case),None)
     if row is None:raise ArenaError('case ID is not in the result')
@@ -468,6 +507,8 @@ def explain(path,case,step):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--catalog',type=Path)
+    parser.add_argument('--check-strategy')
     parser.add_argument('--verify',type=Path)
     parser.add_argument('--game-only',action='store_true')
     parser.add_argument('--explain',type=Path)
@@ -482,13 +523,24 @@ def main(argv=None):
     parser.add_argument('--output',type=Path)
     args=parser.parse_args(argv)
     try:
+        if args.check_strategy:
+            if not args.catalog or args.verify or args.explain or args.output:
+                raise ArenaError('--check-strategy requires --catalog and no run/verify options')
+            catalog=load_catalog(args.catalog)
+            entry=catalog.entries.get(args.check_strategy)
+            if entry is None:raise ArenaError('unknown custom strategy ID')
+            observations=smoke_check(entry)
+            catalog.assert_unchanged()
+            print(f'{entry.id}: static and LWA1 smoke check passed; source_sha256={entry.sha256}')
+            for line in observations:print(line)
+            return 0
         if args.explain:
             if args.verify or args.game_only or args.output or args.case is None or args.step is None:
                 raise ArenaError('--explain requires --case ID/seed and --step N only')
-            explain(args.explain,args.case,args.step);return 0
+            explain(args.explain,args.case,args.step,catalog_path=args.catalog);return 0
         if args.verify:
             if args.case is not None or args.step is not None:raise ArenaError('--case/--step require --explain')
-            result=verify(args.verify,game_only=args.game_only);show(result)
+            result=verify(args.verify,game_only=args.game_only,catalog_path=args.catalog);show(result)
             if result['schema_version']==1:print('game replay only; strategy decisions unverified')
             elif all(row['game_verified'] and row['policy_verified'] for row in result['cases']):
                 print(f"Verified {len(result['cases'])} matches: game and policy decisions.")
