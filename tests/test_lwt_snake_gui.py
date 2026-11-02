@@ -69,7 +69,6 @@ class LwtSnakeTkTests(unittest.TestCase):
         other.focus_force()
         self.pump(lambda: self.root.focus_displayof() is not None and self.root.focus_displayof().winfo_toplevel() is other)
         self.assertIs(self.root.focus_displayof().winfo_toplevel(), other)
-        self.root.event_generate('<FocusOut>', when='now')
         self.pump(lambda: not app.busy and app.snapshot.phase == 'PAUSED')
         other.destroy()
         app.reset_button.invoke()

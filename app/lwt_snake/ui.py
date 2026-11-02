@@ -168,7 +168,10 @@ class LwtSnakeApp:
         return None
 
     def on_focus_out(self, event: tk.Event) -> None:
-        if event.widget is self.root and not self.closing and self.focus_id is None:
+        # The focused widget may be a child button/canvas. Its FocusOut
+        # bubbles through the root bind tag on X11; check the whole window
+        # after focus settles so intra-window transfers do not pause.
+        if not self.closing and self.focus_id is None:
             self.focus_id = self.root.after_idle(self.check_focus)
 
     def check_focus(self) -> None:
