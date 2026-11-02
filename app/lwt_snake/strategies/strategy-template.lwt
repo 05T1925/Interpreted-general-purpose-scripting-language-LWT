@@ -1,0 +1,25 @@
+# Copy to a new file. Implement validation and a legal choice before registration.
+# This placeholder intentionally reports TRAPPED; it is not a playable strategy.
+let next_sequence = 1;
+let line = input();
+while (line != null) {
+    let fields = split(line, "|");
+    when (len(fields) != 9 or fields[0] != "LWA1") {
+        emit "LWA1|ERR|000000|BAD_FRAME";
+    } otherwise {
+        let sequence = fields[1];
+        when (len(sequence) != 6) {
+            emit "LWA1|ERR|000000|BAD_SEQUENCE";
+        } otherwise {
+            when (to_int(sequence) != next_sequence) {
+                emit "LWA1|ERR|" + sequence + "|BAD_SEQUENCE";
+            } otherwise {
+                # TODO: validate every board field, compute legal steps in LWT,
+                # and choose a direction using your own documented algorithm.
+                emit "LWA1|" + sequence + "|NONE|-|TRAPPED";
+                next_sequence = next_sequence + 1;
+            }
+        }
+    }
+    line = input();
+}
