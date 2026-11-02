@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S33–S40 已由主窗口复核并进入本地 `main`；现有课程应用包括日志分析器与 LWT Snake。S40 的[同局面反事实实验台](docs/s40-main-review.md)已通过复核，精确功能分支的远端 CI 四格成功。S41 的[策略差异自动发现](docs/s41-witness-discovery-plan.md)仅规划，S12 保留为最终交付阶段。当前状态见 [project.md](project.md)。
+本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S33–S40 已由主窗口复核并进入本地 `main`；现有课程应用包括日志分析器与 LWT Snake。S40 的[同局面反事实实验台](docs/s40-main-review.md)已通过复核，精确功能分支的远端 CI 四格成功。S41 正在独立功能分支实施、等待主窗口审查；S12 保留为最终交付阶段。当前状态见 [project.md](project.md)。
 
 ## 阅读入口
 
@@ -217,3 +217,7 @@ LWT Snake 新增“保存本局/载入记录”、真实 LWT 验证、按事务�
 ## S40 LWT 策略反事实实验台
 
 `python -m app.lwt_snake.counterfactual --explain reports/s40-divergence --catalog app/lwt_snake/strategies/strategy-catalog.json` 先重验 S39 v3 原局及三份 LWT 策略，再展示同一观察轨迹第 2 步的方向分歧与各自只推进一步的游戏分支。`python -m app.lwt_snake.counterfactual_ui` 是只读 Tk 展示；无 GUI 可使用 CLI。命令、固定证据与限制见[应用说明](app/README.md)及[S40 报告](docs/s40-counterfactual-lab.md)。
+
+## S41 LWT 策略差异自动发现
+
+`python -m app.lwt_snake.witness --verify reports/s41-found --catalog app/lwt_snake/strategies/strategy-catalog.json` 对固定搜索结果重新执行有界 LWT 策略咨询，并验证 S40 的一步分支。另有预算 1 的无见证样例与篡改拒绝样例；命令、反馈含义和 GUI 加载方式见[应用说明](app/README.md)与[S41 报告](docs/s41-witness-discovery.md)。

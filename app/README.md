@@ -267,3 +267,16 @@ python -m app.lwt_snake.counterfactual_ui
 ```
 
 固定[方向分歧实验](../reports/s40-divergence/analysis.json)对比 baseline 的 R 与 BFS、新策略的 D；[第 1 步样例](../reports/s40-demo/analysis.json)展示同方向、不同原因，[故意篡改样例](../reports/s40-tampered/analysis.json)必须验真失败。Tk 入口仅是 Python 只读教学界面；没有 GUI 时上述 CLI 能完成全部验真和解释。证据边界见[冻结契约](../docs/s40-counterfactual-contract.md)和[阶段报告](../docs/s40-counterfactual-lab.md)。
+
+## S41 自动寻找可复验方向分歧
+
+从可信 S39 v3 结果中按 seed、咨询步和挑战者 ID 固定顺序搜索。参考与挑战者都是各自长驻的 LWT 进程，接收相同的真实观察前缀；最多扫描 32 次参考咨询。找到后调用 S40 生成并重验一步分支。预算内无分歧是正常结果，不能推断策略等价。可信本地目录与超时不是安全沙箱。
+
+```powershell
+python -m app.lwt_snake.witness --result reports/s39-demo/result.json --catalog app/lwt_snake/strategies/strategy-catalog.json --reference baseline --challengers bfs,mobility-lookahead --max-observations 32 --output 新目录
+python -m app.lwt_snake.witness --verify 新目录 --catalog app/lwt_snake/strategies/strategy-catalog.json
+python -m app.lwt_snake.counterfactual --explain 新目录/analysis --catalog app/lwt_snake/strategies/strategy-catalog.json
+python -m app.lwt_snake.counterfactual_ui
+```
+
+Tk 只读查看器的“加载见证目录”按钮可显式选择本地 S41 结果并在后台重新验真；固定 S40 演示仍可用。离线答辩可用[已发现见证](../reports/s41-found/witness.json)、[预算 1 无见证](../reports/s41-none/witness.json)、[篡改反馈](../reports/s41-tampered/agent-feedback.json)复现成功、边界和拒绝路径。冻结含义见[契约](../docs/s41-witness-contract.md)，实测与限制见[阶段报告](../docs/s41-witness-discovery.md)。
