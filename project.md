@@ -2,7 +2,7 @@
 
 > Agent 当前状态入口。核对日期：2026-11-02。每次开始任务都重新检查 Git 和远端；阶段历史见[仓库工作流](docs/repository-workflow.md)，当前关系见[阶段路线图](阶段执行与审查路线图.md)。
 
-> **当前结论：** S37/S38 [联合复审通过](docs/s37-s38-main-review.md)并合入本地/远端 `main`；精确功能分支 Actions 四格成功，历史 v1 仅能明确标为游戏回放验真。S39 已在 `feature/lwt-strategy-workshop` 实施可信本地 LWT 策略目录、独立 Agent 第三策略、v3 双层验真与工作坊指南，**等待主窗口审查**；见[阶段报告](docs/s39-strategy-workshop.md)、[SDK](docs/strategy-sdk.md)和[Agent 证据](docs/s39-agent-record.md)。S39 尚未合入或推送，其精确 SHA 的远端 CI、人工桌面与 S12 最终交付均未开始。
+> **当前结论：** S39 已经[主窗口复核](docs/s39-main-review.md)并快进合入本地 `main`；审查修正提交 `0f543e4b12ff45c34deb6167ed82a2363acf9c44` 的[功能分支 Actions](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41434877262)在 Ubuntu/Windows × Python 3.10/3.13 四格成功。S39 提供可信本地 LWT 策略目录、独立 Agent 第三策略及 v3 游戏/策略双层验真；见[阶段报告](docs/s39-strategy-workshop.md)和[SDK](docs/strategy-sdk.md)。S40 仅处于[规划](docs/s40-counterfactual-lab-plan.md)阶段；S12 新克隆、PPT、人工桌面和最终交付尚未开始。
 
 ## 目标与课程评分
 
@@ -32,8 +32,9 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - S35：可验证回放和接管已通过主窗口复核、合入本地 `main`，功能分支精确 SHA 的远端 CI 四格成功。格式见[回放契约](docs/snake-replay-format.md)；人工桌面操作仍未验证。
 - S36：LWT 策略助手、提示与串行自动驾驶已通过主窗口复核、合入本地 `main`；功能分支精确提交的 CI 四格成功。见[审查记录](docs/s36-main-review.md)、[冻结协议](docs/snake-strategy-protocol.md)和[执行报告](docs/s36-strategy.md)。
 - S37/S38：双策略擂台、v2 游戏与决策双层验真、逐步解释已通过[联合复审](docs/s37-s38-main-review.md)并合入本地 `main`；精确功能分支的 CI 四格通过。旧 v1 只可 game-only。见[执行报告](docs/s37-arena.md)、[S38 报告](docs/s38-policy-proof.md)。
-- S39：可信本地策略目录、独立 Agent 新 LWT 策略与 v3 双层验真实施完成，待主窗口审查；见[报告](docs/s39-strategy-workshop.md)、[SDK](docs/strategy-sdk.md)和[派发提示](docs/s39-strategy-workshop-handoff.md)。
-- S12：保留为 S39 审查后的最后交付阶段，执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
+- S39：可信本地策略目录、独立 Agent 新 LWT 策略与 v3 双层验真已通过[主窗口复核](docs/s39-main-review.md)，功能分支精确提交的远端 CI 四格成功；见[报告](docs/s39-strategy-workshop.md)和[SDK](docs/strategy-sdk.md)。
+- S40：可验证的多策略同局面比较与单步反事实实验，仅规划；见[派发规划](docs/s40-counterfactual-lab-plan.md)。
+- S12：保留为 S40 审查后的最终交付阶段，执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
 
 ## 常用验证入口
 

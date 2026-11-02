@@ -22,4 +22,6 @@
 
 ## 后续门槛
 
-审查修正提交后，将功能分支推送并核对其精确 SHA 的 Actions 四格。只有远端检查通过且主线可安全快进时才集成到 `main`。人工桌面、陌生策略隔离、Python 3.10/Linux 本机环境和 S12 新克隆/PPT 仍属于独立验收事项。可信目录限制用于防止误选路径，不能作为安全沙箱使用。
+审查修正提交为 `0f543e4b12ff45c34deb6167ed82a2363acf9c44`。功能分支推送后，[Actions run 41434877262](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41434877262) 的 Ubuntu/Windows × Python 3.10/3.13 四格均 `success`；这是精确提交的远端证据。本地主线从共同基线 `a4157c4` 以 `git merge --ff-only` 快进到该提交，未重写历史。远端 `main` 的同步与新提交 Actions 另行核对。
+
+因此 S39 通过主窗口审查。人工桌面、陌生策略隔离、Python 3.10/Linux 本机环境和 S12 新克隆/PPT 仍属于独立验收事项。可信目录限制用于防止误选路径，不能作为安全沙箱使用。
