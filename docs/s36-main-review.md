@@ -4,7 +4,7 @@
 
 ## 结论
 
-阶段实现与课程“Agent 编写 LWT 应用”的目标直接相关：新增 141 行有效 LWT 的独立长驻策略，游戏规则仍由 313 行有效 LWT `game.lwt` 计算；Python 仅负责协议、进程、Tk 调度与显示。静态 BFS 依据预测后的占用计算方向，属于确定性单步启发式，不保证未来存活或最优。审阅和定向复跑未发现阻断问题，可送精确 SHA 的远端 CI；CI 结果必须在推送后单独填写。最有课程价值的后续应用增量见 [S37 策略擂台派发提示](s37-strategy-arena-handoff.md)。
+阶段实现与课程“Agent 编写 LWT 应用”的目标直接相关：新增 141 行有效 LWT 的独立长驻策略，游戏规则仍由 313 行有效 LWT `game.lwt` 计算；Python 仅负责协议、进程、Tk 调度与显示。静态 BFS 依据预测后的占用计算方向，属于确定性单步启发式，不保证未来存活或最优。审阅、定向复跑和精确 SHA 的远端 CI 均未发现阻断问题。S36 于 2026-11-02 通过主窗口审查，保留全部原提交快进合入本地 `main`；人工桌面交互仍待最终验收。后续应用增量见 [S37 策略擂台派发提示](s37-strategy-arena-handoff.md)。
 
 ## 独立核查
 
@@ -15,6 +15,7 @@
 | Windows 定向 | `python -m unittest tests.test_lwt_snake_strategy -q`：8/8、exit 0；`python -m lwt --check app/lwt_snake/strategy.lwt`：1 source passed；`compileall` 与 `git diff --check main...HEAD`：exit 0。 |
 | Linux 定向 | WSL Ubuntu 24.04 / Python 3.12.3 下，`python3 -m unittest tests.test_lwt_snake_strategy -q`：8/8；策略静态检查通过；Xvfb/Tk 8.6.14 下 `python3 tools/run_gui_integration.py --require-no-skips`：23/23、fail 0、skip 0。此为本机 WSL 定向验证，不代替远端 3.10/3.13 四格。 |
 | 课程与旧应用门禁 | 主窗口 `python tools/check_project_integrity.py`：287 cases、384 matrix links、287 referenced；策略/游戏有效 LWT 行数分别 141/313。执行窗口报告全量 unittest 493/493、语言黑盒 287/287、S10 25/25；这些全量数字尚未在本窗口复跑，后续以精确 SHA CI 验证。 |
+| 远端功能分支 CI | `3bf7effa4fc3bf9a1c2f117e174a7a5a1c0182f0` 的 [Actions run 41388553619](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41388553619)：Ubuntu/Windows × Python 3.10/3.13 四格均为 `completed/success`。功能分支已推送，随后本地 `main` 快进至该提交。主分支推送与 CI 单独核验。 |
 
 ## 审查边界
 
