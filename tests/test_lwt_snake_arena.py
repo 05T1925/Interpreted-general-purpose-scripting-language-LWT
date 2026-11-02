@@ -22,6 +22,31 @@ class ArenaTests(unittest.TestCase):
         return subprocess.run([sys.executable,'-m','app.lwt_snake.arena',*map(str,args)],
                               cwd=ROOT,capture_output=True,timeout=70)
 
+    def test_review_counterexamples_rejected(self):
+        """A game replay cannot establish who chose its commands; zero cases prove nothing."""
+        fixed=json.loads((ROOT/'reports/s37-demo/result.json').read_text(encoding='utf-8'))
+        with tempfile.TemporaryDirectory(prefix='s38 counterexample ') as folder:
+            target=Path(folder)
+            original=fixed['cases'][0]
+            self.assertEqual((original['strategy_id'],original['seed'],original['score']),('baseline',4,10))
+            row=dict(original)
+            row.update(strategy_id='bfs',strategy_sha256=fixed['strategies']['bfs']['sha256'],
+                       replay_path='replays/bfs-4.json')
+            (target/'replays').mkdir()
+            shutil.copyfile(ROOT/'reports/s37-demo'/original['replay_path'],target/row['replay_path'])
+            forged=dict(fixed,seeds=[4],strategies={'bfs':fixed['strategies']['bfs']},cases=[row],
+                        summary=arena.summary([row]))
+            result=target/'result.json'
+            result.write_text(json.dumps(forged),encoding='utf-8')
+            self.assertNotEqual(self.cli('--verify',result).returncode,0,'relabelled baseline replay passed as BFS')
+
+    def test_empty_inventory_rejected(self):
+        fixed=json.loads((ROOT/'reports/s37-demo/result.json').read_text(encoding='utf-8'))
+        with tempfile.TemporaryDirectory(prefix='s38 empty ') as folder:
+            result=Path(folder)/'result.json'
+            result.write_text(json.dumps(dict(fixed,seeds=[],strategies={},cases=[],summary={})),encoding='utf-8')
+            self.assertNotEqual(self.cli('--verify',result).returncode,0,'empty inventory passed verification')
+
     def test_baseline_public_lwa1_protocol_and_distinct_choice(self):
         from tests.test_lwt_snake_strategy import frame
         inputs=[frame(),frame(2,height=2,direction='L',food=(3,1),body=((1,0),(1,1),(0,1),(0,0))),
