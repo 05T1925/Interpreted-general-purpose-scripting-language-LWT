@@ -38,14 +38,99 @@ class ArenaTests(unittest.TestCase):
                         summary=arena.summary([row]))
             result=target/'result.json'
             result.write_text(json.dumps(forged),encoding='utf-8')
-            self.assertNotEqual(self.cli('--verify',result).returncode,0,'relabelled baseline replay passed as BFS')
+            rejected=self.cli('--verify',result)
+            self.assertEqual(rejected.returncode,3)
+            self.assertIn(b'game replay only; strategy decisions unverified',rejected.stderr)
+            downgraded=self.cli('--game-only','--verify',result)
+            self.assertEqual(downgraded.returncode,0,downgraded.stderr)
+            self.assertIn(b'game replay only; strategy decisions unverified',downgraded.stdout)
 
     def test_empty_inventory_rejected(self):
         fixed=json.loads((ROOT/'reports/s37-demo/result.json').read_text(encoding='utf-8'))
         with tempfile.TemporaryDirectory(prefix='s38 empty ') as folder:
             result=Path(folder)/'result.json'
             result.write_text(json.dumps(dict(fixed,seeds=[],strategies={},cases=[],summary={})),encoding='utf-8')
-            self.assertNotEqual(self.cli('--verify',result).returncode,0,'empty inventory passed verification')
+            self.assertEqual(self.cli('--game-only','--verify',result).returncode,3)
+
+    def test_v2_policy_tampering_and_explanation(self):
+        with tempfile.TemporaryDirectory(prefix='s38 proof 雪 ') as folder:
+            root=Path(folder);original=root/'original'
+            made=self.cli('--strategies','baseline','--seeds','4','--max-ticks','12','--output',original)
+            self.assertEqual(made.returncode,0,made.stderr)
+            clean=self.cli('--verify',original/'result.json')
+            self.assertEqual(clean.returncode,0,clean.stderr)
+            self.assertIn(b'game and policy decisions',clean.stdout)
+            data=json.loads((original/'result.json').read_text(encoding='utf-8'))
+            row=data['cases'][0]
+            self.assertEqual((row['score'],row['ticks'],row['game_verified'],row['policy_verified']),(10,12,True,True))
+            for field,expected in [('response_direction',b'response'),('response_reason',b'response'),
+                                   ('sequence',b'sequence'),('count',b'extra game transaction'),
+                                   ('transaction',b'game_transaction'),('request',b'query-before-TURN')]:
+                with self.subTest(field=field):
+                    copy=root/field;shutil.copytree(original,copy)
+                    result_file=copy/'result.json';changed=json.loads(result_file.read_text(encoding='utf-8'))
+                    item=changed['cases'][0]
+                    decision_file=copy/item['decision_path']
+                    evidence=json.loads(decision_file.read_text(encoding='utf-8'))
+                    decisions=evidence['decisions']
+                    if field=='response_direction':
+                        parts=decisions[0]['response'].split('|');parts[3]='U';decisions[0]['response']='|'.join(parts)
+                    elif field=='response_reason':
+                        parts=decisions[0]['response'].split('|');parts[4]='FOOD';decisions[0]['response']='|'.join(parts)
+                    elif field=='sequence':decisions[0]['sequence']=2
+                    elif field=='count':decisions.pop()
+                    elif field=='transaction':decisions[0]['game_transaction']=3
+                    else:decisions[0]['request']=decisions[1]['request']
+                    decision_file.write_text(json.dumps(evidence),encoding='utf-8')
+                    item['decision_sha256']=hashlib.sha256(decision_file.read_bytes()).hexdigest()
+                    result_file.write_text(json.dumps(changed),encoding='utf-8')
+                    rejected=self.cli('--verify',result_file)
+                    self.assertEqual(rejected.returncode,3,(field,rejected.stdout,rejected.stderr))
+                    self.assertIn(expected,rejected.stderr)
+                    self.assertIn(b'baseline/4',rejected.stderr)
+            # Rebinding the same LWS1 commands to BFS, with every ordinary SHA updated,
+            # must fail when the fresh LWT BFS process answers the first divergent step.
+            copy=root/'relabel';shutil.copytree(original,copy)
+            result_file=copy/'result.json';changed=json.loads(result_file.read_text(encoding='utf-8'))
+            item=changed['cases'][0]
+            bfs=arena.STRATEGIES['bfs'];digest=arena.digest_file(bfs)
+            changed['strategies']={'bfs':{'path':str(bfs.relative_to(ROOT)).replace('\\','/'),'sha256':digest,'protocol':'LWA1'}}
+            item['strategy_id']='bfs';item['strategy_sha256']=digest
+            for kind in ('replay','decision'):
+                old=copy/item[kind+'_path'];new=old.with_name('bfs-4.json');old.rename(new)
+                item[kind+'_path']=f'{kind}s/bfs-4.json' if kind=='decision' else 'replays/bfs-4.json'
+            decision_file=copy/item['decision_path'];evidence=json.loads(decision_file.read_text(encoding='utf-8'))
+            evidence['strategy_id']='bfs';evidence['strategy_sha256']=digest
+            decision_file.write_text(json.dumps(evidence),encoding='utf-8')
+            item['decision_sha256']=hashlib.sha256(decision_file.read_bytes()).hexdigest()
+            changed['summary']=arena.summary([item])
+            result_file.write_text(json.dumps(changed),encoding='utf-8')
+            rejected=self.cli('--verify',result_file)
+            self.assertEqual(rejected.returncode,3,rejected.stdout)
+            self.assertIn(b'bfs/4: decision',rejected.stderr)
+            for step in (1,2,3):
+                explained=self.cli('--explain',original/'result.json','--case','baseline/4','--step',step)
+                self.assertEqual(explained.returncode,0,explained.stderr)
+                self.assertIn(b'LWT_advice=LWA1|',explained.stdout)
+                self.assertIn(b'before_tx=',explained.stdout)
+            self.assertEqual(self.cli('--explain',result_file,'--case','bfs/4','--step','1').returncode,3)
+
+    def test_result_inventory_rejects_noncanonical_json(self):
+        fixed=json.loads((ROOT/'reports/s37-demo/result.json').read_text(encoding='utf-8'))
+        with tempfile.TemporaryDirectory() as folder:
+            result=Path(folder)/'result.json'
+            bad=[dict(fixed,seeds=[]),dict(fixed,board={'width':24,'height':19}),
+                 dict(fixed,seeds=[True]),dict(fixed,max_ticks=True),
+                 dict(fixed,cases=[]),dict(fixed,strategies={}),
+                 dict(fixed,seeds=[4,4])]
+            for value in bad:
+                with self.subTest(value=str(value)[:80]):
+                    result.write_text(json.dumps(value),encoding='utf-8')
+                    self.assertEqual(self.cli('--game-only','--verify',result).returncode,3)
+            for raw in (b'{"schema_version":1,"schema_version":1}',b'{"x":NaN}',b'{"x":999999999999999999999}'):
+                with self.subTest(raw=raw):
+                    result.write_bytes(raw)
+                    self.assertEqual(self.cli('--game-only','--verify',result).returncode,3)
 
     def test_baseline_public_lwa1_protocol_and_distinct_choice(self):
         from tests.test_lwt_snake_strategy import frame
@@ -72,12 +157,12 @@ class ArenaTests(unittest.TestCase):
                 self.assertEqual(result.returncode,0,result.stderr)
                 verify=self.cli('--verify',directory/'result.json')
                 self.assertEqual(verify.returncode,0,verify.stderr)
-                self.assertIn(b'Verified 6 matches.',verify.stdout)
+                self.assertIn(b'Verified 6 matches: game and policy decisions.',verify.stdout)
                 data=(directory/'result.json').read_bytes()
                 outputs.append(data)
                 parsed=json.loads(data)
                 self.assertEqual(len(parsed['cases']),6)
-                self.assertTrue(all(case['verified'] for case in parsed['cases']))
+                self.assertTrue(all(case['game_verified'] and case['policy_verified'] for case in parsed['cases']))
                 for case in parsed['cases']:
                     self.assertEqual(case['ticks'],12)
                     self.assertEqual(case['stop_reason'],'limit')
@@ -130,7 +215,8 @@ class ArenaTests(unittest.TestCase):
                 case=arena.run_case('baseline',4,8,5,5,output,strategy_factory=strategy_factory)
                 self.assertEqual(case['stop_reason'],'failed')
                 self.assertEqual(case['ticks'],0)
-                self.assertTrue(case['verified'])
+                self.assertTrue(case['game_verified'])
+                self.assertFalse(case['policy_verified'])
                 self.assertEqual(len(arena.load(output/case['replay_path']).transactions),2)
                 self.assertIsNotNone(case['error_category'])
         with tempfile.TemporaryDirectory() as folder:
@@ -147,7 +233,7 @@ class ArenaTests(unittest.TestCase):
                 options['process_factory']=process_factory
                 return LwtSnakeBridge(**options)
             broken=arena.run_case('baseline',4,8,5,5,output,game_factory=broken_game_factory)
-            self.assertEqual((broken['stop_reason'],broken['verified'],broken['replay_path']),
+            self.assertEqual((broken['stop_reason'],broken['game_verified'],broken['replay_path']),
                              ('failed',False,None))
             self.assertIsNotNone(broken['error_category'])
             with patch.object(arena,'save',side_effect=OSError('disk full')):
