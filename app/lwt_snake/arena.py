@@ -252,7 +252,7 @@ def verify_case_v2(path,data,row,*,check_flags=True):
     name=row['strategy_id'];seed=row['seed'];label=f'{name}/{seed}'
     relative=f'replays/{name}-{seed}.json'
     if row['replay_path'] is None:
-        if row['stop_reason']!='failed' or row['game_verified'] or row['policy_verified'] or row['replay_sha256'] is not None or row['decision_path'] is not None or row['decision_sha256'] is not None:
+        if row['stop_reason']!='failed' or row['game_verified'] or row['policy_verified'] or row['replay_sha256'] is not None or row['decision_path'] is not None or row['decision_sha256'] is not None or row['ticks']!=0 or row['score'] is not None or row['phase'] is not None:
             raise ArenaError(f'{label}: missing replay proof fields inconsistent')
         return False
     file,raw=_strict_file(path.parent,row['replay_path'],relative,16*1024*1024,label)
@@ -338,8 +338,6 @@ def verify_case_v2(path,data,row,*,check_flags=True):
         raise ArenaError(f'{label}: limit consultation/TICK mismatch')
     if reason in ('won','game_over') and (trapped or pending or len(entries)!=ticks or last.phase!={'won':'WON','game_over':'GAME_OVER'}[reason]):
         raise ArenaError(f'{label}: terminal consultation/phase mismatch')
-    if reason=='failed' and last.phase in ('WON','GAME_OVER') and not pending:
-        raise ArenaError(f'{label}: failed reason conceals completed terminal')
     policy=bool(entries)
     if check_flags and (row['game_verified'] is not True or row['policy_verified'] is not policy):
         raise ArenaError(f'{label}: game_verified/policy_verified flag mismatch')

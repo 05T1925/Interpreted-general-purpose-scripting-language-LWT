@@ -113,6 +113,10 @@ class ArenaTests(unittest.TestCase):
                 self.assertEqual(explained.returncode,0,explained.stderr)
                 self.assertIn(b'LWT_advice=LWA1|',explained.stdout)
                 self.assertIn(b'before_tx=',explained.stdout)
+            turn_and_food=self.cli('--explain',ROOT/'reports/s38-demo/result.json','--case','bfs/4','--step','3')
+            self.assertEqual(turn_and_food.returncode,0,turn_and_food.stderr)
+            self.assertIn(b'|MOVE|L|FOOD commands=TURN,TICK',turn_and_food.stdout)
+            self.assertIn(b'score=20 delta=10',turn_and_food.stdout)
             self.assertEqual(self.cli('--explain',result_file,'--case','bfs/4','--step','1').returncode,3)
 
     def test_result_inventory_rejects_noncanonical_json(self):
