@@ -120,7 +120,9 @@ def run_case(strategy_id,seed,width,height,max_ticks,folder,*,strategy_factory=S
         try:
             reconstructed=reconstruct(load(target),total_timeout=60)
             verified=True
-            if state is None:state=reconstructed.states[-1]
+            # A completed bridge transaction can precede a transport/UI fault.
+            state=reconstructed.states[-1]
+            ticks=sum(command_parts(tx)[0]=='TICK' for tx in replay.transactions)
         except Exception as error:
             reason='failed';category=type(error).__name__;message=f'replay verification: {error}'[:512]
     return {'strategy_id':strategy_id,'strategy_sha256':digest_file(strategy_path),
@@ -149,10 +151,17 @@ def run(args):
     args.output.mkdir(parents=False)
     (args.output/'replays').mkdir()
     cases=[]
-    with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures={pool.submit(run_case,name,seed,args.width,args.height,args.max_ticks,args.output): (name,seed)
+    cancellation=threading.Event()
+    pool=ThreadPoolExecutor(max_workers=args.workers)
+    try:
+        futures={pool.submit(run_case,name,seed,args.width,args.height,args.max_ticks,args.output,cancel=cancellation): (name,seed)
                  for name,seed in paths}
         for future in as_completed(futures):cases.append(future.result())
+    except BaseException:
+        cancellation.set()
+        for future in futures:future.cancel()
+        raise
+    finally:pool.shutdown(wait=True,cancel_futures=True)
     cases.sort(key=lambda case:(case['strategy_id'],case['seed']))
     result={'schema_version':1,'protocol_version':'LWS1','board':{'width':args.width,'height':args.height},
             'seeds':seeds,'max_ticks':args.max_ticks,
@@ -175,12 +184,17 @@ def _pairs(pairs):
 def verify(path):
     raw=path.read_bytes()
     if len(raw)>MAX_RESULT:raise ArenaError('result exceeds 1 MiB')
-    data=json.loads(raw.decode('utf-8','strict'),object_pairs_hook=_pairs)
+    data=json.loads(raw.decode('utf-8','strict'),object_pairs_hook=_pairs,
+                    parse_constant=lambda value:(_ for _ in ()).throw(ArenaError('non-finite JSON number')))
     if type(data)!=dict or set(data)!=RESULT_KEYS or data['schema_version']!=1 or data['protocol_version']!='LWS1':
         raise ArenaError('result schema/version invalid')
+    if type(data['strategies'])!=dict or type(data['cases'])!=list or type(data['summary'])!=dict:
+        raise ArenaError('result inventory/summary field type invalid')
     board=data['board'];ids=list(data['strategies']);seeds=data['seeds']
-    if type(board)!=dict or set(board)!={'width','height'} or ids!=sorted(ids) or any(name not in STRATEGIES for name in ids):
+    if type(board)!=dict or set(board)!={'width','height'} or type(board['width'])!=int or type(board['height'])!=int or not 4<=board['width']<=24 or not 1<=board['height']<=18 or ids!=sorted(ids) or any(name not in STRATEGIES for name in ids):
         raise ArenaError('result board/strategy inventory invalid')
+    if type(data['max_ticks'])!=int or not 1<=data['max_ticks']<=100:
+        raise ArenaError('result tick limit invalid')
     if type(seeds)!=list or any(type(seed)!=int for seed in seeds) or seeds!=sorted(set(seeds)):
         raise ArenaError('result seed inventory invalid')
     if len(data['cases'])!=len(ids)*len(seeds) or len(data['cases'])>16:raise ArenaError('result case inventory invalid')
@@ -191,14 +205,19 @@ def verify(path):
     expected=[(name,seed) for name in ids for seed in seeds]
     for row,(name,seed) in zip(data['cases'],expected):
         label=f'{name}/{seed}'
-        if type(row)!=dict or set(row)!=CASE_KEYS or row['strategy_id']!=name or row['seed']!=seed:
-            raise ArenaError(f'{label}: case identity/schema mismatch')
+        if type(row)!=dict or set(row)!=CASE_KEYS:raise ArenaError(f'{label}: case schema mismatch')
+        if row['strategy_id']!=name:raise ArenaError(f'{label}: strategy_id mismatch')
+        if row['seed']!=seed:raise ArenaError(f'{label}: seed mismatch')
+        if type(row['ticks'])!=int or row['ticks']<0 or (row['score'] is not None and type(row['score'])!=int) or (row['phase'] is not None and type(row['phase'])!=str):
+            raise ArenaError(f'{label}: tick/score/phase field type invalid')
         if row['strategy_sha256']!=data['strategies'][name]['sha256'] or row['game_sha256']!=digest_file(GAME_SOURCE):
             raise ArenaError(f'{label}: strategy/game digest mismatch')
         relative=f'replays/{name}-{seed}.json'
         if row['replay_path']!=relative:raise ArenaError(f'{label}: replay path mismatch')
         file=path.parent/relative
         if not file.is_file():raise ArenaError(f'{label}: missing replay')
+        if file.is_symlink() or not file.resolve().is_relative_to(path.parent.resolve()):
+            raise ArenaError(f'{label}: replay path escapes result directory')
         if row['replay_sha256']!=hashlib.sha256(file.read_bytes()).hexdigest():raise ArenaError(f'{label}: replay digest mismatch')
         record=load(file)
         if (record.width,record.height,record.seed)!=(board['width'],board['height'],seed):
@@ -255,7 +274,10 @@ def main(argv=None):
             result=verify(args.verify);show(result);print(f"Verified {len(result['cases'])} matches.");return 0
         if args.output is None:raise ArenaError('--output is required to run matches')
         return run(args)
-    except (ArenaError,OSError,ValueError,UnicodeError) as error:
+    except KeyboardInterrupt:
+        print('arena: cancelled; active processes are being reaped',file=sys.stderr)
+        return 130
+    except (ArenaError,OSError,ValueError,UnicodeError,RecursionError,TypeError) as error:
         print(f'arena: {error}',file=sys.stderr)
         return 3 if args.verify else 2
 
