@@ -42,8 +42,8 @@ CLI 无 Tk、断网可用。正常一步和转向吃食物一步均由定向测�
 
 | 命令 | 退出码与结果 |
 |---|---|
-| `python -m unittest tests.test_lwt_snake_arena -q` | 最终 exit 0，9/9，60.325s。针对旧实现两条审查反例各 exit 1，修复后同测试通过 |
-| `python -m unittest discover -s tests -q` | 最终 exit 0，502/502，210.889s；S37 报告 497，本阶段增 5 项 |
+| `python -m unittest tests.test_lwt_snake_arena -q` | 补终局反例前 exit 0，9/9，60.325s；最终补至 10 项后复跑。针对旧实现两条审查反例各 exit 1，修复后同测试通过 |
+| `python -m unittest discover -s tests -q` | 补终局反例前 exit 0，502/502，210.889s；最终增至 503 项后复跑 |
 | `python tools/run_tests.py` | 0，语言黑盒 287/287，九类均通过，52.599s |
 | `python tools/check_project_integrity.py` | 0，287 cases、384 matrix links、287 referenced cases |
 | `python tools/run_gui_integration.py --require-no-skips` | 0，真实 Tk 控件/合成事件 23/23，fail 0、skip 0，35.772s |
@@ -56,6 +56,8 @@ CLI 无 Tk、断网可用。正常一步和转向吃食物一步均由定向测�
 定向攻击测试把决策方向、`FOOD/SPACE` 原因、响应序号、咨询计数、咨询前事务索引、查询快照或策略 ID 改坏并重算可控的普通 SHA，`--verify` 均非零，错误定位到 `strategy/seed` 和决策/事务字段。旧 S37 的 replay score、seed、源码摘要、缺失文件及事务篡改回归继续通过。策略坏帧、超时、stderr 洪流、非零退出、游戏启动坏帧、预取消与写盘失败均在测试中有受控注入；失败前缀不记成正常零分。严格 GUI runner 仍是自动控件证据，不等同物理键鼠或视觉人工验收。
 
 补充 workers 一致性时把每个输出目录下的结果、回放、决策 JSON **全部按字节比较**，而非只比顶层结果。又发现两个完成局的合法 median `5.0` 曾被过严的 JSON 小数解析拒绝；修改为接受有限小数，仍用 summary 重算拒绝伪造数值，新增两种子真实 LWT 回归。首次放置该测试时误把畸形 JSON 断言缩进到新测试，定向运行出现 `NameError`；调整归属后两项定向测试 exit 0，最终全量在修正后的文件上重跑。此处不将中间失败写成绿灯。
+
+终局边界另用真实 4×2 棋盘、baseline/4 运行到 `won` 并双层验真；随后追加第 11 次虚构咨询并同步更新决策文件 SHA，`--verify` exit 3、指出 `baseline/4: decision`。该测试只接受真实获胜局为正例，不以手写游戏状态代替 LWT 引擎。
 
 ## 修改文件、保护与交接
 

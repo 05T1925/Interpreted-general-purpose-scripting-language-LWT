@@ -146,6 +146,29 @@ class ArenaTests(unittest.TestCase):
             checked=self.cli('--verify',output/'result.json')
             self.assertEqual(checked.returncode,0,checked.stderr)
 
+    def test_terminal_game_rejects_extra_policy_consultation(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);original=root/'won'
+            made=self.cli('--strategies','baseline','--seeds','4','--width','4','--height','2',
+                          '--max-ticks','40','--output',original)
+            self.assertEqual(made.returncode,0,made.stderr)
+            result_file=original/'result.json'
+            data=json.loads(result_file.read_text(encoding='utf-8'))
+            self.assertEqual(data['cases'][0]['stop_reason'],'won')
+            self.assertEqual(self.cli('--verify',result_file).returncode,0)
+            copy=root/'extra';shutil.copytree(original,copy)
+            forged=copy/'result.json';data=json.loads(forged.read_text(encoding='utf-8'))
+            row=data['cases'][0];decision_file=copy/row['decision_path']
+            evidence=json.loads(decision_file.read_text(encoding='utf-8'))
+            last=dict(evidence['decisions'][-1]);last['sequence']+=1
+            evidence['decisions'].append(last)
+            decision_file.write_text(json.dumps(evidence),encoding='utf-8')
+            row['decision_sha256']=hashlib.sha256(decision_file.read_bytes()).hexdigest()
+            forged.write_text(json.dumps(data),encoding='utf-8')
+            rejected=self.cli('--verify',forged)
+            self.assertEqual(rejected.returncode,3,rejected.stdout)
+            self.assertIn(b'baseline/4: decision',rejected.stderr)
+
     def test_baseline_public_lwa1_protocol_and_distinct_choice(self):
         from tests.test_lwt_snake_strategy import frame
         inputs=[frame(),frame(2,height=2,direction='L',food=(3,1),body=((1,0),(1,1),(0,1),(0,0))),
