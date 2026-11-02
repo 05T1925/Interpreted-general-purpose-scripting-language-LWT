@@ -1,0 +1,203 @@
+# LWA1 strategy: two-ply mobility, direct food, then Manhattan distance.
+# Direction order U,R,D,L resolves every tie. No search queue is used.
+
+fn six(n) {
+    let s = str(n);
+    while (len(s) < 6) { s = "0" + s; }
+    return s;
+}
+
+fn ascii_only(s) {
+    # Count every printable ASCII character. Other ASCII control bytes are
+    # rejected as malformed frames too; a tab is ASCII and reaches validation.
+    let chars = [" ", "!", "\"", "#", "$", "%", "&", "'", "(", ")",
+        "*", "+", ",", "-", ".", "/", "0", "1", "2", "3", "4",
+        "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?",
+        "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+        "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+        "V", "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`",
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
+        "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
+        "w", "x", "y", "z", "{", "|", "}", "~", "\t"];
+    let count = 0;
+    each (c in chars) { count = count + len(split(s, c)) - 1; }
+    return count == len(s);
+}
+
+fn decimal(s) {
+    when (len(s) == 0 or len(s) > 3) { return -1; }
+    let n = -1;
+    attempt { n = to_int(s); } recover (error) { return -1; }
+    when (n < 0 or str(n) != s) { return -1; }
+    return n;
+}
+
+fn sequence_number(s) {
+    when (len(s) != 6) { return -1; }
+    let n = -1;
+    attempt { n = to_int(s); } recover (error) { return -1; }
+    when (n < 1 or n > 999999 or six(n) != s) { return -1; }
+    return n;
+}
+
+fn occupied(x, y, xs, ys, count) {
+    let i = 0;
+    while (i < count) {
+        when (xs[i] == x and ys[i] == y) { return true; }
+        i = i + 1;
+    }
+    return false;
+}
+
+fn abs_int(n) {
+    when (n < 0) { return -n; }
+    return n;
+}
+
+fn opposite(a, b) {
+    return (a == "U" and b == "D") or (a == "D" and b == "U") or
+        (a == "R" and b == "L") or (a == "L" and b == "R");
+}
+
+fn step_x(x, d) {
+    when (d == "R") { return x + 1; }
+    when (d == "L") { return x - 1; }
+    return x;
+}
+
+fn step_y(y, d) {
+    when (d == "D") { return y + 1; }
+    when (d == "U") { return y - 1; }
+    return y;
+}
+
+fn in_board(x, y, width, height) {
+    return x >= 0 and x < width and y >= 0 and y < height;
+}
+
+fn respond_snapshot(sequence, f) {
+    let width = decimal(f[2]);
+    let height = decimal(f[3]);
+    let dir = f[4];
+    let food_x = decimal(f[5]);
+    let food_y = decimal(f[6]);
+    let length = decimal(f[7]);
+    when (width < 4 or width > 24 or height < 1 or height > 18 or
+          width * height > 432 or length < 3 or
+          length >= width * height or
+          not (dir == "U" or dir == "R" or dir == "D" or dir == "L") or
+          not in_board(food_x, food_y, width, height)) {
+        emit "LWA1|ERR|" + sequence + "|BAD_SNAPSHOT";
+        return false;
+    }
+    let body = split(f[8], ";");
+    when (len(body) != length) {
+        emit "LWA1|ERR|" + sequence + "|BAD_SNAPSHOT";
+        return false;
+    }
+    let xs = [];
+    let ys = [];
+    let i = 0;
+    while (i < length) {
+        let pair = split(body[i], ",");
+        when (len(pair) != 2) {
+            emit "LWA1|ERR|" + sequence + "|BAD_SNAPSHOT";
+            return false;
+        }
+        let x = decimal(pair[0]);
+        let y = decimal(pair[1]);
+        when (not in_board(x, y, width, height) or
+              occupied(x, y, xs, ys, i) or
+              (i > 0 and abs_int(x - xs[i - 1]) + abs_int(y - ys[i - 1]) != 1)) {
+            emit "LWA1|ERR|" + sequence + "|BAD_SNAPSHOT";
+            return false;
+        }
+        push(xs, x);
+        push(ys, y);
+        i = i + 1;
+    }
+    when (occupied(food_x, food_y, xs, ys, length)) {
+        emit "LWA1|ERR|" + sequence + "|BAD_SNAPSHOT";
+        return false;
+    }
+
+    let directions = ["U", "R", "D", "L"];
+    let best_direction = "";
+    let best_score = -1000000;
+    each (candidate in directions) {
+        when (not opposite(candidate, dir)) {
+            let nx = step_x(xs[0], candidate);
+            let ny = step_y(ys[0], candidate);
+            let eating = nx == food_x and ny == food_y;
+            let blocked_count = length - 1;
+            when (eating) { blocked_count = length; }
+            when (in_board(nx, ny, width, height) and
+                  not occupied(nx, ny, xs, ys, blocked_count)) {
+                # Predict the body after this one legal move.
+                let px = [nx];
+                let py = [ny];
+                let old_count = length - 1;
+                when (eating) { old_count = length; }
+                let j = 0;
+                while (j < old_count) {
+                    push(px, xs[j]);
+                    push(py, ys[j]);
+                    j = j + 1;
+                }
+                # The old food is consumed; count non-growing next moves.
+                let exits = 0;
+                each (second in directions) {
+                    when (not opposite(second, candidate)) {
+                        let sx = step_x(nx, second);
+                        let sy = step_y(ny, second);
+                        when (in_board(sx, sy, width, height) and
+                              not occupied(sx, sy, px, py, len(px) - 1)) {
+                            exits = exits + 1;
+                        }
+                    }
+                }
+                let distance = abs_int(nx - food_x) + abs_int(ny - food_y);
+                let score = exits * 20 - distance * 10;
+                when (exits > 0) { score = score + 10000; }
+                when (eating) { score = score + 1000; }
+                when (score > best_score) {
+                    best_score = score;
+                    best_direction = candidate;
+                }
+            }
+        }
+    }
+    when (best_direction == "") {
+        emit "LWA1|" + sequence + "|NONE|-|TRAPPED";
+    } otherwise {
+        let reason = "SPACE";
+        when (step_x(xs[0], best_direction) == food_x and
+              step_y(ys[0], best_direction) == food_y) { reason = "FOOD"; }
+        emit "LWA1|" + sequence + "|MOVE|" + best_direction + "|" + reason;
+    }
+    return true;
+}
+
+let next_sequence = 1;
+let line = input();
+while (line != null) {
+    let fields = split(line, "|");
+    when (len(line) > 4096 or not ascii_only(line) or
+          len(fields) != 9 or fields[0] != "LWA1") {
+        emit "LWA1|ERR|000000|BAD_FRAME";
+    } otherwise {
+        let seq = sequence_number(fields[1]);
+        when (seq < 0) {
+            emit "LWA1|ERR|000000|BAD_SEQUENCE";
+        } otherwise {
+            when (seq != next_sequence) {
+                emit "LWA1|ERR|" + fields[1] + "|BAD_SEQUENCE";
+            } otherwise {
+                when (respond_snapshot(fields[1], fields)) {
+                    next_sequence = next_sequence + 1;
+                }
+            }
+        }
+    }
+    line = input();
+}

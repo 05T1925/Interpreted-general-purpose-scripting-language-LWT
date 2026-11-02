@@ -1,4 +1,11 @@
 {
   "schema_version": 1,
-  "strategies": []
+  "strategies": [
+    {
+      "id": "mobility-lookahead",
+      "path": "mobility-lookahead.lwt",
+      "sha256": "4a2f5439292a304ab4a69ada0d9425177ed1f975a7ba87ec12d2fc1b6b31019c",
+      "protocol": "LWA1"
+    }
+  ]
 }
