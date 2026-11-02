@@ -12,6 +12,7 @@ from unittest.mock import patch
 
 from app.lwt_snake import arena
 from app.lwt_snake.strategy import StrategyBridge
+from app.lwt_snake.bridge import LwtSnakeBridge
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -113,6 +114,17 @@ class ArenaTests(unittest.TestCase):
             case=arena.run_case('baseline',4,8,5,5,output,cancel=cancel)
             self.assertEqual(case['stop_reason'],'failed')
             self.assertIsNone(case['replay_path'])
+            def broken_game_factory(**options):
+                def process_factory(**launch):
+                    launch['args']=[sys.executable,'-u','-c',
+                                    'import sys;sys.stdin.readline();print("not-a-frame",flush=True);sys.exit(7)']
+                    return subprocess.Popen(**launch)
+                options['process_factory']=process_factory
+                return LwtSnakeBridge(**options)
+            broken=arena.run_case('baseline',4,8,5,5,output,game_factory=broken_game_factory)
+            self.assertEqual((broken['stop_reason'],broken['verified'],broken['replay_path']),
+                             ('failed',False,None))
+            self.assertIsNotNone(broken['error_category'])
             with patch.object(arena,'save',side_effect=OSError('disk full')):
                 with self.assertRaisesRegex(OSError,'disk full'):
                     arena.run_case('baseline',4,8,5,1,output)
