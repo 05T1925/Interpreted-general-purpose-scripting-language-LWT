@@ -71,6 +71,14 @@ class StrategyCliTests(unittest.TestCase):
         self.assertEqual(self.run_frames([frame(height=2,direction='L',food=(0,0),
                                                body=((1,0),(1,1),(0,1),(0,0)))]),
                          [b'LWA1|ERR|000001|BAD_SNAPSHOT'])
+        # U and R each reach four cells; a body barrier isolates the food.
+        # Fixed U,R,D,L order resolves the SPACE tie as U.
+        self.assertEqual(self.run_frames([frame(height=3,direction='U',food=(0,1),
+                  body=((2,1),(2,2),(1,2),(1,1),(1,0),(0,0)))]),
+                  [b'LWA1|000001|MOVE|U|SPACE'])
+        dense=tuple((x,y) for y in range(18) for x in (range(24) if y%2==0 else range(23,-1,-1)))
+        self.assertEqual(self.run_frames([frame(width=24,height=18,direction='U',food=dense[-1],body=dense[:-1])]),
+                         [b'LWA1|000001|NONE|-|TRAPPED'])
 
     def test_invalid_utf8_is_real_input_diagnostic(self):
         result=subprocess.run([sys.executable,'-u','-m','lwt',str(SOURCE)],cwd=ROOT,

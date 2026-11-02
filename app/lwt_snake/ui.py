@@ -13,6 +13,7 @@ from app.lwt_snake.session import EngineWorker, Reply
 from app.ui_theme import COLORS, apply_theme
 from app.lwt_snake.clock import GameClock, focus_is_external
 from app.lwt_snake.replay import save
+from app.lwt_snake.strategy import StrategyWorker
 
 
 def _install_key_tag(widget, key_tag):
@@ -44,6 +45,16 @@ class LwtSnakeApp:
         self.tick_id: str | None = None
         self.poll_id: str | None = None
         self.focus_id: str | None = None
+        self.strategy_worker = None
+        self.strategy_replies = queue.Queue(maxsize=8)
+        self.strategy_generation = 0
+        self.strategy_busy = False
+        self.strategy_hold = False
+        self.pending_strategy = None
+        self.advice = None
+        self.auto = False
+        self.auto_stage = None
+        self.auto_id = None
         root.title("LWT 驱动贪吃蛇")
         root.geometry("820x700")
         root.minsize(480, 440)
@@ -88,6 +99,14 @@ class LwtSnakeApp:
         self.speed.set('中'); self.speed.grid(row=2,column=0)
         self.position_var = tk.StringVar(value='实时对局')
         ttk.Label(replay_controls, textvariable=self.position_var, wraplength=330).grid(row=2,column=1,columnspan=3,sticky='w')
+        strategy_controls = ttk.Frame(footer)
+        strategy_controls.grid(row=4,column=0,columnspan=4,sticky='ew')
+        self.hint_button = ttk.Button(strategy_controls,text='提示 / 关闭提示',command=self.toggle_hint)
+        self.hint_button.grid(row=0,column=0)
+        self.auto_button = ttk.Button(strategy_controls,text='自动驾驶：关',command=self.toggle_auto)
+        self.auto_button.grid(row=0,column=1,padx=6)
+        self.strategy_var = tk.StringVar(value='策略由 LWT 计算 · 单步启发式，不保证胜利')
+        ttk.Label(strategy_controls,textvariable=self.strategy_var,wraplength=430).grid(row=1,column=0,columnspan=2,sticky='w')
         self.key_tag = f"LwtSnakeKeys{id(self)}"
         root.bind_class(self.key_tag, "<KeyPress>", self.on_key)
         _install_key_tag(root, self.key_tag)
@@ -104,10 +123,17 @@ class LwtSnakeApp:
         self.worker.start()
         self.sync_controls()
 
-    def send(self, command: str, *args: object, replace: bool = False) -> None:
+    def send(self, command: str, *args: object, replace: bool = False, automatic: bool = False) -> None:
+        if command in {'PAUSE','RESET'}:
+            self.cancel_strategy()
+        elif command == 'TURN' and not automatic:
+            taking = self.auto or self.strategy_busy or self.strategy_hold or self.pending_strategy is not None
+            if taking or self.advice is not None:
+                self.cancel_strategy(resume_manual=True)
+            if taking: replace = True
         if self.mode != 'live' or self.closing or self.failed or (self.busy and not replace):
             return
-        if command == 'TURN' and self.clock.due(time.monotonic()):
+        if command == 'TURN' and not automatic and self.clock.due(time.monotonic()):
             command, args = 'TICK', ()
         if command in {'PAUSE', 'RESET'}:
             self.clock.stop()
@@ -208,15 +234,24 @@ class LwtSnakeApp:
             if reply.record:
                 self.status_var.set(f'已保存完整前缀：{len(reply.record.transactions)} 条' + (('；'+reply.record.interruption) if reply.record.interruption else ''))
             if reply.error:
+                if self.auto or self.strategy_busy or self.pending_strategy:
+                    self.cancel_strategy()
                 self.failed = reply.fatal
                 self.status_var.set("引擎错误：" + reply.error)
             elif reply.snapshot:
                 if self.mode == 'handoff': self.mode = 'live'
                 self.snapshot = reply.snapshot
+                if self.advice is not None and not self.auto:
+                    self.strategy_var.set('策略由 LWT 计算 · 快照已改变，建议已清除')
+                self.advice = None
                 if self.mode == 'live':
                     branched = self.worker.recorder is not None and self.worker.recorder.origin is not None
                     self.position_var.set('实时对局 · 接管分支' if branched else '实时对局')
                 if reply.snapshot.phase != 'RUNNING':
+                    self.cancel_strategy()
+                    self.clock.stop()
+                    self.cancel_tick()
+                elif self.auto or self.strategy_busy or self.strategy_hold:
                     self.clock.stop()
                     self.cancel_tick()
                 elif self.last_command == 'TICK':
@@ -230,6 +265,13 @@ class LwtSnakeApp:
                 self.clock.stop()
                 self.cancel_tick()
             self.draw()
+            if reply.snapshot and self.auto and reply.snapshot.phase == 'RUNNING':
+                if self.auto_stage == 'turn':
+                    self.auto_stage = 'tick'
+                    self.send('TICK',automatic=True)
+                elif self.auto_stage == 'tick':
+                    self.auto_stage = 'delay'
+                    self.auto_id = self.root.after(max(140,self.tick_ms),self.auto_next)
             self.schedule_tick()
         if self.mode in {'loading','handoff'} and not self.busy:
             if self.failed:
@@ -246,6 +288,7 @@ class LwtSnakeApp:
         self.sync_controls()
         if self.mode == 'live' and not self.failed and self.worker.recorder is not None and self.worker.recorder.reason:
             self.status_var.set(self.worker.recorder.reason)
+        self.poll_strategy()
         self.poll_id = self.root.after(10, self.poll)
 
     def sync_controls(self) -> None:
@@ -260,9 +303,12 @@ class LwtSnakeApp:
         self.take_button.configure(state='normal' if replay and self.snapshot.phase not in {'GAME_OVER','WON'} else 'disabled')
         self.save_button.configure(state='normal' if self.mode == 'live' and self.worker.recorder is not None else 'disabled')
         self.cancel_button.configure(state='normal' if self.mode in {'loading','handoff'} else 'disabled')
+        strategy_ready = ready and phase == 'RUNNING'
+        self.hint_button.configure(state='normal' if (strategy_ready or self.strategy_busy) and not self.auto else 'disabled')
+        self.auto_button.configure(text='自动驾驶：开' if self.auto else '自动驾驶：关',state='normal' if strategy_ready or self.auto else 'disabled')
 
     def schedule_tick(self) -> None:
-        if self.mode == 'live' and not self.closing and not self.failed and not self.busy and self.snapshot and self.snapshot.phase == "RUNNING" and self.tick_id is None:
+        if self.mode == 'live' and not self.auto and not self.strategy_busy and not self.strategy_hold and not self.pending_strategy and not self.closing and not self.failed and not self.busy and self.snapshot and self.snapshot.phase == "RUNNING" and self.tick_id is None:
             self.clock.start(time.monotonic())
             delay = max(0, int((self.clock.deadline - time.monotonic()) * 1000))
             self.tick_id = self.root.after(delay, self.tick)
@@ -280,6 +326,8 @@ class LwtSnakeApp:
             self.schedule_tick()
 
     def save_game(self) -> None:
+        self.cancel_strategy()
+        self.pause()
         path = filedialog.asksaveasfilename(parent=self.root, defaultextension='.json', filetypes=[('对局 JSON','*.json')], confirmoverwrite=True)
         if not path or self.closing: return
         if self.failed and self.worker.finished.is_set():
@@ -294,6 +342,8 @@ class LwtSnakeApp:
         except (OSError, ValueError) as error: self.status_var.set('保存失败：'+str(error))
 
     def load_game(self) -> None:
+        self.cancel_strategy()
+        self.pause()
         path = filedialog.askopenfilename(parent=self.root, filetypes=[('对局 JSON','*.json')])
         if path: self.load_path(Path(path))
 
@@ -301,6 +351,7 @@ class LwtSnakeApp:
         self.transition('loading', replay_path=path)
 
     def transition(self, mode, **options):
+        self.cancel_strategy()
         self.clock.stop(); self.cancel_tick(); self.stop_play()
         self.pending_save = None
         self.mode = mode; self.busy = True; self.failed = False
@@ -348,6 +399,80 @@ class LwtSnakeApp:
         if self.mode == 'replay' and self.snapshot.phase not in {'GAME_OVER','WON'}:
             self.transition('handoff', replay=self.verified.replay, prefix=self.replay_index+1)
 
+    def cancel_strategy(self, *, resume_manual=False):
+        self.strategy_generation += 1
+        if self.strategy_worker is not None: self.strategy_worker.stop()
+        if self.auto_id is not None:
+            self.root.after_cancel(self.auto_id); self.auto_id = None
+        self.pending_strategy = None
+        self.auto = False; self.auto_stage = None
+        self.strategy_busy = False; self.strategy_hold = False; self.advice = None
+        self.strategy_var.set('策略由 LWT 计算 · 已停止；可手动继续')
+        self.clock.stop(); self.cancel_tick()
+        if resume_manual and not self.closing: self.schedule_tick()
+
+    def toggle_hint(self):
+        if self.strategy_busy or self.advice is not None or self.pending_strategy:
+            self.cancel_strategy(resume_manual=True); self.sync_controls(); return
+        self.cancel_strategy()
+        self.query_strategy('hint')
+
+    def toggle_auto(self):
+        if self.auto:
+            self.cancel_strategy(resume_manual=True); self.sync_controls(); return
+        if self.mode != 'live' or self.busy or self.failed or not self.snapshot or self.snapshot.phase != 'RUNNING': return
+        self.cancel_strategy()
+        self.auto = True
+        self.query_strategy('auto')
+
+    def query_strategy(self, purpose):
+        if self.closing or self.mode != 'live' or self.failed or self.busy or not self.snapshot or self.snapshot.phase != 'RUNNING': return
+        self.clock.stop(); self.cancel_tick()
+        worker = self.strategy_worker
+        if worker is not None and worker.stopping.is_set() and not worker.finished.is_set():
+            self.pending_strategy = purpose
+            self.strategy_var.set('正在回收旧策略进程…'); self.sync_controls(); return
+        if worker is None or worker.finished.is_set():
+            self.strategy_generation += 1
+            worker = self.strategy_worker = StrategyWorker(self.repository_root,self.strategy_replies,self.strategy_generation)
+            worker.start()
+        if worker.submit(self.snapshot):
+            self.strategy_busy = True; self.strategy_hold = False
+            self.auto_stage = 'strategy' if self.auto else None
+            self.strategy_var.set('策略由 LWT 计算 · 计算中…')
+        self.sync_controls()
+
+    def auto_next(self):
+        self.auto_id = None
+        if self.auto: self.query_strategy('auto')
+
+    def poll_strategy(self):
+        if self.pending_strategy and self.strategy_worker.finished.is_set():
+            purpose,self.pending_strategy=self.pending_strategy,None
+            self.query_strategy(purpose)
+        while True:
+            try: reply=self.strategy_replies.get_nowait()
+            except queue.Empty: break
+            if reply.generation != self.strategy_generation or (reply.state is not None and reply.state != self.snapshot) or self.mode != 'live': continue
+            self.strategy_busy = False
+            if reply.error or reply.advice.direction is None:
+                message = reply.error or 'TRAPPED：没有合法下一步'
+                self.cancel_strategy()
+                self.strategy_hold = True
+                self.strategy_var.set('策略停止：'+message+'；可手动接管或重试')
+            else:
+                self.advice = reply.advice
+                arrow={'U':'↑','R':'→','D':'↓','L':'←'}[reply.advice.direction]
+                self.strategy_var.set(f'策略由 LWT 计算 · {arrow} {reply.advice.direction} / {reply.advice.reason}')
+                if self.auto:
+                    if reply.advice.direction != self.snapshot.direction:
+                        self.auto_stage = 'turn'
+                        self.send('TURN',reply.advice.direction,automatic=True)
+                    else:
+                        self.auto_stage = 'tick'; self.send('TICK',automatic=True)
+                else: self.schedule_tick()
+            self.sync_controls()
+
     def draw(self) -> None:
         self.canvas.delete("all")
         state = self.snapshot
@@ -368,6 +493,7 @@ class LwtSnakeApp:
         if self.closing:
             return
         self.closing = True
+        self.cancel_strategy()
         self.next_worker = None
         self.stop_play()
         self.clock.stop()
@@ -389,5 +515,7 @@ def launch() -> None:
     try:
         root.mainloop()
     finally:
+        if app.strategy_worker:
+            app.strategy_worker.stop(); app.strategy_worker.join(timeout=6)
         app.worker.stop()
         app.worker.join(timeout=6)
