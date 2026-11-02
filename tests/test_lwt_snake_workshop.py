@@ -131,6 +131,9 @@ class WorkshopTests(unittest.TestCase):
             result=output/'result.json'
             self.assertEqual(self.cli('--verify',result,'--catalog',manifest).returncode,0)
             self.assertEqual(self.cli('--verify',result).returncode,3)
+            legacy_only=self.cli('--game-only','--verify',result,'--catalog',manifest)
+            self.assertEqual(legacy_only.returncode,3)
+            self.assertIn(b'only for legacy v1',legacy_only.stderr)
             other=self.trusted_file('.json',manifest.read_bytes())
             self.assertEqual(self.cli('--verify',result,'--catalog',other).returncode,3)
             changed=json.loads(result.read_text(encoding='utf-8'))

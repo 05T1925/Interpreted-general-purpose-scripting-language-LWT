@@ -399,7 +399,7 @@ def verify(path,*,game_only=False,catalog_path=None):
         catalog=None
     paths=dict(STRATEGIES)
     if catalog:paths.update({name:entry.path for name,entry in catalog.entries.items()})
-    if version==2 and game_only:
+    if version in (2,3) and game_only:
         raise ArenaError('--game-only is only for legacy v1 results')
     if type(data['strategies'])!=dict or type(data['cases'])!=list or type(data['summary'])!=dict:
         raise ArenaError('result inventory/summary field type invalid')
