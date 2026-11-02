@@ -60,10 +60,12 @@ def search(result, catalog, reference, challengers, budget):
     paths.update({name: entry.path for name, entry in trusted.entries.items()})
     scanned = 0
     match = None
+    eligible = 0
     for row in sorted((row for row in data['cases'] if row['strategy_id'] == reference),
                       key=lambda row: row['seed']):
         if row['stop_reason'] == 'failed' or row['game_verified'] is not True or row['policy_verified'] is not True:
             continue
+        eligible += 1
         decisions = arena._read_json(result.parent / row['decision_path'], arena.MAX_DECISIONS)['decisions']
         states = reconstruct(load(result.parent / row['replay_path']), total_timeout=60).states
         policies = {name: StrategyBridge(repository_root=ROOT, source_path=paths[name]) for name in names}
@@ -99,6 +101,8 @@ def search(result, catalog, reference, challengers, budget):
                 policy.close()
         if match or scanned >= budget:
             break
+    if eligible == 0:
+        raise WitnessError('no completed double-verified reference match to scan')
     found = match is not None
     return {'schema_version': 1, 'result_path': result_rel, 'result_sha256': result_sha,
             'catalog_path': catalog_rel, 'catalog_sha256': trusted.sha256,

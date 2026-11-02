@@ -59,6 +59,15 @@ class WitnessTests(unittest.TestCase):
         with patch.object(witness, 'DEADLINE', .01), patch.object(sys, 'argv', argv):
             self.assertEqual(witness.supervised_main(), 3)
 
+    def test_no_completed_reference_is_an_error_not_no_witness(self):
+        data = json.loads((ROOT/RESULT).read_text(encoding='utf-8'))
+        for row in data['cases']:
+            if row['strategy_id'] == 'baseline':
+                row['stop_reason'] = 'failed'
+        with patch.object(witness.arena, 'verify', return_value=data):
+            with self.assertRaisesRegex(witness.WitnessError, 'no completed'):
+                witness.search(ROOT/RESULT, ROOT/CATALOG, 'baseline', ['bfs'], 1)
+
 
 if __name__ == '__main__':
     unittest.main()
