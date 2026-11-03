@@ -2,7 +2,7 @@
 
 > Agent 当前状态入口。核对日期：2026-11-03。每次开始任务都重新检查 Git 和远端；阶段历史见[仓库工作流](docs/repository-workflow.md)，当前关系见[阶段路线图](阶段执行与审查路线图.md)。
 
-> **当前结论：** S41 经[主窗口复核](docs/s41-main-review.md)并以快进方式进入本地 `main`；审查修正提交 `10e6a82788ecb59f768d2cb4968e5597728060b2` 的[功能分支 Actions](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41481213153)在 Ubuntu/Windows × Python 3.10/3.13 四格成功。远端 `main` 与本次状态文档提交的 CI 仍须分别核对。S12 新克隆、PPT、人工桌面和最终交付均未开始。
+> **当前结论：** S41 已经[主窗口复核](docs/s41-main-review.md)并进入已同步的 `main`。S12 正在 `milestone/final-delivery` 上形成最终交付候选：远端 main 的仓库外新克隆、PPT、自动化验收和答辩材料已制作，详见[S12 执行报告](docs/s12-final-delivery.md)。主窗口审查、阶段分支精确 SHA 的 CI、合入 main 与人工桌面验收分别确认。
 
 ## 目标与课程评分
 
@@ -35,7 +35,7 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - S39：可信本地策略目录、独立 Agent 新 LWT 策略与 v3 双层验真已通过[主窗口复核](docs/s39-main-review.md)，功能分支精确提交的远端 CI 四格成功；见[报告](docs/s39-strategy-workshop.md)和[SDK](docs/strategy-sdk.md)。
 - S40：可验证的多策略同局面比较与单步反事实实验已通过[主窗口复核](docs/s40-main-review.md)并进入本地 main；精确功能分支 CI 四格成功；见[契约](docs/s40-counterfactual-contract.md)和[执行报告](docs/s40-counterfactual-lab.md)。
 - S41：Agent 策略差异自动发现与可复现反馈已通过[主窗口复核](docs/s41-main-review.md)并进入本地 main；原始执行证据见[报告](docs/s41-witness-discovery.md)。
-- S12：下一阶段为最终交付，执行新克隆验收、兼容性/CI、GUI 现场预检、PPT、答辩和交付；见[S12 规划](docs/s12-final-delivery-plan.md)。
+- S12：阶段执行候选已在 `milestone/final-delivery`，新克隆自动化、PPT 与答辩材料见[执行报告](docs/s12-final-delivery.md)；主窗口复核和现场人工验收待完成。
 
 ## 常用验证入口
 

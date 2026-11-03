@@ -221,3 +221,7 @@ LWT Snake 新增“保存本局/载入记录”、真实 LWT 验证、按事务�
 ## S41 LWT 策略差异自动发现
 
 `python -m app.lwt_snake.witness --verify reports/s41-found --catalog app/lwt_snake/strategies/strategy-catalog.json` 对固定搜索结果重新执行有界 LWT 策略咨询，并验证 S40 的一步分支。另有预算 1 的无见证样例与篡改拒绝样例；命令、反馈含义和 GUI 加载方式见[应用说明](app/README.md)与[S41 报告](docs/s41-witness-discovery.md)。
+
+## S12 最终交付候选
+
+课程八项提交物、仓库外新克隆实测和限制见[最终验收清单](docs/final-acceptance-checklist.md)与[S12 执行报告](docs/s12-final-delivery.md)。可编辑的[系统介绍 PPT](slides/LWT介绍.pptx)配套[演示脚本](docs/demo-script.md)和[答辩问答卡](docs/defense-qa-card.md)。本阶段分支等待主窗口审查；最终 SHA 的远端 CI、合入 main 与线下人工操作分别确认。无需 GUI 的策略证据链可按演示脚本直接运行公开 CLI。

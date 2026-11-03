@@ -280,3 +280,5 @@ python -m app.lwt_snake.counterfactual_ui
 ```
 
 Tk 只读查看器的“加载见证目录”按钮可显式选择本地 S41 结果并在后台重新验真；固定 S40 演示仍可用。离线答辩可用[已发现见证](../reports/s41-found/witness.json)、[预算 1 无见证](../reports/s41-none/witness.json)、[篡改反馈](../reports/s41-tampered/agent-feedback.json)复现成功、边界和拒绝路径。冻结含义见[契约](../docs/s41-witness-contract.md)，实测与限制见[阶段报告](../docs/s41-witness-discovery.md)。
+
+S12 候选的 5–8 分钟系统演示与无 GUI 命令见[演示脚本](../docs/demo-script.md)，八项提交物与现场尚待确认的操作见[最终验收清单](../docs/final-acceptance-checklist.md)。
