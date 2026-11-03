@@ -80,7 +80,9 @@
 
 ## 6. CI、保护和交接
 
-工作流 `.github/workflows/tests.yml` 仍配置 Ubuntu/Windows × Python 3.10/3.13 四格、15 分钟 job。S41 审查 SHA 的四格历史成功不能替代 S12 最终 SHA。首次只读 GitHub API 查询受到匿名速率限制，未取得本阶段精确 run；功能分支如获推送，应按实际最终 SHA 和 run URL 逐格复核。Python 3.10 是历史最低兼容目标，2026 年已不作为推荐部署版本；本轮本机仅 Python 3.13.7。
+工作流 `.github/workflows/tests.yml` 仍配置 Ubuntu/Windows × Python 3.10/3.13 四格、15 分钟 job。S41 审查 SHA 的四格历史成功不能替代 S12 最终 SHA。首次只读 GitHub API 查询受到匿名速率限制；按实际最终 SHA 和 run URL 逐格复核。Python 3.10 是历史最低兼容目标，2026 年已不作为推荐部署版本；本轮本机仅 Python 3.13.7。
+
+阶段分支首轮推送已成功，远端 `main` 当时仍为 `79284f001eb2421be1455aa547a073103329b907`。随后从远端 `milestone/final-delivery` 再次独立克隆到 `C:\Users\28641\AppData\Local\Temp\lwt-s12-candidate-20261103`，确认该时点的 `c602396bbc3537f6ceb63d49e6d81f7d5013876c` 与 PPT、演示脚本均可取得，工作区干净。该首轮 SHA 的 [Actions run 41572388182](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41572388182) 在查询时仍为 `In progress`；报告补充提交会产生新的最终 SHA，应以**最终 SHA 的新 run** 逐格复核，不能沿用此 run 的结论。
 
 保护路径对 `main...HEAD` 须保持空差异：`lwt/`、[正式规范](language-spec.md)、`tests/cases/`、[测试矩阵](test-matrix.md)、`app/log_report.lwt`、`app/lwt_snake/game.lwt`、三份策略、S35–S41 固定结果、`reports/app-concurrency.json`、`docs/app-concurrency.md`、`bench/results.json`、`reports/performance.md`、S28 profile 与 S29 smoke。没有更改语言语义、游戏规则或固定原始证据。
 
