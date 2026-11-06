@@ -21,5 +21,5 @@
 - [ ] S41 只读 Tk 查看器：载入本地见证、重新验真、切换/关闭。
 - [ ] 演示桌面无遮挡、输入归属清楚；无法确保时用 [CLI 脚本](demo-script.md)。
 - [x] 主窗口核对候选精确 SHA `e1249f56f1d889c0c6e400a46602e0fe3f7df1ce` 的 Ubuntu/Windows × Python 3.10/3.13 四格 Actions（run [41572881428](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41572881428)，全部成功）。
-- [x] 主窗口审查候选提交并快进集成到本地 `main`；远端同步状态以本次复核记录更新。
+- [x] 主窗口审查候选提交、快进集成到本地 `main` 并正常推送；推送后远端 `main` 与本地 `HEAD` 一致。
 - [ ] 完成现场人工 GUI 检查，并按教师实际要求确认线下验收与最终归档。

@@ -12,7 +12,7 @@
 - GitHub Actions 对候选精确 SHA `e1249f56f1d889c0c6e400a46602e0fe3f7df1ce` 的 run [41572881428](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/41572881428) 已完成；Ubuntu/Windows × Python 3.10/3.13 四个 job 均成功。该证据绑定候选 SHA，不由先前提交的 CI 状态推断。
 - 检查课程要求的八项交付映射、最终验收清单、5–8 分钟演示脚本、答辩问答卡，以及 PPT 与性能报告中的数据来源关系。
 - PPTX 包结构检查识别出 12 页、1 张原生图表和嵌入工作簿；图表有 12 个数值点，与 S11 六组 LWT/Python 中位数相符。页面几何检查覆盖 12 页，未报告越界项目或警告。执行窗口报告还记录了逐页渲染和 PowerPoint 打开；本次主窗口复核没有把它表述为现场讲解验收。
-- 最终交付分支已由候选 SHA 快进到本地 `main`；具体 push 与远端 main SHA 以本记录后续补记的同步核验为准。
+- 最终交付分支已由候选 SHA 快进到本地 `main`；复核记录与集成结果已通过普通 `git push origin main` 同步，推送后只读核对确认远端 `main` 与本地 `HEAD` 一致。
 
 ## 未完成项与交接
 
