@@ -119,16 +119,20 @@
 
 ## 6. Git 基线与提交
 
-- 收口基线：`HEAD = main = origin/main = 5027860efc8a1cce342ca13b1434d7724aeeffc4`，工作区干净，`fetch` 后 ahead/behind `0 0`。
-- 本轮按仓库工作流从 `main` 创建 `milestone/final-acceptance`（里程碑/文档收口，非 codex 前缀），仅提交文档变更；正常提交与推送，不强推、不 reset、不改写 `main`。提交 SHA、推送后远端核对与精确 SHA 的 Actions 状态在下表完成后据实填写；查询工具不可用、限流或 run 仍在运行时如实写明，不沿用候选旧 SHA 的 CI 结论。
+- 收口基线：`HEAD = main = origin/main = 5027860efc8a1cce342ca13b1434d7724aeeffc4`，工作区干净，`fetch` 后 ahead/behind `0 0`。推送前 `git ls-remote origin refs/heads/main` 仍为该值，远端 `main` 全程未被本分支改写。
+- 本轮按仓库工作流从 `main` 创建 `milestone/final-acceptance`（里程碑/文档收口，非 codex 前缀），仅提交文档变更；正常 `git push -u`，不强推、不 reset、不改写 `main`、不打标签、不发布。
 - 本轮为文档变更，未改动程序代码，按项目门槛不重跑全量测试；第 5 节中 `run_tests.py` 与定向 CLI 属于答辩路径取证，非因代码改动而重跑。
 
-| 项 | 值（提交推送后填写） |
+| 项 | 值（本轮核对） |
 |---|---|
-| 收口分支 | `milestone/final-acceptance` |
-| 本轮提交 SHA | 待提交后记录 |
-| 推送后远端分支 SHA | 待推送后 `git ls-remote` 核对记录 |
-| 该精确 SHA 的 Actions | 待查询记录 |
+| 收口基线 | `HEAD = main = origin/main = 5027860efc8a1cce342ca13b1434d7724aeeffc4`，工作区干净，fetch 后 ahead/behind `0 0` |
+| 收口分支 | `milestone/final-acceptance`（自 `main` 创建，非 codex 前缀） |
+| 内容与证据收口提交 | `58f2facaad7b17ac04283634f7f5c939f8b6d88d`，已推送 |
+| 推送后远端分支 SHA | `git ls-remote origin refs/heads/milestone/final-acceptance` = `58f2facaad7b17ac04283634f7f5c939f8b6d88d`，与本地一致 |
+| 58f2fac 的 Actions | run [42260414148](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42260414148)（event=push，created `2026-11-06T17:18:26Z`）；本轮 2026-11-07 经 GitHub API 查询：四格 `windows-latest/Python 3.10`、`ubuntu-latest/Python 3.10`、`ubuntu-latest/Python 3.13`、`windows-latest/Python 3.13` 均 `status=in_progress`、`conclusion` 未定。**run 仍在运行，该精确 SHA 的四格 CI 结论尚未产生**；不沿用候选 `e1249f56f1d889c0c6e400a46602e0fe3f7df1ce` 的四格成功。查询时 `gh` CLI 未安装，改用 GitHub REST API（HTTP 200，未限流）。
+| 本段状态回填提交 | 即包含本段的提交；按仓库惯例不在自身正文预写自身 SHA，由主窗口以 `git log -1 milestone/final-acceptance` 与其 Actions run 单独核对。若查询工具不可用、API 限流或 run 仍在运行，如实写明，不沿用候选旧 SHA 结论。 |
+
+`58f2fac` 已推送，属已共享历史；本段以追加提交方式回填其 SHA 与 CI 查询状态，未改写该提交，也未强推。CI 最终结论待 run 完成后由主窗口按精确 SHA 另行核对，本轮不下结论、不声称四格已通过。
 
 ## 7. 遗留事项与交接
 
