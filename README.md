@@ -1,13 +1,13 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库用于实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S31–S41 已由主窗口复核并进入本地 `main`；现有课程应用包括日志分析器与 LWT Snake。S41 的[策略差异自动发现](docs/s41-main-review.md)已通过复核，精确功能分支的远端 CI 四格成功。S12 是下一阶段，负责最终验收和交付。当前状态见 [project.md](project.md)。
+本仓库实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S31–S41 已由主窗口复核并进入本地 `main`；S12 最终交付候选也已通过复核并集成。课程应用包括日志分析器与 LWT Snake。现场人工 GUI 验收仍是未完成项；当前状态见 [project.md](project.md) 和 [S12 主窗口复核](docs/s12-main-review.md)。
 
 ## 阅读入口
 
 1. [作业原文](大作业内容.md)：教师要求与评分项。
 2. [总体方案与复检](LWT大作业总体方案与复检.md)：目标、取舍、阶段门槛。
 3. [详细实施规划](详细实施规划.md)：语义草案、文件结构、任务和验收方法。
-4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：阶段接力与审查门槛；当前顺序为 S12 最终收尾。
+4. [阶段执行与审查路线图](阶段执行与审查路线图.md)：阶段接力与审查门槛；S12 已通过主窗口复核，现场验收项见清单。
 5. [正式语言规范](docs/language-spec.md)：LWT 语法和语义；S24 循环控制和 S25 静态模块的规则以此为准。
 6. [project.md](project.md)：当前状态、已定决策和下一步，供编程 Agent 复用。
 7. [人类/Agent 开发指南](docs/developer-guide.md)：从运行 CLI 到语言语义和示例的操作说明。
@@ -39,13 +39,14 @@
 33. [S24 循环控制报告](docs/s24-loop-control.md)：break/continue 规范、实现、覆盖、复验和阶段状态。
 34. [S25 多文件函数模块报告](docs/s25-modules.md)：模块路径、独立命名空间、加载/错误行为、黑盒覆盖和演示输出。
 35. [S12 最终交付规划](docs/s12-final-delivery-plan.md)：评分项证据映射、新克隆/CI、GUI 预检、PPT 与答辩收尾。
-36. [S27 静态检查器说明](docs/static-checker.md)：非执行型 `--check`、稳定诊断码、JSON schema 和局限。
-37. [LWT Language Server 使用说明](docs/language-server.md)：stdlib stdio LSP 子集、overlay、UTF-16、diagnostics 和能力边界。
-38. [S29 Language Server 执行报告](docs/s29-language-server.md)：协议/服务/真实子进程测试、smoke 证据、保护路径和限制。
-39. [S30 调试器计划](docs/s30-debugger-plan.md)：源码级调试器的设计决策、范围和验收对应。
-40. [S30 调试器说明](docs/debugger.md)：运行命令、断点/单步/变量查看、I/O 边界与限制。
-41. [S30 调试器执行报告](docs/s30-debugger.md)：实现、测试证据、保护路径和阶段交接。
-42. [S33 测试工作台执行报告](docs/s33-testing-workbench.md)：runner JSON/字节契约、Test Explorer 与真实 Extension Host/DAP 验收。
+36. [S12 主窗口复核](docs/s12-main-review.md)：候选 SHA、精确 CI、PPT 核查、集成状态与现场遗留。
+37. [S27 静态检查器说明](docs/static-checker.md)：非执行型 `--check`、稳定诊断码、JSON schema 和局限。
+38. [LWT Language Server 使用说明](docs/language-server.md)：stdlib stdio LSP 子集、overlay、UTF-16、diagnostics 和能力边界。
+39. [S29 Language Server 执行报告](docs/s29-language-server.md)：协议/服务/真实子进程测试、smoke 证据、保护路径和限制。
+40. [S30 调试器计划](docs/s30-debugger-plan.md)：源码级调试器的设计决策、范围和验收对应。
+41. [S30 调试器说明](docs/debugger.md)：运行命令、断点/单步/变量查看、I/O 边界与限制。
+42. [S30 调试器执行报告](docs/s30-debugger.md)：实现、测试证据、保护路径和阶段交接。
+43. [S33 测试工作台执行报告](docs/s33-testing-workbench.md)：runner JSON/字节契约、Test Explorer 与真实 Extension Host/DAP 验收。
 
 ### LWT 静态检查器（S27）
 
@@ -222,6 +223,6 @@ LWT Snake 新增“保存本局/载入记录”、真实 LWT 验证、按事务�
 
 `python -m app.lwt_snake.witness --verify reports/s41-found --catalog app/lwt_snake/strategies/strategy-catalog.json` 对固定搜索结果重新执行有界 LWT 策略咨询，并验证 S40 的一步分支。另有预算 1 的无见证样例与篡改拒绝样例；命令、反馈含义和 GUI 加载方式见[应用说明](app/README.md)与[S41 报告](docs/s41-witness-discovery.md)。
 
-## S12 最终交付候选
+## S12 最终交付
 
-课程八项提交物、仓库外新克隆实测和限制见[最终验收清单](docs/final-acceptance-checklist.md)与[S12 执行报告](docs/s12-final-delivery.md)。可编辑的[系统介绍 PPT](slides/LWT介绍.pptx)配套[演示脚本](docs/demo-script.md)和[答辩问答卡](docs/defense-qa-card.md)。本阶段分支等待主窗口审查；最终 SHA 的远端 CI、合入 main 与线下人工操作分别确认。无需 GUI 的策略证据链可按演示脚本直接运行公开 CLI。
+课程八项提交物、仓库外新克隆实测和限制见[最终验收清单](docs/final-acceptance-checklist.md)与[S12 执行报告](docs/s12-final-delivery.md)。可编辑的[系统介绍 PPT](slides/LWT介绍.pptx)配套[演示脚本](docs/demo-script.md)和[答辩问答卡](docs/defense-qa-card.md)。S12 候选已通过主窗口复核、快进进入本地 `main`，候选精确 SHA 的远端 CI 四格成功；现场人工 GUI 验收仍未完成。无需 GUI 的策略证据链可按演示脚本运行公开 CLI。
