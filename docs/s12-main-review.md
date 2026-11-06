@@ -19,3 +19,16 @@
 桌面输入归属不清，故语义实验室、日志工作台、LWT Snake 和 S41 查看器的物理键鼠、焦点、缩放、输入法及视觉体验仍未完成现场人工验收。Tk 自动控件测试和窗口可启动证据不替代该项。现场操作应在无遮挡、输入归属明确的环境中按[最终验收清单](final-acceptance-checklist.md)逐项完成；如果现场 GUI 不可用，按[演示脚本](demo-script.md)使用可复现 CLI 路径，并如实说明限制。
 
 课程教师实际要求、现场演示、评分与最终归档仍由提交者确认。S12 不再派发新的产品功能阶段；只有发现可复现的阻断缺陷时，才另开最小范围修复。
+
+## 2026-11-07 最终验收收口复核
+
+主窗口复核本轮收口执行：从干净的 `main...origin/main`（`HEAD = main = origin/main = 5027860efc8a1cce342ca13b1434d7724aeeffc4`，重新 fetch 后 ahead/behind 0 0）创建 `milestone/final-acceptance`，只做文档与证据收口，无产品功能与程序代码变更。逐项客观结论见[现场验收记录](s12-gui-acceptance.md)，清单已同步更新于[最终核对表](final-acceptance-checklist.md)。
+
+- **桌面判定**：只读枚举到 24 个带标题窗口，并检测到 `cua-driver`（`Cua.AgentCursorOverlay.default`）来源不明的 GUI 自动化覆盖层；目标 LWT 应用无前台窗口，PowerPoint 进程在运行但标题仅为 “PowerPoint”，输入归属与焦点无法确定。判定不满足“无遮挡、输入归属明确”，立即停止 GUI 操作，本轮未发送任何鼠标/键盘事件、未启动或操作任何 GUI 应用。
+- **A–E 矩阵**：语义实验室、日志工作台挑战、LWT Snake 键盘/失焦/接管、S41 Tk 查看器、PowerPoint 逐页播放等人工交互项**全部未验证**；不以自动化、窗口启动、截图或静态审阅替代。
+- **CLI 后退主路径本轮实跑通过**：最小程序与定位错误（0/3）、完整性 `287/384/287`、黑盒 `287/287`（183.111s）、日志两条（默认与 WARN+retry+top=2）、`--check game.lwt`、有效行 246/313、模块 `demo:2`、replay 10 事务、arena 烟测与 9 局验真、S41 `found=true` / `found=false` / 篡改退出 3、`counterfactual --explain` 一步分支；临时副本篡改拒绝退出 3 且仓库原件未改。以上为本机 CLI 实测，非人工 GUI。
+- **PPT 静态审阅通过**：12 页、SHA-256 `0e680d17...fe5d` 与执行报告一致；原生图表两系列各 6 点共 12 数值点与 [S11 报告](../reports/performance.md) 六组中位数逐值一致，嵌入工作簿同值，页内展示数字（287、246、313、日志计数等）与仓库最终报告及本轮 CLI 实测一致。未用 PowerPoint GUI 播放，字体/裁切/图表可读性与讲述流程保留为未验证。
+- **环境记录**：Windows 11 家庭版 10.0.26200、Python 3.13.7、Tk/Tcl 8.6、2560×1600、`Win8DpiScaling=0`、VS Code 1.144.0、Microsoft 365 16.0.20527.20150；GitHub API 可达、`gh` 未安装。
+- **保护范围**：未改解释器、正式规范、黑盒用例、日志应用、游戏 LWT、固定回放/策略证据、S10 并发与 S11 性能原始数据、S28 profile、S29 smoke；未覆盖 PPT 或已有证据文件，未运行会重写固定原始数据的生成器。
+
+本轮收口提交与精确 SHA 的 Actions 结论见[现场验收记录第 6 节](s12-gui-acceptance.md#6-git-基线与提交)；候选 `e1249f5` 的四格成功不自动适用于新提交。本轮不声称教师已验收、不预判最终分数、不打标签、不发布。

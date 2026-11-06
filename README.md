@@ -226,3 +226,5 @@ LWT Snake 新增“保存本局/载入记录”、真实 LWT 验证、按事务�
 ## S12 最终交付
 
 课程八项提交物、仓库外新克隆实测和限制见[最终验收清单](docs/final-acceptance-checklist.md)与[S12 执行报告](docs/s12-final-delivery.md)。可编辑的[系统介绍 PPT](slides/LWT介绍.pptx)配套[演示脚本](docs/demo-script.md)和[答辩问答卡](docs/defense-qa-card.md)。S12 候选已通过主窗口复核、快进进入本地 `main`，候选精确 SHA 的远端 CI 四格成功；现场人工 GUI 验收仍未完成。无需 GUI 的策略证据链可按演示脚本运行公开 CLI。
+
+2026-11-07 完成一次[最终验收收口与现场验收记录](docs/s12-gui-acceptance.md)：重新 fetch 后 `HEAD = main = origin/main = 5027860`、工作区干净。桌面同时存在 24 个窗口与 `cua-driver` 覆盖层，输入归属不清，故语义实验室、日志工作台、LWT Snake、S41 查看器与 PowerPoint 播放等人工交互项全部记为未验证，本轮未发送任何键鼠事件。可复现的 CLI 后退主路径已在本机实跑通过（黑盒 287/287、完整性 287/384/287、日志分析、S39–S41 证据链、回放与模块），PPT 静态审阅确认 12 页且原生图表 12 数值点与 S11 六组中位数一致。收口文档改动在 `milestone/final-acceptance` 分支；该新提交 SHA 的 Actions 须单独查询。教师线下验收与最终评分仍由提交者确认。

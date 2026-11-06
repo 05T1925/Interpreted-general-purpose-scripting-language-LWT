@@ -44,3 +44,28 @@ python -m app.lwt_snake.witness --verify $tmp --catalog app/lwt_snake/strategies
 ## 无 GUI 后退
 
 无需桌面、网络或第三方 GUI 库即可运行上面的 CLI。展示游戏规则时使用 `python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-parent.json`；展示语言模块时使用 `python -m lwt examples/modules/main.lwt`。GUI/Tk 自动测试证明控件回调集成，不能代替现场真实鼠标、键盘、焦点和视觉检查。
+
+## 2026-11-07 本机实跑核验
+
+本轮在无 GUI 条件下把上述主路径全部实际执行一遍，验证答辩 CLI 后退可用。环境与桌面判定、逐条命令退出码与输出见[现场验收记录](s12-gui-acceptance.md)；本节只记与演示顺序直接相关的结论。
+
+| 演示段 | 命令 | 本轮退出码与结果 |
+|---|---|---|
+| 最小程序 | `python -m lwt examples/guide/hello.lwt` | 0；`hello, LWT` / `42` |
+| 定位错误 | `python -m lwt examples/language_lab/division_by_zero.lwt` | 3；`2:8: RuntimeError: division by zero` |
+| 一键黑盒 | `python tools/run_tests.py` | 0；`passed=287 failed=0 total=287`（183.111s） |
+| 完整性 | `python tools/check_project_integrity.py` | 0；`cases=287; matrix_links=384; referenced_cases=287` |
+| 日志默认 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log` | 0；Total 7 / Valid 6 / Malformed 1 / Matched 6 |
+| 日志过滤 | `... --level WARN --keyword retry --top 2` | 0；Matched 1 / WARN 1 / cache 1 |
+| 策略检查 | `python -m app.lwt_snake.arena --check-strategy mobility-lookahead --catalog ...` | 0；静态与 LWA1 烟测通过 |
+| S39 验真 | `python -m app.lwt_snake.arena --verify reports/s39-demo/result.json --catalog ...` | 0；`Verified 9 matches: game and policy decisions.` |
+| S41 发现 | `python -m app.lwt_snake.witness --verify reports/s41-found --catalog ...` | 0；`found=true scanned=2/32 case=baseline/4 step=2 challenger=bfs` |
+| S41 未见 | `... --verify reports/s41-none --catalog ...` | 0；`found=false scanned=1/1` |
+| 篡改拒绝 | `... --verify reports/s41-tampered --catalog ...` | 3；`WitnessError: agent feedback evidence mismatch` |
+| S40 解释 | `python -m app.lwt_snake.counterfactual --explain reports/s41-found/analysis --catalog ...` | 0；baseline `R/SPACE`、bfs `D/FOOD`，score 10→10 |
+| 回放 | `python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-parent.json` | 0；`Verified 10 transactions.` |
+| 模块 | `python -m lwt examples/modules/main.lwt` | 0；`demo:2` |
+
+- 篡改拒绝的临时副本方式本轮已实跑：复制 `reports/s41-found` 到系统临时目录，仅改副本 `agent-feedback.json.question`，`witness --verify <temp>` → 3（`WitnessError: agent feedback evidence mismatch`）；仓库固定原件未改。上文 PowerShell 段的 `question` 字段在本轮证据结构下确实参与反馈校验，可触发拒绝；若某次结构不含该字段，改按段落注释复制 `reports/s41-tampered/agent-feedback.json` 到临时副本同名位置，切勿改仓库固定证据。
+- 演示脚本 5–8 分钟主线在无 GUI 下可完整走通证据链；GUI 段（6:15–7:00 的 `python -m app.language_lab` / `python -m app.lwt_snake.counterfactual_ui`）本轮因桌面条件不满足未做人工操作，讲述时应如实说明人工输入法、焦点与视觉项未验证。
+- PPT 数字已静态核对与仓库一致（12 页、图表 12 数值点 = S11 六组中位数）；未用 PowerPoint GUI 播放，字体/裁切/图表可读性为未验证项。
