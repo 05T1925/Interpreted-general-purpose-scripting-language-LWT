@@ -128,11 +128,13 @@
 | 收口基线 | `HEAD = main = origin/main = 5027860efc8a1cce342ca13b1434d7724aeeffc4`，工作区干净，fetch 后 ahead/behind `0 0` |
 | 收口分支 | `milestone/final-acceptance`（自 `main` 创建，非 codex 前缀） |
 | 内容与证据收口提交 | `58f2facaad7b17ac04283634f7f5c939f8b6d88d`，已推送 |
-| 推送后远端分支 SHA | `git ls-remote origin refs/heads/milestone/final-acceptance` = `58f2facaad7b17ac04283634f7f5c939f8b6d88d`，与本地一致 |
-| 58f2fac 的 Actions | run [42260414148](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42260414148)（event=push，created `2026-11-06T17:18:26Z`）；本轮 2026-11-07 经 GitHub API 查询：四格 `windows-latest/Python 3.10`、`ubuntu-latest/Python 3.10`、`ubuntu-latest/Python 3.13`、`windows-latest/Python 3.13` 均 `status=in_progress`、`conclusion` 未定。**run 仍在运行，该精确 SHA 的四格 CI 结论尚未产生**；不沿用候选 `e1249f56f1d889c0c6e400a46602e0fe3f7df1ce` 的四格成功。查询时 `gh` CLI 未安装，改用 GitHub REST API（HTTP 200，未限流）。
-| 本段状态回填提交 | 即包含本段的提交；按仓库惯例不在自身正文预写自身 SHA，由主窗口以 `git log -1 milestone/final-acceptance` 与其 Actions run 单独核对。若查询工具不可用、API 限流或 run 仍在运行，如实写明，不沿用候选旧 SHA 结论。 |
+| 状态回填提交 | `41d355339f96b35148d748e6e4d658d526dff589`，以追加提交回填 SHA 与 CI 状态，已推送；与 `58f2fac` 同属已共享历史，未改写、未强推 |
+| 远端分支 SHA | 每次推送后以 `git ls-remote origin refs/heads/milestone/final-acceptance` 核对，与该时点本地 `HEAD` 一致；收口结束时远端指向分支最新提交（最终 `HEAD` 由主窗口以 `git log -1` 与 `ls-remote` 确认，本段不预写“包含本段的提交”自身 SHA） |
+| 58f2fac 的 Actions | run [42260414148](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42260414148)（event=push，created `2026-11-06T17:18:26Z`）；本轮 2026-11-07 经 GitHub API 查询：四格 `windows-latest/Python 3.10`、`ubuntu-latest/Python 3.10`、`ubuntu-latest/Python 3.13`、`windows-latest/Python 3.13` 均 `status=in_progress`、`conclusion` 未定。 |
+| 41d3553 的 Actions | run [42260863558](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42260863558)（event=push，created `2026-11-06T17:21:18Z`）；本轮经 GitHub API 查询四格均 `status=in_progress`、`conclusion` 未定。 |
+| 收口末提交 | 包含本段的最终提交由主窗口以 `git log -1 milestone/final-acceptance` 与 `git ls-remote` 单独确认；按仓库惯例不在自身正文预写自身 SHA。 |
 
-`58f2fac` 已推送，属已共享历史；本段以追加提交方式回填其 SHA 与 CI 查询状态，未改写该提交，也未强推。CI 最终结论待 run 完成后由主窗口按精确 SHA 另行核对，本轮不下结论、不声称四格已通过。
+**两个精确 SHA 的 CI 在本轮查询时均仍在运行、四格结论尚未产生；不沿用候选 `e1249f56f1d889c0c6e400a46602e0fe3f7df1ce` 的四格成功，也不把“run 正在运行”写成“已通过”。** 查询时 `gh` CLI 未安装，改用 GitHub REST API（HTTP 200，未限流）。`58f2fac`、`41d3553` 均已推送、属已共享历史，未改写、未强推。CI 最终结论待各 run 完成后由主窗口按精确 SHA 另行核对；若届时查询工具不可用、API 限流或 run 仍在运行，如实写明。本轮不下结论、不声称四格已通过。
 
 ## 7. 遗留事项与交接
 
