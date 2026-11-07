@@ -39,6 +39,7 @@ class TokenKind(str, Enum):
     FINALLY = "finally"
     THROW = "throw"
     DICT = "dict"
+    SPAWN = "spawn"
 
     PLUS = "+"
     MINUS = "-"
@@ -101,6 +102,7 @@ _KEYWORDS: dict[str, TokenKind] = {
     "finally": TokenKind.FINALLY,
     "throw": TokenKind.THROW,
     "dict": TokenKind.DICT,
+    "spawn": TokenKind.SPAWN,
 }
 
 _SINGLE_CHARACTERS: dict[str, TokenKind] = {

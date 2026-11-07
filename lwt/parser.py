@@ -33,6 +33,7 @@ from .ast_nodes import (
     RecordDeclaration,
     RecordFieldInitializer,
     ReturnStatement,
+    SpawnExpression,
     Statement,
     ThrowStatement,
     TopLevelItem,
@@ -380,6 +381,35 @@ class Parser:
                         break
             self._consume(TokenKind.RIGHT_BRACE, "expected '}' after dict entries")
             return DictExpression(tuple(entries), _token_location(opening))
+
+        if self._match(TokenKind.SPAWN):
+            keyword = self._previous()
+            alias: Identifier | None = None
+            name_token = self._consume(
+                TokenKind.IDENT, "expected a function name after 'spawn'"
+            )
+            name = self._identifier_from_token(name_token)
+            # `spawn m.f(...)`: DOT + IDENT indicates a module-qualified target.
+            if self._match(TokenKind.DOT):
+                alias = name
+                member_token = self._consume(
+                    TokenKind.IDENT, "expected a function name after module alias"
+                )
+                name = self._identifier_from_token(member_token)
+            # Parentheses are mandatory: `spawn f;` is a syntax error.
+            self._consume(
+                TokenKind.LEFT_PAREN, "expected '(' after spawn target"
+            )
+            arguments: list[Expression] = []
+            if not self._check(TokenKind.RIGHT_PAREN):
+                while True:
+                    arguments.append(self._expression())
+                    if not self._match(TokenKind.COMMA):
+                        break
+            self._consume(TokenKind.RIGHT_PAREN, "expected ')' after spawn arguments")
+            return SpawnExpression(
+                name, alias, tuple(arguments), _token_location(keyword)
+            )
 
         if self._match(TokenKind.IDENT):
             name_token = self._previous()

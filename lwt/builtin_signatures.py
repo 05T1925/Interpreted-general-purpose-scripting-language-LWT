@@ -22,6 +22,13 @@ BUILTIN_ARITIES: dict[str, int] = {
     "put": 3,
     "delete": 2,
     "error": 2,
+    # S43 deterministic concurrency (WP1 stubs; WP2 implements the scheduler).
+    "yield": 0,
+    "channel": 0,
+    "send": 2,
+    "receive": 1,
+    "close": 1,
+    "join": 1,
 }
 
 BUILTIN_NAMES = frozenset(BUILTIN_ARITIES)

@@ -227,6 +227,24 @@ class LexerTests(unittest.TestCase):
             ["dict", "throw", "finally", "dictValue", "thrower", "finally_block"],
         )
 
+    def test_s43_spawn_is_a_distinct_reserved_token(self) -> None:
+        # S43 adds exactly one lexical keyword, `spawn`. Neighbouring
+        # identifiers must stay ordinary IDENTs.
+        tokens = scan("spawn spawner spawn_task spawn2")[:-1]
+        self.assertEqual(
+            [token.kind for token in tokens],
+            [
+                TokenKind.SPAWN,
+                TokenKind.IDENT,
+                TokenKind.IDENT,
+                TokenKind.IDENT,
+            ],
+        )
+        self.assertEqual(
+            [token.lexeme for token in tokens],
+            ["spawn", "spawner", "spawn_task", "spawn2"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

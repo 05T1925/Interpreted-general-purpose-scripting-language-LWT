@@ -33,6 +33,7 @@ from .ast_nodes import (
     RecordConstructionExpression,
     RecordDeclaration,
     ReturnStatement,
+    SpawnExpression,
     Statement,
     ThrowStatement,
     UnaryExpression,
@@ -100,6 +101,20 @@ class _ErrorValue:
     column: int | None
 
 
+@dataclass(frozen=True, slots=True, eq=False)
+class _TaskValue:
+    """An opaque task handle (WP1 placeholder; WP2 binds it to a live task)."""
+
+    task_id: int
+
+
+@dataclass(frozen=True, slots=True, eq=False)
+class _ChannelValue:
+    """An opaque channel handle (WP1 placeholder; WP2 binds it to a queue)."""
+
+    channel_id: int
+
+
 class _RecordValue:
     """A mutable record instance whose equality is object identity."""
 
@@ -149,6 +164,8 @@ class _RuntimeContext:
         "profile_source",
         "debug_hook",
         "module_unit",
+        "next_task_id",
+        "next_channel_id",
     )
 
     def __init__(
@@ -177,6 +194,9 @@ class _RuntimeContext:
         self.profile_source = profile_source
         self.debug_hook = debug_hook
         self.module_unit = module_unit
+        # S43: opaque handle numbering, shared by all tasks of this execution.
+        self.next_task_id = 1
+        self.next_channel_id = 1
 
 
 class Environment:
@@ -535,6 +555,12 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
             if location is not None:
                 return location
         return None
+    if isinstance(expression, SpawnExpression):
+        for argument in expression.arguments:
+            location = _unsupported_expression(argument)
+            if location is not None:
+                return location
+        return None
     if isinstance(expression, RecordConstructionExpression):
         for field in expression.fields:
             location = _unsupported_expression(field.value)
@@ -809,6 +835,38 @@ def _evaluate(
 
     if isinstance(expression, DictExpression):
         return _construct_dict(expression, environment, runtime)
+
+    if isinstance(expression, SpawnExpression):
+        # WP1 placeholder: validate the target/arity like a real spawn and
+        # evaluate arguments left-to-right, but return an inert handle. WP2
+        # replaces this with a live task in the deterministic scheduler.
+        target_runtime = runtime
+        if expression.alias is not None:
+            target_runtime = runtime.imports.get(expression.alias.name)  # type: ignore[assignment]
+            if target_runtime is None:
+                _runtime_error(
+                    f"undefined module alias {expression.alias.name!r}",
+                    expression.alias.location,
+                )
+        declaration = target_runtime.functions.get(expression.callee.name)
+        if declaration is None:
+            _runtime_error(
+                f"undefined function {expression.callee.name!r} for spawn",
+                expression.callee.location,
+            )
+        arguments = [
+            _evaluate(argument, environment, runtime)
+            for argument in expression.arguments
+        ]
+        if len(arguments) != len(declaration.parameters):
+            _runtime_error(
+                f"spawn {expression.callee.name!r} expects "
+                f"{len(declaration.parameters)} arguments, got {len(arguments)}",
+                expression.location,
+            )
+        task_id = runtime.next_task_id
+        runtime.next_task_id += 1
+        return _TaskValue(task_id)
 
     if isinstance(expression, RecordConstructionExpression):
         return _construct_record(expression, environment, runtime)
@@ -1156,12 +1214,36 @@ def _invoke_builtin(
             location.column,
         )
 
+    if name in _CONCURRENCY_BUILTINS:
+        # WP1 registers the names/arities and validates arguments; the actual
+        # scheduler-backed behavior lands in WP2. Raise an explicit, located
+        # runtime error rather than returning a half-true placeholder value.
+        if len(arguments) != _CONCURRENCY_BUILTINS[name]:
+            _runtime_error(
+                f"{name} expects {_CONCURRENCY_BUILTINS[name]} arguments", location
+            )
+        _runtime_error(
+            f"concurrency built-in {name!r} requires the WP2 deterministic scheduler",
+            location,
+        )
+
     raise AssertionError(f"unknown built-in function: {name!r}")
 
 
 _DICT_BUILTINS = frozenset(
     {"keys", "values", "items", "has", "get", "put", "delete"}
 )
+
+# S43 concurrency built-ins (WP1: arity registry + explicit "not yet wired"
+# error; WP2 replaces the dispatch with scheduler-backed behavior).
+_CONCURRENCY_BUILTINS = {
+    "yield": 0,
+    "channel": 0,
+    "send": 2,
+    "receive": 1,
+    "close": 1,
+    "join": 1,
+}
 
 
 def _expect_dict(value: object, name: str, location: SourceLocation) -> _DictValue:
@@ -1386,7 +1468,7 @@ def _evaluate_binary(
             equal = False
         elif type(left) in {int, str, bool} or left is None:
             equal = left == right
-        elif type(left) is list or isinstance(left, (_RecordValue, _ErrorValue, _DictValue)):
+        elif type(left) is list or isinstance(left, (_RecordValue, _ErrorValue, _DictValue, _TaskValue, _ChannelValue)):
             # Never invoke Python's recursive container/record/dict equality.
             equal = left is right
         else:
@@ -1478,6 +1560,10 @@ def _format_value(value: object, active: set[int], nested: bool) -> str:
         return "true" if value else "false"
     if value is None:
         return "null"
+    if isinstance(value, _TaskValue):
+        return f"<task {value.task_id}>"
+    if isinstance(value, _ChannelValue):
+        return f"<channel {value.channel_id}>"
     if type(value) is list:
         identity = id(value)
         if identity in active:

@@ -23,6 +23,7 @@ from lwt.ast_nodes import (
     RecordConstructionExpression,
     RecordDeclaration,
     ReturnStatement,
+    SpawnExpression,
     ThrowStatement,
     UnaryExpression,
     VariableExpression,
@@ -495,6 +496,31 @@ class ParserErrorTests(unittest.TestCase):
 
     def test_finally_without_attempt_is_syntax_error(self) -> None:
         self.assert_syntax_error("finally { }", SourceLocation(1, 1))
+
+    def test_s43_spawn_reserved_identifier_is_rejected(self) -> None:
+        for source in ("let spawn = 1;", "fn spawn() {}", "spawn = 2;"):
+            with self.subTest(source=source):
+                self.assert_syntax_error(source)
+
+    def test_s43_spawn_local_and_module_forms_parse(self) -> None:
+        local = parse_source("let t = spawn work(1, 2);").items[0].initializer  # type: ignore[attr-defined]
+        self.assertIsInstance(local, SpawnExpression)
+        self.assertIsNone(local.alias)
+        self.assertEqual(local.callee.name, "work")
+        self.assertEqual(len(local.arguments), 2)
+        qualified = parse_source("let t = spawn m.f(1);").items[0].initializer  # type: ignore[attr-defined]
+        self.assertIsInstance(qualified, SpawnExpression)
+        self.assertEqual(qualified.alias.name, "m")  # type: ignore[union-attr]
+        self.assertEqual(qualified.callee.name, "f")
+
+    def test_s43_spawn_requires_parentheses(self) -> None:
+        # `spawn f;` must be a syntax error, not a call with zero args.
+        self.assert_syntax_error("fn f() {} spawn f;")
+
+    def test_s43_spawn_target_must_be_an_identifier(self) -> None:
+        # A builtin or a literal cannot be a spawn target.
+        self.assert_syntax_error("let t = spawn 1();")
+        self.assert_syntax_error("let t = spawn dict{\"a\": 1}();")
 
 
 if __name__ == "__main__":

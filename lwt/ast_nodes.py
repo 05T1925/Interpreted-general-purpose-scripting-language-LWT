@@ -165,6 +165,21 @@ class DictExpression:
 
 
 @dataclass(frozen=True, slots=True)
+class SpawnExpression:
+    """A `spawn f(args)` or `spawn alias.f(args)` task-creation expression.
+
+    ``alias`` is None for a same-source user function; for a module function it
+    is the import alias and ``member`` is the function name. ``callee`` always
+    holds the (single) function name for diagnostics and static checks.
+    """
+
+    callee: Identifier
+    alias: Identifier | None
+    arguments: tuple[Expression, ...]
+    location: SourceLocation
+
+
+@dataclass(frozen=True, slots=True)
 class RecordFieldInitializer:
     name: Identifier
     value: Expression
@@ -238,6 +253,7 @@ Expression = (
     | VariableExpression
     | ArrayExpression
     | DictExpression
+    | SpawnExpression
     | RecordConstructionExpression
     | CallExpression
     | ModuleCallExpression
