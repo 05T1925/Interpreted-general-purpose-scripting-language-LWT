@@ -41,7 +41,7 @@
 字段规则：
 
 - `id`：全库唯一的 ASCII 小写短横线标识符，模式为 `[a-z0-9]+(?:-[a-z0-9]+)*`。
-- `spec_refs`：非空且不重复的规范章节编号数组，例如 `2.1`、`4.3`、`9`；值只能引用规范 §1–§9。
+- `spec_refs`：非空且不重复的规范章节编号数组，例如 `2.1`、`4.3`、`9`、`11.4`；值只能引用规范 §1–§11（含 S43 确定性并发第 11 节及其 11.1–11.9 小节；由 `tools/run_tests.py` 的 `VALID_SPEC_REFS` 注册，未知引用如 `12` 仍为配置错误）。
 - `tags`：可选的字符串数组，缺省为空数组；标签不重复。
 - `args`：字符串数组，作为 LWT 程序参数，缺省不允许省略（空数组表示无参数）。空字符串、空格、Unicode 和字面量 `--` 均保留。
 - `stdin`：必须恰有一个键。`{"text":"..."}` 将 JSON 字符串以 UTF-8 编码；`{"base64":"..."}` 使用严格 Base64 解码，适合非法 UTF-8 等任意字节输入。
@@ -159,6 +159,22 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | [attempt-comments-between-blocks](../tests/cases/error-recovery/attempt-comments-between-blocks.lwt)；[attempt-empty-blocks](../tests/cases/error-recovery/attempt-empty-blocks.lwt)；[attempt-missing-recover](../tests/cases/error-recovery/attempt-missing-recover.lwt)；[attempt-normal-flow](../tests/cases/error-recovery/attempt-normal-flow.lwt)；[attempt-requires-blocks](../tests/cases/error-recovery/attempt-requires-blocks.lwt)；[attempt-semicolon-rejected](../tests/cases/error-recovery/attempt-semicolon-rejected.lwt)；[recover-standalone-rejected](../tests/cases/error-recovery/recover-standalone-rejected.lwt)；[recover-parameter-required](../tests/cases/error-recovery/recover-parameter-required.lwt)；[recover-parameter-one-only](../tests/cases/error-recovery/recover-parameter-one-only.lwt)；[attempt-reserved-variable](../tests/cases/error-recovery/attempt-reserved-variable.lwt)；[attempt-reserved-module-alias](../tests/cases/error-recovery/attempt-reserved-module-alias.lwt)；[recover-reserved-function](../tests/cases/error-recovery/recover-reserved-function.lwt) | 关键字保留、注释、块、参数数目、分号边界、缺少/孤立 recover、无错路径 | 12 项 CLI 黑盒；语法错误位置和首错诊断精确比较。 |
 | [recover-array-bounds](../tests/cases/error-recovery/recover-array-bounds.lwt)；[recover-division-by-zero](../tests/cases/error-recovery/recover-division-by-zero.lwt)；[recover-type-error](../tests/cases/error-recovery/recover-type-error.lwt)；[recover-undefined-variable](../tests/cases/error-recovery/recover-undefined-variable.lwt)；[recover-error-display-unicode](../tests/cases/error-recovery/recover-error-display-unicode.lwt)；[recover-error-fields-display](../tests/cases/error-recovery/recover-error-fields-display.lwt)；[recover-error-identity](../tests/cases/error-recovery/recover-error-identity.lwt)；[recover-error-index-type](../tests/cases/error-recovery/recover-error-index-type.lwt)；[recover-error-len-type](../tests/cases/error-recovery/recover-error-len-type.lwt)；[recover-error-not-record-type](../tests/cases/error-recovery/recover-error-not-record-type.lwt)；[recover-readonly-error-fields](../tests/cases/error-recovery/recover-readonly-error-fields.lwt)；[recover-unknown-error-field](../tests/cases/error-recovery/recover-unknown-error-field.lwt) | 代表性 RuntimeError、Error 五字段、稳定显示/Unicode 转义、身份相等、只读字段、未知字段与不匹配类型 | 12 项 CLI 黑盒；包括成功捕获和严格类型/字段错误结果。 |
 | [recover-each-break](../tests/cases/error-recovery/recover-each-break.lwt)；[recover-each-continue](../tests/cases/error-recovery/recover-each-continue.lwt)；[recover-handler-error-not-self-caught](../tests/cases/error-recovery/recover-handler-error-not-self-caught.lwt)；[recover-handler-error-outer](../tests/cases/error-recovery/recover-handler-error-outer.lwt)；[recover-import-error-not-caught](../tests/cases/error-recovery/recover-import-error-not-caught.lwt)；[recover-lex-error-not-caught](../tests/cases/error-recovery/recover-lex-error-not-caught.lwt)；[recover-module-chain-source](../tests/cases/error-recovery/recover-module-chain-source.lwt)；[recover-nearest-handler](../tests/cases/error-recovery/recover-nearest-handler.lwt)；[recover-preserves-side-effects](../tests/cases/error-recovery/recover-preserves-side-effects.lwt)；[recover-return](../tests/cases/error-recovery/recover-return.lwt)；[recover-syntax-error-not-caught](../tests/cases/error-recovery/recover-syntax-error-not-caught.lwt)；[recover-unhandled-runtime-keeps-output](../tests/cases/error-recovery/recover-unhandled-runtime-keeps-output.lwt)；[recover-user-function](../tests/cases/error-recovery/recover-user-function.lwt)；[recover-variable-scope](../tests/cases/error-recovery/recover-variable-scope.lwt)；[recover-while-break](../tests/cases/error-recovery/recover-while-break.lwt)；[recover-while-continue](../tests/cases/error-recovery/recover-while-continue.lwt) | 最近动态 handler、嵌套处理、函数/模块传播、静态预检边界、return/break/continue、作用域、输出和修改副作用 | 16 项 CLI 黑盒；错误码、完整 stdout/stderr 和模块来源位置端到端比较。 |
+
+### §11 确定性并发（S43，WP0 已注册章节、用例由 WP3 落地）
+
+> 本节为 S43 增量。`VALID_SPEC_REFS` 已在 WP0 先行注册 `11` 与 `11.1`–`11.9`（未知引用如 `12` 仍报配置错误，见 `tests/test_runner.py` 的 `test_concurrency_spec_sections_11_and_11_x_are_valid_references` 与 `test_unknown_spec_section_12_is_rejected`）。下表按契约条款列出将新增的 `tests/cases/concurrency/` 覆盖分组；具体用例链接在 WP3 落地后填入，未落地前不以占位链接冒充已测。
+
+| 规范条款 | 覆盖目标 | spec_refs | 计划用例组（WP3 落地后补链接） |
+|---|---|---|---|
+| §11.1 范围与边界 | 非目标（浮点/dict/抢占/取消/网络）边界 | `11.1` | 边界与工具拒绝 |
+| §11.2 语法 | `spawn` 保留字、前缀形式、模块限定 `spawn 别名.f(...)` | `11.2` | spawn/join 基础、语法错误 |
+| §11.3 任务与调度点 | Task 值、五个调度点、`input()` 在任务中拒绝 | `11.3` | 调度与 yield、错误 |
+| §11.4 策略与轨迹 | fifo / random:SEED、决策记录、轨迹绑定与重放 | `11.4` | 调度与 yield、工具边界 |
+| §11.5 通道 | 无界 FIFO、阻塞 receive、close 幂等、类型错误 | `11.5` | 通道（10 项） |
+| §11.6 错误与死锁 | 原位置重抛、未 join 收尾抛出、死锁三类 | `11.6` | 错误（7）、死锁（3） |
+| §11.7 收尾 | 按任务编号 join 未完成、后代覆盖 | `11.7` | 调度与 yield、错误 |
+| §11.8 工具关系 | `--check` 诊断、`--profile`/debugger/DAP 执行前拒绝 | `11.8` | 工具边界（2 项 CLI） |
+| §11.9 兼容性与取舍 | `spawn` 保留字与 6 内置名的破坏性变更 | `11.9` | 名称扫描（报告）+ spawn 保留字用例 |
 
 ## 4. 本次实测摘要、未覆盖边界和 CI
 

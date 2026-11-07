@@ -97,6 +97,30 @@ class CaseInventoryTests(unittest.TestCase):
 
         self.assertEqual(cases[0].spec_refs, ("10",))
 
+    def test_concurrency_spec_sections_11_and_11_x_are_valid_references(self) -> None:
+        # S43 gate: section 11 and all nine subsections must be registered in
+        # VALID_SPEC_REFS *before* any 11.x black-box case is introduced.
+        refs = ("11", "11.1", "11.2", "11.3", "11.4",
+                "11.5", "11.6", "11.7", "11.8", "11.9")
+        for ref in refs:
+            with self.subTest(ref=ref):
+                self.write_case(
+                    filename=f"ref-{ref.replace('.', '-')}",
+                    case_id=f"ref-{ref.replace('.', '-')}",
+                    metadata={"spec_refs": [ref]},
+                )
+        cases = runner.discover_cases(self.root)
+        self.assertEqual(sorted(case.spec_refs[0] for case in cases), sorted(refs))
+
+    def test_unknown_spec_section_12_is_rejected(self) -> None:
+        # Unknown references must still fail as a configuration error; widening
+        # the set for 11.x must not turn validation into a no-op.
+        self.write_case(metadata={"spec_refs": ["12"]})
+        with self.assertRaisesRegex(
+            runner.ConfigurationError, "existing language-spec section"
+        ):
+            runner.discover_cases(self.root)
+
     def test_empty_case_tree_is_a_configuration_error(self) -> None:
         with self.assertRaisesRegex(
             runner.ConfigurationError, "no black-box test cases were discovered"

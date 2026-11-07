@@ -1,0 +1,32 @@
+# S43 baseline profile (WP0)
+# Generated 2026-11-07 13:25:07 +0800 on Windows / CPython 3.13.x
+# Relative hotspots only; NOT comparable with S11 absolute numbers.
+
+=== command: python -m cProfile -s cumtime -m lwt bench/array_scan.lwt -- 5000  (first 15 lines after program stdout) ===
+5000|2514735|54
+         1822158 function calls (1635891 primitive calls) in 0.565 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     53/1    0.015    0.000    0.565    0.565 {built-in method builtins.exec}
+        1    0.000    0.000    0.565    0.565 <frozen runpy>:206(run_module)
+        1    0.000    0.000    0.562    0.562 <frozen runpy>:65(_run_code)
+        1    0.000    0.000    0.562    0.562 __main__.py:1(<module>)
+        1    0.000    0.000    0.501    0.501 cli.py:479(main)
+        1    0.000    0.000    0.485    0.485 runtime.py:234(execute)
+  45117/9    0.070    0.000    0.484    0.054 runtime.py:553(_execute_statement)
+185244/45063    0.212    0.000    0.383    0.000 runtime.py:789(_evaluate)
+  1272726    0.117    0.000    0.117    0.000 {built-in method builtins.isinstance}
+
+=== command: python -X importtime -m lwt examples/guide/hello.lwt  (first 10 lines) ===
+import time: self [us] | cumulative | imported package
+import time:       105 |        105 | winreg
+import time:       227 |        227 |   _io
+import time:        32 |         32 |   marshal
+import time:       285 |        285 |   nt
+import time:       622 |       1164 | _frozen_importlib_external
+import time:      2184 |       2184 |   time
+import time:       378 |       2562 | zipimport
+import time:        82 |         82 |     _codecs
+import time:       565 |        646 |   codecs

@@ -29,6 +29,11 @@ VALID_SPEC_REFS = frozenset(
     {
         "1", "2", "2.1", "2.2", "3", "4", "4.1", "4.2", "4.3", "4.4",
         "5", "6", "7", "8", "8.7", "8.8", "9", "10", "10.6",
+        # S43 deterministic concurrency: language-spec section 11 and its nine
+        # subsections. Unknown references (e.g. "12") remain a configuration
+        # error; this gate must land before any 11.x case is added.
+        "11", "11.1", "11.2", "11.3", "11.4", "11.5",
+        "11.6", "11.7", "11.8", "11.9",
     }
 )
 
