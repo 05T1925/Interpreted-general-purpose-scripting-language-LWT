@@ -1,0 +1,3802 @@
+{
+  "attempts": [
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 521592000,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0001",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 303265900,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0001",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 330568200,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0002",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 508372600,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0002",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 464236700,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0003",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 293613100,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0003",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 303524200,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0004",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 455370800,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0004",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 297699000,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0005",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 451156800,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0005",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 493348600,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0006",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 322789500,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0006",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 477190500,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0007",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 301088600,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0007",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 295518800,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0008",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 497545900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0008",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 449670100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0009",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 316455700,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0009",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 319532100,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0010",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 490248400,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0010",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 291081600,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0011",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 448193900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0011",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 315054300,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0012",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 498196100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0012",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 306286400,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0013",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 475322600,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0013",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 440367900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0014",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 358503500,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0014",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 317718500,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0015",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 451366900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0015",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 311693700,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0016",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 487409400,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0016",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 496366700,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0017",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 300108700,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0017",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 360709700,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0018",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 439265900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0018",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 321264200,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0019",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 520176300,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0019",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 325231800,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0020",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 503402200,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0020",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 537910800,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0021",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 330502400,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0021",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 458074800,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0022",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 298047300,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0022",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 299957700,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0023",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 458860000,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0023",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 297112400,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0024",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 434618000,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0024",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 450998100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0025",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 303139200,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0025",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 323434100,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0026",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 439307900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0026",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 287662100,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0027",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 442389900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0027",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 316044600,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0028",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 535863700,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0028",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 333643300,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0029",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 497284200,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0029",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 483704600,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0030",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 335517300,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0030",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 464105700,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0031",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 333113400,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0031",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 464160000,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0032",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 316499100,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0032",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 325600300,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0033",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 450925900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0033",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 335707200,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0034",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 516367400,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0034",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 537414500,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0035",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 316999600,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0035",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 297911400,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0036",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 438303100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0036",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 313898900,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0037",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 468259800,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0037",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 305382800,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0038",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 469564100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0038",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 307117000,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0039",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 500235300,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0039",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 292025400,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0040",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 513817100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0040",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 374768500,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0041",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 485742500,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0041",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 307199000,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0042",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 451857300,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0042",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 433701200,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0043",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 585158200,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0043",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 446881100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0044",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 300918300,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0044",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 450477900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0045",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 302203000,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0045",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 523012600,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0046",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 300840800,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0046",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 305837000,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0047",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 490486500,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0047",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 424631100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0048",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "100"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 299910300,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0048",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDQ0MDkwfDEK",
+      "stdout_len": 12,
+      "stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 290231400,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0049",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 568489200,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0049",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 540898300,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0050",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 317401800,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0050",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 530852900,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0051",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 292452800,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0051",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 299970600,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0052",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 515151800,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0052",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMDA5Cg==",
+      "stdout_len": 10,
+      "stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 296132700,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0053",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 513433100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0053",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwyNTE0NzM1fDU0Cg==",
+      "stdout_len": 16,
+      "stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 298549600,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0054",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 471149400,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0054",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 459796100,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0055",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "100"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 326606500,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0055",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDUwNTAK",
+      "stdout_len": 9,
+      "stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 450465300,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0056",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 304294900,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0056",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.py",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 290953600,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0057",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\array_scan.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "array_scan",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 463540300,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0057",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDAxOTN8MTEK",
+      "stdout_len": 15,
+      "stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 447996500,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0058",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 355944900,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0058",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 490090400,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0059",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "5000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 307306300,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0059",
+      "size": 5000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "NTAwMHwxMjUwMjUwMAo=",
+      "stdout_len": 14,
+      "stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 457609600,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0060",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "1000"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 288912800,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0060",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHwxMDAwCg==",
+      "stdout_len": 10,
+      "stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.lwt",
+        "--",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 442467200,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0061",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\arithmetic.py",
+        "1000"
+      ],
+      "benchmark": "arithmetic",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 289705000,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0061",
+      "size": 1000,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwMHw1MDA1MDAK",
+      "stdout_len": 12,
+      "stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 297238600,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0062",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 449705500,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0062",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.py",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 287567200,
+      "exit_code": 0,
+      "language": "python",
+      "oracle_ok": true,
+      "pair_id": "pair-0063",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\bench\\dict_counts.lwt",
+        "--",
+        "100"
+      ],
+      "benchmark": "dict_counts",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 451278300,
+      "exit_code": 0,
+      "language": "lwt",
+      "oracle_ok": true,
+      "pair_id": "pair-0063",
+      "size": 100,
+      "stderr_base64": "",
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_base64": "MTAwfDEwMAo=",
+      "stdout_len": 8,
+      "stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50"
+    }
+  ],
+  "environment": {
+    "branch": "feature/engine-performance",
+    "cpu_count": 32,
+    "cpu_model": "13th Gen Intel(R) Core(TM) i9-13980HX",
+    "git_head": "639d0e3cd6e0b5eb8fa1b0cacca4be7742d69edd",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "power_scheme": "电源方案 GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3 (Silent)",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python_executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+    "python_version": "3.13.14 (main, Jun 11 2026, 04:04:46) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "generated_at_utc": "2026-11-07T09:36:44.106653+00:00",
+  "protocol": {
+    "benchmarks": [
+      "arithmetic",
+      "array_scan",
+      "dict_counts"
+    ],
+    "languages": [
+      "lwt",
+      "python"
+    ],
+    "oracle": "independent expected_stdout; byte-exact for every warm-up and formal run",
+    "order": "fixed-seed interleaved paired blocks; language order shuffled per block",
+    "output_path": "reports/s44-performance/benchmark-v2.json",
+    "repeats": 7,
+    "s11_boundary": "never writes bench/results.json or reports/performance.md",
+    "seed": 20261107,
+    "sizes": [
+      100,
+      1000,
+      5000
+    ],
+    "timeout_s": 60,
+    "timing": "time.perf_counter_ns around subprocess.run",
+    "warmups": 2
+  },
+  "ratios_lwt_over_python": {
+    "arithmetic|100": 1.506,
+    "arithmetic|1000": 1.486,
+    "arithmetic|5000": 1.529,
+    "array_scan|100": 1.499,
+    "array_scan|1000": 1.628,
+    "array_scan|5000": 1.793,
+    "dict_counts|100": 1.482,
+    "dict_counts|1000": 1.479,
+    "dict_counts|5000": 1.641
+  },
+  "schedule": [
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 521592000,
+      "pair_id": "pair-0001",
+      "python_elapsed_ns": 303265900,
+      "repeat_index": 7,
+      "size": 5000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 508372600,
+      "pair_id": "pair-0002",
+      "python_elapsed_ns": 330568200,
+      "repeat_index": 2,
+      "size": 5000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 464236700,
+      "pair_id": "pair-0003",
+      "python_elapsed_ns": 293613100,
+      "repeat_index": 4,
+      "size": 1000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 455370800,
+      "pair_id": "pair-0004",
+      "python_elapsed_ns": 303524200,
+      "repeat_index": 5,
+      "size": 1000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 451156800,
+      "pair_id": "pair-0005",
+      "python_elapsed_ns": 297699000,
+      "repeat_index": 5,
+      "size": 100
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 493348600,
+      "pair_id": "pair-0006",
+      "python_elapsed_ns": 322789500,
+      "repeat_index": 2,
+      "size": 1000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 477190500,
+      "pair_id": "pair-0007",
+      "python_elapsed_ns": 301088600,
+      "repeat_index": 6,
+      "size": 1000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 497545900,
+      "pair_id": "pair-0008",
+      "python_elapsed_ns": 295518800,
+      "repeat_index": 5,
+      "size": 1000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 449670100,
+      "pair_id": "pair-0009",
+      "python_elapsed_ns": 316455700,
+      "repeat_index": 5,
+      "size": 1000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 490248400,
+      "pair_id": "pair-0010",
+      "python_elapsed_ns": 319532100,
+      "repeat_index": 4,
+      "size": 5000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 448193900,
+      "pair_id": "pair-0011",
+      "python_elapsed_ns": 291081600,
+      "repeat_index": 6,
+      "size": 1000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 498196100,
+      "pair_id": "pair-0012",
+      "python_elapsed_ns": 315054300,
+      "repeat_index": 6,
+      "size": 100
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 475322600,
+      "pair_id": "pair-0013",
+      "python_elapsed_ns": 306286400,
+      "repeat_index": 3,
+      "size": 100
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 440367900,
+      "pair_id": "pair-0014",
+      "python_elapsed_ns": 358503500,
+      "repeat_index": 1,
+      "size": 100
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 451366900,
+      "pair_id": "pair-0015",
+      "python_elapsed_ns": 317718500,
+      "repeat_index": 4,
+      "size": 100
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 487409400,
+      "pair_id": "pair-0016",
+      "python_elapsed_ns": 311693700,
+      "repeat_index": 3,
+      "size": 1000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 496366700,
+      "pair_id": "pair-0017",
+      "python_elapsed_ns": 300108700,
+      "repeat_index": 7,
+      "size": 1000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 439265900,
+      "pair_id": "pair-0018",
+      "python_elapsed_ns": 360709700,
+      "repeat_index": 4,
+      "size": 100
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 520176300,
+      "pair_id": "pair-0019",
+      "python_elapsed_ns": 321264200,
+      "repeat_index": 5,
+      "size": 5000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 503402200,
+      "pair_id": "pair-0020",
+      "python_elapsed_ns": 325231800,
+      "repeat_index": 2,
+      "size": 5000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 537910800,
+      "pair_id": "pair-0021",
+      "python_elapsed_ns": 330502400,
+      "repeat_index": 1,
+      "size": 5000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 458074800,
+      "pair_id": "pair-0022",
+      "python_elapsed_ns": 298047300,
+      "repeat_index": 2,
+      "size": 100
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 458860000,
+      "pair_id": "pair-0023",
+      "python_elapsed_ns": 299957700,
+      "repeat_index": 3,
+      "size": 100
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 434618000,
+      "pair_id": "pair-0024",
+      "python_elapsed_ns": 297112400,
+      "repeat_index": 4,
+      "size": 1000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 450998100,
+      "pair_id": "pair-0025",
+      "python_elapsed_ns": 303139200,
+      "repeat_index": 6,
+      "size": 100
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 439307900,
+      "pair_id": "pair-0026",
+      "python_elapsed_ns": 323434100,
+      "repeat_index": 4,
+      "size": 1000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 442389900,
+      "pair_id": "pair-0027",
+      "python_elapsed_ns": 287662100,
+      "repeat_index": 3,
+      "size": 1000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 535863700,
+      "pair_id": "pair-0028",
+      "python_elapsed_ns": 316044600,
+      "repeat_index": 5,
+      "size": 5000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 497284200,
+      "pair_id": "pair-0029",
+      "python_elapsed_ns": 333643300,
+      "repeat_index": 5,
+      "size": 5000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 483704600,
+      "pair_id": "pair-0030",
+      "python_elapsed_ns": 335517300,
+      "repeat_index": 2,
+      "size": 1000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 464105700,
+      "pair_id": "pair-0031",
+      "python_elapsed_ns": 333113400,
+      "repeat_index": 5,
+      "size": 100
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 464160000,
+      "pair_id": "pair-0032",
+      "python_elapsed_ns": 316499100,
+      "repeat_index": 1,
+      "size": 1000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 450925900,
+      "pair_id": "pair-0033",
+      "python_elapsed_ns": 325600300,
+      "repeat_index": 1,
+      "size": 1000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 516367400,
+      "pair_id": "pair-0034",
+      "python_elapsed_ns": 335707200,
+      "repeat_index": 7,
+      "size": 5000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 537414500,
+      "pair_id": "pair-0035",
+      "python_elapsed_ns": 316999600,
+      "repeat_index": 6,
+      "size": 5000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 438303100,
+      "pair_id": "pair-0036",
+      "python_elapsed_ns": 297911400,
+      "repeat_index": 7,
+      "size": 1000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 468259800,
+      "pair_id": "pair-0037",
+      "python_elapsed_ns": 313898900,
+      "repeat_index": 3,
+      "size": 1000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 469564100,
+      "pair_id": "pair-0038",
+      "python_elapsed_ns": 305382800,
+      "repeat_index": 6,
+      "size": 100
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 500235300,
+      "pair_id": "pair-0039",
+      "python_elapsed_ns": 307117000,
+      "repeat_index": 4,
+      "size": 100
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 513817100,
+      "pair_id": "pair-0040",
+      "python_elapsed_ns": 292025400,
+      "repeat_index": 2,
+      "size": 5000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 485742500,
+      "pair_id": "pair-0041",
+      "python_elapsed_ns": 374768500,
+      "repeat_index": 7,
+      "size": 1000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 451857300,
+      "pair_id": "pair-0042",
+      "python_elapsed_ns": 307199000,
+      "repeat_index": 2,
+      "size": 100
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 585158200,
+      "pair_id": "pair-0043",
+      "python_elapsed_ns": 433701200,
+      "repeat_index": 1,
+      "size": 5000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 446881100,
+      "pair_id": "pair-0044",
+      "python_elapsed_ns": 300918300,
+      "repeat_index": 7,
+      "size": 100
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 450477900,
+      "pair_id": "pair-0045",
+      "python_elapsed_ns": 302203000,
+      "repeat_index": 5,
+      "size": 100
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 523012600,
+      "pair_id": "pair-0046",
+      "python_elapsed_ns": 300840800,
+      "repeat_index": 4,
+      "size": 5000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 490486500,
+      "pair_id": "pair-0047",
+      "python_elapsed_ns": 305837000,
+      "repeat_index": 3,
+      "size": 5000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 424631100,
+      "pair_id": "pair-0048",
+      "python_elapsed_ns": 299910300,
+      "repeat_index": 1,
+      "size": 100
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 568489200,
+      "pair_id": "pair-0049",
+      "python_elapsed_ns": 290231400,
+      "repeat_index": 6,
+      "size": 5000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 540898300,
+      "pair_id": "pair-0050",
+      "python_elapsed_ns": 317401800,
+      "repeat_index": 6,
+      "size": 5000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 530852900,
+      "pair_id": "pair-0051",
+      "python_elapsed_ns": 292452800,
+      "repeat_index": 3,
+      "size": 5000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 515151800,
+      "pair_id": "pair-0052",
+      "python_elapsed_ns": 299970600,
+      "repeat_index": 4,
+      "size": 5000
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 513433100,
+      "pair_id": "pair-0053",
+      "python_elapsed_ns": 296132700,
+      "repeat_index": 7,
+      "size": 5000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 471149400,
+      "pair_id": "pair-0054",
+      "python_elapsed_ns": 298549600,
+      "repeat_index": 7,
+      "size": 100
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 459796100,
+      "pair_id": "pair-0055",
+      "python_elapsed_ns": 326606500,
+      "repeat_index": 1,
+      "size": 100
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 450465300,
+      "pair_id": "pair-0056",
+      "python_elapsed_ns": 304294900,
+      "repeat_index": 7,
+      "size": 100
+    },
+    {
+      "benchmark": "array_scan",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 463540300,
+      "pair_id": "pair-0057",
+      "python_elapsed_ns": 290953600,
+      "repeat_index": 1,
+      "size": 1000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 447996500,
+      "pair_id": "pair-0058",
+      "python_elapsed_ns": 355944900,
+      "repeat_index": 1,
+      "size": 5000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 490090400,
+      "pair_id": "pair-0059",
+      "python_elapsed_ns": 307306300,
+      "repeat_index": 3,
+      "size": 5000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 457609600,
+      "pair_id": "pair-0060",
+      "python_elapsed_ns": 288912800,
+      "repeat_index": 6,
+      "size": 1000
+    },
+    {
+      "benchmark": "arithmetic",
+      "language_order": [
+        "lwt",
+        "python"
+      ],
+      "lwt_elapsed_ns": 442467200,
+      "pair_id": "pair-0061",
+      "python_elapsed_ns": 289705000,
+      "repeat_index": 2,
+      "size": 1000
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 449705500,
+      "pair_id": "pair-0062",
+      "python_elapsed_ns": 297238600,
+      "repeat_index": 2,
+      "size": 100
+    },
+    {
+      "benchmark": "dict_counts",
+      "language_order": [
+        "python",
+        "lwt"
+      ],
+      "lwt_elapsed_ns": 451278300,
+      "pair_id": "pair-0063",
+      "python_elapsed_ns": 287567200,
+      "repeat_index": 3,
+      "size": 100
+    }
+  ],
+  "schema_version": 1,
+  "source_sha256": {
+    "bench/arithmetic.lwt": "52dab871487f160f2e6ac7421f78fb25b043e32114efc794984cbd879bdb3757",
+    "bench/arithmetic.py": "38b94fe8dfcf015fb11e768c9a7e7a35dca0d66e6f92486bc02661f116b55c3a",
+    "bench/array_scan.lwt": "57cf094994fb4f1adbcd8fcaefb428a255110fad305def5a645d2f132b09a566",
+    "bench/array_scan.py": "f1964386cf9f6b7b4f8ccb2ea94cfc31ec5f295f3e5b9d3f118e66746e29013d",
+    "bench/dict_counts.lwt": "ed6b528c217a338671a0bbb467783b0b30e8039222339da74e3f3c053217b06d",
+    "bench/dict_counts.py": "428d94a83d8cf2761a9296b2e54b6ce5204dd200e1545281931c71af15a581e1"
+  },
+  "summary": {
+    "arithmetic|1000|lwt": {
+      "max_ms": 485.743,
+      "median_ms": 450.926,
+      "median_ns": 450925900,
+      "min_ms": 439.308,
+      "n": 7,
+      "range_ms": 46.435
+    },
+    "arithmetic|1000|python": {
+      "max_ms": 374.769,
+      "median_ms": 303.524,
+      "median_ns": 303524200,
+      "min_ms": 287.662,
+      "n": 7,
+      "range_ms": 87.106
+    },
+    "arithmetic|100|lwt": {
+      "max_ms": 475.323,
+      "median_ms": 459.796,
+      "median_ns": 459796100,
+      "min_ms": 450.478,
+      "n": 7,
+      "range_ms": 24.845
+    },
+    "arithmetic|100|python": {
+      "max_ms": 326.606,
+      "median_ms": 305.383,
+      "median_ns": 305382800,
+      "min_ms": 298.047,
+      "n": 7,
+      "range_ms": 28.559
+    },
+    "arithmetic|5000|lwt": {
+      "max_ms": 540.898,
+      "median_ms": 497.284,
+      "median_ns": 497284200,
+      "min_ms": 447.997,
+      "n": 7,
+      "range_ms": 92.902
+    },
+    "arithmetic|5000|python": {
+      "max_ms": 355.945,
+      "median_ms": 325.232,
+      "median_ns": 325231800,
+      "min_ms": 307.306,
+      "n": 7,
+      "range_ms": 48.639
+    },
+    "array_scan|1000|lwt": {
+      "max_ms": 497.546,
+      "median_ms": 483.705,
+      "median_ns": 483704600,
+      "min_ms": 434.618,
+      "n": 7,
+      "range_ms": 62.928
+    },
+    "array_scan|1000|python": {
+      "max_ms": 335.517,
+      "median_ms": 297.112,
+      "median_ns": 297112400,
+      "min_ms": 290.954,
+      "n": 7,
+      "range_ms": 44.564
+    },
+    "array_scan|100|lwt": {
+      "max_ms": 498.196,
+      "median_ms": 451.157,
+      "median_ns": 451156800,
+      "min_ms": 424.631,
+      "n": 7,
+      "range_ms": 73.565
+    },
+    "array_scan|100|python": {
+      "max_ms": 360.71,
+      "median_ms": 300.918,
+      "median_ns": 300918300,
+      "min_ms": 297.699,
+      "n": 7,
+      "range_ms": 63.011
+    },
+    "array_scan|5000|lwt": {
+      "max_ms": 568.489,
+      "median_ms": 530.853,
+      "median_ns": 530852900,
+      "min_ms": 513.433,
+      "n": 7,
+      "range_ms": 55.056
+    },
+    "array_scan|5000|python": {
+      "max_ms": 330.502,
+      "median_ms": 296.133,
+      "median_ns": 296132700,
+      "min_ms": 290.231,
+      "n": 7,
+      "range_ms": 40.271
+    },
+    "dict_counts|1000|lwt": {
+      "max_ms": 493.349,
+      "median_ms": 464.16,
+      "median_ns": 464160000,
+      "min_ms": 438.303,
+      "n": 7,
+      "range_ms": 55.045
+    },
+    "dict_counts|1000|python": {
+      "max_ms": 322.789,
+      "median_ms": 313.899,
+      "median_ns": 313898900,
+      "min_ms": 288.913,
+      "n": 7,
+      "range_ms": 33.877
+    },
+    "dict_counts|100|lwt": {
+      "max_ms": 500.235,
+      "median_ms": 450.998,
+      "median_ns": 450998100,
+      "min_ms": 440.368,
+      "n": 7,
+      "range_ms": 59.867
+    },
+    "dict_counts|100|python": {
+      "max_ms": 358.503,
+      "median_ms": 304.295,
+      "median_ns": 304294900,
+      "min_ms": 287.567,
+      "n": 7,
+      "range_ms": 70.936
+    },
+    "dict_counts|5000|lwt": {
+      "max_ms": 585.158,
+      "median_ms": 520.176,
+      "median_ns": 520176300,
+      "min_ms": 490.486,
+      "n": 7,
+      "range_ms": 94.672
+    },
+    "dict_counts|5000|python": {
+      "max_ms": 433.701,
+      "median_ms": 317.0,
+      "median_ns": 316999600,
+      "min_ms": 299.971,
+      "n": 7,
+      "range_ms": 133.731
+    }
+  },
+  "tool": "lwt-benchmark-v2"
+}

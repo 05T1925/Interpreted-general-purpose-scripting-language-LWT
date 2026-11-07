@@ -95,6 +95,21 @@ def inspect_project(repo_root: Path = REPO_ROOT) -> IntegrityResult:
 
 
 def main(repo_root: Path = REPO_ROOT) -> int:
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--require-all-referenced", action="store_true",
+        help="S44 WP5: fail unless every discovered case is linked in the matrix "
+             "(or --exempt covers the remainder).",
+    )
+    parser.add_argument(
+        "--exempt", type=int, default=0, metavar="N",
+        help="allowed unreferenced case count when --require-all-referenced is set "
+             "(e.g. documented pure-CLI contract cases). Default 0.",
+    )
+    args = parser.parse_args()
+
     result = inspect_project(repo_root)
     if result.errors:
         print("Project integrity: FAILED", file=sys.stderr)
@@ -102,10 +117,26 @@ def main(repo_root: Path = REPO_ROOT) -> int:
             print(f"  {error}", file=sys.stderr)
         return 1
 
+    unreferenced = result.case_count - result.referenced_case_count
+    extra = ""
+    if args.require_all_referenced:
+        if args.exempt < 0:
+            print("Project integrity: FAILED; --exempt must be >= 0", file=sys.stderr)
+            return 1
+        if unreferenced > args.exempt:
+            print(
+                "Project integrity: FAILED; "
+                f"unreferenced={unreferenced} exceeds exempt={args.exempt} "
+                f"(cases={result.case_count}, referenced_cases={result.referenced_case_count})",
+                file=sys.stderr,
+            )
+            return 1
+        extra = f"; unreferenced={unreferenced}; exempt={args.exempt}"
+
     print(
         "Project integrity: OK; "
         f"cases={result.case_count}; matrix_links={result.matrix_link_count}; "
-        f"referenced_cases={result.referenced_case_count}"
+        f"referenced_cases={result.referenced_case_count}{extra}"
     )
     return 0
 

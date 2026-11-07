@@ -217,6 +217,34 @@ S42 新增 `dict-maps` 类别 43 项，覆盖映射字面量与插入序显示�
 
 S43（确定性并发）新增 **46 项** `concurrency` 黑盒（含任务书一键命令引用的 `race-lost-update`），使语言黑盒总数由 354 增至 **400 项**（`error-recovery` 64、`dict-maps` 43 等既有类别零回归）。46 项按八组分布：spawn/join 基础、调度与 yield、共享状态、通道、错误、死锁、显示/相等、工具边界；每条 `spec_refs` 用 `11.1`–`11.9`，`tags` 含 `concurrency`。expected 由公开 CLI 在默认 `fifo` 策略下实测并逐条断言语义后记录，工具边界用例（profile 拒绝、`--check` 诊断）用 `cli_args_override`。`python tools/check_project_integrity.py` 实测 `cases=400; matrix_links=445; referenced_cases=348`；`python tools/run_concurrency_determinism.py --repeat 10` 对 46 项各重复 10 次并逐字节比对 stdout/stderr/退出码，结果见 `reports/s42-determinism.json`。全量黑盒 400 项实测结果见 S43 阶段报告（`docs/s42-deterministic-concurrency.md`，WP8 收口时交付）。该结果不代表 Python 3.10、Linux 或远端 Actions 已运行。
 
+### 4.5.3 S44 覆盖矩阵闭环（补齐 52 个未链接用例）
+
+> S44 优化不改变任何黑盒语义，但要求覆盖矩阵每个已发现用例都有明确归属：此前 §4.5.1/§4.5.2 以"代表性用例"列举 S42/S43 新增覆盖，留下 52 个未链接用例（`dict-maps` 33、`error-recovery` 17、`concurrency` 2）。这些都不是纯 CLI 契约用例，故**逐项补链接而非豁免**。`python tools/check_project_integrity.py --require-all-referenced` 现要求 `unreferenced=0`（或显式 `exempt=N`），本段使 `referenced_cases=400/400`。
+
+#### dict-maps（33 项：S42 映射语义的逐项补全）
+
+[dict-alias-mutation](../tests/cases/dict-maps/dict-alias-mutation.lwt)、[dict-bad-key-null](../tests/cases/dict-maps/dict-bad-key-null.lwt)、[dict-delete-missing](../tests/cases/dict-maps/dict-delete-missing.lwt)、[dict-delete-present](../tests/cases/dict-maps/dict-delete-present.lwt)
+[dict-duplicate-int-key](../tests/cases/dict-maps/dict-duplicate-int-key.lwt)、[dict-each-keys](../tests/cases/dict-maps/dict-each-keys.lwt)、[dict-empty-display](../tests/cases/dict-maps/dict-empty-display.lwt)、[dict-get-default-expression](../tests/cases/dict-maps/dict-get-default-expression.lwt)
+[dict-get-missing-default](../tests/cases/dict-maps/dict-get-missing-default.lwt)、[dict-get-present](../tests/cases/dict-maps/dict-get-present.lwt)、[dict-has-false](../tests/cases/dict-maps/dict-has-false.lwt)、[dict-has-non-dict](../tests/cases/dict-maps/dict-has-non-dict.lwt)
+[dict-has-true](../tests/cases/dict-maps/dict-has-true.lwt)、[dict-identity-equal](../tests/cases/dict-maps/dict-identity-equal.lwt)、[dict-index-assign-new](../tests/cases/dict-maps/dict-index-assign-new.lwt)、[dict-index-assign-update](../tests/cases/dict-maps/dict-index-assign-update.lwt)
+[dict-index-bad-key-type](../tests/cases/dict-maps/dict-index-bad-key-type.lwt)、[dict-int-key-index](../tests/cases/dict-maps/dict-int-key-index.lwt)、[dict-key-expression-order](../tests/cases/dict-maps/dict-key-expression-order.lwt)、[dict-keys-empty](../tests/cases/dict-maps/dict-keys-empty.lwt)
+[dict-keys-order](../tests/cases/dict-maps/dict-keys-order.lwt)、[dict-len](../tests/cases/dict-maps/dict-len.lwt)、[dict-len-empty](../tests/cases/dict-maps/dict-len-empty.lwt)、[dict-len-non-dict-unchanged](../tests/cases/dict-maps/dict-len-non-dict-unchanged.lwt)
+[dict-mixed-key-literals](../tests/cases/dict-maps/dict-mixed-key-literals.lwt)、[dict-neq-identity](../tests/cases/dict-maps/dict-neq-identity.lwt)、[dict-nested-display](../tests/cases/dict-maps/dict-nested-display.lwt)、[dict-put-new-append](../tests/cases/dict-maps/dict-put-new-append.lwt)
+[dict-put-returns-null](../tests/cases/dict-maps/dict-put-returns-null.lwt)、[dict-string-key-index](../tests/cases/dict-maps/dict-string-key-index.lwt)、[dict-value-any-type](../tests/cases/dict-maps/dict-value-any-type.lwt)、[dict-values-non-dict](../tests/cases/dict-maps/dict-values-non-dict.lwt)
+[dict-values-order](../tests/cases/dict-maps/dict-values-order.lwt)
+
+#### error-recovery（17 项：S42 throw/finally 与 S26 恢复的逐项补全）
+
+[finally-category-dispatch](../tests/cases/error-recovery/finally-category-dispatch.lwt)、[finally-continue-passes](../tests/cases/error-recovery/finally-continue-passes.lwt)、[finally-handler-emits-then-fin](../tests/cases/error-recovery/finally-handler-emits-then-fin.lwt)、[finally-nested-once](../tests/cases/error-recovery/finally-nested-once.lwt)
+[finally-on-empty-blocks](../tests/cases/error-recovery/finally-on-empty-blocks.lwt)、[finally-on-normal-flow](../tests/cases/error-recovery/finally-on-normal-flow.lwt)、[finally-override-break](../tests/cases/error-recovery/finally-override-break.lwt)、[finally-overrides-body-return](../tests/cases/error-recovery/finally-overrides-body-return.lwt)
+[finally-return-in-body-runs-first](../tests/cases/error-recovery/finally-return-in-body-runs-first.lwt)、[handler-error-caught-by-outer](../tests/cases/error-recovery/handler-error-caught-by-outer.lwt)、[legacy-attempt-unchanged](../tests/cases/error-recovery/legacy-attempt-unchanged.lwt)、[nested-attempt-inner-handled](../tests/cases/error-recovery/nested-attempt-inner-handled.lwt)
+[throw-error-rethrow](../tests/cases/error-recovery/throw-error-rethrow.lwt)、[throw-in-function-propagates](../tests/cases/error-recovery/throw-in-function-propagates.lwt)、[throw-non-string-non-error](../tests/cases/error-recovery/throw-non-string-non-error.lwt)、[throw-null-is-error](../tests/cases/error-recovery/throw-null-is-error.lwt)
+[uncaught-throw-error-category](../tests/cases/error-recovery/uncaught-throw-error-category.lwt)
+
+#### concurrency（2 项：S43 通道显示与一键命令用例）
+
+[channel-display-array](../tests/cases/concurrency/channel-display-array.lwt)、[race-lost-update](../tests/cases/concurrency/race-lost-update.lwt)
+
 ### 4.6 明确未覆盖或不属于本阶段
 
 - `input()` 底层流读取失败：普通子进程管道难以跨 Windows/Linux 稳定触发该 OS 错误；非法 UTF-8、空输入 EOF、空行及 CRLF 已测。
