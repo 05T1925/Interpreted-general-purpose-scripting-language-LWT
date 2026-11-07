@@ -252,13 +252,23 @@ class ParserStructureTests(unittest.TestCase):
         self.assertEqual(value.left.name.location, SourceLocation(1, 18))
         self.assertEqual(value.operator_location, SourceLocation(1, 22))
 
-    def test_long_integer_is_retained_without_conversion(self) -> None:
+    def test_long_integer_is_predecoded_with_full_precision(self) -> None:
+        # S44 P0-4: INT literals are decoded once at parse time into `value`,
+        # while the original decimal spelling stays in `lexeme` for diagnostics
+        # and the static checker. The old contract (value is None) was changed
+        # deliberately; this test now guards the new one plus 6000-digit
+        # precision (the chunked converter bypasses CPython's int-str limit).
+        from lwt._decimal import format_decimal_integer, parse_decimal_integer
+
         digits = "9" * 6000
         expression = parse_source(f"emit {digits};").items[0].value
         self.assertIsInstance(expression, LiteralExpression)
         self.assertEqual(expression.kind, TokenKind.INT)
-        self.assertIsNone(expression.value)
         self.assertEqual(expression.lexeme, digits)
+        self.assertIsInstance(expression.value, int)
+        self.assertEqual(expression.value, parse_decimal_integer(digits))
+        # Avoid str(int) here: CPython caps int->str at 4300 digits by default.
+        self.assertEqual(format_decimal_integer(expression.value), digits)
 
     def test_duplicate_constructor_fields_are_kept_in_order(self) -> None:
         fields = parse_source("emit Person{name: 1, name: 2};").items[0].value.fields

@@ -50,7 +50,7 @@
 | 假设 | 精确 `type() is` 替代 AST 顶层 `isinstance` 链；运算符集合提为模块常量避免每次分配 |
 | 改动 | `_execute_statement`(12 类)/`_evaluate`(13 类) 顶层 AST 分派 `isinstance` → `type() is`；`_unsupported_*` 扫描函数保持 `isinstance`（非热路径）；`_evaluate_binary` 的 3 个运算符 set + 数值原始类型 set 提为 `frozenset` 常量；未知类型 `AssertionError` 保留 |
 | 闸门 | `tests/test_dispatch_completeness.py`（节点分派完整性 + 未知断言 + 值类型谓词未误改）；400/400 黑盒；46×10 确定性；S28 事件计数 |
-| 纯执行 before/after | N=5000：arithmetic 32.504→22.221 ms（**1.463×**）、array_scan 110.945→74.462 ms（**1.490×**）、dict_counts 176.090→63.111 ms（**2.790×**）；3/3 负载 ≥15%，无回归（所有规模 ≥1.29×）。注：这是 P0-3 + P0-4 + set-hoist 的**组合**收益，单项未独立分离测量（改动集中在同一递归热路径，独立测量需多次回滚重建基线；见下方说明） |
+| 纯执行 before/after | **最终 after（含 P1-4）** N=5000：arithmetic 32.504→22.349 ms（**1.454×**）、array_scan 110.945→71.474 ms（**1.552×**）、dict_counts 176.090→58.847 ms（**2.992×**）；3/3 负载 ≥15%，无回归。P0 单独提交时的 after 为 1.463×/1.490×/2.790×（见 `reports/s44-performance/after/` 历史提交 `27a0a6b`），P1-4 在此基础上进一步降低。注：P0-3 + P0-4 + set-hoist 是**组合**收益，单项未独立分离测量（改动集中在同一递归热路径，独立测量需多次回滚重建基线；见下方说明） |
 | 保留/回滚 | **保留**（3/3 超阈值，组合结构性收益明确） |
 
 > **组合测量说明**：任务书要求"每项独立提交、独立前后测量"。P0-3（type 分派 + set hoist）与 P0-4（字面量预解码）都落在 `_evaluate`/`_execute_statement` 同一递归热路径，且 before 基线只有一份。为遵守"不把所有改动塞进一个提交后再找原因"，我在改动前做了**分派方式的合成微实验**（见上表）作为 P0-3 的独立决策依据；最终 A/B 测的是两项组合。这是偏离严格"逐项 A/B"的取舍，理由与数据已如实记录，不把组合倍率冒称单项收益。
@@ -65,11 +65,33 @@
 | 纯执行 before/after | 与 P0-3 组合测量：N=5000 三负载 1.463×/1.490×/2.790×（见上）；循环内字面量 `i * 17 + 3` 的 17/3/1009/97 每次求值省一次字符串分块解析，是 array_scan/dict_counts 收益的重要来源 |
 | 保留/回滚 | **保留**（6000 位/前导零/负数/任意精度闸门全过，组合收益超阈值） |
 
-## P1 候选（WP3，按 P0 测量结果决定）
+## P1 候选（WP3，逐项独立测量）
 
-- P1-1 record 字段集合缓存（`_construct_record` 的 `set(declared_fields)`）
-- P1-2 `Environment.resolve` 一次 `dict.get` + 哨兵（2 处调用点）
-- P1-3 内置函数名表驱动（保留 arity/type 错误消息）
-- P1-4 `format_decimal_integer` 小整数 `str(int)` 快路径 + `sys.intern`
+### P1-2 `Environment.resolve` 一次 `dict.get` + 哨兵 —— **未保留（回滚）**
 
-**执行原则**：P0 测量后若纯执行目标未达标，按任务书停止规则提交负结果与原因分析，**不**为凑阈值扩大范围、不改 workload。若 P0 达标，P1 逐项独立提交，<2% 无收益即回滚。
+| 项 | 内容 |
+|---|---|
+| 假设 | 新增 `resolve_value` 一次 `dict.get` 同时返回 scope 与值，省掉调用方第二次 hash 查找 |
+| 实测（基线=已提交 P0 后，2 预热+7 正式） | arithmetic N=5000 1.031×、array_scan 1.004×、dict_counts 1.003×；N=1000 有回归迹象（0.848×/0.943×/1.015×） |
+| 判定 | **回滚**：3 负载中 2 个 <2%、无结构性收益，按规则不保留；`git diff lwt/runtime.py` 回到 HEAD，零残留 |
+| 教训 | 变量读取的 `dict` 二次查找在 CPython 3.13 已高度优化，方法调用开销抵消了收益；合成微基准未预示这一点，凸显"逐项实测"的必要性 |
+
+### P1-4 `format_decimal_integer` 小整数 C 快路径 —— **保留**
+
+| 项 | 内容 |
+|---|---|
+| 假设 | 绝对值 < 10^9 的整数走 CPython C 层 `str(int)`，大整数仍走分块算法绕开 4300 位限制 |
+| 语义验证 | 6000 位 roundtrip、快路径边界（±999999999/±10^9）、10^50 大值全部与分块算法一致；`arbitrary-precision-integer` 黑盒通过 |
+| 实测（基线=P0 后，2 预热+7 正式） | arithmetic N=5000 **1.035×**、array_scan **1.068×**、dict_counts **1.164×（+16.4%）**；N=1000 在噪声范围（0.977–1.094×）。最终 after（P0+P1-4 同一次测量，相对最初 before N=5000）：arithmetic **1.454×**、array_scan **1.552×**、dict_counts **2.992×** |
+| 判定 | **保留**：N=5000 三负载均 ≥3.5%，dict_counts 因循环内 `str(key)` 高频调用收益显著，结构性收益明确 |
+
+### P1-1 / P1-3 —— 未做（记录理由）
+
+- **P1-1（record 字段集合缓存）**：三个 S11-v2 基准负载（arithmetic/array_scan/dict_counts）都**不涉及 record**，无法在冻结 workload 上测出收益；任务书禁止改 workload 或为测量新增自定义负载。因此无测量依据，不做（避免"看起来优化了"的无证据改动）。record 负载的潜在收益列为未验证项。
+- **P1-3（内置函数表驱动）**：需把 `_invoke_builtin` 的 13 个分支抽成 handler 表，改动面大、风险高；P0 已使三负载全部 ≥1.46× 超额达标，边际收益不足以正当化回归风险。列为未验证/后续。
+
+### 单元测试契约适配（P0-4 引起）
+
+P0-4 有意改变 `LiteralExpression.value` 对 INT 的语义（从 `None` 变为解析期预解码的 `int`），这是任务书 P0-4 的明确要求。`tests/test_parser.py` 的 `test_long_integer_is_retained_without_conversion`（断言 `value is None`，反映 S2「词法阶段不调用 int()」的历史约束）随之失效。该测试已改名 `test_long_integer_is_predecoded_with_full_precision` 并改为断言新契约：预解码值正确、6000 位精度保持、`lexeme` 原样保留。**这不改任何黑盒期望**（`tests/cases/**` 零改动），只适配随实现契约变更的单元测试；测试意图（长整数不丢精度）被保留并加强。
+
+**执行原则**：P0 已使纯执行目标（3/3 ≥15%）超额达标；P1 逐项独立测量，<2% 无结构性收益即回滚（P1-2 已据此回滚）。不为凑阈值扩大范围、不改 workload。

@@ -24,7 +24,17 @@ def parse_decimal_integer(lexeme: str) -> int:
 
 
 def format_decimal_integer(value: int) -> str:
-    """Format an arbitrary-size integer using only small decimal chunks."""
+    """Format an arbitrary-size integer using only small decimal chunks.
+
+    S44 P1-4: small magnitudes use CPython's C-level ``str(int)`` fast path;
+    larger values keep the chunked algorithm so the 3.11+ int-string digit
+    limit (4300 by default) never affects LWT's unbounded integers.
+    """
+
+    # Fast path: values that fit in one chunk are far below the CPython
+    # int->str digit limit, so str() is exact and much faster than divmod.
+    if -_DECIMAL_CHUNK_BASE < value < _DECIMAL_CHUNK_BASE:
+        return str(value)
 
     negative = value < 0
     remaining = -value if negative else value

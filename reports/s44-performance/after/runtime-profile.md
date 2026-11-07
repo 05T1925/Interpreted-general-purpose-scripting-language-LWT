@@ -1,11 +1,11 @@
-# LWT 运行时微基准与热点画像（S44 after WP2 (P0-3+P0-4)）
+# LWT 运行时微基准与热点画像（S44 after (P0+P1-4)）
 
-> 本文件是 S44 after WP2 (P0-3+P0-4) 的**独立画像证据**，不是 S11 正式性能报告的修订。计时口径、原始 run 身份与六组表格仍以 [S11 报告](../../performance.md) 为准；本工具不写入 `bench/results.json`，也不改写任何 S10/S11/S28/S29 固定证据。
+> 本文件是 S44 after (P0+P1-4) 的**独立画像证据**，不是 S11 正式性能报告的修订。计时口径、原始 run 身份与六组表格仍以 [S11 报告](../../performance.md) 为准；本工具不写入 `bench/results.json`，也不改写任何 S10/S11/S28/S29 固定证据。
 
 ## 环境与口径
 
-- 采集时间（UTC）：2026-11-07T09:16:12.084040Z
-- Git HEAD：`40932c0200754ab1429163ffc9c50f216e1fc24b`
+- 采集时间（UTC）：2026-11-07T09:33:39.918941Z
+- Git HEAD：`27a0a6b95b934668b064a9374829f102829297a2`
 - Python：`3.13.14 (main, Jun 11 2026, 04:04:46) [MSC v.1944 64 bit (AMD64)]`；平台：`Windows-11-10.0.26200-SP0`
 - 工具：`tools/micro_bench.py`（schema v1）
 - 每负载每规模：预热 2 次、计时 7 次；同一进程、同一已解析 AST，输出逐次与独立 oracle 比对。
@@ -15,15 +15,15 @@
 
 | 负载 | N | parse | execute | parse/execute | 输出校验 |
 |---|---:|---:|---:|---:|---|
-| arithmetic | 100 | 0.560 | 0.553 | 1.013 | pass |
-| arithmetic | 1000 | 0.594 | 4.204 | 0.141 | pass |
-| arithmetic | 5000 | 0.568 | 22.221 | 0.026 | pass |
-| array_scan | 100 | 0.990 | 1.798 | 0.550 | pass |
-| array_scan | 1000 | 0.992 | 14.364 | 0.069 | pass |
-| array_scan | 5000 | 0.848 | 74.462 | 0.011 | pass |
-| dict_counts | 100 | 0.807 | 1.388 | 0.581 | pass |
-| dict_counts | 1000 | 0.774 | 11.520 | 0.067 | pass |
-| dict_counts | 5000 | 0.800 | 63.111 | 0.013 | pass |
+| arithmetic | 100 | 0.481 | 0.524 | 0.919 | pass |
+| arithmetic | 1000 | 0.614 | 4.733 | 0.130 | pass |
+| arithmetic | 5000 | 0.519 | 22.349 | 0.023 | pass |
+| array_scan | 100 | 1.009 | 1.877 | 0.538 | pass |
+| array_scan | 1000 | 0.900 | 15.834 | 0.057 | pass |
+| array_scan | 5000 | 0.961 | 71.474 | 0.013 | pass |
+| dict_counts | 100 | 0.916 | 1.305 | 0.702 | pass |
+| dict_counts | 1000 | 0.864 | 10.528 | 0.082 | pass |
+| dict_counts | 5000 | 0.727 | 58.847 | 0.012 | pass |
 
 ## 热点事件分布（S28 ProfileCollector，单次采集）
 
