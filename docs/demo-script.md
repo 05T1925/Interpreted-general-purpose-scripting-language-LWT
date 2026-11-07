@@ -11,6 +11,7 @@
 | 1:05–1:35 | 展示 S42 语言核心增量：dict 映射的插入序与内置、throw/finally 的控制流覆盖，以及可交互 REPL。 | `python -m lwt examples/dicts.lwt`；`python -m lwt examples/throw_finally.lwt`；下方“REPL 片段” |
 | 1:05–1:40 | 展示一键黑盒和覆盖矩阵。现场时间不足可展示已记录的新克隆完整输出，再抽跑用例，不把旧记录说成现场运行。 | `python tools/run_tests.py`；`python tools/check_project_integrity.py`；[矩阵](test-matrix.md) |
 | 1:40–2:20 | 展示 LWT 日志分析器对坏行、等级和关键字的处理。Python 工作台只解析报告并绘图。 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log`；加 `--level WARN --keyword retry --top 2` |
+| 2:20–3:50 | S43 并发：多文件每个一个任务并发读取、按输入顺序归并（字节等价串行版）；换种子得到另一交错，轨迹可记录/重放，篡改被拒。 | `python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log`；下方“并发演示片段”；`reports/s42-schedules/summary.md` |
 | 2:20–2:55 | 展示 Agent 策略模板、独立产出记录和真实协议检查。 | [SDK](strategy-sdk.md)、[Agent 记录](s39-agent-record.md)；`python -m app.lwt_snake.arena --check-strategy mobility-lookahead --catalog app/lwt_snake/strategies/strategy-catalog.json` |
 | 2:55–4:30 | 依次验 S39 原局、S41 自动差异和 S40 一步分支。说明双方收到的是**同一已验证观察前缀**；第一处分歧只在给定清单、排序及预算内成立。 | 下方“证据链命令” |
 | 4:30–5:20 | 复制固定见证到仓库外临时目录，只改副本的反馈字段，展示拒绝。原始 `reports/` 不改。 | 下方“篡改拒绝” |
@@ -51,6 +52,21 @@ printf 'let d = dict{"Li": 87, "Wu": 56};\nemit d;\nput(d, "Zhao", 73);\nemit ke
 ```
 
 stdout 预期依次为 `dict{"Li": 87, "Wu": 56}`、`["Li", "Wu", "Zhao"]`、`User`、`clean`；stderr 含续行提示符与元命令帮助。也可用 `python -m lwt --repl` 进入交互会话（`.help`/`.vars`/`.reset`/`.exit`）。该片段在 S42 执行窗口已实跑核对，见 [S42 执行报告](s42-execution-report.md) 与 [REPL 单测](../tests/test_repl.py)（14 项通过）。REPL 是开发工具，不改变 `python -m lwt SOURCE` 普通执行契约。
+
+## 并发演示片段（S43，约 90 秒）
+
+三步展示「并发可复现」而非「跑得快」。全部用公开 CLI，固定证据只读。
+
+```powershell
+# 1) 多文件并发读取，按输入顺序归并；每文件报告块与串行版逐字节相同
+python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log
+
+# 2) 同一程序换种子 -> 另一交错（race 有两种结果：丢更新 1 / 无丢失 2）
+python -m lwt --schedule=random:1 --schedule-log reports/s42-schedules/found/lost-update/trace-demo.json tests/cases/concurrency/race-lost-update.lwt
+python -m lwt --schedule-replay reports/s42-schedules/found/lost-update/trace-demo.json tests/cases/concurrency/race-lost-update.lwt
+```
+
+预期：第 1 步输出两个 `=== 路径 ===` 报告块，顺序与参数顺序相同（不依赖哪个文件先读完），块正文与 `python -m lwt app/log_report.lwt -- 单文件` 逐字节相同；第 2 步记录与重放 stdout 一致（同一轨迹逐字复现）。**注意**：`reports/s42-schedules/found/lost-update/trace-demo.json` 是演示临时写入，现场演示后由用户自行删除；不要改动已固定的 `trace-1.json`/`trace-2.json`。篡改演示见 [三态摘要](../reports/s42-schedules/summary.md)（tampered 三种篡改均退出 4），契约见[并发速查](concurrency.md)。本片段命令在 S43 执行窗口已实跑核对（含 4 fixture 差分等价、多文件 10 次一致、一键重放退出 0）。
 
 ## 无 GUI 后退
 

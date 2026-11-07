@@ -274,7 +274,7 @@ stderr 为空，退出码为 0。示例展示 while 跳过当前迭代并提前�
 
 ### 不支持的能力
 
-LWT 0.2 支持规范第 4.4 节的 dict 映射、第 10.6 节的 `throw`/`finally` 结构化错误传播，以及 `python -m lwt --repl` 交互会话（开发工具）。模块仍是第 9 节定义的静态函数库，不支持模块值、动态加载、`from`/通配符导入、循环依赖或模块顶层初始化。第 10 节的恢复机制捕获退出码为 3 的 LWT 错误（含 `throw` 产生的 `User`/自定义类别），但不支持类型过滤、多个 handler 或回滚。也不支持浮点、类、闭包、函数值、带标签的循环跳转或语言级线程。不要从 Python 的能力推断 LWT 也支持某个结构；遇到未列出的语义，先查规范、实现和黑盒证据。
+LWT 0.2 支持规范第 4.4 节的 dict 映射、第 10.6 节的 `throw`/`finally` 结构化错误传播、第 11 节的**确定性并发子语言**（`spawn`/`join`/`yield()`/通道），以及 `python -m lwt --repl` 交互会话（开发工具）。模块仍是第 9 节定义的静态函数库，不支持模块值、动态加载、`from`/通配符导入、循环依赖或模块顶层初始化。第 10 节的恢复机制捕获退出码为 3 的 LWT 错误（含 `throw` 产生的 `User`/自定义类别），但不支持类型过滤、多个 handler 或回滚。并发是**协作式、单令牌**的：不支持抢占、语句级抢占、真实并行 CPU 执行、任务取消/超时、有界通道/背压、`sleep`、条件变量、读写锁、原子变量、多进程共享状态、跨进程通道或网络。也不支持浮点、类、闭包、函数值或带标签的循环跳转。不要从 Python 的能力推断 LWT 也支持某个结构；遇到未列出的语义，先查规范、实现和黑盒证据。
 
 ## 4. 调试和验证
 
@@ -314,7 +314,32 @@ printf 'let x = 1;\nemit x + 2;\n.exit\n' | python -m lwt --repl
 python -m lwt.debugger --commands examples/debugger/session.txt --program-stdin examples/debugger/program-input.txt examples/debugger/main.lwt
 ```
 
-该入口使用 LWT AST/runtime 的专用语句钩子，支持精确行断点、`step`/`next`/`finish`、LWT 调用栈及只读局部/全局变量检查。`--commands` 文件和 `--program-stdin` 文件各司其职；未指定程序输入时 `input()` 读到 EOF。若省略 `--commands`，控制台 stdin 用于输入调试命令。LWT 的 `emit` 仍写 stdout，调试信息写 stderr；完整命令、断点映射、退出码和能力边界见[调试器说明](debugger.md)。普通错误排查仍可直接运行 CLI，调试器不会改变语言规则或普通 CLI/profile 行为。
+该入口使用 LWT AST/runtime 的专用语句钩子，支持精确行断点、`step`/`next`、`finish`、LWT 调用栈及只读局部/全局变量检查。`--commands` 文件和 `--program-stdin` 文件各司其职；未指定程序输入时 `input()` 读到 EOF。若省略 `--commands`，控制台 stdin 用于输入调试命令。LWT 的 `emit` 仍写 stdout，调试信息写 stderr；完整命令、断点映射、退出码和能力边界见[调试器说明](debugger.md)。普通错误排查仍可直接运行 CLI，调试器不会改变语言规则或普通 CLI/profile 行为。
+
+### 确定性并发（S43）
+
+LWT 0.2 提供协作式、确定性可重放的并发子语言（规范第 11 节）。它适合**并发读取多文件 / 重叠等待型 I/O**、把调度决策外化为可复现轨迹；**不**用于加速 CPU 计算（单令牌 + GIL）。
+
+```lwt
+fn fetch(path) { return read_text(path); }
+let ch = channel();
+let t = spawn fetch("data.log");        # 不切换，返回 <task 1>
+send(ch, join(t));                       # join 是调度点，错误在调用处原位置重抛
+emit str(len(receive(ch)));
+```
+
+七个能力：`spawn f(args)` / `spawn m.f(args)`（唯一新保留字，前缀表达式）、预置 `join(task)`、`yield()`、`channel()`、`send(ch, v)`、`receive(ch)`、`close(ch)`。五个调度点：`yield()`、阻塞 `receive`、阻塞 `join`、任务结束、`read_text` 的 I/O 点；其余语句在两个调度点之间原子完成，`emit` 不会被打断成半行。默认 `fifo`（先进先出队列）；`--schedule=random:SEED` 用自带 splitmix64 PRNG 换交错。
+
+何时用 / 何时不用、五个调度点、原子性、反模式与轨迹调试见[并发契约卡](concurrency.md)。工具边界：`--profile`、CLI 调试器与 DAP 遇到 `spawn` 在执行前以退出码 4 拒绝，**不**产生半真档案或断点；`--check` 会诊断 `spawn` 目标不存在与实参数量不符（`E-SPAWN-001/002`），但不检查并发正确性。
+
+轨迹可复现：
+
+```powershell
+python -m lwt --schedule=random:7 --schedule-log trace.json path/to/program.lwt
+python -m lwt --schedule-replay trace.json path/to/program.lwt   # 逐字节相同
+```
+
+轨迹绑定源文件摘要、程序实参、策略、每个决策点与输出摘要；任何篡改以 `CliError`/4 拒绝。`reports/s42-schedules/summary.md` 含 found/absent/tampered 三态证据。
 
 ## 5. 项目资料
 

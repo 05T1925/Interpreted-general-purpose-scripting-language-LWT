@@ -28,10 +28,18 @@ description: Use only to create, edit, debug, or validate LWT source programs (.
 
 ## 语言边界
 
-当前 LWT 0.2 支持整数、字符串、布尔/null、数组、record、**dict 映射**、函数、分支循环、each、静态函数模块、基本输入输出、文本内置函数，以及 `attempt/recover` 与 **`throw`/`finally`** 结构化错误传播。break/continue 只能作用于当前函数中最近的循环。不得使用浮点、类、闭包、函数值、动态模块加载、模块顶层执行、线程或未写入规范的特性。具体边界以正式规范和当前实现为准。
+当前 LWT 0.2 支持整数、字符串、布尔/null、数组、record、**dict 映射**、函数、分支循环、each、静态函数模块、基本输入输出、文本内置函数，`attempt/recover` 与 **`throw`/`finally`** 结构化错误传播，以及**规范第 11 节的协作式确定性并发子集**（`spawn`/`join`/`yield()`/通道）。break/continue 只能作用于当前函数中最近的循环。并发仅限该子集：不支持抢占、真实并行 CPU 执行、任务取消/超时、有界通道/背压、`sleep`、条件变量、读写锁、原子变量、多进程共享状态、跨进程通道或网络。也不得使用浮点、类、闭包、函数值、动态模块加载、模块顶层执行或未写入规范的特性。具体边界以正式规范和当前实现为准。
 
 S42 新增能力的使用要点（写 .lwt 时）：
 
 - **dict 映射**：`dict{"k": 1, 2: "two"}` 构造；键必须是整数或字符串（布尔不是合法键），显示与 `keys`/`values`/`items` 都按插入顺序，`d[k]` 读写（缺键读取报错，`d[k] = v` 新键追加），相等性是身份比较。内置：`keys`/`values`/`items`/`has`/`get`/`put`/`delete`，`len(d)` 返回键数。`each` 不直接遍历 dict，用 `each (k in keys(d)) {...}`。详见规范 §4.4、§6 与[示例](../../../examples/dicts.lwt)。注意新增内置名 `keys/values/items/has/get/put/delete/error` 与用户函数共用函数名空间，`fn values()` 等定义会报冲突，应另取名。
 - **throw/finally**：`throw "message";` 抛出 `User` 类别错误，`throw error("Category", "message");` 抛出自定义类别；`attempt { ... } recover (problem) { ... } finally { ... }` 的 finally 块无论正常/错误/return/break/continue 都会执行一次，且 finally 自身的错误或控制流会覆盖此前挂起结果；`problem` 只在 recover 块可见。多个 handler、类型过滤、事务回滚**不支持**，可用单个 recover 块内 `when (problem.category == "...")` 分派。详见规范 §10.6 与[示例](../../../examples/throw_finally.lwt)。
 - **REPL**：`python -m lwt --repl` 是交互式开发工具（stdout 只含 `emit`，提示符走 stderr），不是 .lwt 程序语法；编写应用仍用普通 CLI。
+
+S43 并发子集的使用要点（写 .lwt 时，详见[并发契约卡](../../../docs/concurrency.md)与规范 §11）：
+
+- **最小示例**：`fn fetch(p){ return read_text(p); } let t = spawn fetch("a.log"); emit str(len(join(t)));` — `spawn` 是唯一新保留字（前缀表达式、必须带括号），`join/yield/channel/send/receive/close` 是预置函数名。
+- **五个调度点**：`yield()`、阻塞 `receive`、阻塞 `join`、任务结束、`read_text` 的 I/O 点；两点之间原子完成。并发只在等待型 I/O 上重叠，不加速 CPU 计算（单令牌 + GIL）。`--schedule=random:SEED` 换交错，`--schedule-log`/`--schedule-replay` 记录/重放轨迹（绑定源摘要、实参、策略、决策、输出摘要；篡改以 CliError/4 拒绝）。
+- **反模式 1**：把 `yield` 当锁 — 它只是让步点，两个任务「读—yield—写」同一全局变量会丢更新。共享计数请用单任务归并或通道。
+- **反模式 2**：依赖任务完成顺序输出 — 调度顺序由策略决定，不是墙钟；用按输入顺序的专属通道或按编号 `join` 收集（见 `app/concurrent_log_report.lwt`）。
+- **反模式 3**：为 `--profile`/调试器写并发路径 — 这些工具在执行前以 4 拒绝 `spawn`，不要写「尽力而为」的并发断点或档案逻辑。`--check` 只诊断 `spawn` 目标存在性与实参数量（`E-SPAWN-001/002`），不检查并发正确性。

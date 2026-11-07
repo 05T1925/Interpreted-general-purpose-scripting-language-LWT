@@ -1,0 +1,66 @@
+{
+  "amdahl_note": "The single-token LWT model executes CPU work serially; only the I/O-wait fraction can overlap. If p is the I/O-wait fraction, the best possible speedup is 1/(1-p). These numbers are this machine and this run only; no claim of CPU parallel speedup is made.",
+  "fixtures": {
+    "files": 8,
+    "sha256_by_file": {
+      "log-00.log": "db35a941ad6194801e74667bdbf122408e45cbd995a55680deae742054563aa6",
+      "log-01.log": "db35a941ad6194801e74667bdbf122408e45cbd995a55680deae742054563aa6",
+      "log-02.log": "db35a941ad6194801e74667bdbf122408e45cbd995a55680deae742054563aa6",
+      "log-03.log": "db35a941ad6194801e74667bdbf122408e45cbd995a55680deae742054563aa6",
+      "log-04.log": "db35a941ad6194801e74667bdbf122408e45cbd995a55680deae742054563aa6",
+      "log-05.log": "db35a941ad6194801e74667bdbf122408e45cbd995a55680deae742054563aa6",
+      "log-06.log": "db35a941ad6194801e74667bdbf122408e45cbd995a55680deae742054563aa6",
+      "log-07.log": "db35a941ad6194801e74667bdbf122408e45cbd995a55680deae742054563aa6"
+    },
+    "size_mb_each": 2,
+    "total_mb": 16
+  },
+  "generated_at_utc": "2026-11-07T06:48:25.189156Z",
+  "git_head": "e9bd715c07dca849a937c62e3112fa14a394aad0",
+  "groups": {
+    "lwt_concurrent": {
+      "max_ms": 24248.744,
+      "median_ms": 22119.246,
+      "min_ms": 20677.437,
+      "range_ms": 3571.307,
+      "runs": 7
+    },
+    "lwt_serial": {
+      "max_ms": 28919.893,
+      "median_ms": 28635.862,
+      "min_ms": 27362.972,
+      "range_ms": 1556.921,
+      "runs": 7
+    },
+    "py_serial": {
+      "max_ms": 47.145,
+      "median_ms": 44.535,
+      "min_ms": 40.552,
+      "range_ms": 6.593,
+      "runs": 7
+    },
+    "py_threads": {
+      "max_ms": 58.875,
+      "median_ms": 53.815,
+      "min_ms": 51.06,
+      "range_ms": 7.815,
+      "runs": 7
+    }
+  },
+  "lwt_serial_over_concurrent": 1.295,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "protocol": {
+    "generation": "temp dir, LF-boundary plain text, removed after run",
+    "page_cache": "warm (same files read repeatedly); see report",
+    "repeats": 7,
+    "warmups": 2
+  },
+  "py_serial_over_threads": 0.828,
+  "python_version": "3.13.14 (main, Jun 11 2026, 04:04:46) [MSC v.1944 64 bit (AMD64)]",
+  "schema": "lwt-s43-concurrency-benchmark/1",
+  "schema_version": 1,
+  "startup_baseline_ms": {
+    "lwt_help_median": 571.218,
+    "python_c_pass_median": 300.039
+  }
+}
