@@ -1,0 +1,3 @@
+fn w(){ let x = 1 / 0; return x; }
+let t=spawn w();
+attempt { join(t); } recover(p){ emit p.category; emit str(p.line); }

@@ -1,0 +1,4 @@
+fn w(){ emit "before"; return 1; }
+let t=spawn w();
+emit "mid";
+emit str(join(t));

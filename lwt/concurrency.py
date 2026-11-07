@@ -238,7 +238,9 @@ class Scheduler:
     ) -> None:
         self.policy = policy
         self.tracer = tracer
-        self.cond = threading.Condition(threading.Lock())
+        # RLock is required: send/receive/close hold ``cond`` and call
+        # wake_receiver, which re-enters ``cond``. A plain Lock self-deadlocks.
+        self.cond = threading.Condition(threading.RLock())
         self.tasks: dict[int, TaskState] = {0: TaskState(task_id=0, status="blocked")}
         self.channels: dict[int, ChannelState] = {}
         self.owner = 0

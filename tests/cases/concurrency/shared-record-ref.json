@@ -1,0 +1,19 @@
+{
+  "id": "shared-record-ref",
+  "spec_refs": [
+    "11.3"
+  ],
+  "tags": [
+    "normal",
+    "shared"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "9\n9\n",
+    "stderr": ""
+  }
+}

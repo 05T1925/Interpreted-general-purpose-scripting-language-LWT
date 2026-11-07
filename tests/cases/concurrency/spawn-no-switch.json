@@ -1,0 +1,19 @@
+{
+  "id": "spawn-no-switch",
+  "spec_refs": [
+    "11.3"
+  ],
+  "tags": [
+    "boundary",
+    "spawn"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "main\ntask\n1\n",
+    "stderr": ""
+  }
+}

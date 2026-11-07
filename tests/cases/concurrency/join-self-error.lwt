@@ -1,0 +1,5 @@
+fn selfie(ch){ let t = receive(ch); return join(t); }
+let ch=channel();
+let a=spawn selfie(ch);
+send(ch, a);
+emit str(join(a));

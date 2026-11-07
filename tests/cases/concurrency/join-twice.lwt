@@ -1,0 +1,4 @@
+fn w(){ return 5; }
+let t=spawn w();
+emit str(join(t));
+emit str(join(t));

@@ -1,0 +1,4 @@
+fn w(x){ emit str(x); return x; }
+let a=spawn w(10);
+let b=spawn w(20);
+emit str(join(a)+join(b));

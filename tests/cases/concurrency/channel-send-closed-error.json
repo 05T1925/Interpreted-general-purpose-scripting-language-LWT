@@ -1,0 +1,19 @@
+{
+  "id": "channel-send-closed-error",
+  "spec_refs": [
+    "11.5"
+  ],
+  "tags": [
+    "error",
+    "channel"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/concurrency/channel-send-closed-error.lwt:1:22: RuntimeError: send on a closed channel\n"
+  }
+}

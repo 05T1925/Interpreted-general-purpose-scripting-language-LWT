@@ -1,0 +1,19 @@
+{
+  "id": "fifo-order",
+  "spec_refs": [
+    "11.4"
+  ],
+  "tags": [
+    "normal",
+    "scheduler"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "10\n20\n30\n",
+    "stderr": ""
+  }
+}

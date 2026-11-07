@@ -1,0 +1,3 @@
+fn f(x){ return x * 2; }
+let t = spawn f(3);
+emit str(join(t));

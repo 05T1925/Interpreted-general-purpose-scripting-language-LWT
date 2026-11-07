@@ -1,0 +1,19 @@
+{
+  "id": "spawn-join-return",
+  "spec_refs": [
+    "11.2"
+  ],
+  "tags": [
+    "normal",
+    "spawn"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "6\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,6 @@
+let c = 0;
+fn w(){ let tmp = c; yield(); c = tmp + 1; return null; }
+let a=spawn w();
+let b=spawn w();
+join(a); join(b);
+emit str(c);

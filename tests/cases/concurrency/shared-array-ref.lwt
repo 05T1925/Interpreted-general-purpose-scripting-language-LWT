@@ -1,0 +1,5 @@
+let arr = [1];
+fn w(){ push(arr, 2); return len(arr); }
+let t=spawn w();
+emit str(join(t));
+emit str(len(arr));

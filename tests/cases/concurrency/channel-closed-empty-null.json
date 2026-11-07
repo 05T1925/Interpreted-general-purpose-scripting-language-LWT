@@ -1,0 +1,19 @@
+{
+  "id": "channel-closed-empty-null",
+  "spec_refs": [
+    "11.5"
+  ],
+  "tags": [
+    "boundary",
+    "channel"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "null\n",
+    "stderr": ""
+  }
+}

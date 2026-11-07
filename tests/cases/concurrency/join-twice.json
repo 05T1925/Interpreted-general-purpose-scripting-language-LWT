@@ -1,0 +1,19 @@
+{
+  "id": "join-twice",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "boundary",
+    "join"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "5\n5\n",
+    "stderr": ""
+  }
+}

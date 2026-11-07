@@ -1,0 +1,3 @@
+fn w(){ fail("x"); }
+let t=spawn w();
+attempt { join(t); } recover(p){ emit p.category; }

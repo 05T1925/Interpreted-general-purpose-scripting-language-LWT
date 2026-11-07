@@ -1,0 +1,4 @@
+fn w(x){ emit str(x); return x; }
+let a=spawn w(1);
+let b=spawn w(2);
+let c=spawn w(3);

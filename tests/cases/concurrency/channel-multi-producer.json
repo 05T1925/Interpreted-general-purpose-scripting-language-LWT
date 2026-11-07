@@ -1,0 +1,19 @@
+{
+  "id": "channel-multi-producer",
+  "spec_refs": [
+    "11.5"
+  ],
+  "tags": [
+    "normal",
+    "channel"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "3\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,6 @@
+fn r(ch){ let v=receive(ch); emit "got:"+str(v); return v; }
+fn s(ch){ send(ch, 42); return null; }
+let ch=channel();
+let a=spawn r(ch);
+let b=spawn s(ch);
+join(a); join(b);

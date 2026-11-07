@@ -1,0 +1,5 @@
+fn w(x){ emit str(x); yield(); emit str(x); return null; }
+let a=spawn w(1);
+let b=spawn w(2);
+let c=spawn w(3);
+join(a); join(b); join(c);

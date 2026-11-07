@@ -1,0 +1,19 @@
+{
+  "id": "join-reraises-location",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "error",
+    "join"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "RuntimeError\n1\n",
+    "stderr": ""
+  }
+}

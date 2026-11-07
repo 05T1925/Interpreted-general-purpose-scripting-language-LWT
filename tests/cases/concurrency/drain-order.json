@@ -1,0 +1,19 @@
+{
+  "id": "drain-order",
+  "spec_refs": [
+    "11.7"
+  ],
+  "tags": [
+    "normal",
+    "scheduler"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n2\n3\n",
+    "stderr": ""
+  }
+}

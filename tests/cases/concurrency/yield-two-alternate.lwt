@@ -1,0 +1,4 @@
+fn w(n){ let i=0; while(i<n){ emit str(i); yield(); i=i+1; } return null; }
+let a=spawn w(3);
+let b=spawn w(3);
+join(a); join(b);

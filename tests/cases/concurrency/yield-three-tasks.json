@@ -1,0 +1,19 @@
+{
+  "id": "yield-three-tasks",
+  "spec_refs": [
+    "11.4"
+  ],
+  "tags": [
+    "normal",
+    "yield"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n2\n3\n1\n2\n3\n",
+    "stderr": ""
+  }
+}

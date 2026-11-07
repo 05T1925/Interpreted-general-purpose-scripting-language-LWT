@@ -1,0 +1,4 @@
+fn f(){ emit "task"; return 1; }
+let t = spawn f();
+emit "main";
+emit str(join(t));

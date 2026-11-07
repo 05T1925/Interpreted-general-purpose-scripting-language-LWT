@@ -1,0 +1,19 @@
+{
+  "id": "shared-global",
+  "spec_refs": [
+    "11.3"
+  ],
+  "tags": [
+    "normal",
+    "shared"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "2\n",
+    "stderr": ""
+  }
+}

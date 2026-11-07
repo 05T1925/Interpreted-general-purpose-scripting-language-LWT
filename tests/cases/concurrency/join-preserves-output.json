@@ -1,0 +1,19 @@
+{
+  "id": "join-preserves-output",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "normal",
+    "join"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "mid\nbefore\n1\n",
+    "stderr": ""
+  }
+}

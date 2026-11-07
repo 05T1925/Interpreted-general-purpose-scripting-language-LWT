@@ -1,0 +1,4 @@
+fn inner(){ return 5; }
+fn outer(){ let t = spawn inner(); return join(t); }
+let t = spawn outer();
+emit str(join(t));

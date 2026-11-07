@@ -1,0 +1,19 @@
+{
+  "id": "throw-in-task",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "normal",
+    "error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "User\nuser err\n",
+    "stderr": ""
+  }
+}

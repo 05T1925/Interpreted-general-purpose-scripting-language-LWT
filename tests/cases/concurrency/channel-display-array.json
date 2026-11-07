@@ -1,0 +1,19 @@
+{
+  "id": "channel-display-array",
+  "spec_refs": [
+    "11.5"
+  ],
+  "tags": [
+    "normal",
+    "display"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[<channel 1>]\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "yield-two-alternate",
+  "spec_refs": [
+    "11.3"
+  ],
+  "tags": [
+    "normal",
+    "yield"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "0\n0\n1\n1\n2\n2\n",
+    "stderr": ""
+  }
+}

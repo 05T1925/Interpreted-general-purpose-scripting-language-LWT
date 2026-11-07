@@ -1,0 +1,5 @@
+fn w(){ return 1; }
+let t=spawn w();
+emit t == t;
+emit t == 1;
+join(t);

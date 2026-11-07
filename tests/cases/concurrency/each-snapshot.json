@@ -1,0 +1,19 @@
+{
+  "id": "each-snapshot",
+  "spec_refs": [
+    "11.3"
+  ],
+  "tags": [
+    "normal",
+    "shared"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n2\n",
+    "stderr": ""
+  }
+}

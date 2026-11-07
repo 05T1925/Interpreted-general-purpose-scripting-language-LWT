@@ -1,0 +1,19 @@
+{
+  "id": "channel-receive-type-error",
+  "spec_refs": [
+    "11.5"
+  ],
+  "tags": [
+    "error",
+    "channel"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/concurrency/channel-receive-type-error.lwt:1:10: RuntimeError: receive expects a channel\n"
+  }
+}

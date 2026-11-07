@@ -1,0 +1,3 @@
+fn f(a,b,c){ return a+b+c; }
+let t = spawn f(1,2,3);
+emit str(join(t));

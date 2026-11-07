@@ -1,0 +1,19 @@
+{
+  "id": "deadlock-join-cycle",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "error",
+    "deadlock"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/concurrency/deadlock-join-cycle.lwt:1:39: RuntimeError: deadlock detected\n"
+  }
+}

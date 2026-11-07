@@ -1,0 +1,24 @@
+{
+  "id": "profile-rejects-spawn",
+  "spec_refs": [
+    "11.8"
+  ],
+  "tags": [
+    "error",
+    "tool"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 4,
+    "stdout": "",
+    "stderr": "lwt: CliError: profile does not support spawn programs\n"
+  },
+  "cli_args_override": [
+    "--profile",
+    "tests/cases/concurrency/profile-rejects-spawn-profile.json",
+    "tests/cases/concurrency/profile-rejects-spawn.lwt"
+  ]
+}

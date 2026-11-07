@@ -1,0 +1,3 @@
+fn f(){ return 7; }
+let t = spawn f();
+emit str(join(t));

@@ -1,0 +1,20 @@
+{
+  "id": "race-lost-update",
+  "spec_refs": [
+    "11.4"
+  ],
+  "tags": [
+    "boundary",
+    "shared",
+    "race"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  }
+}

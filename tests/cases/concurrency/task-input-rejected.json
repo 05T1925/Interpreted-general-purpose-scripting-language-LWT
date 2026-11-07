@@ -1,0 +1,19 @@
+{
+  "id": "task-input-rejected",
+  "spec_refs": [
+    "11.3"
+  ],
+  "tags": [
+    "error",
+    "lifecycle"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/concurrency/task-input-rejected.lwt:1:17: RuntimeError: input is not available in a task\n"
+  }
+}

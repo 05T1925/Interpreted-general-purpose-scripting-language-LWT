@@ -1,0 +1,19 @@
+{
+  "id": "task-display",
+  "spec_refs": [
+    "11.3"
+  ],
+  "tags": [
+    "normal",
+    "display"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "<task 1>\n",
+    "stderr": ""
+  }
+}

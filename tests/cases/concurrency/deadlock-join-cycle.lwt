@@ -1,0 +1,8 @@
+fn j(ch){ let t = receive(ch); return join(t); }
+let ch1=channel();
+let ch2=channel();
+let a=spawn j(ch1);
+let b=spawn j(ch2);
+send(ch1, b);
+send(ch2, a);
+join(a); join(b);

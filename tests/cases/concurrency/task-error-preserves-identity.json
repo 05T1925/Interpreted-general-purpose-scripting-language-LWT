@@ -1,0 +1,19 @@
+{
+  "id": "task-error-preserves-identity",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "boundary",
+    "error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "RuntimeError\n",
+    "stderr": ""
+  }
+}

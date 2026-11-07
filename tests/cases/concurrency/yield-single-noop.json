@@ -1,0 +1,19 @@
+{
+  "id": "yield-single-noop",
+  "spec_refs": [
+    "11.3"
+  ],
+  "tags": [
+    "boundary",
+    "yield"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "ok\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,6 @@
+fn p(ch){ send(ch,7); send(ch,8); close(ch); return null; }
+fn c(ch){ let a=receive(ch); let b=receive(ch); let d=receive(ch); emit str(a)+str(b)+str(d); return null; }
+let ch=channel();
+let x=spawn p(ch);
+let y=spawn c(ch);
+join(x); join(y);

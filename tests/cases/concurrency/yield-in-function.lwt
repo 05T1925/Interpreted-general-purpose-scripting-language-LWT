@@ -1,0 +1,3 @@
+fn w(){ emit "a"; yield(); emit "b"; return null; }
+let t=spawn w();
+join(t);

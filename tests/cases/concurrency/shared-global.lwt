@@ -1,0 +1,6 @@
+let g = 0;
+fn w(){ g = g + 1; return g; }
+let a=spawn w();
+let b=spawn w();
+join(a); join(b);
+emit str(g);

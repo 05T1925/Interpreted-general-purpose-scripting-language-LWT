@@ -1,0 +1,19 @@
+{
+  "id": "spawn-no-args",
+  "spec_refs": [
+    "11.2"
+  ],
+  "tags": [
+    "normal",
+    "spawn"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "7\n",
+    "stderr": ""
+  }
+}

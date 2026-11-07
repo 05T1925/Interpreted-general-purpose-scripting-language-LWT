@@ -1,0 +1,4 @@
+fn w(ch){ close(ch); send(ch,1); return null; }
+let ch=channel();
+let t=spawn w(ch);
+join(t);

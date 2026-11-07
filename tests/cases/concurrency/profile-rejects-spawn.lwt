@@ -1,0 +1,3 @@
+fn w(){ return 1; }
+let t=spawn w();
+join(t);

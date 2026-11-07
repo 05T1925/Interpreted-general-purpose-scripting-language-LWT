@@ -1,0 +1,19 @@
+{
+  "id": "task-identity-equality",
+  "spec_refs": [
+    "11.3"
+  ],
+  "tags": [
+    "boundary",
+    "display"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\nfalse\n",
+    "stderr": ""
+  }
+}

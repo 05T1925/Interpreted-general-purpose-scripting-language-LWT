@@ -1,0 +1,19 @@
+{
+  "id": "spawn-nested",
+  "spec_refs": [
+    "11.7"
+  ],
+  "tags": [
+    "normal",
+    "spawn"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "5\n",
+    "stderr": ""
+  }
+}

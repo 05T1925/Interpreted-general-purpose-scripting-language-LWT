@@ -1,0 +1,4 @@
+fn f(){ emit "ran"; }
+let t = spawn f();
+let r = join(t);
+emit r;

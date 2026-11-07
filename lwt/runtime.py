@@ -268,9 +268,18 @@ def format_decimal_integer(value: int) -> str:
 # gain no hooks (invariant I2).
 # ---------------------------------------------------------------------------
 def _program_has_spawn(program: Program) -> bool:
-    """True if any expression is a SpawnExpression (recursive, id-ordered)."""
+    """True if the program uses any S43 concurrency construct.
+
+    This includes `spawn` expressions and calls to the six concurrency
+    built-ins. A program that only calls `yield()`/`channel()` (with no spawn)
+    still needs a scheduler so those built-ins behave per spec 11.3/11.5
+    (`yield()` is a no-op with no peers; `channel()` creates a handle).
+    """
 
     found = False
+    concurrency_names = {
+        "yield", "channel", "send", "receive", "close", "join"
+    }
 
     def walk(value: object) -> None:
         nonlocal found
@@ -279,6 +288,9 @@ def _program_has_spawn(program: Program) -> bool:
         ):
             return
         if isinstance(value, SpawnExpression):
+            found = True
+            return
+        if isinstance(value, CallExpression) and value.callee.name in concurrency_names:
             found = True
             return
         if isinstance(value, tuple):

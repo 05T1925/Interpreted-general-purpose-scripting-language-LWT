@@ -1,0 +1,19 @@
+{
+  "id": "unjoined-task-error",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "error",
+    "lifecycle"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "top\n",
+    "stderr": "tests/cases/concurrency/unjoined-task-error.lwt:1:9: RuntimeError: unjoined\n"
+  }
+}

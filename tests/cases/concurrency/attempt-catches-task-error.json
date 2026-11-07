@@ -1,0 +1,19 @@
+{
+  "id": "attempt-catches-task-error",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "normal",
+    "error"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "boom\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,3 @@
+let arr=[1,2];
+fn w(){ push(arr, 3); return null; }
+each (x in arr) { emit str(x); let t=spawn w(); join(t); }

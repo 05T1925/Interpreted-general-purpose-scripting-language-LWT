@@ -1,0 +1,4 @@
+fn r(ch){ let v=receive(ch); return v; }
+let c=channel();
+let a=spawn r(c);
+join(a);

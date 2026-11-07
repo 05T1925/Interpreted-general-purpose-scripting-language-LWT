@@ -1,0 +1,19 @@
+{
+  "id": "deadlock-double-receive",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "error",
+    "deadlock"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/concurrency/deadlock-double-receive.lwt:1:17: RuntimeError: deadlock detected\n"
+  }
+}

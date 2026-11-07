@@ -1,0 +1,19 @@
+{
+  "id": "join-non-task-error",
+  "spec_refs": [
+    "11.6"
+  ],
+  "tags": [
+    "error",
+    "join"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/concurrency/join-non-task-error.lwt:1:10: RuntimeError: join expects a task\n"
+  }
+}

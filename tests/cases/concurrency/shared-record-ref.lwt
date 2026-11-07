@@ -1,0 +1,6 @@
+record R { x };
+let r = R{x: 1};
+fn w(){ r.x = 9; return r.x; }
+let t=spawn w();
+emit str(join(t));
+emit str(r.x);

@@ -1,0 +1,23 @@
+{
+  "id": "check-spawn-undefined",
+  "spec_refs": [
+    "11.8"
+  ],
+  "tags": [
+    "error",
+    "tool"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "tests/cases/concurrency/check-spawn-undefined.lwt:1:15: StaticError[E-SPAWN-001]: undefined function 'nonexistent' for spawn\n"
+  },
+  "cli_args_override": [
+    "--check",
+    "tests/cases/concurrency/check-spawn-undefined.lwt"
+  ]
+}

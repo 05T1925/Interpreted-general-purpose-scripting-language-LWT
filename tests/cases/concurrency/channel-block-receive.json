@@ -1,0 +1,19 @@
+{
+  "id": "channel-block-receive",
+  "spec_refs": [
+    "11.5"
+  ],
+  "tags": [
+    "normal",
+    "channel"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "got:42\n",
+    "stderr": ""
+  }
+}
