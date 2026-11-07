@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "tool": "S42 log_report.lwt dict refactor byte-exact comparison",
+  "command_template": "python -m lwt app/log_report.lwt -- <args...>",
+  "cwd": "repository root",
+  "before_note": "baseline captured before the dict refactor of app/log_report.lwt (linear find_count over Count array)",
+  "after_note": "dict-backed O(1) counting; emit helpers still selection-sort over keys(counts) so display order/bytes are unchanged",
+  "app_source_sha256": "2f993cfbed9c5a9d5f3f645f089fedd1ed08b63beba3d1d1bf77d070f59d5598",
+  "records": [
+    {
+      "args": [
+        "app/fixtures/sample.log"
+      ],
+      "before": {
+        "exit_code": 0,
+        "stdout_sha256": "eaaebdf9d9030ab6e142422b57a8f035320d41614140776f4b57c5e751d0a876",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "exit_code": 0,
+        "stdout_sha256": "eaaebdf9d9030ab6e142422b57a8f035320d41614140776f4b57c5e751d0a876",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "byte_identical": true
+    },
+    {
+      "args": [
+        "app/fixtures/sample.log",
+        "--level",
+        "WARN",
+        "--keyword",
+        "retry",
+        "--top",
+        "2"
+      ],
+      "before": {
+        "exit_code": 0,
+        "stdout_sha256": "719c2251484b9ca09e71c13aecd5039e59d98abd56e3fc761f4ed7d0e1d1ef68",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "exit_code": 0,
+        "stdout_sha256": "719c2251484b9ca09e71c13aecd5039e59d98abd56e3fc761f4ed7d0e1d1ef68",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "byte_identical": true
+    },
+    {
+      "args": [
+        "app/fixtures/malformed.log"
+      ],
+      "before": {
+        "exit_code": 0,
+        "stdout_sha256": "b401d5f3ca76a779f3c94c0e20002dc571608f88925f561415b1a6e1293b9f3c",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "exit_code": 0,
+        "stdout_sha256": "b401d5f3ca76a779f3c94c0e20002dc571608f88925f561415b1a6e1293b9f3c",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "byte_identical": true
+    },
+    {
+      "args": [
+        "app/fixtures/showcase.log"
+      ],
+      "before": {
+        "exit_code": 0,
+        "stdout_sha256": "6eb5d9ddb1c91b348cde9a388af769144c84561ff611fa028fb7812b23e5b175",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "exit_code": 0,
+        "stdout_sha256": "6eb5d9ddb1c91b348cde9a388af769144c84561ff611fa028fb7812b23e5b175",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "byte_identical": true
+    },
+    {
+      "args": [
+        "app/fixtures/sample.log",
+        "--top",
+        "0"
+      ],
+      "before": {
+        "exit_code": 0,
+        "stdout_sha256": "3f8245e317e2230a997d72f46ad1a84e2760ca70783b7691f903365d4623e201",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "exit_code": 0,
+        "stdout_sha256": "3f8245e317e2230a997d72f46ad1a84e2760ca70783b7691f903365d4623e201",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "byte_identical": true
+    },
+    {
+      "args": [
+        "app/fixtures/sample.log",
+        "--level",
+        "INFO"
+      ],
+      "before": {
+        "exit_code": 0,
+        "stdout_sha256": "eb966b3870142e219bc9c834b74d967c1e9a5db5c79e18de4e4b0f4d76c6b02b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "exit_code": 0,
+        "stdout_sha256": "eb966b3870142e219bc9c834b74d967c1e9a5db5c79e18de4e4b0f4d76c6b02b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "byte_identical": true
+    },
+    {
+      "args": [
+        "app/fixtures/concurrency.log"
+      ],
+      "before": {
+        "exit_code": 0,
+        "stdout_sha256": "d4955d74db17340a8ac5629db89816f29a678514b7661d84998abf1efd258ac4",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "exit_code": 0,
+        "stdout_sha256": "d4955d74db17340a8ac5629db89816f29a678514b7661d84998abf1efd258ac4",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "byte_identical": true
+    },
+    {
+      "args": [
+        "app/fixtures/showcase.log",
+        "--keyword",
+        "retry",
+        "--top",
+        "3"
+      ],
+      "before": {
+        "exit_code": 0,
+        "stdout_sha256": "201693bb5faa09680942a5315de57b35b6bcf40ab1b342a6abfcebffef843233",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "exit_code": 0,
+        "stdout_sha256": "201693bb5faa09680942a5315de57b35b6bcf40ab1b342a6abfcebffef843233",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "byte_identical": true
+    },
+    {
+      "args": [
+        "app/fixtures/malformed.log",
+        "--level",
+        "ERROR",
+        "--top",
+        "1"
+      ],
+      "before": {
+        "exit_code": 0,
+        "stdout_sha256": "dc96d6006dbb3bb786722ae14d797653ff742d3c3d35dd4eae197daa0ed4be01",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "exit_code": 0,
+        "stdout_sha256": "dc96d6006dbb3bb786722ae14d797653ff742d3c3d35dd4eae197daa0ed4be01",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "byte_identical": true
+    }
+  ],
+  "all_byte_identical": true
+}

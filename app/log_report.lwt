@@ -204,33 +204,34 @@ fn record_matches(record_value, options) {
     return true;
 }
 
-fn find_count(counts, name) {
-    let index = 0;
-    while (index < len(counts)) {
-        when (counts[index].name == name) {
-            return index;
-        }
-        index = index + 1;
-    }
-    return -1;
-}
-
 fn add_count(counts, name) {
-    let found = find_count(counts, name);
-    when (found == -1) {
-        push(counts, Count{name: name, count: 1, selected: false});
+    # S42: dict-backed O(1) frequency counting replaces the former linear
+    # find_count scan over a Count array. `counts` is a dict of name -> count.
+    when (has(counts, name)) {
+        put(counts, name, get(counts, name, 0) + 1);
     } otherwise {
-        counts[found].count = counts[found].count + 1;
+        put(counts, name, 1);
     }
     return null;
+}
+
+fn count_array(counts) {
+    # Materialise a Count array in dict insertion order. The emit helpers below
+    # keep their original selection-sort logic, so displayed order and bytes are
+    # unchanged; only accumulation moved from O(n^2) linear search to O(1) dict.
+    let rows = [];
+    each (name in keys(counts)) {
+        push(rows, Count{name: name, count: get(counts, name, 0), selected: false});
+    }
+    return rows;
 }
 
 fn build_report(lines, options) {
     let valid = 0;
     let malformed = 0;
     let matched = 0;
-    let levels = [];
-    let modules = [];
+    let levels = dict{};
+    let modules = dict{};
     let examples = [];
 
     each (line in lines) {
@@ -337,9 +338,9 @@ fn emit_report(report, top_limit) {
     emit "Malformed lines: " + str(report.malformed_lines);
     emit "Matched records: " + str(report.matched_records);
     emit "Level counts:";
-    emit_level_counts(report.level_counts);
+    emit_level_counts(count_array(report.level_counts));
     emit "Top modules:";
-    emit_top_modules(report.module_counts, top_limit);
+    emit_top_modules(count_array(report.module_counts), top_limit);
     emit "Matching examples (first 3):";
     emit_examples(report.examples);
     return null;
