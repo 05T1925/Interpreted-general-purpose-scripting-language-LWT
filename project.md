@@ -4,7 +4,7 @@
 
 > **当前结论：** S12 已经[主窗口复核](docs/s12-main-review.md)，候选 SHA `e1249f56f1d889c0c6e400a46602e0fe3f7df1ce` 已快进集成到本地 `main`，该精确 SHA 的远端 Actions 四格成功。PPT、交付审计和答辩材料见[S12 执行报告](docs/s12-final-delivery.md)。现场人工 GUI 验收仍未完成；没有据此声称教师验收或最终评分通过。
 
-> **S42（2026-11-07，执行窗口）：** 以 `main = 5027860efc8a1cce342ca13b1434d7724aeeffc4` 为基线，在 `feature/lwt-core-0.2` 分支承接并收尾 LWT 0.2 语言核心增强：dict 映射、throw/finally、交互 REPL、单进程运行时画像，以及 log_report.lwt 的 dict 计数改造（输出字节不变）。基线黑盒 330/330；新增 24 个 throw/finally 黑盒后全量 **354/354**，完整性 `cases=354; matrix_links=394; referenced_cases=297`。执行窗口报告见[S42 执行报告](docs/s42-execution-report.md)。该分支**不推送、不合并、不打标签**；最终 SHA 的 Actions、Python 3.10/Linux 与现场人工 GUI 均为未验证。基线裁决理由（含 `milestone/final-acceptance` 独立文档线）见 S42 报告 §1.1。
+> **S42（2026-11-07，执行窗口）：** 以 `main = 5027860efc8a1cce342ca13b1434d7724aeeffc4` 为基线，在 `feature/lwt-core-0.2` 分支承接并收尾 LWT 0.2 语言核心增强：dict 映射、throw/finally、交互 REPL、单进程运行时画像，以及 log_report.lwt 的 dict 计数改造（输出字节不变）。基线黑盒 330/330；新增 24 个 throw/finally 黑盒后全量 **354/354**，完整性 `cases=354; matrix_links=401; referenced_cases=304`。执行窗口报告见[S42 执行报告](docs/s42-execution-report.md)。该分支**不推送、不合并、不打标签**；最终 SHA 的 Actions、Python 3.10/Linux 与现场人工 GUI 均为未验证。基线裁决理由（含 `milestone/final-acceptance` 独立文档线）见 S42 报告 §1.1。
 
 ## 目标与课程评分
 

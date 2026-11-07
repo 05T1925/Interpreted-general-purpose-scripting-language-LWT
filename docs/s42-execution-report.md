@@ -29,7 +29,7 @@
 | 基线 SHA | `5027860efc8a1cce342ca13b1434d7724aeeffc4`（`main` = `origin/main`） |
 | 收口分支 | `milestone/final-acceptance @ f1b7fa9…`（未纳入本阶段基线，独立文档线） |
 | 工作分支 | `feature/lwt-core-0.2`（不推送） |
-| 提交序列 | 见第 6 节逐 Wave 提交清单（每 Wave 一个独立提交） |
+| 提交序列 | 见第 6 节按可运行交付单元分组的提交清单（源码三特性同文件交织，按单元分组而非机械按 Wave；理由见 §6） |
 | 远端 | 本阶段**不推送**；候选/基线远端状态以主窗口实时 `git ls-remote` 为准 |
 | 工作区 | 每笔提交后 `git status -sb` 干净；保护路径差异为空 |
 
@@ -53,7 +53,7 @@
 | `python tools/run_tests.py`（全量） | 0 | **354/354 通过**，9 类别；`error-recovery` 64/64（含 24 新增）、`dict-maps` 43/43；371.753s |
 | `python tools/run_tests.py --category error-recovery` | 0 | 64/64（复核新增用例） |
 | `python tools/run_tests.py --category dict-maps --category lexer-parser --category values-operators` | 0 | 126/126（复核 dict 与词法/语法/运算零回归） |
-| `python tools/check_project_integrity.py` | 0 | `cases=354; matrix_links=394; referenced_cases=297` |
+| `python tools/check_project_integrity.py` | 0 | `cases=354; matrix_links=401; referenced_cases=304`（提交 2 在 `test-matrix.md` 补充 7 个 throw/finally 代表用例链接后，由基线 394/297 增至 401/304） |
 | `python -m unittest discover -s tests -q`（系统 Python 3.13.7 + Tk） | 1 | `Ran 569 tests ... FAILED (failures=1)`；唯一失败 `test_load_real_s41_witness_with_button_and_reverify`（Tk worker 超时），干净 `main` 基线对照同样失败，与 S42 无关，详见 §7。其余 568 项通过。 |
 | `python -m unittest tests.test_lexer tests.test_parser tests.test_runtime tests.test_static_checker tests.test_repl -q` | 0 | 130/130，52.434s |
 | `python -m unittest discover -s tests -p test_app.py -q` | 0 | 25/25，43.919s（应用 CLI 契约零回归） |
@@ -70,7 +70,7 @@
 ### 4.1 基线只读回归与全量 unittest
 
 - **改造前基线**（承接工作树）：`python tools/run_tests.py` **330/330**（322.186s）、`check_project_integrity.py` `cases=330; matrix_links=394; referenced_cases=297`、`compileall` 无诊断，起点可用。
-- **改造后全量黑盒**：`python tools/run_tests.py` **354/354**（371.753s），`error-recovery` 64/64（含 24 新增）、`dict-maps` 43/43，其余类别零回归；`check_project_integrity.py` `cases=354; matrix_links=394; referenced_cases=297`。
+- **改造后全量黑盒**：`python tools/run_tests.py` **354/354**（371.753s），`error-recovery` 64/64（含 24 新增）、`dict-maps` 43/43，其余类别零回归；`check_project_integrity.py` `cases=354; matrix_links=401; referenced_cases=304`（提交 2 在矩阵中补充 7 个 throw/finally 代表用例链接后，比基线的 394/297 各增 7）。
 - **全量 unittest（权威一次）**：用系统 Python 3.13.7 + Tk 8.6 跑 `python -m unittest discover -s tests -q`，`Ran 569 tests in 1265.982s`，`FAILED (failures=1)`。**唯一失败为 `test_load_real_s41_witness_with_button_and_reverify`**（`Tk worker did not settle within bounded event loop`）。该失败经干净 `main` 基线（5027860，`git worktree` 独立检出）对照重跑，**同样失败**；相关 GUI 源码与策略 LWT 与基线字节一致、`app/lwt_snake/` 无差异，故判定为**桌面环境（多窗口 + `cua-driver`）下的 Tk worker 时序问题，非 S42 回归**。其余 568 项通过。
 - **全量 unittest（解释器差异说明）**：Bash 默认 `python` 为 WorkBuddy 内置 3.13.14（**无 tkinter**），用它跑全量会额外出现 `test_language_lab_entry` 的 `ModuleNotFoundError: No module named 'tkinter'` 等环境性 FAIL；该结果不采用。第 4 节 CLI/黑盒/画像实测用 Bash `python` 完成（无 Tk 不影响 CLI），全量 unittest 以系统 Python 为准。
 - **失败测试的修复与复验**：基线全量里另有 3 类「新增语言特性导致旧测试断言过期」的问题（13 个 `test_runner` ERROR 源于用例 `spec_refs` 白名单未含 `10.6`；`test_cli` 的 `fn values()` 与新内置冲突；`test_semantic_properties` 模板数量 7→13；`test_runner` 硬编码 `case_count=287`）。均已最小修复并用系统 Python 单独重跑通过（`test_runner` 32/32、`test_cli` 该用例、`test_semantic_properties` 该用例均 OK），属「测试断言随语言演进适配」，不移除断言意图。详见 §7。
@@ -102,6 +102,7 @@
 | 3 | `perf(profile): add single-process micro-benchmark` | `tools/micro_bench.py`、`reports/runtime-profile.{json,md}`（独立证据，不改 S11）。 |
 | 4 | `feat(app): refactor log_report counting with dict` | `app/log_report.lwt` dict 计数改造、`reports/log-report-dict-refactor.json`（9 组逐字节对比）。 |
 | 5 | `docs: sync guides, demo, skill, status and S42 report` | `docs/{developer-guide,demo-script}.md`、`README.md`、`.agents/skills/lwt-app/SKILL.md`、`project.md`、阶段路线图、`docs/s42-execution-report.md`。 |
+| 6 | `docs: correct integrity link counts` | 提交后抽检发现改造后完整性链接数应为 `matrix_links=401; referenced_cases=304`（提交 2 在矩阵补充 7 个代表用例链接后增长），把报告/`project.md`/路线图中「改造后」数字的 394/297 更正为实测值；改造前基线的 330/394/297 是历史事实，保留不变。仅文档，不重跑全量。 |
 
 SHA 与最终 `git status -sb` 在提交后回填（见第 10 节）。
 
@@ -139,7 +140,7 @@ SHA 与最终 `git status -sb` 在提交后回填（见第 10 节）。
 | 项 | 值 |
 |---|---|
 | 工作分支 | `feature/lwt-core-0.2`（从基线 `5027860efc8a1cce342ca13b1434d7724aeeffc4` 创建，**不推送**） |
-| 提交序列（按 §6 分组） | ① `35e4b37a99b2da8d48719eda31080c6e4792e99e` `feat(lwt-0.2): add dict, throw/finally and REPL core`；② `06fad50aa97e3bc894cd5e969417c94449bf81ba` `test(errors): add 24 verified throw/finally black-box cases`；③ `125b4db5f6e34eac8b98810d0e5865e65c320901` `perf(profile): add single-process micro-benchmark and runtime profile`；④ `aec6076f67a945dcbddc0e56c907c34f3d5a5dcc` `feat(app): refactor log_report counting with dict`；⑤ 文档同步提交（`docs: sync guides, demo, skill, status and S42 report`，即包含本报告的这一笔，SHA 由主窗口以 `git log -1 milestone/...` 方式在 `feature/lwt-core-0.2` 上核对，本正文不预写自身 SHA）。 |
+| 提交序列（按 §6 分组） | ① `35e4b37a99b2da8d48719eda31080c6e4792e99e` `feat(lwt-0.2): add dict, throw/finally and REPL core`；② `06fad50aa97e3bc894cd5e969417c94449bf81ba` `test(errors): add 24 verified throw/finally black-box cases`；③ `125b4db5f6e34eac8b98810d0e5865e65c320901` `perf(profile): add single-process micro-benchmark and runtime profile`；④ `aec6076f67a945dcbddc0e56c907c34f3d5a5dcc` `feat(app): refactor log_report counting with dict`；⑤ `3b59f12e277a9d47869e2fa4b80094d1cd3b5c94` `docs: sync guides, demo, skill, status and S42 report`；⑥ 数字校准提交（`docs: correct integrity link counts`，即包含本报告的最终笔，把改造后完整性链接数从基线的 394/297 更正为实测 401/304；SHA 由主窗口以 `git log -1 feature/lwt-core-0.2` 核对，本正文不预写自身 SHA）。 |
 | 最终 `git status -sb` | `## feature/lwt-core-0.2`，工作区干净；`git diff --check` 0、Markdown 667 链接全解析、保护路径差异为空。 |
 | 远端 | **未推送**；无远端最终 SHA，Actions 未查询，不沿用候选旧 SHA。 |
 | 全量 unittest（系统 Python 3.13.7 + Tk 8.6） | `Ran 569 tests in 1265.982s`，`FAILED (failures=1)`；唯一失败为基线既有环境性 Tk worker 超时（干净 `main` 对照同样失败），其余 568 项通过。 |
