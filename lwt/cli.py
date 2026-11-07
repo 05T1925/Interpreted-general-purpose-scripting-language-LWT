@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import io
 import json
 import os
 import sys
@@ -10,11 +12,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, BinaryIO, Sequence, TextIO
 
+from .concurrency import ScheduleReplayMismatch, ScheduleTracer, source_digest
 from .errors import LwtError, format_diagnostic
 from .lexer import scan
 from .modules import load_module_graph
 from .parser import parse
-from .runtime import ReplSession, execute
+from .runtime import ReplSession, _program_has_spawn, execute
 
 if TYPE_CHECKING:
     from .analyzer import Diagnostic
@@ -86,6 +89,81 @@ def parse_profile_cli_args(argv: Sequence[str]) -> ProfileArguments:
     if remaining and remaining[0] != "--":
         raise LwtError("CliError", "program arguments must follow --", 4)
     return ProfileArguments(argv[1], argv[2], tuple(remaining[1:]) if remaining else ())
+
+
+@dataclass(frozen=True, slots=True)
+class ScheduleArguments:
+    source_path: str
+    program_args: tuple[str, ...]
+    policy: str
+    log_path: str | None
+    replay_path: str | None
+
+
+def parse_schedule_cli_args(argv: Sequence[str]) -> ScheduleArguments:
+    """Parse ``[--schedule=P] [--schedule-log=F | --schedule-replay=F] SOURCE
+    [-- ARGS...]``. Unknown flags and conflicting switches are CliError/4.
+    """
+
+    remaining = list(argv)
+    policy = "fifo"
+    log_path: str | None = None
+    replay_path: str | None = None
+    while remaining and remaining[0].startswith("--schedule"):
+        token = remaining.pop(0)
+        if token == "--schedule" or token.startswith("--schedule="):
+            value = token.partition("=")[2] if "=" in token else ""
+            if token == "--schedule":
+                if not remaining:
+                    raise LwtError("CliError", "--schedule needs a policy", 4)
+                value = remaining.pop(0)
+            if value != "fifo" and not (
+                value.startswith("random:") and value[7:].lstrip("-").isdigit()
+            ):
+                raise LwtError(
+                    "CliError", f"unknown schedule policy {value!r}", 4
+                )
+            policy = value
+        elif token.startswith("--schedule-log="):
+            log_path = token.partition("=")[2]
+        elif token.startswith("--schedule-replay="):
+            replay_path = token.partition("=")[2]
+        else:
+            raise LwtError("CliError", f"unknown schedule option {token!r}", 4)
+    if log_path is not None and replay_path is not None:
+        raise LwtError(
+            "CliError", "--schedule-log and --schedule-replay are mutually exclusive", 4
+        )
+    if log_path == "" or replay_path == "":
+        raise LwtError("CliError", "schedule trace path cannot be empty", 4)
+    if not remaining or remaining[0] == "--":
+        raise LwtError("CliError", "expected a source path", 4)
+    source_path = remaining.pop(0)
+    program_args: tuple[str, ...] = ()
+    if remaining:
+        if remaining[0] != "--":
+            raise LwtError("CliError", "program arguments must follow --", 4)
+        program_args = tuple(remaining[1:])
+    return ScheduleArguments(source_path, program_args, policy, log_path, replay_path)
+
+
+class _TeeTextIO(io.TextIOBase):
+    """Forward writes to a real stream while capturing raw text bytes."""
+
+    def __init__(self, target: TextIO) -> None:
+        self._target = target
+        self.buffer = io.BytesIO()
+
+    def write(self, text: str) -> int:  # type: ignore[override]
+        self._target.write(text)
+        self.buffer.write(text.encode("utf-8"))
+        return len(text)
+
+    def flush(self) -> None:  # type: ignore[override]
+        self._target.flush()
+
+    def isatty(self) -> bool:  # type: ignore[override]
+        return False
 
 
 def _configure_standard_streams() -> None:
@@ -316,6 +394,13 @@ def _run_profile(argv: Sequence[str]) -> int:
         arguments = parse_profile_cli_args(argv)
         source_path = arguments.source_path
         graph = load_module_graph(source_path, include_hashes=True)
+        # Tool boundary (spec 11.8): reject spawn before any task starts and
+        # before a profile target is preflighted/written, so no partial profile
+        # or breakpoint state can appear.
+        if any(_program_has_spawn(unit.program) for unit in graph.modules):
+            raise LwtError(
+                "CliError", "profile does not support spawn programs", 4
+            )
         target = _preflight_profile_target(arguments.profile_path, graph)
         from .observability import ProfileCollector
 
@@ -476,6 +561,128 @@ def _display_repl_value(value: object) -> str:
     return _display_value(value)
 
 
+def _run_schedule(argv: Sequence[str]) -> int:
+    """Execute with deterministic scheduling, trace recording, and replay."""
+
+    source_path: str | None = None
+    try:
+        args = parse_schedule_cli_args(argv)
+        source_path = args.source_path
+        # Source texts are needed to bind the trace to exact program bytes.
+        graph = load_module_graph(source_path, include_sources=True)
+    except LwtError as error:
+        sys.stderr.write(format_diagnostic(error, source_path) + "\n")
+        return error.exit_code
+
+    texts: dict[str, str] = {}
+    for unit in graph.modules:
+        key = str(unit.display_path or unit.canonical_path.name).replace("\\", "/")
+        texts[key] = unit.source_text or ""
+    entry_key = str(graph.entry.display_path or args.source_path).replace("\\", "/")
+    if entry_key not in texts:
+        texts[entry_key] = graph.entry.source_text or ""
+    digest = source_digest(texts)
+
+    replay_doc: dict[str, object] | None = None
+    if args.replay_path:
+        try:
+            replay_doc = ScheduleTracer.load(args.replay_path)
+        except ScheduleReplayMismatch as mismatch:
+            sys.stderr.write(
+                format_diagnostic(LwtError("CliError", str(mismatch), 4), args.replay_path)
+                + "\n"
+            )
+            return 4
+
+    policy = replay_doc["policy"] if replay_doc else args.policy
+    decisions: list[dict[str, object]] = []
+    out_tee = _TeeTextIO(sys.stdout)
+    err_tee = _TeeTextIO(sys.stderr)
+    exit_code = 0
+    errorMessage: str | None = None
+    try:
+        execute(
+            graph.entry.program,
+            sys.stdin.buffer,
+            out_tee,
+            args.program_args,
+            module_graph=graph,
+            source_path=args.source_path,
+            schedule_policy=policy,
+            schedule_replay=args.replay_path,
+            source_texts=texts,
+            schedule_decisions=decisions,
+        )
+    except LwtError as error:
+        exit_code = error.exit_code
+        errorMessage = format_diagnostic(error, args.source_path)
+    except ScheduleReplayMismatch as mismatch:
+        exit_code = 4
+        errorMessage = format_diagnostic(
+            LwtError("CliError", str(mismatch), 4), args.replay_path or args.source_path
+        )
+    if errorMessage is not None:
+        err_tee.write(errorMessage + "\n")
+    stdout_bytes = out_tee.buffer.getvalue()
+    stderr_bytes = err_tee.buffer.getvalue()
+
+    if args.log_path and exit_code == 0:
+        doc = {
+            "schema": "lwt-schedule-trace/1",
+            "schema_version": 1,
+            "source": args.source_path,
+            "source_sha256": digest,
+            "program_args": list(args.program_args),
+            "policy": policy,
+            "expected_exit_code": exit_code,
+            "expected_stdout_sha256": hashlib.sha256(stdout_bytes).hexdigest(),
+            "expected_stderr_sha256": hashlib.sha256(stderr_bytes).hexdigest(),
+            "decisions": decisions,
+        }
+        try:
+            ScheduleTracer.write(args.log_path, doc)
+        except OSError as error:
+            sys.stderr.write(
+                format_diagnostic(
+                    LwtError("CliError", f"cannot write schedule trace: {error}", 4),
+                    args.log_path,
+                )
+                + "\n"
+            )
+            return 4
+    elif args.replay_path and replay_doc is not None and exit_code == 0:
+        # Replay success requires byte-identical output and decision count.
+        checks = (
+            ("expected_exit_code", replay_doc.get("expected_exit_code"), exit_code),
+            (
+                "expected_stdout_sha256",
+                replay_doc.get("expected_stdout_sha256"),
+                hashlib.sha256(stdout_bytes).hexdigest(),
+            ),
+            (
+                "expected_stderr_sha256",
+                replay_doc.get("expected_stderr_sha256"),
+                hashlib.sha256(stderr_bytes).hexdigest(),
+            ),
+            ("decisions", len(replay_doc.get("decisions", [])), len(decisions)),
+        )
+        for label, expected, actual in checks:
+            if expected != actual:
+                sys.stderr.write(
+                    format_diagnostic(
+                        LwtError(
+                            "CliError",
+                            f"replay mismatch in {label}: expected {expected!r}, got {actual!r}",
+                            4,
+                        ),
+                        args.replay_path,
+                    )
+                    + "\n"
+                )
+                return 4
+    return exit_code
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Read, lex, parse, and execute one LWT source file."""
 
@@ -495,6 +702,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _run_check(arguments)
     if arguments and arguments[0] == "--profile":
         return _run_profile(arguments)
+    if any(arg.startswith("--schedule") for arg in arguments):
+        return _run_schedule(arguments)
     source_path: str | None = None
 
     try:

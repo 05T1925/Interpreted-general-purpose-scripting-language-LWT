@@ -3,9 +3,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, fields, is_dataclass
+from concurrent.futures import Future
 import sys
 from pathlib import Path
-from typing import BinaryIO, NoReturn, TextIO
+import threading
+from typing import Any, BinaryIO, NoReturn, TextIO
+
+from .concurrency import (
+    DeadlockDetected,
+    ScheduleReplayMismatch,
+    ScheduleTracer,
+    Scheduler,
+    current_task_id,
+    set_current_task_id,
+    source_digest,
+)
 
 from .ast_nodes import (
     ArrayExpression,
@@ -164,8 +176,7 @@ class _RuntimeContext:
         "profile_source",
         "debug_hook",
         "module_unit",
-        "next_task_id",
-        "next_channel_id",
+        "scheduler",
     )
 
     def __init__(
@@ -194,9 +205,9 @@ class _RuntimeContext:
         self.profile_source = profile_source
         self.debug_hook = debug_hook
         self.module_unit = module_unit
-        # S43: opaque handle numbering, shared by all tasks of this execution.
-        self.next_task_id = 1
-        self.next_channel_id = 1
+        # S43: the deterministic scheduler, wired in only for programs that
+        # use `spawn`. None means the ordinary, zero-overhead sequential path.
+        self.scheduler: Any = None
 
 
 class Environment:
@@ -251,6 +262,126 @@ def format_decimal_integer(value: int) -> str:
     return "-" + rendered if negative else rendered
 
 
+# ---------------------------------------------------------------------------
+# S43 concurrency bridge. These helpers are the *only* place the tree-walk
+# runtime touches the scheduler; the hot _execute_statement/_evaluate paths
+# gain no hooks (invariant I2).
+# ---------------------------------------------------------------------------
+def _program_has_spawn(program: Program) -> bool:
+    """True if any expression is a SpawnExpression (recursive, id-ordered)."""
+
+    found = False
+
+    def walk(value: object) -> None:
+        nonlocal found
+        if found or value is None or isinstance(
+            value, (str, int, bool, TokenKind, SourceLocation)
+        ):
+            return
+        if isinstance(value, SpawnExpression):
+            found = True
+            return
+        if isinstance(value, tuple):
+            for child in value:
+                walk(child)
+            return
+        if is_dataclass(value):
+            for descriptor in fields(value):
+                walk(getattr(value, descriptor.name))
+
+    walk(program)
+    return found
+
+
+def _task_runner(
+    task_id: int,
+    declaration: FunctionDeclaration,
+    arguments: list[object],
+    target_runtime: _RuntimeContext,
+    call_location: SourceLocation,
+    qualified_name: str,
+) -> None:
+    """Body executed on a spawned task's host thread."""
+
+    scheduler = target_runtime.scheduler
+    assert scheduler is not None
+    set_current_task_id(task_id)
+    state = scheduler.task_state(task_id)
+    try:
+        result = _invoke_user_function(
+            declaration,
+            arguments,
+            target_runtime.global_environment,
+            target_runtime,
+            caller_runtime=target_runtime,
+            call_location=call_location,
+            qualified_name=qualified_name,
+        )
+        state.result = result
+    except LwtError as error:
+        state.error = error
+    except ScheduleReplayMismatch:
+        # Fatal replay mismatch: the scheduler already woke every waiter with
+        # the same error; re-raise so submit_task records it verbatim.
+        raise
+    except SystemExit:
+        raise
+    except KeyboardInterrupt:
+        raise
+    except RecursionError:
+        state.error = LwtError(
+            "RuntimeError", "host recursion limit reached", 3, call_location
+        )
+    except BaseException:  # I6: never leak a host traceback
+        state.error = LwtError(
+            "RuntimeError", "internal task failure", 3, call_location
+        )
+    finally:
+        # I4: the token is always returned, on every path. During a fatal
+        # replay failure/shutdown the cleanup handoff may itself raise; that
+        # must not mask the original error nor leave a thread spinning.
+        try:
+            scheduler.switch(task_id, release="done", location=call_location)
+        except (DeadlockDetected, ScheduleReplayMismatch):
+            pass
+        set_current_task_id(0)
+
+
+def _drain_tasks(runtime: _RuntimeContext, scheduler: Scheduler) -> None:
+    """Top-level finish (spec 11.7/11.6): wait for every unfinished task in id
+    order; a task whose error was never consumed by an explicit join is raised
+    here with its original location. A task already joined (success or error)
+    is not re-raised -- the user's attempt/recover already handled it.
+    """
+
+    set_current_task_id(0)
+    with scheduler.cond:
+        task_ids = sorted(tid for tid in scheduler.tasks if tid != 0)
+    for task_id in task_ids:
+        while True:
+            with scheduler.cond:
+                state = scheduler.task_state(task_id)
+                if state.status == "done":
+                    if state.error is not None and not state.joined:
+                        error = state.error
+                        if isinstance(error, LwtError):
+                            raise error
+                        raise LwtError(
+                            "RuntimeError", "internal task failure", 3,
+                            state.last_block_location,
+                        ) from None
+                    break  # joined (or successful): already accounted for
+                location = state.last_block_location
+            try:
+                scheduler.switch(
+                    0, release="blocked", block_on=task_id, location=location
+                )
+            except DeadlockDetected:
+                raise LwtError(
+                    "RuntimeError", "deadlock detected", 3, location
+                ) from None
+
+
 def execute(
     program: Program,
     input_stream: BinaryIO | None = None,
@@ -261,6 +392,10 @@ def execute(
     source_path: str | None = None,
     observer: object | None = None,
     debug_hook: object | None = None,
+    schedule_policy: str = "fifo",
+    schedule_replay: str | None = None,
+    source_texts: dict[str, str] | None = None,
+    schedule_decisions: list[dict[str, Any]] | None = None,
 ) -> None:
     """Execute a supported LWT program or raise a located LWT error.
 
@@ -268,6 +403,14 @@ def execute(
     happen before any evaluation or output.
     ``input_stream`` is binary so LF and CRLF handling is independent of host
     text-mode newline conversion.
+
+    S43 adds optional deterministic scheduling: when the program contains a
+    ``spawn``, a ``Scheduler`` is created and every module context is wired to
+    it. With no ``spawn`` the sequential path is unchanged (zero overhead).
+    When ``schedule_decisions`` is provided, the scheduler's decisions are
+    appended to it on success; the CLI binds them with captured output bytes
+    to write a schedule trace. ``schedule_replay`` supplies the trace whose
+    decisions are forced (binding validation happens in the CLI).
     """
 
     if input_stream is None:
@@ -346,14 +489,67 @@ def execute(
             _validate_module_calls(unit.program, unit)
 
         runtime = contexts[graph.entry]
+
+        # S43: detect `spawn` anywhere in the loaded module graph. Programs
+        # without it take the original sequential path with zero overhead.
+        uses_spawn = any(_program_has_spawn(unit.program) for unit in graph.modules)
+        scheduler: Scheduler | None = None
+        tracer: ScheduleTracer | None = None
+        replay_doc: dict[str, Any] | None = None
+        if uses_spawn:
+            if observer is not None or debug_hook is not None:
+                # Tool boundary (spec 11.8): refuse before any task starts.
+                raise LwtError(
+                    "CliError",
+                    "profile and debugger do not support spawn",
+                    4,
+                )
+            entry_source = source_path or "entry.lwt"
+            texts = source_texts or {entry_source: ""}
+            digest = source_digest(texts)
+            replay_doc = (
+                ScheduleTracer.load(schedule_replay) if schedule_replay else None
+            )
+            tracer = ScheduleTracer(
+                source=entry_source,
+                source_sha256=digest,
+                program_args=program_args,
+                policy=schedule_policy,
+                replay=replay_doc,
+            )
+            tracer.validate_bindings()
+            scheduler = Scheduler(policy=schedule_policy, tracer=tracer)
+            for ctx in contexts.values():
+                ctx.scheduler = scheduler
+            set_current_task_id(0)
+
         if debug_hook is not None:
             _notify_debug_hook(debug_hook, "program_start", runtime)
-        for item in program.items:
-            if isinstance(
-                item, (ImportDeclaration, FunctionDeclaration, RecordDeclaration)
-            ):
-                continue
-            _execute_statement(item, runtime.global_environment, runtime)
+        try:
+            for item in program.items:
+                if isinstance(
+                    item, (ImportDeclaration, FunctionDeclaration, RecordDeclaration)
+                ):
+                    continue
+                _execute_statement(item, runtime.global_environment, runtime)
+            if scheduler is not None:
+                _drain_tasks(runtime, scheduler)
+        except DeadlockDetected:
+            if scheduler is not None and scheduler.replay_error is not None:
+                raise LwtError(
+                    "CliError", str(scheduler.replay_error), 4
+                ) from None
+            location = scheduler.deadlock_location if scheduler is not None else None
+            raise LwtError(
+                "RuntimeError", "deadlock detected", 3, location
+            ) from None
+        except ScheduleReplayMismatch as mismatch:
+            raise LwtError("CliError", str(mismatch), 4) from None
+        finally:
+            if scheduler is not None:
+                scheduler.stop()
+                scheduler.close()
+                set_current_task_id(0)
     except LwtError as error:
         if observer is not None:
             status = "runtime_error" if error.category == "RuntimeError" and error.exit_code == 3 else "error"
@@ -377,6 +573,11 @@ def execute(
     else:
         if observer is not None:
             _notify_observer(observer, "program_end", profile_entry, program.location, "success", 0)
+        # Expose scheduling decisions to the CLI, which owns the captured
+        # stdout/stderr bytes needed to bind the full trace document.
+        if schedule_decisions is not None and tracer is not None:
+            schedule_decisions.extend(tracer.decisions)
+    return None
 
 
 def _notify_observer(observer: object, method: str, *arguments: object) -> None:
@@ -837,9 +1038,8 @@ def _evaluate(
         return _construct_dict(expression, environment, runtime)
 
     if isinstance(expression, SpawnExpression):
-        # WP1 placeholder: validate the target/arity like a real spawn and
-        # evaluate arguments left-to-right, but return an inert handle. WP2
-        # replaces this with a live task in the deterministic scheduler.
+        # Spec 11.3: resolve target -> check arity -> evaluate args left-to-right
+        # -> create a ready task -> return Task. spawn itself does NOT switch.
         target_runtime = runtime
         if expression.alias is not None:
             target_runtime = runtime.imports.get(expression.alias.name)  # type: ignore[assignment]
@@ -864,8 +1064,23 @@ def _evaluate(
                 f"{len(declaration.parameters)} arguments, got {len(arguments)}",
                 expression.location,
             )
-        task_id = runtime.next_task_id
-        runtime.next_task_id += 1
+        scheduler = runtime.scheduler
+        assert scheduler is not None  # a program with spawn always has one
+        task_id = scheduler.new_task_id()
+        qualified = (
+            f"{expression.alias.name}.{expression.callee.name}"
+            if expression.alias is not None
+            else expression.callee.name
+        )
+        scheduler.submit_task(
+            task_id,
+            lambda tid: _task_runner(
+                tid, declaration, arguments, target_runtime,
+                expression.location, qualified,
+            ),
+        )
+        with scheduler.cond:
+            scheduler.register_task(task_id)
         return _TaskValue(task_id)
 
     if isinstance(expression, RecordConstructionExpression):
@@ -1010,6 +1225,10 @@ def _evaluate(
             for argument in expression.arguments
         ]
         if name == "input":
+            if runtime.scheduler is not None and current_task_id() != 0:
+                _runtime_error(
+                    "input is not available in a task", expression.callee.location
+                )
             if arguments:
                 _runtime_error("input expects 0 arguments", expression.callee.location)
             return _read_input_line(runtime.input_stream, expression.callee.location)
@@ -1099,6 +1318,28 @@ def _checked_array_index(
     return index
 
 
+def _decode_text_file(contents: bytes, location: SourceLocation) -> str:
+    """Shared UTF-8/BOM/newline decoding for read_text (sync and async)."""
+
+    try:
+        text = contents.decode("utf-8", errors="strict")
+    except UnicodeDecodeError:
+        _runtime_error("text file is not valid UTF-8", location)
+    if text.startswith("\ufeff"):
+        text = text[1:]
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def _read_text_sync(path: str, location: SourceLocation) -> str:
+    """Original sequential read_text path (unchanged bytes/contract)."""
+
+    try:
+        contents = Path(path).read_bytes()
+    except (OSError, ValueError):
+        _runtime_error("could not read text file", location)
+    return _decode_text_file(contents, location)
+
+
 def _invoke_builtin(
     name: str,
     arguments: list[object],
@@ -1119,17 +1360,35 @@ def _invoke_builtin(
         path = arguments[0]
         if type(path) is not str:
             _runtime_error("read_text expects a string path", location)
+        scheduler = runtime.scheduler
+        if scheduler is None or current_task_id() == 0 and len(scheduler.tasks) == 1:
+            # Sequential path (no peers): original synchronous read, zero
+            # concurrency overhead. Contract bytes are unchanged.
+            return _read_text_sync(path, location)
+        # I/O scheduling point (spec 11.8): submit the blocking read to the
+        # internal pool, yield the token, and let the batch barrier resume us
+        # in task-id order. Multiple reads overlap in real time while the
+        # scheduling order stays deterministic.
+        future = scheduler.io_pool.submit(Path(path).read_bytes)
+        task_id = current_task_id()
+
+        def continuation(done: Future[Any]) -> object:
+            try:
+                contents = done.result()
+            except (OSError, ValueError):
+                return LwtError("RuntimeError", "could not read text file", 3, location)
+            return _decode_text_file(contents, location)
+
         try:
-            contents = Path(path).read_bytes()
-        except (OSError, ValueError):
-            _runtime_error("could not read text file", location)
-        try:
-            text = contents.decode("utf-8", errors="strict")
-        except UnicodeDecodeError:
-            _runtime_error("text file is not valid UTF-8", location)
-        if text.startswith("\ufeff"):
-            text = text[1:]
-        return text.replace("\r\n", "\n").replace("\r", "\n")
+            injected = scheduler.switch(
+                task_id, release="io_pending", io=(future, continuation),
+                location=location,
+            )
+        except DeadlockDetected:
+            raise LwtError("RuntimeError", "deadlock detected", 3, location) from None
+        if isinstance(injected, BaseException):
+            raise injected
+        return injected
 
     if name == "len":
         if len(arguments) != 1:
@@ -1215,17 +1474,11 @@ def _invoke_builtin(
         )
 
     if name in _CONCURRENCY_BUILTINS:
-        # WP1 registers the names/arities and validates arguments; the actual
-        # scheduler-backed behavior lands in WP2. Raise an explicit, located
-        # runtime error rather than returning a half-true placeholder value.
         if len(arguments) != _CONCURRENCY_BUILTINS[name]:
             _runtime_error(
                 f"{name} expects {_CONCURRENCY_BUILTINS[name]} arguments", location
             )
-        _runtime_error(
-            f"concurrency built-in {name!r} requires the WP2 deterministic scheduler",
-            location,
-        )
+        return _invoke_concurrency_builtin(name, arguments, location, runtime)
 
     raise AssertionError(f"unknown built-in function: {name!r}")
 
@@ -1244,6 +1497,107 @@ _CONCURRENCY_BUILTINS = {
     "close": 1,
     "join": 1,
 }
+
+
+def _invoke_concurrency_builtin(
+    name: str,
+    arguments: list[object],
+    location: SourceLocation,
+    runtime: _RuntimeContext,
+) -> object:
+    """Scheduling-point built-ins (spec 11.3/11.5/11.6)."""
+
+    scheduler = runtime.scheduler
+    assert scheduler is not None
+    task_id = current_task_id()
+
+    if name == "yield":
+        # Explicit yield is a scheduling point; main with no other ready task
+        # is a no-op that returns the token immediately.
+        try:
+            scheduler.switch(task_id, release="ready", location=location)
+        except DeadlockDetected:
+            pass  # no peers: yield is a no-op, keep running
+        return None
+
+    if name == "channel":
+        return _ChannelValue(scheduler.new_channel_id())
+
+    if name == "send":
+        channel_value, value = arguments
+        if not isinstance(channel_value, _ChannelValue):
+            _runtime_error("send first argument must be a channel", location)
+        channel = scheduler.channel(channel_value.channel_id)
+        if channel.closed:
+            _runtime_error("send on a closed channel", location)
+        with scheduler.cond:
+            channel.send(value)
+            # If a receiver is blocked, hand it the value directly; the
+            # waiting task's switch() returns the injected value.
+            if channel.waiting:
+                scheduler.wake_receiver(channel_value.channel_id, value)
+        return None
+
+    if name == "receive":
+        channel_value = arguments[0]
+        if not isinstance(channel_value, _ChannelValue):
+            _runtime_error("receive expects a channel", location)
+        channel = scheduler.channel(channel_value.channel_id)
+        with scheduler.cond:
+            would_block, value = channel.receive()
+            if not would_block:
+                return value
+            channel.waiting.append(task_id)
+        try:
+            return scheduler.switch(
+                task_id, release="blocked", location=location
+            )
+        except DeadlockDetected:
+            raise LwtError("RuntimeError", "deadlock detected", 3, location) from None
+
+    if name == "close":
+        channel_value = arguments[0]
+        if not isinstance(channel_value, _ChannelValue):
+            _runtime_error("close expects a channel", location)
+        channel = scheduler.channel(channel_value.channel_id)
+        with scheduler.cond:
+            channel.close()
+            # Waking with None on a closed channel: each blocked receiver
+            # returns null (spec 11.5).
+            while channel.waiting:
+                scheduler.wake_receiver(channel_value.channel_id, None)
+        return None
+
+    if name == "join":
+        task_value = arguments[0]
+        if not isinstance(task_value, _TaskValue):
+            _runtime_error("join expects a task", location)
+        target = task_value.task_id
+        if target == task_id:
+            _runtime_error("a task cannot join itself", location)
+        while True:
+            with scheduler.cond:
+                state = scheduler.task_state(target)
+                if state.status == "done":
+                    state.joined = True  # consumed by an explicit join
+                    if state.error is not None:
+                        error = state.error
+                        if isinstance(error, LwtError):
+                            raise error
+                        raise LwtError(
+                            "RuntimeError", "internal task failure", 3, location
+                        ) from None
+                    return state.result
+            try:
+                scheduler.switch(
+                    task_id, release="blocked", block_on=target, location=location
+                )
+            except DeadlockDetected:
+                raise LwtError(
+                    "RuntimeError", "deadlock detected", 3, location
+                ) from None
+
+    raise AssertionError(f"unknown concurrency built-in: {name!r}")
 
 
 def _expect_dict(value: object, name: str, location: SourceLocation) -> _DictValue:

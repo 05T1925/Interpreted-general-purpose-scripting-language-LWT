@@ -28,6 +28,7 @@ from .ast_nodes import (
     RecordConstructionExpression,
     RecordDeclaration,
     ReturnStatement,
+    SpawnExpression,
     Statement,
     ThrowStatement,
     UnaryExpression,
@@ -372,6 +373,50 @@ class _Analyzer:
             for initializer in expression.fields:
                 self._analyze_expression(
                     initializer.value, scope, unit, symbols, hidden_here=hidden_here
+                )
+        elif isinstance(expression, SpawnExpression):
+            # S43: check the spawn target exists and the arity matches. This is
+            # a static diagnostic only; concurrency correctness is not checked.
+            name = expression.callee.name
+            if expression.alias is not None:
+                resolution = resolve_module_call(unit, expression)  # type: ignore[arg-type]
+                target_declaration = resolution.declaration
+                if resolution.problem == "alias":
+                    self._report(
+                        unit, "E-SPAWN-001",
+                        f"undefined module alias {expression.alias.name!r}",
+                        expression.alias.location,
+                    )
+                elif resolution.problem == "member":
+                    self._report(
+                        unit, "E-SPAWN-001",
+                        f"module {expression.alias.name!r} has no function {name!r}",
+                        expression.callee.location,
+                    )
+                elif target_declaration is not None and len(target_declaration.parameters) != len(expression.arguments):
+                    self._report(
+                        unit, "E-SPAWN-002",
+                        f"spawn {expression.alias.name}.{name} expects "
+                        f"{len(target_declaration.parameters)} arguments, got {len(expression.arguments)}",
+                        expression.location,
+                    )
+            else:
+                declaration = symbols.functions.get(name)
+                if declaration is None:
+                    self._report(
+                        unit, "E-SPAWN-001",
+                        f"undefined function {name!r} for spawn",
+                        expression.callee.location,
+                    )
+                elif len(declaration.parameters) != len(expression.arguments):
+                    self._report(
+                        unit, "E-SPAWN-002",
+                        f"spawn {name!r} expects {len(declaration.parameters)} arguments, got {len(expression.arguments)}",
+                        expression.callee.location,
+                    )
+            for argument in expression.arguments:
+                self._analyze_expression(
+                    argument, scope, unit, symbols, hidden_here=hidden_here
                 )
         elif isinstance(expression, CallExpression):
             name = expression.callee.name

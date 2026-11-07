@@ -34,6 +34,7 @@ from .ast_nodes import (
     RecordConstructionExpression,
     RecordDeclaration,
     ReturnStatement,
+    SpawnExpression,
     Statement,
     ThrowStatement,
     UnaryExpression,
@@ -161,6 +162,9 @@ class ProfileCollector:
             elif isinstance(expression, RecordConstructionExpression):
                 for field in expression.fields:
                     scan_expression(field.value)
+            elif isinstance(expression, SpawnExpression):
+                for child in expression.arguments:
+                    scan_expression(child)
             elif isinstance(expression, CallExpression):
                 for child in expression.arguments:
                     scan_expression(child)

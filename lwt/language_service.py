@@ -523,6 +523,30 @@ def _build_features(unit: ModuleUnit, text: str) -> DocumentFeatures:
                 definitions[(expression.type_name.location.line, expression.type_name.location.column)] = ref
                 hovers[(expression.type_name.location.line, expression.type_name.location.column)] = "record " + record.name.name + "{" + ", ".join(f.name for f in record.fields) + "}"
             for initializer in expression.fields: visit_expression(initializer.value, scope, hidden_here)
+        elif isinstance(expression, ast.SpawnExpression):
+            # S43: keep LSP node traversal total (no crash on spawn). Provide
+            # hover/definition for the target function like a normal call.
+            name = expression.callee.name
+            if expression.alias is not None:
+                alias_ref = import_refs.get(expression.alias.name)
+                if alias_ref is not None:
+                    definitions[(expression.alias.location.line, expression.alias.location.column)] = alias_ref
+                    hovers[(expression.alias.location.line, expression.alias.location.column)] = hovers[(alias_ref.line, alias_ref.column)]
+                resolution = resolve_module_call(unit, expression)  # type: ignore[arg-type]
+                target_decl = resolution.declaration
+                if target_decl is not None:
+                    ref = definition(target_decl.name)
+                    definitions[(expression.callee.location.line, expression.callee.location.column)] = ref
+                    hovers[(expression.callee.location.line, expression.callee.location.column)] = _function_hover(target_decl)
+            else:
+                declaration = by_name.get(name)
+                if name in BUILTIN_ARITIES:
+                    hovers[(expression.callee.location.line, expression.callee.location.column)] = BUILTIN_HOVER[name]
+                elif declaration is not None:
+                    ref = definition(declaration.name)
+                    definitions[(expression.callee.location.line, expression.callee.location.column)] = ref
+                    hovers[(expression.callee.location.line, expression.callee.location.column)] = _function_hover(declaration)
+            for argument in expression.arguments: visit_expression(argument, scope, hidden_here)
         elif isinstance(expression, ast.CallExpression):
             name = expression.callee.name
             declaration = by_name.get(name)

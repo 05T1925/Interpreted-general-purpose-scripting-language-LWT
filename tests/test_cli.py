@@ -643,8 +643,11 @@ class S5FunctionCliTests(unittest.TestCase):
     def test_function_arguments_evaluate_left_to_right_before_arity_check(self) -> None:
         source = (
             'fn mark(value) { emit value; return value; } '
-            'fn join(left, right) { return left + right; } '
-            'emit join(mark("first"), mark("second")); '
+            # S43: `join` is now a concurrency built-in; a user function may no
+            # longer take that name. Renamed to preserve this S5 test's intent
+            # (argument evaluation order before arity check).
+            'fn combine(left, right) { return left + right; } '
+            'emit combine(mark("first"), mark("second")); '
             'fn one(value) { return value; } '
             'fn extra_a() { emit "arg-a"; return 1; } '
             'fn extra_b() { emit "arg-b"; return 2; } '
