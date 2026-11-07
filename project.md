@@ -6,6 +6,8 @@
 
 > **S42（2026-11-07，执行窗口）：** 以 `main = 5027860efc8a1cce342ca13b1434d7724aeeffc4` 为基线，在 `feature/lwt-core-0.2` 分支承接并收尾 LWT 0.2 语言核心增强：dict 映射、throw/finally、交互 REPL、单进程运行时画像，以及 log_report.lwt 的 dict 计数改造（输出字节不变）。基线黑盒 330/330；新增 24 个 throw/finally 黑盒后全量 **354/354**，完整性 `cases=354; matrix_links=401; referenced_cases=304`。执行窗口报告见[S42 执行报告](docs/s42-execution-report.md)。该分支**不推送、不合并、不打标签**；最终 SHA 的 Actions、Python 3.10/Linux 与现场人工 GUI 均为未验证。基线裁决理由（含 `milestone/final-acceptance` 独立文档线）见 S42 报告 §1.1。
 
+> **S43（2026-11-07，执行窗口，任务书编号 S42 确定性并发）：** 用户裁决"叠加在语言核心之上，记为 S43"，从 `feature/lwt-core-0.2 @ a996591` 创建 `feature/deterministic-concurrency`，为 LWT 增加**协作式确定性可重放并发子语言**（`spawn`/`join`/`yield()`/通道，规范 §11）：单令牌 Event 调度、fifo/random:SEED、轨迹绑定与重放篡改拒绝、死锁检测、read_text I/O 批次屏障、46 项并发黑盒 + 19 单测、233 行并发应用（与 log_report 差分等价）、found/absent/tampered 三态证据、诚实 I/O 重叠性能实验、PPT 12→15 页（旧图表 12 数值点未变）。全量黑盒 **400/400**，完整性 `cases=400; matrix_links=445; referenced_cases=348`，确定性 46×10 全稳定。执行窗口报告见 [S43 报告](docs/s42-deterministic-concurrency.md)、[并发契约卡](docs/concurrency.md)、[三态证据](reports/s42-schedules/summary.md)。**不推送、不合并、不打标签**；最终 SHA 的 Actions、Python 3.10/Linux、DAP 协议帧、Agent 盲测与现场人工 GUI 均为未验证。
+
 ## 目标与课程评分
 
 依据[作业原文](大作业内容.md)，交付 LWT 解释型通用脚本语言及解释器、完整黑盒测试、LWT/Python 性能比较、人类与 Agent 开发指南、至少 200 行的 Agent 编写 LWT 应用及开发记录、Git 历史、介绍 PPT 和线下答辩。评分为解释器 20、测试 20、性能 10、指南 20、LWT 应用 30 分。
@@ -48,6 +50,10 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - Python 全量：python -m unittest discover -s tests -q
 - VS Code 扩展：进入 editors/vscode-lwt 后执行 npm ci 与 npm test；Extension Host 需要设置 VSCODE_EXECUTABLE_PATH 指向 Code.exe。
 - Agent LWT 应用：python -m lwt app/log_report.lwt -- app/fixtures/sample.log
-- 有效 LWT 行数：python tools/count_lwt_lines.py app/log_report.lwt
+- 并发 LWT 应用：python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log
+- 并发确定性 10×：python tools/run_concurrency_determinism.py --repeat 10
+- 调度探索：python tools/explore_lwt_schedules.py --program tests/cases/concurrency/race-lost-update.lwt --seeds 1..200 --out reports/s42-schedules/found/lost-update
+- 并发性能实验：python tools/run_concurrency_benchmark.py --files 8 --size-mb 2 --repeats 7
+- 有效 LWT 行数：python tools/count_lwt_lines.py app/log_report.lwt（并发应用：app/concurrent_log_report.lwt）
 
 语言开发工具边界见[正式规范](docs/language-spec.md)、[静态检查](docs/static-checker.md)、[Language Server](docs/language-server.md)、[调试器](docs/debugger.md)、[VS Code 扩展](docs/vscode-extension.md)和[S33 测试工作台报告](docs/s33-testing-workbench.md)。发生冲突时以作业原文、正式语义和当前实测证据为准。

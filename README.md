@@ -113,6 +113,18 @@ python -m lwt examples/throw_finally.lwt
 
 `examples/dicts.lwt` 演示新增的 **dict 映射**（插入序显示、`int`/`str` 键区分、`keys`/`values`/`items`/`has`/`get`/`put`/`delete` 内置、身份相等、`<cycle>` 显示）；`examples/throw_finally.lwt` 演示 **`throw`/`finally`** 结构化错误传播（含 finally 覆盖 return、Error 原样重抛）。语法与边界见[规范 §4.4/§10.6](docs/language-spec.md)。`python -m lwt --repl` 打开交互式会话（提示符走 stderr、`emit` 走 stdout，支持 `.help`/`.vars`/`.reset`/`.exit`），开发工具说明见[开发指南](docs/developer-guide.md)。S42 执行窗口报告与运行时画像见 [S42 执行报告](docs/s42-execution-report.md)、[画像报告](reports/runtime-profile.md)（独立证据，不改 S11 性能报告）。
 
+### S43 确定性并发（LWT 0.2）
+
+LWT 新增协作式、确定性可重放的并发子语言（规范第 11 节）：`spawn` 派生任务，预置 `join`/`yield()`/`channel()`/`send`/`receive`/`close`。设计目标是"每一次交错都可复现、可断言、可探索"，不是加速 CPU 计算。
+
+```powershell
+python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log
+python -m lwt --schedule=random:7 --schedule-log trace.json app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log
+python -m lwt --schedule-replay trace.json app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log
+```
+
+一页速查见[并发契约卡](docs/concurrency.md)，完整语义见[规范 §11](docs/language-spec.md)，三态证据（found/absent/tampered）见[调度证据摘要](reports/s42-schedules/summary.md)，诚实 I/O 重叠实验见[性能报告](reports/concurrency-performance.md)，阶段报告见 [S43 执行报告](docs/s42-deterministic-concurrency.md)。这些是新证据，不修改 S11 正式性能原始数据。
+
 `control_flow.lwt` 的实际输出是 `0\n-1\n2\n-3\n`；`functions.lwt` 的实际输出是 `120\n`。`collections.lwt` 在本阶段实测输出如下，展示 `each` 进入时保存浅快照：
 
 ```text
