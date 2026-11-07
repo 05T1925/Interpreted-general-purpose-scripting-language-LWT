@@ -1,0 +1,11 @@
+# S43 absent witness: an ordered aggregate whose result is independent of
+# scheduling. Tasks only compute and return; the main task joins in id order
+# and emits in that fixed order, so all seeds produce one outcome class.
+fn compute(x) { return x * x; }
+let a = spawn compute(2);
+let b = spawn compute(3);
+let c = spawn compute(4);
+let ra = join(a);
+let rb = join(b);
+let rc = join(c);
+emit str(ra) + "|" + str(rb) + "|" + str(rc);

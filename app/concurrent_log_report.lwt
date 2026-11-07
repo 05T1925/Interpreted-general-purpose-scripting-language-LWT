@@ -1,0 +1,353 @@
+# LWT concurrent log report application (S43 deterministic concurrency).
+# Python only drives processes/args/verification; all parsing, filtering,
+# aggregation and formatting happen in LWT, now with per-file concurrent I/O.
+#
+# Usage: python -m lwt app/concurrent_log_report.lwt -- FILE [FILE ...]
+# Each FILE is read by its own spawned task (read_text is an I/O scheduling
+# point, so waits overlap in real time). The main task joins in INPUT order,
+# never in completion order, so output is deterministic under every schedule.
+#
+# Differential equivalence (see docs/s42-app-dev-log.md): for a single input
+# file this program's report block is byte-identical to app/log_report.lwt's
+# output for that file. For multiple files each block is the analogous report;
+# the frozen contract maps fields block-by-block so a test can compare them.
+
+record LogRecord {
+    timestamp,
+    level,
+    module_name,
+    message,
+    raw
+};
+
+record Count {
+    name,
+    count,
+    selected
+};
+
+record Slice {
+    path,
+    total_lines,
+    valid_records,
+    malformed_lines,
+    matched_records,
+    level_counts,
+    module_counts,
+    examples,
+    failed
+};
+
+fn usage_error(message) {
+    fail("usage: python -m lwt app/concurrent_log_report.lwt -- FILE [FILE ...]; " + message);
+}
+
+fn file_count() {
+    let values = args();
+    return len(values);
+}
+
+fn file_at(index) {
+    let values = args();
+    return values[index];
+}
+
+fn is_ascii_decimal(text) {
+    when (len(text) == 0) {
+        return false;
+    }
+    let remaining = text;
+    let digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    each (digit in digits) {
+        remaining = remove_all(remaining, digit);
+    }
+    return remaining == "";
+}
+
+fn remove_all(text, marker) {
+    let pieces = split(text, marker);
+    let result = "";
+    each (piece in pieces) {
+        result = result + piece;
+    }
+    return result;
+}
+
+fn begins_with_option(text) {
+    when (text == "") {
+        return false;
+    }
+    let pieces = split(text, "--");
+    when (pieces[0] == "") {
+        return true;
+    }
+    return false;
+}
+
+fn validate_paths() {
+    let n = file_count();
+    when (n == 0) {
+        usage_error("missing INPUT_PATH");
+    }
+    let i = 0;
+    while (i < n) {
+        let path = file_at(i);
+        when (path == "") {
+            usage_error("INPUT_PATH must not be empty");
+        }
+        when (begins_with_option(path)) {
+            usage_error("unexpected option in file list: " + path);
+        }
+        i = i + 1;
+    }
+    return n;
+}
+
+fn logical_lines(text) {
+    let lines = [];
+    when (text == "") {
+        return lines;
+    }
+    let parts = split(text, "\n");
+    let limit = len(parts);
+    when (parts[limit - 1] == "") {
+        # A single trailing empty split part means the source ended in LF;
+        # remove exactly that terminator result.
+        limit = limit - 1;
+    }
+    let index = 0;
+    while (index < limit) {
+        push(lines, parts[index]);
+        index = index + 1;
+    }
+    return lines;
+}
+
+fn parse_log_line(line) {
+    let fields = split(line, "|");
+    when (len(fields) != 4) {
+        return null;
+    }
+    return LogRecord{
+        timestamp: fields[0],
+        level: fields[1],
+        module_name: fields[2],
+        message: fields[3],
+        raw: line
+    };
+}
+
+fn add_count(counts, name) {
+    # dict-backed O(1) frequency counting (same as the serial application).
+    when (has(counts, name)) {
+        put(counts, name, get(counts, name, 0) + 1);
+    } otherwise {
+        put(counts, name, 1);
+    }
+    return null;
+}
+
+fn count_array(counts) {
+    let rows = [];
+    each (name in keys(counts)) {
+        push(rows, Count{name: name, count: get(counts, name, 0), selected: false});
+    }
+    return rows;
+}
+
+fn analyze_lines(lines) {
+    let valid = 0;
+    let malformed = 0;
+    let matched = 0;
+    let levels = dict{};
+    let modules = dict{};
+    let examples = [];
+    each (line in lines) {
+        let record_value = parse_log_line(line);
+        when (record_value == null) {
+            malformed = malformed + 1;
+        } otherwise {
+            valid = valid + 1;
+            matched = matched + 1;
+            add_count(levels, record_value.level);
+            add_count(modules, record_value.module_name);
+            when (len(examples) < 3) {
+                push(examples, record_value);
+            }
+        }
+    }
+    return Slice{
+        path: "",
+        total_lines: len(lines),
+        valid_records: valid,
+        malformed_lines: malformed,
+        matched_records: matched,
+        level_counts: levels,
+        module_counts: modules,
+        examples: examples,
+        failed: false
+    };
+}
+
+fn failed_slice(path) {
+    # A bad file never drags the whole report down: the worker returns a
+    # failed slice and the main task reports it in-place (attempt/recover).
+    return Slice{
+        path: path,
+        total_lines: 0,
+        valid_records: 0,
+        malformed_lines: 0,
+        matched_records: 0,
+        level_counts: dict{},
+        module_counts: dict{},
+        examples: [],
+        failed: true
+    };
+}
+
+fn worker(path, ch) {
+    # Runs on a host thread. read_text is a scheduling point; its I/O overlaps
+    # with other workers while the scheduler keeps the token deterministic.
+    attempt {
+        let text = read_text(path);
+        let lines = logical_lines(text);
+        let slice = analyze_lines(lines);
+        slice.path = path;
+        send(ch, slice);
+    } recover (problem) {
+        # Recover a single unreadable/malformed file without failing the run.
+        send(ch, failed_slice(path));
+    }
+    return null;
+}
+
+fn emit_level_counts(counts) {
+    let emitted = 0;
+    while (emitted < len(counts)) {
+        let best_index = -1;
+        let index = 0;
+        while (index < len(counts)) {
+            when (counts[index].selected == false) {
+                when (best_index < 0) {
+                    best_index = index;
+                } otherwise {
+                    when (counts[index].name < counts[best_index].name) {
+                        best_index = index;
+                    }
+                }
+            }
+            index = index + 1;
+        }
+        when (best_index >= 0) {
+            emit counts[best_index].name + "|" + str(counts[best_index].count);
+            counts[best_index].selected = true;
+        }
+        emitted = emitted + 1;
+    }
+    return null;
+}
+
+fn is_better_module(candidate, current) {
+    when (candidate.count > current.count) {
+        return true;
+    }
+    when (candidate.count == current.count and candidate.name < current.name) {
+        return true;
+    }
+    return false;
+}
+
+fn emit_top_modules(counts, top_limit) {
+    let emitted = 0;
+    while (emitted < len(counts) and emitted < top_limit) {
+        let best_index = -1;
+        let index = 0;
+        while (index < len(counts)) {
+            when (counts[index].selected == false) {
+                when (best_index < 0) {
+                    best_index = index;
+                } otherwise {
+                    when (is_better_module(counts[index], counts[best_index])) {
+                        best_index = index;
+                    }
+                }
+            }
+            index = index + 1;
+        }
+        when (best_index >= 0) {
+            emit counts[best_index].name + "|" + str(counts[best_index].count);
+            counts[best_index].selected = true;
+        }
+        emitted = emitted + 1;
+    }
+    return null;
+}
+
+fn emit_examples(records) {
+    each (record_value in records) {
+        emit record_value.raw;
+    }
+    return null;
+}
+
+fn emit_slice(slice, top_limit) {
+    # Block header identifies the source file for multi-file runs. The
+    # remaining lines are byte-for-byte the serial application's format.
+    emit "=== " + slice.path + " ===";
+    when (slice.failed) {
+        emit "LWT log report (unavailable)";
+        emit "read failed for " + slice.path;
+        return null;
+    }
+    emit "LWT log report";
+    emit "Total lines: " + str(slice.total_lines);
+    emit "Valid records: " + str(slice.valid_records);
+    emit "Malformed lines: " + str(slice.malformed_lines);
+    emit "Matched records: " + str(slice.matched_records);
+    emit "Level counts:";
+    emit_level_counts(count_array(slice.level_counts));
+    emit "Top modules:";
+    emit_top_modules(count_array(slice.module_counts), top_limit);
+    emit "Matching examples (first 3):";
+    emit_examples(slice.examples);
+    return null;
+}
+
+fn main() {
+    let n = validate_paths();
+    let top_limit = 5;
+    # One dedicated channel per file: the main task reads them in INPUT order,
+    # so completion order (scheduler-dependent) never affects output order.
+    # This is the deterministic-merge boundary: no sorting, no timestamps.
+    let channels = [];
+    let tasks = [];
+    let i = 0;
+    while (i < n) {
+        push(channels, channel());
+        i = i + 1;
+    }
+    i = 0;
+    while (i < n) {
+        let path = file_at(i);
+        let ch = channels[i];
+        push(tasks, spawn worker(path, ch));
+        i = i + 1;
+    }
+    # Collect in input order. `receive` on each dedicated channel returns the
+    # slice for that file regardless of which worker finished first. A deadlock
+    # here would mean a worker never sent; the scheduler reports `deadlock
+    # detected` rather than hanging (spec 11.6).
+    i = 0;
+    while (i < n) {
+        let ch = channels[i];
+        let slice = receive(ch);
+        emit_slice(slice, top_limit);
+        i = i + 1;
+    }
+    # Explicitly join workers so no task is left unjoined at program finish;
+    # each worker already sent, so these joins never block on I/O.
+    each (task in tasks) {
+        join(task);
+    }
+}
+main();

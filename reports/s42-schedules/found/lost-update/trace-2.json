@@ -1,0 +1,50 @@
+{
+  "decisions": [
+    {
+      "chosen": 2,
+      "index": 0,
+      "ready": [
+        1,
+        2
+      ]
+    },
+    {
+      "chosen": 2,
+      "index": 1,
+      "ready": [
+        1,
+        2
+      ]
+    },
+    {
+      "chosen": 1,
+      "index": 2,
+      "ready": [
+        1
+      ]
+    },
+    {
+      "chosen": 1,
+      "index": 3,
+      "ready": [
+        1
+      ]
+    },
+    {
+      "chosen": 0,
+      "index": 4,
+      "ready": [
+        0
+      ]
+    }
+  ],
+  "expected_exit_code": 0,
+  "expected_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "expected_stdout_sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+  "policy": "random:1",
+  "program_args": [],
+  "schema": "lwt-schedule-trace/1",
+  "schema_version": 1,
+  "source": "tests/cases/concurrency/race-lost-update.lwt",
+  "source_sha256": "20cc5d8f09267ea496f308a254fc5dc73ef460639ed986e463f38e3358abd58e"
+}

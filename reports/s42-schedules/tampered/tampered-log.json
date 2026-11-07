@@ -1,0 +1,29 @@
+{
+  "schema": "lwt-s42-tampered/1",
+  "program": "tests/cases/concurrency/race-lost-update.lwt",
+  "base_trace": "reports/s42-schedules/found/lost-update/trace-1.json",
+  "all_rejected": true,
+  "attempts": [
+    {
+      "field": "chosen",
+      "expected_exit": 4,
+      "actual_exit": 4,
+      "stderr": "lwt: CliError: decision 0: chosen 999 not in ready [1, 2]",
+      "rejected": true
+    },
+    {
+      "field": "source_sha256",
+      "expected_exit": 4,
+      "actual_exit": 4,
+      "stderr": "lwt: CliError: trace binding mismatch: source_sha256",
+      "rejected": true
+    },
+    {
+      "field": "expected_stdout_sha256",
+      "expected_exit": 4,
+      "actual_exit": 4,
+      "stderr": "lwt: CliError: replay mismatch in expected_stdout_sha256: expected '0000000000000000000000000000000000000000000000000000000000000000', got '4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865'",
+      "rejected": true
+    }
+  ]
+}

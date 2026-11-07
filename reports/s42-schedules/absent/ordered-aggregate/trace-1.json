@@ -1,0 +1,44 @@
+{
+  "decisions": [
+    {
+      "chosen": 3,
+      "index": 0,
+      "ready": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "chosen": 2,
+      "index": 1,
+      "ready": [
+        1,
+        2
+      ]
+    },
+    {
+      "chosen": 1,
+      "index": 2,
+      "ready": [
+        1
+      ]
+    },
+    {
+      "chosen": 0,
+      "index": 3,
+      "ready": [
+        0
+      ]
+    }
+  ],
+  "expected_exit_code": 0,
+  "expected_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "expected_stdout_sha256": "f6d7234415b89673f6f3c319959d6d09d9735d792b5b09667ab058a99cc1dfcf",
+  "policy": "random:1",
+  "program_args": [],
+  "schema": "lwt-schedule-trace/1",
+  "schema_version": 1,
+  "source": "reports/s42-schedules/absent/ordered-aggregate/program.lwt",
+  "source_sha256": "fe1825da409a7cbf3cf00e9522c964eaadb0b8a2968394c08f0e188df2118e9f"
+}
