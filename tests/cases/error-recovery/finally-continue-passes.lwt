@@ -1,0 +1,7 @@
+let i = 0;
+while (i < 2) {
+    i = i + 1;
+    attempt { continue; } recover (p) { emit "no"; } finally { emit "fin"; }
+    emit "unreachable";
+}
+emit "after";

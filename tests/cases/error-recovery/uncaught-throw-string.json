@@ -1,0 +1,19 @@
+{
+  "id": "uncaught-throw-string",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "error",
+    "throw"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "before\n",
+    "stderr": "tests/cases/error-recovery/uncaught-throw-string.lwt:1:16: User: kaboom\n"
+  }
+}

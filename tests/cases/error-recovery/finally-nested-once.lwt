@@ -1,0 +1,4 @@
+let n = 0;
+attempt { attempt { n = n + 1; } recover (p) { } finally { n = n + 10; } }
+recover (p) { } finally { n = n + 100; }
+emit str(n);

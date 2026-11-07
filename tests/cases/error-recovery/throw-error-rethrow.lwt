@@ -1,0 +1,5 @@
+attempt {
+    attempt { throw error("Validation", "age < 0"); }
+    recover (inner) { emit inner.category; throw inner; }
+    finally { emit "inner cleaned"; }
+} recover (outer) { emit outer.category + ":" + outer.message; }

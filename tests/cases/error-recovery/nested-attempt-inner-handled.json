@@ -1,0 +1,19 @@
+{
+  "id": "nested-attempt-inner-handled",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "boundary",
+    "finally"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "handled:inner\ninner fin\nouter fin\n",
+    "stderr": ""
+  }
+}

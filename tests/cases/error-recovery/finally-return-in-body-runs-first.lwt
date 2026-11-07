@@ -1,0 +1,4 @@
+fn f() {
+    attempt { return 1; } recover (p) { emit "no"; } finally { emit "fin"; }
+}
+emit f();

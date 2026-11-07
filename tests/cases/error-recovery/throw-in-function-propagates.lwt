@@ -1,0 +1,2 @@
+fn risky() { throw "boom"; }
+attempt { risky(); } recover (p) { emit p.category; emit p.message; }

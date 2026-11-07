@@ -1,0 +1,2 @@
+attempt { emit "body"; } recover (p) { emit "no"; } finally { emit "fin"; }
+emit "after";

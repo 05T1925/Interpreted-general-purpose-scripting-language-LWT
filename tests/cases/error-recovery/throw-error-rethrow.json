@@ -1,0 +1,19 @@
+{
+  "id": "throw-error-rethrow",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "throw"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "Validation\ninner cleaned\nValidation:age < 0\n",
+    "stderr": ""
+  }
+}

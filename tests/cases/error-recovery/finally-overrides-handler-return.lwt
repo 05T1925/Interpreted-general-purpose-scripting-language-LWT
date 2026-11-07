@@ -1,0 +1,5 @@
+fn f() {
+    attempt { throw "x"; } recover (p) { return 7; } finally { return 9; }
+    return 0;
+}
+emit f();

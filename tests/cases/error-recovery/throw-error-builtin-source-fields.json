@@ -1,0 +1,19 @@
+{
+  "id": "throw-error-builtin-source-fields",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "boundary",
+    "throw"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "E\nm\ntrue\n1\n17\n",
+    "stderr": ""
+  }
+}

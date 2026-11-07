@@ -1,0 +1,2 @@
+attempt { throw "first"; } recover (p) { emit "handler"; throw "second"; }
+finally { throw "third"; }

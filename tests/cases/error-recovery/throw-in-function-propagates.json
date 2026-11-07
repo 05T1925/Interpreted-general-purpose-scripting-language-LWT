@@ -1,0 +1,19 @@
+{
+  "id": "throw-in-function-propagates",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "throw"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "User\nboom\n",
+    "stderr": ""
+  }
+}

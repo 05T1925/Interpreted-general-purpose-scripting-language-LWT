@@ -1,0 +1,6 @@
+let i = 0;
+while (i < 3) {
+    attempt { i = i + 1; break; } recover (p) { emit "no"; }
+    finally { emit "fin"; }
+}
+emit "after";

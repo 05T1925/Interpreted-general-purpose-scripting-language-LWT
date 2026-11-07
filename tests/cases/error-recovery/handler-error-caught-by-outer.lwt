@@ -1,0 +1,3 @@
+attempt {
+    attempt { throw "a"; } recover (i) { throw "b"; } finally { emit "fin"; }
+} recover (o) { emit o.category + ":" + o.message; }

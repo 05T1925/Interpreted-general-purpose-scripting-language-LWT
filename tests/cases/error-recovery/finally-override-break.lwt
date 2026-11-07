@@ -1,0 +1,7 @@
+let i = 0;
+while (i < 2) {
+    i = i + 1;
+    attempt { break; } recover (p) { } finally { continue; }
+    emit "after-break";
+}
+emit "done";

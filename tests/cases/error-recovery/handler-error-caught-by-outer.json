@@ -1,0 +1,19 @@
+{
+  "id": "handler-error-caught-by-outer",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "error",
+    "finally"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "fin\nUser:b\n",
+    "stderr": ""
+  }
+}

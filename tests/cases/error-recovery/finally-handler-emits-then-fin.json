@@ -1,0 +1,19 @@
+{
+  "id": "finally-handler-emits-then-fin",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "finally"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "bad\nfin\n",
+    "stderr": ""
+  }
+}

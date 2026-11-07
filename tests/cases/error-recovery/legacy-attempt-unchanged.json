@@ -1,0 +1,19 @@
+{
+  "id": "legacy-attempt-unchanged",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "error-recovery"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "RuntimeError\nok\n",
+    "stderr": ""
+  }
+}

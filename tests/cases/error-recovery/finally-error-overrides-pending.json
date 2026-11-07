@@ -1,0 +1,19 @@
+{
+  "id": "finally-error-overrides-pending",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "finally"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "handler\n",
+    "stderr": "tests/cases/error-recovery/finally-error-overrides-pending.lwt:2:11: User: third\n"
+  }
+}

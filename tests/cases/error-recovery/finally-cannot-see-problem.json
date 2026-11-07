@@ -1,0 +1,19 @@
+{
+  "id": "finally-cannot-see-problem",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "error",
+    "finally"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "x\n",
+    "stderr": "tests/cases/error-recovery/finally-cannot-see-problem.lwt:1:71: RuntimeError: undefined variable 'p'\n"
+  }
+}

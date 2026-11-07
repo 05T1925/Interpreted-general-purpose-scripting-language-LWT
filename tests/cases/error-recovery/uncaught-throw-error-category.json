@@ -1,0 +1,19 @@
+{
+  "id": "uncaught-throw-error-category",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "error",
+    "throw"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/uncaught-throw-error-category.lwt:1:7: Network: timeout\n"
+  }
+}

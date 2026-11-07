@@ -1,0 +1,4 @@
+attempt { throw "disk unavailable"; emit "no"; } recover (p) {
+    emit p.category; emit p.message;
+} finally { emit "clean"; }
+emit "after";

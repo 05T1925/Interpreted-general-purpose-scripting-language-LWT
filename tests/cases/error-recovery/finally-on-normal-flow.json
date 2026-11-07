@@ -1,0 +1,19 @@
+{
+  "id": "finally-on-normal-flow",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "finally"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "body\nfin\nafter\n",
+    "stderr": ""
+  }
+}

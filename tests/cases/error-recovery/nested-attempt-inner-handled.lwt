@@ -1,0 +1,4 @@
+attempt {
+    attempt { throw "inner"; } recover (i) { emit "handled:" + i.message; }
+    finally { emit "inner fin"; }
+} recover (o) { emit "outer"; } finally { emit "outer fin"; }

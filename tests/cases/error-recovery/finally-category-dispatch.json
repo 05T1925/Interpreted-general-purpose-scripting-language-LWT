@@ -1,0 +1,19 @@
+{
+  "id": "finally-category-dispatch",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "finally"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "retry\ndone\n",
+    "stderr": ""
+  }
+}

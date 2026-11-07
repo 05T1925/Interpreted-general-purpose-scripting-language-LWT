@@ -1,0 +1,19 @@
+{
+  "id": "throw-string-recovered",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "throw"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "User\ndisk unavailable\nclean\nafter\n",
+    "stderr": ""
+  }
+}

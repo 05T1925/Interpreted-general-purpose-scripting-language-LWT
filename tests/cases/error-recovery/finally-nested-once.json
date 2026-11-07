@@ -1,0 +1,19 @@
+{
+  "id": "finally-nested-once",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "finally"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "111\n",
+    "stderr": ""
+  }
+}

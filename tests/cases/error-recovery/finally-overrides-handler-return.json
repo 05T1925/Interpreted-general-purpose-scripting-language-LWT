@@ -1,0 +1,20 @@
+{
+  "id": "finally-overrides-handler-return",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "normal",
+    "finally",
+    "control"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "9\n",
+    "stderr": ""
+  }
+}

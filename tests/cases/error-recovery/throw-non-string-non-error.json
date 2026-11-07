@@ -1,0 +1,19 @@
+{
+  "id": "throw-non-string-non-error",
+  "spec_refs": [
+    "10.6"
+  ],
+  "tags": [
+    "error",
+    "throw"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/error-recovery/throw-non-string-non-error.lwt:1:1: RuntimeError: throw requires a string or an error value\n"
+  }
+}

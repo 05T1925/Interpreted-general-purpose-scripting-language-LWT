@@ -1,0 +1,1 @@
+emit "before"; throw "kaboom";

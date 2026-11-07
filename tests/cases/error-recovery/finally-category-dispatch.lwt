@@ -1,0 +1,5 @@
+attempt { throw error("Network", "timeout"); }
+recover (problem) {
+    when (problem.category == "Network") { emit "retry"; }
+    otherwise { emit "unknown"; }
+} finally { emit "done"; }
