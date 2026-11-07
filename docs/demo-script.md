@@ -8,6 +8,7 @@
 |---|---|---|
 | 0:00–0:35 | 说明课程五项评分与八项提交物。LWT 用 `record`、`when/otherwise`、`each`、`emit` 组合语法。 | [课程要求](../大作业内容.md)、[正式规范](language-spec.md) |
 | 0:35–1:05 | 跑最小程序，说明源码经 lexer、parser、AST 和树遍历运行。再演示可定位的除零错误。 | `python -m lwt examples/guide/hello.lwt`；`python -m lwt examples/language_lab/division_by_zero.lwt`（退出 3） |
+| 1:05–1:35 | 展示 S42 语言核心增量：dict 映射的插入序与内置、throw/finally 的控制流覆盖，以及可交互 REPL。 | `python -m lwt examples/dicts.lwt`；`python -m lwt examples/throw_finally.lwt`；下方“REPL 片段” |
 | 1:05–1:40 | 展示一键黑盒和覆盖矩阵。现场时间不足可展示已记录的新克隆完整输出，再抽跑用例，不把旧记录说成现场运行。 | `python tools/run_tests.py`；`python tools/check_project_integrity.py`；[矩阵](test-matrix.md) |
 | 1:40–2:20 | 展示 LWT 日志分析器对坏行、等级和关键字的处理。Python 工作台只解析报告并绘图。 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log`；加 `--level WARN --keyword retry --top 2` |
 | 2:20–2:55 | 展示 Agent 策略模板、独立产出记录和真实协议检查。 | [SDK](strategy-sdk.md)、[Agent 记录](s39-agent-record.md)；`python -m app.lwt_snake.arena --check-strategy mobility-lookahead --catalog app/lwt_snake/strategies/strategy-catalog.json` |
@@ -40,6 +41,16 @@ python -m app.lwt_snake.witness --verify $tmp --catalog app/lwt_snake/strategies
 ```
 
 预期退出 3 并指出反馈证据不匹配。若固定 schema 不含 `question` 字段，应改为复制仓库内已提交的 [S41 篡改样例](../reports/s41-tampered/agent-feedback.json)到临时副本同名位置；切勿修改仓库固定证据。演示前实际执行并核对本段命令，不能仅凭文档推测结果。
+
+## REPL 演示片段（S42）
+
+无需桌面即可展示会话式执行；提示符与诊断走 stderr，`emit` 走 stdout，便于管道取纯程序输出：
+
+```powershell
+printf 'let d = dict{"Li": 87, "Wu": 56};\nemit d;\nput(d, "Zhao", 73);\nemit keys(d);\nattempt { throw "x"; } recover (p) { emit p.category; } finally { emit "clean"; }\n.exit\n' | python -m lwt --repl
+```
+
+stdout 预期依次为 `dict{"Li": 87, "Wu": 56}`、`["Li", "Wu", "Zhao"]`、`User`、`clean`；stderr 含续行提示符与元命令帮助。也可用 `python -m lwt --repl` 进入交互会话（`.help`/`.vars`/`.reset`/`.exit`）。该片段在 S42 执行窗口已实跑核对，见 [S42 执行报告](s42-execution-report.md) 与 [REPL 单测](../tests/test_repl.py)（14 项通过）。REPL 是开发工具，不改变 `python -m lwt SOURCE` 普通执行契约。
 
 ## 无 GUI 后退
 

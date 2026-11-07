@@ -274,7 +274,7 @@ stderr 为空，退出码为 0。示例展示 while 跳过当前迭代并提前�
 
 ### 不支持的能力
 
-LWT 0.1 只支持规范第 9 节定义的静态函数库模块，不支持模块值、动态加载、`from`/通配符导入、循环依赖或模块顶层初始化。第 10 节的 `attempt`/`recover` 只处理退出码为 3 的 LWT `RuntimeError`；不支持 `throw`、类型过滤、多个 handler、`finally` 或回滚。也不支持浮点、字典、类、闭包、函数值、带标签的循环跳转、语言级线程或 REPL。不要从 Python 的能力推断 LWT 也支持某个结构；遇到未列出的语义，先查规范、实现和黑盒证据。
+LWT 0.2 支持规范第 4.4 节的 dict 映射、第 10.6 节的 `throw`/`finally` 结构化错误传播，以及 `python -m lwt --repl` 交互会话（开发工具）。模块仍是第 9 节定义的静态函数库，不支持模块值、动态加载、`from`/通配符导入、循环依赖或模块顶层初始化。第 10 节的恢复机制捕获退出码为 3 的 LWT 错误（含 `throw` 产生的 `User`/自定义类别），但不支持类型过滤、多个 handler 或回滚。也不支持浮点、类、闭包、函数值、带标签的循环跳转或语言级线程。不要从 Python 的能力推断 LWT 也支持某个结构；遇到未列出的语义，先查规范、实现和黑盒证据。
 
 ## 4. 调试和验证
 
@@ -289,6 +289,22 @@ python -m compileall -q lwt tests tools
 第一条运行解释器模块及测试工具的 unittest；第二条通过 `python -m lwt` 执行完整黑盒用例并精确比较退出码、stdout、stderr；第三条检查 Python 文件是否可编译。运行单个程序时直接执行 `python -m lwt path/to/file.lwt`。每次修改后都要运行与修改相关的 CLI 示例或测试；有条件时再运行完整套件。
 
 遇到错误时，先确认命令是在仓库根目录运行，`SOURCE` 和 `read_text` 的路径均按当前工作目录解析；再核对 `--`、分号、保留字和严格类型规则。词法、语法与模块加载检查先于普通语句执行；`attempt` 只捕获执行期 LWT `RuntimeError`，并把不可变 `Error` 值交给 `recover` 块。未捕获的运行时错误仍终止程序，且此前已完成的 stdout 保留。规范示例是预期语义，是否实测通过要以实际命令为准。
+
+### 交互 REPL（S42）
+
+无需源文件即可打开一个持久会话，逐行执行 LWT 语句：
+
+```powershell
+python -m lwt --repl
+```
+
+提示符、诊断与元命令输出写 stderr，`emit` 写 stdout，因此可直接管道喂入并只取程序输出：
+
+```powershell
+printf 'let x = 1;\nemit x + 2;\n.exit\n' | python -m lwt --repl
+```
+
+顶层变量、函数与 record 声明跨行持久；多行块（如函数体、带 `finally` 的 attempt）会读到括号与分号完整后再执行，遇到真实语法/运行时错误则打印诊断并回到提示符，进程不退出。元命令：`.help`（帮助）、`.vars`（列出当前绑定）、`.reset`（丢弃会话绑定、函数和 record）、`.exit`/`.quit`（退出）；输入流结束（EOF）也以退出码 0 结束。元命令只在顶层单独成行时生效，在程序源码位置出现（如 `.foo`）由解析器按 LWT 语法报错。REPL 是开发工具，不改变 `python -m lwt SOURCE` 的普通执行契约；它复用同一套 lexer/parser/runtime，不引入第二执行引擎。定向测试为 `python -m unittest discover -s tests -p "test_repl.py" -v`。
 
 ### 源码级交互调试（S30）
 

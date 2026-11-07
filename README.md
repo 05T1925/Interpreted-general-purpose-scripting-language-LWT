@@ -103,9 +103,15 @@ python -m lwt examples/functions.lwt
 python -m lwt examples/collections.lwt
 python -m lwt examples/text_tools.lwt -- examples/fixtures/text_tools.txt preview
 python -m lwt examples/modules/main.lwt
+python -m lwt examples/dicts.lwt
+python -m lwt examples/throw_finally.lwt
 ```
 
 模块示例从仓库根目录输出 `demo:2`，演示入口 → `stats_utils.lwt` → `text_utils.lwt` 两层依赖，以及数组和 record 参数。模块规则见[规范第 9 节](docs/language-spec.md#9-静态函数库模块s25)。
+
+### S42 语言核心增量（LWT 0.2）
+
+`examples/dicts.lwt` 演示新增的 **dict 映射**（插入序显示、`int`/`str` 键区分、`keys`/`values`/`items`/`has`/`get`/`put`/`delete` 内置、身份相等、`<cycle>` 显示）；`examples/throw_finally.lwt` 演示 **`throw`/`finally`** 结构化错误传播（含 finally 覆盖 return、Error 原样重抛）。语法与边界见[规范 §4.4/§10.6](docs/language-spec.md)。`python -m lwt --repl` 打开交互式会话（提示符走 stderr、`emit` 走 stdout，支持 `.help`/`.vars`/`.reset`/`.exit`），开发工具说明见[开发指南](docs/developer-guide.md)。S42 执行窗口报告与运行时画像见 [S42 执行报告](docs/s42-execution-report.md)、[画像报告](reports/runtime-profile.md)（独立证据，不改 S11 性能报告）。
 
 `control_flow.lwt` 的实际输出是 `0\n-1\n2\n-3\n`；`functions.lwt` 的实际输出是 `120\n`。`collections.lwt` 在本阶段实测输出如下，展示 `each` 进入时保存浅快照：
 
