@@ -1,0 +1,619 @@
+{
+  "attempts": [
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 0,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 361216800,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 0,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 624473800,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 0,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 608286100,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 1,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 368301100,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 1,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 623866400,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 1,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 614148000,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 2,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 398122500,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 2,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 659449900,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 2,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 606589300,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 3,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 362439800,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 3,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 592646200,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 3,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 626260200,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 4,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 379753900,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 4,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 638704400,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 4,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 600990000,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 5,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 350029300,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 5,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 605919900,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 5,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 589426000,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 6,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 338169000,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 6,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 632368300,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 6,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 702463100,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 7,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 360325700,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 7,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 594279200,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 7,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 705465800,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 8,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 420912100,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 8,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 673184000,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 8,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 644874800,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "pass"
+      ],
+      "block": 9,
+      "command": "python-pass",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 383514700,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "block": 9,
+      "command": "lwt-help",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 609413300,
+      "exit_code": 4,
+      "stderr_len": 40,
+      "stderr_sha256": "6802bf2a82117e70359bab2f9562a442ae55e4af4a1ce7a031e639ce1749da01",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "block": 9,
+      "command": "lwt-hello",
+      "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+      "elapsed_ns": 607466700,
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 14,
+      "stdout_sha256": "bfccfafb16a234de7541b04aef0e8b6ada577340f33ffe5ab2a4d153f36e7b2a"
+    }
+  ],
+  "commands": {
+    "lwt-hello": [
+      "-m",
+      "lwt",
+      "examples/guide/hello.lwt"
+    ],
+    "lwt-help": [
+      "-m",
+      "lwt",
+      "--help"
+    ],
+    "python-pass": [
+      "-c",
+      "pass"
+    ]
+  },
+  "derived": {
+    "hello_minus_pass_ms": 245.847,
+    "hello_over_pass": 1.673,
+    "help_minus_pass_ms": 258.8,
+    "help_over_pass": 1.708
+  },
+  "environment": {
+    "branch": "feature/engine-performance",
+    "cpu_count": 32,
+    "cpu_model": "13th Gen Intel(R) Core(TM) i9-13980HX",
+    "git_head": "344c2559e4453c2d1ff0f63c0c28ce8dd108e238",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "power_scheme": "电源方案 GUID: 64a64f24-65b9-4b56-befd-5ec1eaced9b3 (Silent)",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python_executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+    "python_version": "3.13.14 (main, Jun 11 2026, 04:04:46) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "exit_codes": {
+    "lwt-hello": 0,
+    "lwt-help": 4,
+    "python-pass": 0
+  },
+  "generated_at_utc": "2026-11-07T09:00:07.549707+00:00",
+  "note": "python -m lwt --help currently exits 4 (FileError: cannot read source file); the measurement still captures the full package-import + CLI-parse path. Exit codes are recorded per command and held stable across warm-ups and formal runs.",
+  "protocol": {
+    "cwd": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业",
+    "order": "interleaved round-robin blocks",
+    "repeats": 10,
+    "shell": false,
+    "stdin": "DEVNULL",
+    "timeout_s": 30,
+    "timing": "time.perf_counter_ns around subprocess.run",
+    "warmups": 2
+  },
+  "schema_version": 1,
+  "summary": {
+    "lwt-hello": {
+      "exit_code": 0,
+      "max_ms": 705.466,
+      "median_ms": 611.217,
+      "min_ms": 589.426,
+      "n": 10,
+      "range_ms": 116.04,
+      "samples_ns": [
+        589426000,
+        600990000,
+        606589300,
+        607466700,
+        608286100,
+        614148000,
+        626260200,
+        644874800,
+        702463100,
+        705465800
+      ]
+    },
+    "lwt-help": {
+      "exit_code": 4,
+      "max_ms": 673.184,
+      "median_ms": 624.17,
+      "min_ms": 592.646,
+      "n": 10,
+      "range_ms": 80.538,
+      "samples_ns": [
+        592646200,
+        594279200,
+        605919900,
+        609413300,
+        623866400,
+        624473800,
+        632368300,
+        638704400,
+        659449900,
+        673184000
+      ]
+    },
+    "python-pass": {
+      "exit_code": 0,
+      "max_ms": 420.912,
+      "median_ms": 365.37,
+      "min_ms": 338.169,
+      "n": 10,
+      "range_ms": 82.743,
+      "samples_ns": [
+        338169000,
+        350029300,
+        360325700,
+        361216800,
+        362439800,
+        368301100,
+        379753900,
+        383514700,
+        398122500,
+        420912100
+      ]
+    }
+  },
+  "tool": "lwt-startup-bench"
+}

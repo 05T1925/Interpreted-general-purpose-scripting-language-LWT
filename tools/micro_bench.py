@@ -249,12 +249,12 @@ def _profile_workload(name: str, source: str, size: int) -> dict[str, Any]:
     }
 
 
-def _render_markdown(report: dict[str, Any]) -> str:
+def _render_markdown(report: dict[str, Any], label: str = "S42 Wave D", s11_link: str = "../reports/performance.md") -> str:
     lines: list[str] = []
-    lines.append("# LWT 运行时微基准与热点画像（S42 Wave D）")
+    lines.append(f"# LWT 运行时微基准与热点画像（{label}）")
     lines.append("")
-    lines.append("> 本文件是 S42 新增的**独立画像证据**，不是 S11 正式性能报告的修订。"
-                 "计时口径、原始 run 身份与六组表格仍以 [S11 报告](../reports/performance.md) 为准；"
+    lines.append(f"> 本文件是 {label} 的**独立画像证据**，不是 S11 正式性能报告的修订。"
+                 f"计时口径、原始 run 身份与六组表格仍以 [S11 报告]({s11_link}) 为准；"
                  "本工具不写入 `bench/results.json`，也不改写任何 S10/S11/S28/S29 固定证据。")
     lines.append("")
     meta = report["environment"]
@@ -321,6 +321,17 @@ def _render_markdown(report: dict[str, Any]) -> str:
 def _argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", default="reports/", help="output directory (default: reports/)")
+    parser.add_argument(
+        "--output-prefix",
+        default="",
+        help="filename prefix for the two output files (e.g. s44-before-). Default empty "
+             "keeps the historical runtime-profile.{json,md} names untouched.",
+    )
+    parser.add_argument(
+        "--label",
+        default="S42 Wave D",
+        help="provenance label written into the JSON environment and the markdown title",
+    )
     parser.add_argument("--repeats", type=int, default=DEFAULT_REPEATS)
     parser.add_argument("--warmups", type=int, default=DEFAULT_WARMUPS)
     return parser
@@ -356,6 +367,7 @@ def main(argv: list[str] | None = None) -> int:
             "platform": platform.platform(),
             "repeats": args.repeats,
             "warmups": args.warmups,
+            "label": args.label,
         },
         "method": {
             "timing": "perf_counter_ns around load_module_graph (parse) and execute (pure execution)",
@@ -369,11 +381,28 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     out_dir = REPO_ROOT / args.out
-    json_path = out_dir / "runtime-profile.json"
-    md_path = out_dir / "runtime-profile.md"
+    prefix = args.output_prefix
+    json_path = out_dir / f"{prefix}runtime-profile.json"
+    md_path = out_dir / f"{prefix}runtime-profile.md"
     _atomic_text(json_path, json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
-    _atomic_text(md_path, _render_markdown(report))
-    print(f"micro_bench: wrote {json_path.relative_to(REPO_ROOT)} and {md_path.relative_to(REPO_ROOT)}")
+    # Keep provenance links valid for non-default output directories (S44 A/B).
+    # Default reports/ -> ../reports/performance.md as in the S42 evidence.
+    label = args.label
+    if out_dir == REPO_ROOT / "reports":
+        s11_link = "../reports/performance.md"
+    else:
+        s11_link = os.path.relpath(REPO_ROOT / "reports" / "performance.md", out_dir).replace("\\", "/")
+        if not s11_link.startswith("."):
+            s11_link = "./" + s11_link
+    _atomic_text(md_path, _render_markdown(report, label=label, s11_link=s11_link))
+
+    def _display(path: Path) -> str:
+        try:
+            return str(path.relative_to(REPO_ROOT))
+        except ValueError:
+            return str(path)
+
+    print(f"micro_bench: wrote {_display(json_path)} and {_display(md_path)}")
     return 0
 
 
