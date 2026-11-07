@@ -38,3 +38,18 @@
 | 远端精确 SHA 的 CI | 无（本阶段不推送） | 功能分支未推送，Actions 未查询 | 未验证 |
 
 **重要**：以上 S43 行只记录**执行窗口自测**，不替代 **S12 现场人工 GUI A–E 验收**（语义实验室、日志工作台、LWT Snake、S41 Tk 查看器、演示桌面无遮挡与输入归属），也不替代主窗口审查、合入 main、远端 CI 与教师线下验收。执行实现 / 主窗口审查 / 合入 main / 远端 CI / 现场人工 GUI 五项状态分别确认，不能由一项推断另一项。S43 阶段报告见 [s42-deterministic-concurrency.md](s42-deterministic-concurrency.md)。
+
+## S44 可验证加速核对（执行窗口自测，基线未经主窗口复核）
+
+| 课程抓手 / 任务书 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| 启动惰性化 P0-1/P0-2 | `lwt/_sched_support.py`、`lwt/{runtime,cli,modules,concurrency}.py` | `tests/test_startup.py` 10 项：非 spawn 无 `lwt.concurrency`、spawn 仍工作、三开关/REPL 不回归；`--help` 1.256×、hello 1.224× | 执行实现完成，待复核 |
+| 热路径 P0-3/P0-4 | `lwt/runtime.py`、`lwt/parser.py`、[`lwt/_decimal.py`](../lwt/_decimal.py) | `tests/test_dispatch_completeness.py` 9 项；纯执行 N=5000 1.454×/1.552×/2.992×；6000 位整数精度 | 执行实现完成 |
+| 局部优化 P1 | [优化台账](s44-optimization-ledger.md) | P1-2 <2% 已回滚零残留；P1-4 保留；P1-1/P1-3 未做理由在台账 | 执行实现完成 |
+| S11-v2 分层基准 | [`reports/s44-performance/benchmark-v2.md`](../reports/s44-performance/benchmark-v2.md)、`tools/benchmark_v2.py` | 126 次 oracle 全通过；端到端/纯执行分列；旧 S11 数据零改动 | 执行实现完成 |
+| 门槛判定与覆盖闭环 | `tools/compare_perf.py`、`tools/check_project_integrity.py --require-all-referenced`、[矩阵](test-matrix.md) §4.5.3 | `compare_perf` 全 PASS；`referenced_cases=400/400; unreferenced=0` | 执行实现完成 |
+| 全量回归与保护数据 | [S44 执行报告](s44-performance.md) | 400/400 黑盒、595+ unittest、46×10 确定性、S28 事件计数；S11/S42/S43 保护数据差异空 | 执行实现完成 |
+| Agent 盲测 pass@1 | 无（无法新开无上下文会话） | 如实写"未执行"，不把自测当盲测 | 未执行 |
+| 远端精确 SHA 的 CI / Python 3.10 / Linux | 无（本阶段不推送） | 未在这些环境实测 | 未验证 |
+
+**重要（S44）**：用户授权叠加在**未复核的 S43** 之上，本节只记录**执行窗口自测**，**不替代现场人工 GUI A–E 验收**，也不替代主窗口审查、合入 main、远端 CI 与教师线下验收。诊断工具严禁写入 `bench/results.json`、`reports/performance.md` 等 S11/S42/S43 固定证据；本阶段已加输出路径拒绝并核对保护路径差异为空。S44 阶段报告见 [s44-performance.md](s44-performance.md)。

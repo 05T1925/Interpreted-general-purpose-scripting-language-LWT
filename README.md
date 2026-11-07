@@ -73,7 +73,7 @@ python tools/check_project_integrity.py
 python tools/run_tests.py
 ```
 
-语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。S26 当前集合为 287 项，其中 282 项执行配对 LWT 程序、5 项专测 CLI 参数契约；错误恢复类别 40 项。精确环境结果、完整性链接数和单元测试数以 [S26 报告](docs/s26-runtime-recovery.md)为准。S8/S23/S24/S25 历史快照原值保留；Python 3.10 和远端 Actions 未验证。
+语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。S26 当时集合为 287 项，其中 282 项执行配对 LWT 程序、5 项专测 CLI 参数契约；错误恢复类别 40 项（该段为 S26 历史快照；**当前集合为 400 项**，见 [S44 执行报告](docs/s44-performance.md)）。精确环境结果、完整性链接数和单元测试数以 [S26 报告](docs/s26-runtime-recovery.md)为准。S8/S23/S24/S25 历史快照原值保留；Python 3.10 和远端 Actions 未验证。
 
 运行 lexer、parser、runtime、CLI 和黑盒 runner 的开发辅助 unittest：
 
@@ -180,7 +180,7 @@ S15–S18 已通过主窗口审查并合入本地 `main`。S17 主窗口实际�
 
 S16 已在 `app/snake_game.py` 提供独立启动入口。贪吃蛇是 **Python/Tkinter 附加演示，并非第二个 LWT 应用**；不会替代 `app/log_report.lwt`，也不计入课程要求的 LWT 有效代码行数。S17 为两个 GUI 提取共享主题并修复 Snake 结束态重开；S18 没有改变 Snake 规则。桌面复核状态见[S18 工作报告](docs/s18-workbench.md)。
 
-应用测试经公开 CLI 运行，不纳入语言黑盒矩阵；S8 历史基线为 194 项，S23 阶段实测为 195 项，S24 阶段实测为 217 项，后续阶段报告记录的当前基数为 287 项。并发工具使用固定输入分别同时启动 1、2、4 个独立操作系统进程，不代表 LWT 线程支持；原始逐试次结果位于[`reports/app-concurrency.json`](reports/app-concurrency.json)。
+应用测试经公开 CLI 运行，不纳入语言黑盒矩阵；S8 历史基线为 194 项，S23 阶段实测为 195 项，S24 阶段实测为 217 项，S26 阶段为 287 项，S42 增至 354 项，S43 增至 **400 项**（含 46 项 `concurrency`）。S10 并发工具使用固定输入分别同时启动 1、2、4 个独立操作系统进程，是**多进程输出一致性**的历史证据、不是性能基准；LWT 的语言级协作并发（单令牌、可重放）由 **S43** 另行提供，见[并发契约卡](docs/concurrency.md)。原始逐试次结果位于[`reports/app-concurrency.json`](reports/app-concurrency.json)。
 
 ## S11 性能实验
 
@@ -200,7 +200,9 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-当前实现支持标量、变量/块、I/O、分支循环、函数、数组/record、文本内置函数、静态函数模块与受限错误恢复。S27 `--check`、S28 `--profile`、S29 Language Server、S30 调试器和 S31–S33 VS Code 集成都属于开发工具，不属于 LWT 语言语义；LSP 不执行被分析源码，调试器会执行它。语言黑盒保持 287 项；工具测试单列于 unittest。S33 在本机 Windows VS Code Extension Host 中实测 287 项发现、选择运行、失败差异、取消刷新和 DAP 断点；本阶段 SHA 的远端 CI、人工鼠标/键盘操作和 VSIX 安装未验证。S23–S30 独立审查记录不完整。S12 尚未开始。详见 [S33 执行报告](docs/s33-testing-workbench.md) 与[最终交付规划](docs/s12-final-delivery-plan.md)。
+> **当前状态（S44，2026-11-07）**：语言黑盒已达 **400 项**（S42 dict/throw 后 354，S43 并发 +46）；`feature/engine-performance` 完成引擎启动与热路径加速（纯执行 N=5000 提升 1.45–2.99×、启动 `--help` 1.256×），400/400 黑盒、46×10 确定性、595 项 unittest 全过；**未推送、未合并、主窗口未复核**。见 [S44 执行报告](docs/s44-performance.md)。下文 S33 段落中的「287 项」为当时的历史快照，不是当前基数。
+
+当前实现支持标量、变量/块、I/O、分支循环、函数、数组/record、dict 映射、throw/finally 错误恢复、协作式确定性并发（`spawn`/`join`/通道，见[并发契约卡](docs/concurrency.md)）与文本内置函数、静态函数模块。S27 `--check`、S28 `--profile`、S29 Language Server、S30 调试器和 S31–S33 VS Code 集成都属于开发工具，不属于 LWT 语言语义；LSP 不执行被分析源码，调试器会执行它。S33 阶段语言黑盒为 287 项（历史快照）；工具测试单列于 unittest。S33 在本机 Windows VS Code Extension Host 中实测 287 项发现、选择运行、失败差异、取消刷新和 DAP 断点；本阶段 SHA 的远端 CI、人工鼠标/键盘操作和 VSIX 安装未验证。S23–S30 独立审查记录不完整。S12 尚未开始。详见 [S33 执行报告](docs/s33-testing-workbench.md) 与[最终交付规划](docs/s12-final-delivery-plan.md)。
 
 ## S28 执行档案与覆盖率报告
 

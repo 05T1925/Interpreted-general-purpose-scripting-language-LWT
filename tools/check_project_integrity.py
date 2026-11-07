@@ -94,7 +94,7 @@ def inspect_project(repo_root: Path = REPO_ROOT) -> IntegrityResult:
     return IntegrityResult(len(cases), matrix_link_count, len(referenced_ids), tuple(errors))
 
 
-def main(repo_root: Path = REPO_ROOT) -> int:
+def main(repo_root: Path = REPO_ROOT, argv: list[str] | None = None) -> int:
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -108,7 +108,10 @@ def main(repo_root: Path = REPO_ROOT) -> int:
         help="allowed unreferenced case count when --require-all-referenced is set "
              "(e.g. documented pure-CLI contract cases). Default 0.",
     )
-    args = parser.parse_args()
+    # argv=None means library/test call: no command-line switches, so do NOT
+    # read sys.argv (which belongs to unittest/nose when called in-process).
+    # The __main__ entry below passes sys.argv[1:] explicitly.
+    args = parser.parse_args(argv if argv is not None else [])
 
     result = inspect_project(repo_root)
     if result.errors:
@@ -142,4 +145,4 @@ def main(repo_root: Path = REPO_ROOT) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(argv=sys.argv[1:]))

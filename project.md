@@ -1,12 +1,14 @@
 # LWT 项目上下文
 
-> Agent 当前状态入口。核对日期：2026-11-06。每次开始任务都重新检查 Git 和远端；阶段历史见[仓库工作流](docs/repository-workflow.md)，当前关系见[阶段路线图](阶段执行与审查路线图.md)。
+> Agent 当前状态入口。核对日期：2026-11-07。每次开始任务都重新检查 Git 和远端；阶段历史见[仓库工作流](docs/repository-workflow.md)，当前关系见[阶段路线图](阶段执行与审查路线图.md)。
 
 > **当前结论：** S12 已经[主窗口复核](docs/s12-main-review.md)，候选 SHA `e1249f56f1d889c0c6e400a46602e0fe3f7df1ce` 已快进集成到本地 `main`，该精确 SHA 的远端 Actions 四格成功。PPT、交付审计和答辩材料见[S12 执行报告](docs/s12-final-delivery.md)。现场人工 GUI 验收仍未完成；没有据此声称教师验收或最终评分通过。
 
 > **S42（2026-11-07，执行窗口）：** 以 `main = 5027860efc8a1cce342ca13b1434d7724aeeffc4` 为基线，在 `feature/lwt-core-0.2` 分支承接并收尾 LWT 0.2 语言核心增强：dict 映射、throw/finally、交互 REPL、单进程运行时画像，以及 log_report.lwt 的 dict 计数改造（输出字节不变）。基线黑盒 330/330；新增 24 个 throw/finally 黑盒后全量 **354/354**，完整性 `cases=354; matrix_links=401; referenced_cases=304`。执行窗口报告见[S42 执行报告](docs/s42-execution-report.md)。该分支**不推送、不合并、不打标签**；最终 SHA 的 Actions、Python 3.10/Linux 与现场人工 GUI 均为未验证。基线裁决理由（含 `milestone/final-acceptance` 独立文档线）见 S42 报告 §1.1。
 
 > **S43（2026-11-07，执行窗口，任务书编号 S42 确定性并发）：** 用户裁决"叠加在语言核心之上，记为 S43"，从 `feature/lwt-core-0.2 @ a996591` 创建 `feature/deterministic-concurrency`，为 LWT 增加**协作式确定性可重放并发子语言**（`spawn`/`join`/`yield()`/通道，规范 §11）：单令牌 Event 调度、fifo/random:SEED、轨迹绑定与重放篡改拒绝、死锁检测、read_text I/O 批次屏障、46 项并发黑盒 + 19 单测、233 行并发应用（与 log_report 差分等价）、found/absent/tampered 三态证据、诚实 I/O 重叠性能实验、PPT 12→15 页（旧图表 12 数值点未变）。全量黑盒 **400/400**，完整性 `cases=400; matrix_links=445; referenced_cases=348`，确定性 46×10 全稳定。执行窗口报告见 [S43 报告](docs/s42-deterministic-concurrency.md)、[并发契约卡](docs/concurrency.md)、[三态证据](reports/s42-schedules/summary.md)。**不推送、不合并、不打标签**；最终 SHA 的 Actions、Python 3.10/Linux、DAP 协议帧、Agent 盲测与现场人工 GUI 均为未验证。
+
+> **S44（2026-11-07，执行窗口，LWT 执行引擎「可验证加速」）：** 用户**明确授权叠加在未复核的 S43 上**（报告首段已粗体标注「基线未经主窗口复核」），从 `feature/deterministic-concurrency @ 344c255` 创建 `feature/engine-performance`。不改规范 §1–§11 可观察语义、400 项黑盒、46×10 并发确定性，完成：启动惰性化（非 spawn 程序 `sys.modules` 无 `lwt.concurrency`）、精确类型分派 + 运算符集合常量化、INT 字面量解析期预解码、小整数显示快路径；P1-2 实测 <2% 已回滚。同机 A/B：启动 `--help` 624→497 ms（**1.256×**）、hello 611→500 ms（**1.224×**）；纯执行 execute N=5000 三负载 **1.454×/1.552×/2.992×**；S11-v2 分层基准 126 次 oracle 全通过、端到端 LWT/Python 1.48–1.79×（仍慢，口径分开）。覆盖矩阵补 52 个未链接用例至 `referenced_cases=400/400; unreferenced=0`，新增 `--require-all-referenced`。全量黑盒 **400/400**、unittest **595+**、确定性 46×10 稳定、S28 事件计数不变、保护数据零改动；PPT 15→17 页（旧图表 12 数值点未变，SHA `cb309365…`→`2b0d1df3…`）。执行窗口报告见 [S44 报告](docs/s44-performance.md)、[性能计划](docs/s44-performance-plan.md)、[优化台账](docs/s44-optimization-ledger.md)、[S11-v2 基准](reports/s44-performance/benchmark-v2.md)。**不推送、不合并、不打标签**；最终 SHA 的 Actions、Python 3.10/Linux、Agent 盲测与现场人工 GUI 均为未验证。
 
 ## 目标与课程评分
 
@@ -54,6 +56,11 @@ S0–S30 已在 main 的历史中；S23–S30 是按用户授权纳入本地主�
 - 并发确定性 10×：python tools/run_concurrency_determinism.py --repeat 10
 - 调度探索：python tools/explore_lwt_schedules.py --program tests/cases/concurrency/race-lost-update.lwt --seeds 1..200 --out reports/s42-schedules/found/lost-update
 - 并发性能实验：python tools/run_concurrency_benchmark.py --files 8 --size-mb 2 --repeats 7
+- S44 启动 A/B：python tools/measure_startup.py --out reports/s44-performance/before/startup.json --repeats 10 --warmups 2
+- S44 纯执行 A/B：python tools/micro_bench.py --out reports/s44-performance/before --repeats 7 --warmups 2
+- S44 门槛判定：python tools/compare_perf.py（只读 before/after JSON，启动+纯执行全 PASS 退 0）
+- S44 S11-v2 分层基准：python tools/benchmark_v2.py --sizes 100,1000,5000 --repeats 7 --warmups 2
+- S44 覆盖闭环：python tools/check_project_integrity.py --require-all-referenced（应 unreferenced=0）
 - 有效 LWT 行数：python tools/count_lwt_lines.py app/log_report.lwt（并发应用：app/concurrent_log_report.lwt）
 
 语言开发工具边界见[正式规范](docs/language-spec.md)、[静态检查](docs/static-checker.md)、[Language Server](docs/language-server.md)、[调试器](docs/debugger.md)、[VS Code 扩展](docs/vscode-extension.md)和[S33 测试工作台报告](docs/s33-testing-workbench.md)。发生冲突时以作业原文、正式语义和当前实测证据为准。

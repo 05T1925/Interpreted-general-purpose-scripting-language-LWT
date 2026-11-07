@@ -68,6 +68,24 @@ python -m lwt --schedule-replay reports/s42-schedules/found/lost-update/trace-de
 
 预期：第 1 步输出两个 `=== 路径 ===` 报告块，顺序与参数顺序相同（不依赖哪个文件先读完），块正文与 `python -m lwt app/log_report.lwt -- 单文件` 逐字节相同；第 2 步记录与重放 stdout 一致（同一轨迹逐字复现）。**注意**：`reports/s42-schedules/found/lost-update/trace-demo.json` 是演示临时写入，现场演示后由用户自行删除；不要改动已固定的 `trace-1.json`/`trace-2.json`。篡改演示见 [三态摘要](../reports/s42-schedules/summary.md)（tampered 三种篡改均退出 4），契约见[并发速查](concurrency.md)。本片段命令在 S43 执行窗口已实跑核对（含 4 fixture 差分等价、多文件 10 次一致、一键重放退出 0）。
 
+## 引擎加速演示片段（S44，约 45 秒）
+
+三步展示「快在哪、快多少、为什么」，只读已固定证据，不改任何 S11/S42/S43 原始文件。
+
+```powershell
+# 1) 启动惰性化：非 spawn 程序不加载并发模块（约 10 秒）
+python -m lwt --help                      # 当前解释器：该路径返回退出码 4，仍触发完整包导入
+python -c "import sys, lwt.cli; print('concurrency loaded:', 'lwt.concurrency' in sys.modules)"   # False
+
+# 2) 一键对照 before/after 门槛（只读 reports/s44-performance/ 的新 JSON）
+python tools/compare_perf.py             # 文本表：启动 --help 1.256× / hello 1.224×；纯执行 N=5000 1.45–2.99×
+
+# 3) S11-v2 分层：端到端 vs 纯执行分开看
+python tools/benchmark_v2.py --help        # 协议说明；正式结果见 reports/s44-performance/benchmark-v2.md
+```
+
+预期：第 1 步 `lwt.cli` 导入后 `lwt.concurrency` 不在 `sys.modules`（P0-1 惰性化）；第 2 步 `compare_perf.py` 对启动两项与纯执行三负载均报 PASS，退出码 0；第 3 步展示分层报告，说明端到端 LWT/Python 倍率（约 1.4–1.5×）与纯执行提升（1.45–2.99×）是**不同口径**，不混用。完整方法、环境、逐项台账与未验证项见 [S44 执行报告](s44-performance.md)、[性能计划](s44-performance-plan.md) 与 [优化台账](s44-optimization-ledger.md)。
+
 ## 无 GUI 后退
 
 无需桌面、网络或第三方 GUI 库即可运行上面的 CLI。展示游戏规则时使用 `python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-parent.json`；展示语言模块时使用 `python -m lwt examples/modules/main.lwt`。GUI/Tk 自动测试证明控件回调集成，不能代替现场真实鼠标、键盘、焦点和视觉检查。

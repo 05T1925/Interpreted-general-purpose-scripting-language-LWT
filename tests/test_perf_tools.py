@@ -155,22 +155,26 @@ class CoverageGateTests(unittest.TestCase):
                          "every discovered case must be linked in docs/test-matrix.md")
 
     def test_require_all_referenced_cli_passes(self) -> None:
-        # main() is invoked through the module with argv patched via sys.argv.
         from tools import check_project_integrity as cpi
-        saved = sys.argv
+
+        buf = io.StringIO()
+        old = sys.stdout
+        sys.stdout = buf
         try:
-            sys.argv = ["check_project_integrity.py", "--require-all-referenced"]
-            buf = io.StringIO()
-            old = sys.stdout
-            sys.stdout = buf
-            try:
-                code = cpi.main(REPO_ROOT)
-            finally:
-                sys.stdout = old
-            self.assertEqual(code, 0, buf.getvalue())
-            self.assertIn("unreferenced=0", buf.getvalue())
+            code = cpi.main(REPO_ROOT, argv=["--require-all-referenced"])
         finally:
-            sys.argv = saved
+            sys.stdout = old
+        self.assertEqual(code, 0, buf.getvalue())
+        self.assertIn("unreferenced=0", buf.getvalue())
+
+    def test_library_call_ignores_unittest_argv(self) -> None:
+        # main(root) with no argv must NOT read sys.argv (which holds the
+        # unittest runner's flags) -- the original S44 regression was exactly
+        # this: argparse picked up '-q' and raised SystemExit(2).
+        from tools import check_project_integrity as cpi
+
+        code = cpi.main(REPO_ROOT)
+        self.assertEqual(code, 0)
 
 
 if __name__ == "__main__":

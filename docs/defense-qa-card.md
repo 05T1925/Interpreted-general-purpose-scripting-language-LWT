@@ -19,3 +19,8 @@
 | GIL 下并发有什么意义？ | 意义在**等待型 I/O 重叠**与**交错可复现**，不是 CPU 加速：`read_text` 提交内部线程池、任务转 `io_pending`，批次屏障后按编号恢复；CPU 仍在单令牌下串行。Amdahl 上限 `1/(1-p)`（p 为 I/O 等待占比），实测四组对照见 `reports/concurrency-performance.*`。 |
 | 创新点与既有工作边界？ | 既有 S38/S40/S41 的「分歧—见证—重放—验真」针对**策略决策**；S43 把它推广到**调度交错**：200 种子 found 2 类、absent 1 类、tampered 三种篡改被拒。不是新解释器 VM，也不改 S11 性能原始数字；见 `docs/s42-feasibility.md` 与三态摘要。 |
 | 怎么测并发？ | 46 项 `concurrency` 黑盒（fifo 下输出确定）+ 19 项 `test_concurrency.py`（PRNG 向量、确定性 10×、I/O 批次屏障、死锁、线程无泄漏三路径、轨迹三态）+ `run_concurrency_determinism.py` 对 46 项各 10 次逐字节比对；全量 400/400，既有 354 项零回归。 |
+| S44 优化后为什么端到端仍比 Python 慢？ | S11-v2 分层显示：慢在「解释器的节点分派 + 对象分配 + 包导入」这些结构性成本，纯执行已提速（N=5000 三负载 1.45–2.99×）但基线差距大。S44 优化的是启动导入与树遍历热路径，不是把解释器变成编译执行；端到端仍带 Python 启动和解析，不能把分层倍率说成端到端倍率。见 `reports/s44-performance/benchmark-v2.md`。 |
+| S44 具体优化了什么？ | 四类：①非 spawn 程序不再导入 `lwt.concurrency`/`concurrent.futures`（惰性化，启动 `--help` 1.256×）；②热路径 AST 分派改用 `type() is` 精确判断、运算符集合提为模块常量；③INT 字面量解析期预解码、执行期直接取值；④小整数显示走 CPython `str(int)` 快路径。逐项假设/测量/保留或回滚见 `docs/s44-optimization-ledger.md`。 |
+| 如何证明优化没改变语义？ | 四层：400 项黑盒逐字节不变、46×10 并发确定性稳定、S28 固定 profile 事件计数不变、`--check`/`--profile`/debugger/DAP/LSP 不回归；另加 `tests/test_dispatch_completeness.py` 保证每个 AST 节点类型都有分派分支、未知类型仍 `AssertionError`，6000 位/前导零/负数整数用例保持。P1-2 无收益已回滚，不留无证据改动。 |
+| 为什么不做字节码 VM？ | S42 画像明确：先优化树遍历热点而非上 VM；VM 的首要价值是双后端交叉验证正确性，性能只是副产物，且结论绑定具体 CPython 版本（PEP 659 特化会改倍率）。S44 用最小风险的精确分派 + 字面量预解码已使纯执行三负载 ≥1.45×，无需引入新执行后端，也不污染 S11 正式性能口径。 |
+| 并发与启动有什么关系？ | S43 并发模块（`concurrent.futures`/`hashlib`/`json`/`tempfile`）原本被 `runtime.py` 顶层导入，所有程序都要付约 100–200 ms 导入成本。S44 P0-1 把它拆到轻量 `_sched_support` + spawn 分支延迟加载：非 spawn 程序 `sys.modules` 无 `lwt.concurrency`，而 spawn 程序仍完整工作（`tests/test_startup.py` 断言）。这是「并发能力可选付费」，与并发语义无关。 |
