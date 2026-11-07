@@ -1,0 +1,375 @@
+{
+  "environment": {
+    "generated_at_utc": "2026-11-07T02:19:08.645382Z",
+    "git_head": "5027860efc8a1cce342ca13b1434d7724aeeffc4",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.13.14 (main, Jun 11 2026, 04:04:46) [MSC v.1944 64 bit (AMD64)]",
+    "repeats": 20,
+    "warmups": 3
+  },
+  "measurements": [
+    {
+      "execute": {
+        "max_ns": 1890700,
+        "median_ns": 901250,
+        "min_ns": 810700,
+        "range_ns": 1080000,
+        "runs": 20
+      },
+      "expected_stdout_sha256": "1c8d798f48fe7f02fcf1c8cba627937d3aa6cc4e807372f638bc7f1b18f1e3d6",
+      "n": 100,
+      "parse": {
+        "max_ns": 2831100,
+        "median_ns": 1444800,
+        "min_ns": 922600,
+        "range_ns": 1908500,
+        "runs": 23
+      },
+      "parse_to_execute_median_ratio": 1.603107,
+      "repeats": 20,
+      "source": "bench/arithmetic.lwt",
+      "source_sha256": "52dab871487f160f2e6ac7421f78fb25b043e32114efc794984cbd879bdb3757",
+      "warmups": 3,
+      "workload": "arithmetic"
+    },
+    {
+      "execute": {
+        "max_ns": 10507000,
+        "median_ns": 7450450,
+        "min_ns": 6674300,
+        "range_ns": 3832700,
+        "runs": 20
+      },
+      "expected_stdout_sha256": "25077dd02686aa1dd9136c067021694007c36ff4528da3044feb5e597b3a6c31",
+      "n": 1000,
+      "parse": {
+        "max_ns": 1660400,
+        "median_ns": 932300,
+        "min_ns": 785900,
+        "range_ns": 874500,
+        "runs": 23
+      },
+      "parse_to_execute_median_ratio": 0.125133,
+      "repeats": 20,
+      "source": "bench/arithmetic.lwt",
+      "source_sha256": "52dab871487f160f2e6ac7421f78fb25b043e32114efc794984cbd879bdb3757",
+      "warmups": 3,
+      "workload": "arithmetic"
+    },
+    {
+      "execute": {
+        "max_ns": 58052000,
+        "median_ns": 36821650,
+        "min_ns": 33041500,
+        "range_ns": 25010500,
+        "runs": 20
+      },
+      "expected_stdout_sha256": "51ca0a4ba8cbfea38e58ee9bd5bc4bb108b4fe682f0b8d0333fa2f4c45c56cd0",
+      "n": 5000,
+      "parse": {
+        "max_ns": 1986900,
+        "median_ns": 961500,
+        "min_ns": 776600,
+        "range_ns": 1210300,
+        "runs": 23
+      },
+      "parse_to_execute_median_ratio": 0.026112,
+      "repeats": 20,
+      "source": "bench/arithmetic.lwt",
+      "source_sha256": "52dab871487f160f2e6ac7421f78fb25b043e32114efc794984cbd879bdb3757",
+      "warmups": 3,
+      "workload": "arithmetic"
+    },
+    {
+      "execute": {
+        "max_ns": 4362600,
+        "median_ns": 2809500,
+        "min_ns": 2483800,
+        "range_ns": 1878800,
+        "runs": 20
+      },
+      "expected_stdout_sha256": "b6c51e3e7f364058b223dfafe9b837f5cdecea36c4d7c3e18574b4fe16efb5ba",
+      "n": 100,
+      "parse": {
+        "max_ns": 2834200,
+        "median_ns": 1783400,
+        "min_ns": 1326900,
+        "range_ns": 1507300,
+        "runs": 23
+      },
+      "parse_to_execute_median_ratio": 0.634775,
+      "repeats": 20,
+      "source": "bench/array_scan.lwt",
+      "source_sha256": "57cf094994fb4f1adbcd8fcaefb428a255110fad305def5a645d2f132b09a566",
+      "warmups": 3,
+      "workload": "array_scan"
+    },
+    {
+      "execute": {
+        "max_ns": 33688000,
+        "median_ns": 26528900,
+        "min_ns": 23761200,
+        "range_ns": 9926800,
+        "runs": 20
+      },
+      "expected_stdout_sha256": "b38d524b3d29ab80015c71b4e6873080a0306687a4bcfa85593a4d4075dd70c8",
+      "n": 1000,
+      "parse": {
+        "max_ns": 2514300,
+        "median_ns": 1653900,
+        "min_ns": 1309300,
+        "range_ns": 1205000,
+        "runs": 23
+      },
+      "parse_to_execute_median_ratio": 0.062343,
+      "repeats": 20,
+      "source": "bench/array_scan.lwt",
+      "source_sha256": "57cf094994fb4f1adbcd8fcaefb428a255110fad305def5a645d2f132b09a566",
+      "warmups": 3,
+      "workload": "array_scan"
+    },
+    {
+      "execute": {
+        "max_ns": 150972500,
+        "median_ns": 129992700,
+        "min_ns": 120582500,
+        "range_ns": 30390000,
+        "runs": 20
+      },
+      "expected_stdout_sha256": "3ad7a7b6d8d480262a56d39d52c6d3a4a862aaaef07d189c92b6b3f12bcde24f",
+      "n": 5000,
+      "parse": {
+        "max_ns": 3417400,
+        "median_ns": 1859600,
+        "min_ns": 1447800,
+        "range_ns": 1969600,
+        "runs": 23
+      },
+      "parse_to_execute_median_ratio": 0.014305,
+      "repeats": 20,
+      "source": "bench/array_scan.lwt",
+      "source_sha256": "57cf094994fb4f1adbcd8fcaefb428a255110fad305def5a645d2f132b09a566",
+      "warmups": 3,
+      "workload": "array_scan"
+    },
+    {
+      "execute": {
+        "max_ns": 3687700,
+        "median_ns": 1871450,
+        "min_ns": 1765800,
+        "range_ns": 1921900,
+        "runs": 20
+      },
+      "expected_stdout_sha256": "1a7f714c9e8ba8638528a23cdb474796c5ebab2c1f888166702ac7aaf69e4e50",
+      "n": 100,
+      "parse": {
+        "max_ns": 2263900,
+        "median_ns": 1403200,
+        "min_ns": 1049600,
+        "range_ns": 1214300,
+        "runs": 23
+      },
+      "parse_to_execute_median_ratio": 0.749793,
+      "repeats": 20,
+      "source": "bench/dict_counts.lwt",
+      "source_sha256": "ed6b528c217a338671a0bbb467783b0b30e8039222339da74e3f3c053217b06d",
+      "warmups": 3,
+      "workload": "dict_counts"
+    },
+    {
+      "execute": {
+        "max_ns": 24264900,
+        "median_ns": 20435100,
+        "min_ns": 17073700,
+        "range_ns": 7191200,
+        "runs": 20
+      },
+      "expected_stdout_sha256": "61c078ee04639f2a6a0bbce8a4e30a68d08028008039ad878c49e6f70993dc15",
+      "n": 1000,
+      "parse": {
+        "max_ns": 2286300,
+        "median_ns": 1439200,
+        "min_ns": 1187400,
+        "range_ns": 1098900,
+        "runs": 23
+      },
+      "parse_to_execute_median_ratio": 0.070428,
+      "repeats": 20,
+      "source": "bench/dict_counts.lwt",
+      "source_sha256": "ed6b528c217a338671a0bbb467783b0b30e8039222339da74e3f3c053217b06d",
+      "warmups": 3,
+      "workload": "dict_counts"
+    },
+    {
+      "execute": {
+        "max_ns": 122474700,
+        "median_ns": 111057300,
+        "min_ns": 107237800,
+        "range_ns": 15236900,
+        "runs": 20
+      },
+      "expected_stdout_sha256": "c9c48f6b4fa416d59b2a2e59daae0166cf120f28c385a846ee0bf235d1750196",
+      "n": 5000,
+      "parse": {
+        "max_ns": 2731700,
+        "median_ns": 1662600,
+        "min_ns": 1165800,
+        "range_ns": 1565900,
+        "runs": 23
+      },
+      "parse_to_execute_median_ratio": 0.014971,
+      "repeats": 20,
+      "source": "bench/dict_counts.lwt",
+      "source_sha256": "ed6b528c217a338671a0bbb467783b0b30e8039222339da74e3f3c053217b06d",
+      "warmups": 3,
+      "workload": "dict_counts"
+    }
+  ],
+  "method": {
+    "excludes": [
+      "process creation",
+      "Python startup",
+      "package import"
+    ],
+    "oracle": "byte-exact stdout compared before and after every timed run",
+    "process_model": "single process; parsed once, executed repeatedly",
+    "s11_relationship": "independent evidence; never written into bench/results.json",
+    "timing": "perf_counter_ns around load_module_graph (parse) and execute (pure execution)"
+  },
+  "profiles": [
+    {
+      "decision_coverage": {
+        "covered": 2,
+        "percentage": 100.0,
+        "total": 2
+      },
+      "event_count": 3008,
+      "event_distribution": [
+        {
+          "count": 2005,
+          "event": "statement",
+          "percentage": 66.66
+        },
+        {
+          "count": 1001,
+          "event": "decision",
+          "percentage": 33.28
+        },
+        {
+          "count": 1,
+          "event": "program_end",
+          "percentage": 0.03
+        },
+        {
+          "count": 1,
+          "event": "program_start",
+          "percentage": 0.03
+        }
+      ],
+      "exit_code": 0,
+      "function_coverage": {
+        "covered": 0,
+        "percentage": null,
+        "total": 0
+      },
+      "size": 1000,
+      "statement_coverage": {
+        "covered": 7,
+        "percentage": 100.0,
+        "total": 7
+      },
+      "status": "success",
+      "workload": "arithmetic"
+    },
+    {
+      "decision_coverage": {
+        "covered": 6,
+        "percentage": 100.0,
+        "total": 6
+      },
+      "event_count": 10024,
+      "event_distribution": [
+        {
+          "count": 7020,
+          "event": "statement",
+          "percentage": 70.03
+        },
+        {
+          "count": 3002,
+          "event": "decision",
+          "percentage": 29.95
+        },
+        {
+          "count": 1,
+          "event": "program_end",
+          "percentage": 0.01
+        },
+        {
+          "count": 1,
+          "event": "program_start",
+          "percentage": 0.01
+        }
+      ],
+      "exit_code": 0,
+      "function_coverage": {
+        "covered": 0,
+        "percentage": null,
+        "total": 0
+      },
+      "size": 1000,
+      "statement_coverage": {
+        "covered": 17,
+        "percentage": 100.0,
+        "total": 17
+      },
+      "status": "success",
+      "workload": "array_scan"
+    },
+    {
+      "decision_coverage": {
+        "covered": 3,
+        "percentage": 75.0,
+        "total": 4
+      },
+      "event_count": 6008,
+      "event_distribution": [
+        {
+          "count": 4005,
+          "event": "statement",
+          "percentage": 66.66
+        },
+        {
+          "count": 2001,
+          "event": "decision",
+          "percentage": 33.31
+        },
+        {
+          "count": 1,
+          "event": "program_end",
+          "percentage": 0.02
+        },
+        {
+          "count": 1,
+          "event": "program_start",
+          "percentage": 0.02
+        }
+      ],
+      "exit_code": 0,
+      "function_coverage": {
+        "covered": 0,
+        "percentage": null,
+        "total": 0
+      },
+      "size": 1000,
+      "statement_coverage": {
+        "covered": 9,
+        "percentage": 90.0,
+        "total": 10
+      },
+      "status": "success",
+      "workload": "dict_counts"
+    }
+  ],
+  "schema_version": 1,
+  "tool": "lwt-micro-bench"
+}
