@@ -28,21 +28,19 @@ import threading
 from typing import Any, Callable
 
 from .errors import LwtError, SourceLocation
+# S44 P0-1: the scheduling exceptions and thread-local task id live in a
+# lightweight module so callers can import them without this module's heavy
+# stack (concurrent.futures/hashlib/json/tempfile). Re-exported here for
+# backward compatibility; the class objects are shared, not copies.
+from ._sched_support import (
+    DeadlockDetected,
+    ScheduleReplayMismatch,
+    current_task_id,
+    set_current_task_id,
+)
 
 SCHEMA = "lwt-schedule-trace/1"
 SCHEMA_VERSION = 1
-
-# Per-thread current task id. The runtime context is shared across task
-# threads, so the active task must be thread-local (never a shared field).
-_context = threading.local()
-
-
-def current_task_id() -> int:
-    return getattr(_context, "task_id", 0)
-
-
-def set_current_task_id(task_id: int) -> None:
-    _context.task_id = task_id
 
 
 # ---------------------------------------------------------------------------
@@ -80,14 +78,6 @@ def source_digest(entries: dict[str, str]) -> str:
 
 def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
-
-
-class ScheduleReplayMismatch(Exception):
-    """A replay trace field is inconsistent (mapped to CliError/4 by cli)."""
-
-
-class DeadlockDetected(Exception):
-    """Internal signal that the scheduler found no runnable task."""
 
 
 # ---------------------------------------------------------------------------

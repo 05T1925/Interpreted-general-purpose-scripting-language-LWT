@@ -3,21 +3,24 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, fields, is_dataclass
-from concurrent.futures import Future
 import sys
 from pathlib import Path
-import threading
-from typing import Any, BinaryIO, NoReturn, TextIO
+from typing import TYPE_CHECKING, Any, BinaryIO, NoReturn, TextIO
 
-from .concurrency import (
+# S44 P0-1: only the lightweight scheduling primitives are imported eagerly.
+# The heavy scheduler stack (concurrent.futures, hashlib, json, tempfile and
+# lwt.concurrency itself) is loaded lazily, inside the spawn-only branch of
+# execute(), so non-spawn programs pay zero import cost for it.
+from ._sched_support import (
     DeadlockDetected,
     ScheduleReplayMismatch,
-    ScheduleTracer,
-    Scheduler,
     current_task_id,
     set_current_task_id,
-    source_digest,
 )
+
+if TYPE_CHECKING:
+    from concurrent.futures import Future
+    from .concurrency import ScheduleTracer, Scheduler
 
 from .ast_nodes import (
     ArrayExpression,
@@ -57,10 +60,29 @@ from .errors import LwtError, SourceLocation
 from .builtin_signatures import BUILTIN_NAMES
 from .lexer import TokenKind
 from .modules import ModuleGraph, ModuleUnit, resolve_module_call
+# S44 P0-4: share the chunked decimal converters with the parser (which now
+# pre-decodes INT literals). Re-exported here for API/test compatibility.
+from ._decimal import parse_decimal_integer, format_decimal_integer
 
 
-_DECIMAL_CHUNK_DIGITS = 9
-_DECIMAL_CHUNK_BASE = 10**_DECIMAL_CHUNK_DIGITS
+# S44 P0-3: hoist per-call set literals out of the binary-operator hot path.
+# A set display inside a function body is rebuilt on every call; for arithmetic
+# loops that is tens of thousands of allocations. Membership semantics are
+# unchanged (TokenKind is a hashable str-Enum).
+_EQUALITY_OPERATORS = frozenset({TokenKind.EQUAL_EQUAL, TokenKind.BANG_EQUAL})
+_ARITHMETIC_OPERATORS = frozenset(
+    {TokenKind.MINUS, TokenKind.STAR, TokenKind.SLASH, TokenKind.PERCENT}
+)
+_COMPARISON_OPERATORS = frozenset(
+    {
+        TokenKind.LESS,
+        TokenKind.LESS_EQUAL,
+        TokenKind.GREATER,
+        TokenKind.GREATER_EQUAL,
+    }
+)
+_NUMERIC_PRIMITIVES = frozenset({int, str, bool})
+
 _LITERAL_KINDS = frozenset(
     {
         TokenKind.INT,
@@ -232,34 +254,6 @@ class Environment:
         while environment.parent is not None:
             environment = environment.parent
         return environment
-
-
-def parse_decimal_integer(lexeme: str) -> int:
-    """Convert decimal digits without passing a large string to ``int``."""
-
-    value = 0
-    for start in range(0, len(lexeme), _DECIMAL_CHUNK_DIGITS):
-        chunk = lexeme[start : start + _DECIMAL_CHUNK_DIGITS]
-        value = value * (10 ** len(chunk)) + int(chunk)
-    return value
-
-
-def format_decimal_integer(value: int) -> str:
-    """Format an arbitrary-size integer using only small decimal chunks."""
-
-    negative = value < 0
-    remaining = -value if negative else value
-    if remaining == 0:
-        return "0"
-
-    chunks: list[int] = []
-    while remaining:
-        remaining, chunk = divmod(remaining, _DECIMAL_CHUNK_BASE)
-        chunks.append(chunk)
-
-    rendered = str(chunks.pop())
-    rendered += "".join(f"{chunk:0{_DECIMAL_CHUNK_DIGITS}d}" for chunk in reversed(chunks))
-    return "-" + rendered if negative else rendered
 
 
 # ---------------------------------------------------------------------------
@@ -505,8 +499,8 @@ def execute(
         # S43: detect `spawn` anywhere in the loaded module graph. Programs
         # without it take the original sequential path with zero overhead.
         uses_spawn = any(_program_has_spawn(unit.program) for unit in graph.modules)
-        scheduler: Scheduler | None = None
-        tracer: ScheduleTracer | None = None
+        scheduler: Any = None
+        tracer: Any = None
         replay_doc: dict[str, Any] | None = None
         if uses_spawn:
             if observer is not None or debug_hook is not None:
@@ -516,6 +510,13 @@ def execute(
                     "profile and debugger do not support spawn",
                     4,
                 )
+            # S44 P0-1: load the heavy scheduler stack only for spawn programs.
+            from .concurrency import (
+                ScheduleTracer,
+                Scheduler,
+                source_digest,
+            )
+
             entry_source = source_path or "entry.lwt"
             texts = source_texts or {entry_source: ""}
             digest = source_digest(texts)
@@ -792,15 +793,15 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
 def _execute_statement(
     statement: Statement, environment: Environment, runtime: _RuntimeContext
 ) -> None:
-    if runtime.debug_hook is not None and not isinstance(statement, Block):
+    if runtime.debug_hook is not None and not type(statement) is Block:
         _notify_debug_hook(
             runtime.debug_hook, "before_statement", statement, environment, runtime
         )
-    if runtime.observer is not None and not isinstance(statement, Block):
+    if runtime.observer is not None and not type(statement) is Block:
         source = runtime.profile_source or runtime.source_path or "entry.lwt"
         _notify_observer(runtime.observer, "statement", statement, source)
 
-    if isinstance(statement, LetStatement):
+    if type(statement) is LetStatement:
         name = statement.name.name
         if name in environment.values:
             _runtime_error(
@@ -811,13 +812,13 @@ def _execute_statement(
         environment.values[name] = value
         return
 
-    if isinstance(statement, BreakStatement):
+    if type(statement) is BreakStatement:
         raise _BreakSignal(statement.location)
 
-    if isinstance(statement, ContinueStatement):
+    if type(statement) is ContinueStatement:
         raise _ContinueSignal(statement.location)
 
-    if isinstance(statement, AttemptStatement):
+    if type(statement) is AttemptStatement:
         attempt_outcome: str | None = None
         try:
             try:
@@ -896,7 +897,7 @@ def _execute_statement(
                 )
         return
 
-    if isinstance(statement, ThrowStatement):
+    if type(statement) is ThrowStatement:
         value = _evaluate(statement.value, environment, runtime)
         if type(value) is str:
             error = LwtError("User", value, 3, statement.location)
@@ -922,7 +923,7 @@ def _execute_statement(
             )
         raise error
 
-    if isinstance(statement, ReturnStatement):
+    if type(statement) is ReturnStatement:
         value = (
             _evaluate(statement.value, environment, runtime)
             if statement.value is not None
@@ -930,7 +931,7 @@ def _execute_statement(
         )
         raise _ReturnSignal(value, statement.location)
 
-    if isinstance(statement, EmitStatement):
+    if type(statement) is EmitStatement:
         value = _evaluate(statement.value, environment, runtime)
         try:
             rendered = _display_value(value)
@@ -940,17 +941,17 @@ def _execute_statement(
         runtime.output_stream.write(rendered + "\n")
         return
 
-    if isinstance(statement, ExpressionStatement):
+    if type(statement) is ExpressionStatement:
         _evaluate(statement.expression, environment, runtime)
         return
 
-    if isinstance(statement, Block):
+    if type(statement) is Block:
         nested = Environment(environment)
         for child in statement.statements:
             _execute_statement(child, nested, runtime)
         return
 
-    if isinstance(statement, WhenStatement):
+    if type(statement) is WhenStatement:
         condition = _evaluate(statement.condition, environment, runtime)
         if type(condition) is not bool:
             _runtime_error("when condition must be a boolean", statement.location)
@@ -969,7 +970,7 @@ def _execute_statement(
             _execute_statement(statement.otherwise_branch, environment, runtime)
         return
 
-    if isinstance(statement, WhileStatement):
+    if type(statement) is WhileStatement:
         while True:
             condition = _evaluate(statement.condition, environment, runtime)
             if type(condition) is not bool:
@@ -993,7 +994,7 @@ def _execute_statement(
             except _BreakSignal:
                 return
 
-    if isinstance(statement, EachStatement):
+    if type(statement) is EachStatement:
         iterable = _evaluate(statement.iterable, environment, runtime)
         if type(iterable) is not list:
             _runtime_error("each requires an array", statement.location)
@@ -1028,12 +1029,15 @@ def _execute_statement(
 def _evaluate(
     expression: Expression, environment: Environment, runtime: _RuntimeContext
 ) -> object:
-    if isinstance(expression, LiteralExpression):
-        if expression.kind is TokenKind.INT:
+    if type(expression) is LiteralExpression:
+        # S44 P0-4: the parser pre-decodes INT into `value`; no re-parse here.
+        # Defensive fallback for hand-built ASTs (e.g. a tool constructing a
+        # LiteralExpression directly) keeps the prior behavior for INT/None.
+        if expression.kind is TokenKind.INT and expression.value is None:
             return parse_decimal_integer(expression.lexeme)
         return expression.value
 
-    if isinstance(expression, VariableExpression):
+    if type(expression) is VariableExpression:
         binding = environment.resolve(expression.name.name)
         if binding is None:
             _runtime_error(
@@ -1042,14 +1046,14 @@ def _evaluate(
             )
         return binding.values[expression.name.name]
 
-    if isinstance(expression, ArrayExpression):
+    if type(expression) is ArrayExpression:
         # A list comprehension evaluates each element exactly once, left-to-right.
         return [_evaluate(element, environment, runtime) for element in expression.elements]
 
-    if isinstance(expression, DictExpression):
+    if type(expression) is DictExpression:
         return _construct_dict(expression, environment, runtime)
 
-    if isinstance(expression, SpawnExpression):
+    if type(expression) is SpawnExpression:
         # Spec 11.3: resolve target -> check arity -> evaluate args left-to-right
         # -> create a ready task -> return Task. spawn itself does NOT switch.
         target_runtime = runtime
@@ -1095,10 +1099,10 @@ def _evaluate(
             scheduler.register_task(task_id)
         return _TaskValue(task_id)
 
-    if isinstance(expression, RecordConstructionExpression):
+    if type(expression) is RecordConstructionExpression:
         return _construct_record(expression, environment, runtime)
 
-    if isinstance(expression, IndexExpression):
+    if type(expression) is IndexExpression:
         receiver = _evaluate(expression.object, environment, runtime)
         index = _evaluate(expression.index, environment, runtime)
         if isinstance(receiver, _DictValue):
@@ -1106,7 +1110,7 @@ def _evaluate(
         checked_index = _checked_array_index(receiver, index, expression.access_location)
         return receiver[checked_index]
 
-    if isinstance(expression, FieldExpression):
+    if type(expression) is FieldExpression:
         receiver = _evaluate(expression.object, environment, runtime)
         if isinstance(receiver, _ErrorValue):
             if expression.field.name not in _ERROR_FIELDS:
@@ -1125,7 +1129,7 @@ def _evaluate(
             )
         return receiver.fields[field_name]
 
-    if isinstance(expression, AssignmentExpression):
+    if type(expression) is AssignmentExpression:
         target = expression.target
         if isinstance(target, VariableExpression):
             identifier = target.name
@@ -1178,7 +1182,7 @@ def _evaluate(
 
         raise AssertionError("parser admitted an invalid assignment target")
 
-    if isinstance(expression, UnaryExpression):
+    if type(expression) is UnaryExpression:
         value = _evaluate(expression.operand, environment, runtime)
         if expression.operator is TokenKind.MINUS:
             if type(value) is not int:
@@ -1190,7 +1194,7 @@ def _evaluate(
             return not value
         raise AssertionError(f"unknown unary operator: {expression.operator!r}")
 
-    if isinstance(expression, BinaryExpression):
+    if type(expression) is BinaryExpression:
         left = _evaluate(expression.left, environment, runtime)
         if expression.operator is TokenKind.AND:
             if type(left) is not bool:
@@ -1223,7 +1227,7 @@ def _evaluate(
         right = _evaluate(expression.right, environment, runtime)
         return _evaluate_binary(expression, left, right)
 
-    if isinstance(expression, CallExpression):
+    if type(expression) is CallExpression:
         name = expression.callee.name
         is_builtin = name in _BUILTIN_NAMES
         declaration = None if is_builtin else runtime.functions.get(name)
@@ -1277,7 +1281,7 @@ def _evaluate(
         except RecursionError:
             _runtime_error("host recursion limit reached", expression.callee.location)
 
-    if isinstance(expression, ModuleCallExpression):
+    if type(expression) is ModuleCallExpression:
         target_runtime = runtime.imports.get(expression.alias.name)
         if target_runtime is None:
             _runtime_error(
@@ -1829,10 +1833,10 @@ def _evaluate_binary(
     operator = expression.operator
     location = expression.operator_location
 
-    if operator in {TokenKind.EQUAL_EQUAL, TokenKind.BANG_EQUAL}:
+    if operator in _EQUALITY_OPERATORS:
         if type(left) is not type(right):
             equal = False
-        elif type(left) in {int, str, bool} or left is None:
+        elif type(left) in _NUMERIC_PRIMITIVES or left is None:
             equal = left == right
         elif type(left) is list or isinstance(left, (_RecordValue, _ErrorValue, _DictValue, _TaskValue, _ChannelValue)):
             # Never invoke Python's recursive container/record/dict equality.
@@ -1848,12 +1852,7 @@ def _evaluate_binary(
             return left + right
         _runtime_error("'+' requires two integers or two strings", location)
 
-    if operator in {
-        TokenKind.MINUS,
-        TokenKind.STAR,
-        TokenKind.SLASH,
-        TokenKind.PERCENT,
-    }:
+    if operator in _ARITHMETIC_OPERATORS:
         if type(left) is not int or type(right) is not int:
             _runtime_error(
                 f"operator {operator.value!r} requires integer operands", location
@@ -1868,12 +1867,7 @@ def _evaluate_binary(
             return left // right
         return left % right
 
-    if operator in {
-        TokenKind.LESS,
-        TokenKind.LESS_EQUAL,
-        TokenKind.GREATER,
-        TokenKind.GREATER_EQUAL,
-    }:
+    if operator in _COMPARISON_OPERATORS:
         same_supported_type = (
             type(left) is int and type(right) is int
         ) or (type(left) is str and type(right) is str)

@@ -44,6 +44,9 @@ from .ast_nodes import (
 )
 from .errors import LwtError, SourceLocation
 from .lexer import Token, TokenKind
+# S44 P0-4: pre-decode INT literals once during parsing instead of re-parsing
+# the lexeme on every evaluation. The chunked converter is shared with runtime.
+from ._decimal import parse_decimal_integer
 
 
 # Each group is left-associative; the groups' order is defined by the call chain.
@@ -350,8 +353,14 @@ class Parser:
             TokenKind.NULL,
         ):
             token = self._previous()
+            # S44 P0-4: INT lexemes keep their spelling for diagnostics and the
+            # static checker, but the decoded integer is cached in `value` so
+            # the runtime no longer re-parses the same digits on each eval.
+            literal = token.literal
+            if token.kind is TokenKind.INT:
+                literal = parse_decimal_integer(token.lexeme)
             return LiteralExpression(
-                token.kind, token.literal, token.lexeme, _token_location(token)
+                token.kind, literal, token.lexeme, _token_location(token)
             )
 
         if self._match(TokenKind.LEFT_BRACKET):

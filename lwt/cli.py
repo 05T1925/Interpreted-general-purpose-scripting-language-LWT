@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-import hashlib
 import io
-import json
 import os
 import sys
-import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, BinaryIO, Sequence, TextIO
 
-from .concurrency import ScheduleReplayMismatch, ScheduleTracer, source_digest
+# S44 P0-1/P0-2: keep the common CLI startup light. The scheduling exception
+# is tiny (lives in _sched_support); the heavy tracer/digest helpers and
+# hashlib/json/tempfile are imported only inside the commands that need them.
+from ._sched_support import ScheduleReplayMismatch
 from .errors import LwtError, format_diagnostic
 from .lexer import scan
 from .modules import load_module_graph
@@ -300,6 +300,8 @@ def _run_check(argv: Sequence[str]) -> int:
 
 
 def _preflight_profile_target(profile_path: str, graph: object) -> Path:
+    import tempfile
+
     target = Path(profile_path)
     try:
         resolved = target.resolve()
@@ -345,6 +347,9 @@ def _preflight_profile_target(profile_path: str, graph: object) -> Path:
 
 
 def _write_profile_atomic(target: Path, profile: dict[str, object]) -> None:
+    import json
+    import tempfile
+
     temporary: str | None = None
     descriptor = -1
     try:
@@ -563,6 +568,12 @@ def _display_repl_value(value: object) -> str:
 
 def _run_schedule(argv: Sequence[str]) -> int:
     """Execute with deterministic scheduling, trace recording, and replay."""
+
+    # S44 P0-2: these imports are only needed for the schedule subcommand,
+    # which is a rare path; keep them out of plain `--check`/`--profile`/REPL.
+    import hashlib
+
+    from .concurrency import ScheduleTracer, source_digest
 
     source_path: str | None = None
     try:

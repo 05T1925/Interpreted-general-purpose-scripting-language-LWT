@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import os
 from dataclasses import dataclass, field
 from pathlib import Path, PureWindowsPath
@@ -225,6 +224,8 @@ def _decode_file(path: Path, *, entry: bool) -> str:
 
 
 def _decode_file_with_hash(path: Path, *, entry: bool) -> tuple[str, str]:
+    import hashlib
+
     try:
         data = path.read_bytes()
     except (OSError, ValueError):
@@ -248,6 +249,8 @@ def _decode_source(
     overlay = overlays.get(path)
     if overlay is not None:
         if include_hash:
+            import hashlib
+
             return overlay, hashlib.sha256(overlay.encode("utf-8")).hexdigest()
         return overlay, None
     if include_hash:
