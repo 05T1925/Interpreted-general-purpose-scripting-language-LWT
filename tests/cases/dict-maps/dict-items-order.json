@@ -1,0 +1,19 @@
+{
+  "id": "dict-items-order",
+  "spec_refs": [
+    "6"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[[\"b\", 1], [\"a\", 2]]\n",
+    "stderr": ""
+  }
+}

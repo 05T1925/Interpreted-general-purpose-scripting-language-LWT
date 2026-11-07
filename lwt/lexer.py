@@ -36,6 +36,9 @@ class TokenKind(str, Enum):
     IMPORT = "import"
     ATTEMPT = "attempt"
     RECOVER = "recover"
+    FINALLY = "finally"
+    THROW = "throw"
+    DICT = "dict"
 
     PLUS = "+"
     MINUS = "-"
@@ -95,6 +98,9 @@ _KEYWORDS: dict[str, TokenKind] = {
     "import": TokenKind.IMPORT,
     "attempt": TokenKind.ATTEMPT,
     "recover": TokenKind.RECOVER,
+    "finally": TokenKind.FINALLY,
+    "throw": TokenKind.THROW,
+    "dict": TokenKind.DICT,
 }
 
 _SINGLE_CHARACTERS: dict[str, TokenKind] = {

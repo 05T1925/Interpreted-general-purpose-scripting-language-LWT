@@ -1,0 +1,20 @@
+{
+  "id": "dict-neq-identity",
+  "spec_refs": [
+    "4.2",
+    "4.4"
+  ],
+  "tags": [
+    "boundary",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": ""
+  }
+}

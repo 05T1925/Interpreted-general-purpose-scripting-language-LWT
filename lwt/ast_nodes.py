@@ -77,6 +77,13 @@ class AttemptStatement:
     error_name: Identifier
     recover_body: Block
     location: SourceLocation
+    finally_body: Block | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class ThrowStatement:
+    value: Expression
+    location: SourceLocation
 
 
 @dataclass(frozen=True, slots=True)
@@ -139,6 +146,21 @@ class VariableExpression:
 @dataclass(frozen=True, slots=True)
 class ArrayExpression:
     elements: tuple[Expression, ...]
+    location: SourceLocation
+
+
+@dataclass(frozen=True, slots=True)
+class DictEntry:
+    """One ``key: value`` pair inside a dict literal, in source order."""
+
+    key: Expression
+    value: Expression
+    location: SourceLocation
+
+
+@dataclass(frozen=True, slots=True)
+class DictExpression:
+    entries: tuple[DictEntry, ...]
     location: SourceLocation
 
 
@@ -215,6 +237,7 @@ Expression = (
     LiteralExpression
     | VariableExpression
     | ArrayExpression
+    | DictExpression
     | RecordConstructionExpression
     | CallExpression
     | ModuleCallExpression
@@ -229,6 +252,7 @@ Statement = (
     | BreakStatement
     | ContinueStatement
     | AttemptStatement
+    | ThrowStatement
     | ReturnStatement
     | EmitStatement
     | ExpressionStatement

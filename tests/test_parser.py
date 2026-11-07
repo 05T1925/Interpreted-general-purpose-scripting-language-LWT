@@ -11,6 +11,7 @@ from lwt.ast_nodes import (
     BreakStatement,
     CallExpression,
     ContinueStatement,
+    DictExpression,
     EachStatement,
     EmitStatement,
     ExpressionStatement,
@@ -22,6 +23,7 @@ from lwt.ast_nodes import (
     RecordConstructionExpression,
     RecordDeclaration,
     ReturnStatement,
+    ThrowStatement,
     UnaryExpression,
     VariableExpression,
     WhenStatement,
@@ -453,6 +455,46 @@ class ParserErrorTests(unittest.TestCase):
                 self.assert_syntax_error(
                     source, SourceLocation(1, source.index(token) + 1)
                 )
+
+    def test_s42_keywords_are_reserved_identifiers(self) -> None:
+        for source, token in (
+            ("let dict = 1;", "dict"),
+            ("let throw = 1;", "throw"),
+            ("let finally = 1;", "finally"),
+            ("fn dict() {}", "dict"),
+        ):
+            with self.subTest(source=source):
+                self.assert_syntax_error(
+                    source, SourceLocation(1, source.index(token) + 1)
+                )
+
+    def test_dict_literal_is_dict_expression_not_record(self) -> None:
+        program = parse_source('let d = dict{"a": 1, 2: b};')
+        stmt = program.items[0]
+        expr = stmt.initializer  # type: ignore[attr-defined]
+        self.assertIsInstance(expr, DictExpression)
+        self.assertEqual(len(expr.entries), 2)
+
+    def test_empty_dict_literal(self) -> None:
+        program = parse_source("let d = dict{};")
+        self.assertIsInstance(program.items[0].initializer, DictExpression)  # type: ignore[attr-defined]
+
+    def test_throw_statement_parses(self) -> None:
+        program = parse_source('throw "boom";')
+        self.assertIsInstance(program.items[0], ThrowStatement)
+
+    def test_attempt_with_finally_parses(self) -> None:
+        program = parse_source("attempt { } recover (e) { } finally { }")
+        stmt = program.items[0]
+        self.assertIsInstance(stmt, AttemptStatement)
+        self.assertIsInstance(stmt.finally_body, Block)  # type: ignore[attr-defined]
+
+    def test_attempt_without_finally_has_none(self) -> None:
+        program = parse_source("attempt { } recover (e) { }")
+        self.assertIsNone(program.items[0].finally_body)  # type: ignore[attr-defined]
+
+    def test_finally_without_attempt_is_syntax_error(self) -> None:
+        self.assert_syntax_error("finally { }", SourceLocation(1, 1))
 
 
 if __name__ == "__main__":

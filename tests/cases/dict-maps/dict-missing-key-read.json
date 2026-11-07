@@ -1,0 +1,19 @@
+{
+  "id": "dict-missing-key-read",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "error",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/dict-maps/dict-missing-key-read.lwt:2:7: RuntimeError: dict has no key \"z\"\n"
+  }
+}

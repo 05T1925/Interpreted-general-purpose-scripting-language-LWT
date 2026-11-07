@@ -1,0 +1,19 @@
+{
+  "id": "dict-put-new-append",
+  "spec_refs": [
+    "6"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "dict{\"a\": 1, \"b\": 2}\n",
+    "stderr": ""
+  }
+}

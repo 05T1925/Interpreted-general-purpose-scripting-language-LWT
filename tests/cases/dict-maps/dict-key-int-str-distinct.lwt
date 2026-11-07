@@ -1,0 +1,4 @@
+let d = dict{1: "int", "1": "str"};
+emit d[1];
+emit d["1"];
+emit len(d);

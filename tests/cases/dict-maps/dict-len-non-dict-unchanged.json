@@ -1,0 +1,19 @@
+{
+  "id": "dict-len-non-dict-unchanged",
+  "spec_refs": [
+    "6"
+  ],
+  "tags": [
+    "error",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/dict-maps/dict-len-non-dict-unchanged.lwt:1:6: RuntimeError: len expects a string or array\n"
+  }
+}

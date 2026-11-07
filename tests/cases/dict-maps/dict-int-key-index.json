@@ -1,0 +1,19 @@
+{
+  "id": "dict-int-key-index",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "one\ntwo\n",
+    "stderr": ""
+  }
+}

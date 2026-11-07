@@ -1,0 +1,15 @@
+# S42 micro-benchmark workload: O(1) dict-backed frequency counting.
+# Companion to array_scan.lwt; exercises dict keys/put/has/get/len with str keys.
+let n = to_int(args()[0]);
+let counts = dict{};
+let i = 0;
+while (i < n) {
+    let key = str((i * 17 + 3) % 1009);
+    when (has(counts, key)) {
+        put(counts, key, get(counts, key, 0) + 1);
+    } otherwise {
+        put(counts, key, 1);
+    }
+    i = i + 1;
+}
+emit str(n) + "|" + str(len(counts));

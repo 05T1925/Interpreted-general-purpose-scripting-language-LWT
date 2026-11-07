@@ -18,6 +18,7 @@ from .ast_nodes import (
     BreakStatement,
     CallExpression,
     ContinueStatement,
+    DictExpression,
     EachStatement,
     EmitStatement,
     Expression,
@@ -34,6 +35,7 @@ from .ast_nodes import (
     RecordDeclaration,
     ReturnStatement,
     Statement,
+    ThrowStatement,
     UnaryExpression,
     VariableExpression,
     WhenStatement,
@@ -152,6 +154,10 @@ class ProfileCollector:
             elif isinstance(expression, ArrayExpression):
                 for child in expression.elements:
                     scan_expression(child)
+            elif isinstance(expression, DictExpression):
+                for entry in expression.entries:
+                    scan_expression(entry.key)
+                    scan_expression(entry.value)
             elif isinstance(expression, RecordConstructionExpression):
                 for field in expression.fields:
                     scan_expression(field.value)
@@ -211,6 +217,10 @@ class ProfileCollector:
                 module["decision_count"] = int(module["decision_count"]) + 1
                 scan_statement(statement.body)
                 scan_statement(statement.recover_body)
+                if statement.finally_body is not None:
+                    scan_statement(statement.finally_body)
+            elif isinstance(statement, ThrowStatement):
+                scan_expression(statement.value)
             elif isinstance(statement, (BreakStatement, ContinueStatement)):
                 return
             else:

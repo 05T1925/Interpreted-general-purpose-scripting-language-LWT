@@ -1,0 +1,3 @@
+let d = dict{"k": 1};
+d["k"] = 2;
+emit d["k"];

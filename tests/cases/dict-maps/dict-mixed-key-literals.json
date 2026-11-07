@@ -1,0 +1,19 @@
+{
+  "id": "dict-mixed-key-literals",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "dict{\"x\": 1, 2: \"two\", 0: 0}\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,2 @@
+let d = dict{"a": 1};
+emit d["z"];

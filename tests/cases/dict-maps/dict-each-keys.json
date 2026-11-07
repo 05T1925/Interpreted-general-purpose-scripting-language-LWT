@@ -1,0 +1,20 @@
+{
+  "id": "dict-each-keys",
+  "spec_refs": [
+    "4.4",
+    "5"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "a=1\nb=2\n",
+    "stderr": ""
+  }
+}

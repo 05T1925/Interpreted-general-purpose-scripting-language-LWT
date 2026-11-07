@@ -1,0 +1,60 @@
+# LWT 0.2 结构化错误传播（throw / finally）示例。
+
+# 1. throw 字符串 -> category 为 User 的 Error；finally 总执行。
+attempt {
+    throw "disk unavailable";
+    emit "not reached";
+} recover (problem) {
+    emit problem.category;   # User
+    emit problem.message;    # disk unavailable
+} finally {
+    emit "closed handle";    # closed handle
+}
+emit "after first";          # after first
+
+# 2. throw 一个 Error 值（用 error 内置构造自定义 category），原样重抛。
+attempt {
+    attempt {
+        throw error("Validation", "age < 0");
+    } recover (inner) {
+        emit inner.category;      # Validation
+        throw inner;              # 原样重抛保留 category/message
+    } finally {
+        emit "inner cleaned";     # inner cleaned
+    }
+} recover (outer) {
+    emit outer.category + ":" + outer.message;  # Validation:age < 0
+}
+
+# 3. finally 覆盖：handler 中的 return 被 finally 中的 return 覆盖。
+fn decide() {
+    attempt {
+        throw "x";
+    } recover (p) {
+        return 7;                # 挂起
+    } finally {
+        return 9;                # 覆盖挂起的 return
+    }
+    return 0;                    # 不可达
+}
+emit decide();                   # 9
+
+# 4. body 正常也执行 finally，且不进入 handler。
+attempt {
+    emit "body ok";              # body ok
+} recover (p) {
+    emit "no handler";
+} finally {
+    emit "normal finally";       # normal finally
+}
+
+# 5. 单 handler 内按 category 分派（S42 不支持多 handler / 类型过滤）。
+attempt {
+    throw error("Network", "timeout");
+} recover (problem) {
+    when (problem.category == "Network") {
+        emit "retry later";
+    } otherwise {
+        emit "unknown error";
+    }
+}

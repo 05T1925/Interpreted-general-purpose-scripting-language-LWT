@@ -162,5 +162,134 @@ class RuntimeRecoveryTests(unittest.TestCase):
         self.assertEqual(values, [7])
 
 
+class DictRuntimeTests(unittest.TestCase):
+    def run_source(self, source: str) -> str:
+        output = StringIO()
+        execute(parse(scan(source)), BytesIO(), output)
+        return output.getvalue()
+
+    def test_dict_display_and_insertion_order(self) -> None:
+        self.assertEqual(
+            self.run_source('emit dict{"b": 1, "a": 2};'),
+            'dict{"b": 1, "a": 2}\n',
+        )
+
+    def test_int_and_string_keys_are_distinct(self) -> None:
+        source = 'let d = dict{1: "int", "1": "str"}; emit d[1]; emit d["1"];'
+        self.assertEqual(self.run_source(source), "int\nstr\n")
+
+    def test_put_append_and_update_keeps_position(self) -> None:
+        source = (
+            'let d = dict{"a": 1, "b": 2}; put(d, "a", 9); put(d, "c", 3); emit d;'
+        )
+        self.assertEqual(self.run_source(source), 'dict{"a": 9, "b": 2, "c": 3}\n')
+
+    def test_index_assignment_appends(self) -> None:
+        self.assertEqual(
+            self.run_source('let d = dict{}; d["x"] = 1; emit d;'),
+            'dict{"x": 1}\n',
+        )
+
+    def test_builtins(self) -> None:
+        source = (
+            'let d = dict{"a": 1, "b": 2}; emit len(d); emit keys(d); '
+            'emit values(d); emit items(d); emit has(d, "a"); emit has(d, "z"); '
+            'emit get(d, "z", 9); emit delete(d, "a"); emit delete(d, "a"); emit d;'
+        )
+        self.assertEqual(
+            self.run_source(source),
+            '2\n["a", "b"]\n[1, 2]\n[["a", 1], ["b", 2]]\ntrue\nfalse\n9\n'
+            'true\nfalse\ndict{"b": 2}\n',
+        )
+
+    def test_duplicate_key_is_runtime_error(self) -> None:
+        with self.assertRaises(LwtError) as caught:
+            self.run_source('let d = dict{"a": 1, "a": 2}; emit d;')
+        self.assertEqual(caught.exception.exit_code, 3)
+        self.assertIn("duplicate dict key", caught.exception.message)
+
+    def test_bad_key_type_is_runtime_error(self) -> None:
+        with self.assertRaises(LwtError) as caught:
+            self.run_source('let d = dict{true: 1}; emit d;')
+        self.assertEqual(caught.exception.exit_code, 3)
+        self.assertIn("dict key must be an integer or string", caught.exception.message)
+
+    def test_missing_key_read_is_runtime_error(self) -> None:
+        with self.assertRaises(LwtError) as caught:
+            self.run_source('let d = dict{"a": 1}; emit d["z"];')
+        self.assertEqual(caught.exception.exit_code, 3)
+        self.assertIn("dict has no key", caught.exception.message)
+
+    def test_dict_identity_equality(self) -> None:
+        source = 'let d = dict{"a": 1}; emit d == d; emit dict{} == dict{};'
+        self.assertEqual(self.run_source(source), "true\nfalse\n")
+
+    def test_dict_cycle_display(self) -> None:
+        source = 'let d = dict{}; put(d, "self", d); emit d;'
+        self.assertEqual(self.run_source(source), 'dict{"self": <cycle>}\n')
+
+
+class ThrowFinallyTests(unittest.TestCase):
+    def run_source(self, source: str) -> str:
+        output = StringIO()
+        execute(parse(scan(source)), BytesIO(), output)
+        return output.getvalue()
+
+    def test_throw_string_becomes_user_error_and_finally_runs(self) -> None:
+        source = (
+            'attempt { throw "boom"; emit "no"; } recover (p) { '
+            'emit p.category; emit p.message; } finally { emit "clean"; } emit "after";'
+        )
+        self.assertEqual(self.run_source(source), "User\nboom\nclean\nafter\n")
+
+    def test_throw_error_value_preserves_category_and_finally(self) -> None:
+        source = (
+            'attempt { attempt { throw error("Validation", "bad"); } '
+            'recover (i) { emit i.category; throw i; } finally { emit "inner"; } } '
+            'recover (o) { emit o.category + ":" + o.message; }'
+        )
+        self.assertEqual(self.run_source(source), "Validation\ninner\nValidation:bad\n")
+
+    def test_finally_return_overrides_handler_return(self) -> None:
+        source = (
+            'fn f() { attempt { throw "x"; } recover (p) { return 7; } '
+            'finally { return 9; } return 0; } emit f();'
+        )
+        self.assertEqual(self.run_source(source), "9\n")
+
+    def test_finally_runs_on_normal_flow_without_handler(self) -> None:
+        source = (
+            'attempt { emit "body"; } recover (p) { emit "no"; } '
+            'finally { emit "fin"; }'
+        )
+        self.assertEqual(self.run_source(source), "body\nfin\n")
+
+    def test_finally_cannot_see_problem(self) -> None:
+        source = (
+            'attempt { throw "x"; } recover (p) { emit p.message; } '
+            'finally { emit p; }'
+        )
+        with self.assertRaises(LwtError) as caught:
+            self.run_source(source)
+        self.assertEqual(caught.exception.exit_code, 3)
+        self.assertIn("undefined variable 'p'", caught.exception.message)
+
+    def test_uncaught_throw_string_uses_user_category(self) -> None:
+        with self.assertRaises(LwtError) as caught:
+            self.run_source('emit "before"; throw "kaboom";')
+        self.assertEqual(caught.exception.category, "User")
+        self.assertEqual(caught.exception.exit_code, 3)
+
+    def test_throw_non_string_non_error_is_runtime_error(self) -> None:
+        with self.assertRaises(LwtError) as caught:
+            self.run_source("throw 42;")
+        self.assertEqual(caught.exception.category, "RuntimeError")
+        self.assertIn("throw requires a string or an error value", caught.exception.message)
+
+    def test_legacy_attempt_without_finally_unchanged(self) -> None:
+        source = 'attempt { fail("bad"); } recover (p) { emit p.category; emit p.message; } emit "ok";'
+        self.assertEqual(self.run_source(source), "RuntimeError\nbad\nok\n")
+
+
 if __name__ == "__main__":
     unittest.main()

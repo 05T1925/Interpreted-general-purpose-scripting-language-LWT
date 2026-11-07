@@ -14,6 +14,14 @@ BUILTIN_ARITIES: dict[str, int] = {
     "str": 1,
     "push": 2,
     "fail": 1,
+    "keys": 1,
+    "values": 1,
+    "items": 1,
+    "has": 2,
+    "get": 3,
+    "put": 3,
+    "delete": 2,
+    "error": 2,
 }
 
 BUILTIN_NAMES = frozenset(BUILTIN_ARITIES)

@@ -322,5 +322,52 @@ class StaticCheckerCliTests(unittest.TestCase):
         self.assertEqual(result.stderr, b"")
 
 
+class DictStaticCheckerTests(unittest.TestCase):
+    def test_duplicate_literal_keys_report_stc042(self) -> None:
+        _, result = run_source('let d = dict{"a": 1, "a": 2};', "--format=json")
+        self.assertEqual(result.returncode, 2)
+        codes = [item["code"] for item in decode_json(result)["diagnostics"]]
+        self.assertEqual(codes, ["STC042"])
+
+    def test_duplicate_int_literal_keys_report_stc042(self) -> None:
+        _, result = run_source("let d = dict{1: 1, 1: 2};", "--format=json")
+        self.assertEqual(result.returncode, 2)
+        codes = [item["code"] for item in decode_json(result)["diagnostics"]]
+        self.assertEqual(codes, ["STC042"])
+
+    def test_int_and_string_keys_are_not_duplicates(self) -> None:
+        _, result = run_source('let d = dict{1: 1, "1": 2};', "--format=json")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(decode_json(result)["diagnostics"], [])
+
+    def test_non_key_literal_reports_stc043(self) -> None:
+        _, result = run_source("let d = dict{true: 1};", "--format=json")
+        self.assertEqual(result.returncode, 2)
+        codes = [item["code"] for item in decode_json(result)["diagnostics"]]
+        self.assertEqual(codes, ["STC043"])
+
+    def test_dynamic_key_is_deferred_to_runtime(self) -> None:
+        source = 'let k = "a"; let d = dict{k: 1}; emit d[k];'
+        _, result = run_source(source, "--format=json")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(decode_json(result)["diagnostics"], [])
+
+    def test_valid_dict_and_throw_program_passes(self) -> None:
+        source = (
+            'let d = dict{"a": 1}; put(d, "b", 2); '
+            'attempt { throw error("X", "y"); } recover (p) { emit p.category; } '
+            'finally { emit "clean"; }'
+        )
+        _, result = run_source(source, "--format=json")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(decode_json(result)["diagnostics"], [])
+
+    def test_throw_value_undefined_variable_is_reported(self) -> None:
+        _, result = run_source("throw absent;", "--format=json")
+        self.assertEqual(result.returncode, 2)
+        codes = [item["code"] for item in decode_json(result)["diagnostics"]]
+        self.assertEqual(codes, ["STC040"])
+
+
 if __name__ == "__main__":
     unittest.main()

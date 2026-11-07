@@ -13,6 +13,7 @@ from .ast_nodes import (
     BreakStatement,
     CallExpression,
     ContinueStatement,
+    DictExpression,
     EachStatement,
     EmitStatement,
     Expression,
@@ -28,6 +29,7 @@ from .ast_nodes import (
     RecordDeclaration,
     ReturnStatement,
     Statement,
+    ThrowStatement,
     UnaryExpression,
     VariableExpression,
     WhenStatement,
@@ -35,6 +37,7 @@ from .ast_nodes import (
 )
 from .builtin_signatures import BUILTIN_ARITIES, BUILTIN_NAMES
 from .errors import SourceLocation
+from .lexer import TokenKind
 from .modules import ModuleGraph, ModuleUnit, resolve_module_call
 
 
@@ -248,6 +251,11 @@ class _Analyzer:
             self._analyze_block(
                 statement.recover_body, handler_scope, unit, symbols
             )
+            if statement.finally_body is not None:
+                # `problem` is not visible in a finally body.
+                self._analyze_block(statement.finally_body, scope, unit, symbols)
+        elif isinstance(statement, ThrowStatement):
+            self._analyze_expression(statement.value, scope, unit, symbols)
         elif isinstance(statement, ReturnStatement):
             if statement.value is not None:
                 self._analyze_expression(statement.value, scope, unit, symbols)
@@ -293,6 +301,36 @@ class _Analyzer:
                 self._analyze_expression(
                     element, scope, unit, symbols, hidden_here=hidden_here
                 )
+        elif isinstance(expression, DictExpression):
+            seen_literal_keys: set[tuple[str, str]] = set()
+            for entry in expression.entries:
+                self._analyze_expression(
+                    entry.key, scope, unit, symbols, hidden_here=hidden_here
+                )
+                self._analyze_expression(
+                    entry.value, scope, unit, symbols, hidden_here=hidden_here
+                )
+                literal = _static_literal_key(entry.key)
+                if literal is None:
+                    # A statically-known non int/str literal key is a definite
+                    # runtime type error; dynamic keys are left to runtime.
+                    if isinstance(entry.key, LiteralExpression):
+                        self._report(
+                            unit,
+                            "STC043",
+                            "dict key must be an integer or string",
+                            entry.key.location,
+                        )
+                    continue
+                if literal in seen_literal_keys:
+                    self._report(
+                        unit,
+                        "STC042",
+                        f"duplicate dict key {literal[1]!r}",
+                        entry.location,
+                    )
+                else:
+                    seen_literal_keys.add(literal)
         elif isinstance(expression, RecordConstructionExpression):
             name = expression.type_name.name
             fields = symbols.records.get(name) if unit is self.graph.entry else None
@@ -430,6 +468,23 @@ class _Analyzer:
             self._analyze_expression(
                 expression.object, scope, unit, symbols, hidden_here=hidden_here
             )
+
+
+def _static_literal_key(expression: Expression) -> tuple[str, str] | None:
+    """Return a stable ``(kind, value)`` for a statically-known int/str key.
+
+    Returns ``None`` for dynamic keys or literal kinds that are not valid map
+    keys. The caller distinguishes a non-key literal (definite type error) from
+    a dynamic expression (deferred to runtime) with an ``isinstance`` check.
+    """
+
+    if not isinstance(expression, LiteralExpression):
+        return None
+    if expression.kind is TokenKind.INT:
+        return ("int", str(int(expression.lexeme)))
+    if expression.kind is TokenKind.STRING:
+        return ("str", str(expression.value))
+    return None
 
 
 def analyze_module_graph(

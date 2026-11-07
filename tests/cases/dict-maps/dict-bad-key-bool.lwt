@@ -1,0 +1,2 @@
+let d = dict{true: 1};
+emit d;

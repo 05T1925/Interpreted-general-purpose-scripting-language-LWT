@@ -1,0 +1,19 @@
+{
+  "id": "dict-delete-present",
+  "spec_refs": [
+    "6"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\ndict{\"b\": 2}\n",
+    "stderr": ""
+  }
+}

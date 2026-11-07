@@ -1,0 +1,19 @@
+{
+  "id": "dict-nested-display",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "dict{\"arr\": [1, 2], \"sub\": dict{\"x\": 1}}\n",
+    "stderr": ""
+  }
+}

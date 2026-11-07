@@ -1,0 +1,19 @@
+{
+  "id": "dict-bad-key-null",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "error",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/dict-maps/dict-bad-key-null.lwt:1:14: RuntimeError: dict key must be an integer or string\n"
+  }
+}

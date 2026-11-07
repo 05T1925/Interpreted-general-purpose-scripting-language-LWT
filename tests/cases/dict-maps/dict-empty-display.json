@@ -1,0 +1,19 @@
+{
+  "id": "dict-empty-display",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "dict{}\n",
+    "stderr": ""
+  }
+}

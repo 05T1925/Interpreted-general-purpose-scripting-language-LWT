@@ -1,0 +1,19 @@
+{
+  "id": "dict-values-non-dict",
+  "spec_refs": [
+    "6"
+  ],
+  "tags": [
+    "error",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/dict-maps/dict-values-non-dict.lwt:1:6: RuntimeError: values first argument must be a dict\n"
+  }
+}

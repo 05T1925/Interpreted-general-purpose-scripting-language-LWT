@@ -1,0 +1,19 @@
+{
+  "id": "dict-key-int-str-distinct",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "boundary",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "int\nstr\n2\n",
+    "stderr": ""
+  }
+}

@@ -14,6 +14,8 @@ from .ast_nodes import (
     Block,
     CallExpression,
     ContinueStatement,
+    DictEntry,
+    DictExpression,
     EachStatement,
     EmitStatement,
     Expression,
@@ -32,6 +34,7 @@ from .ast_nodes import (
     RecordFieldInitializer,
     ReturnStatement,
     Statement,
+    ThrowStatement,
     TopLevelItem,
     UnaryExpression,
     VariableExpression,
@@ -164,9 +167,20 @@ class Parser:
             recover_body = self._block(
                 return_allowed=return_allowed, loop_depth=loop_depth
             )
+            finally_body = None
+            if self._match(TokenKind.FINALLY):
+                finally_body = self._block(
+                    return_allowed=return_allowed, loop_depth=loop_depth
+                )
             return AttemptStatement(
-                body, error_name, recover_body, _token_location(keyword)
+                body, error_name, recover_body, _token_location(keyword), finally_body
             )
+
+        if self._match(TokenKind.THROW):
+            keyword = self._previous()
+            value = self._expression()
+            self._consume(TokenKind.SEMICOLON, "expected ';' after throw statement")
+            return ThrowStatement(value, _token_location(keyword))
 
         if self._match(TokenKind.EMIT):
             keyword = self._previous()
@@ -349,6 +363,23 @@ class Parser:
                         break
             self._consume(TokenKind.RIGHT_BRACKET, "expected ']' after array elements")
             return ArrayExpression(tuple(elements), _token_location(opening))
+
+        if self._match(TokenKind.DICT):
+            opening = self._previous()
+            self._consume(
+                TokenKind.LEFT_BRACE, "expected '{' after 'dict'"
+            )
+            entries: list[DictEntry] = []
+            if not self._check(TokenKind.RIGHT_BRACE):
+                while True:
+                    key = self._expression()
+                    self._consume(TokenKind.COLON, "expected ':' after dict key")
+                    value = self._expression()
+                    entries.append(DictEntry(key, value, key.location))
+                    if not self._match(TokenKind.COMMA):
+                        break
+            self._consume(TokenKind.RIGHT_BRACE, "expected '}' after dict entries")
+            return DictExpression(tuple(entries), _token_location(opening))
 
         if self._match(TokenKind.IDENT):
             name_token = self._previous()

@@ -1,0 +1,19 @@
+{
+  "id": "dict-values-order",
+  "spec_refs": [
+    "6"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "[1, 2, 3]\n",
+    "stderr": ""
+  }
+}

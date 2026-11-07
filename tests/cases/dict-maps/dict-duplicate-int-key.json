@@ -1,0 +1,19 @@
+{
+  "id": "dict-duplicate-int-key",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "error",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/dict-maps/dict-duplicate-int-key.lwt:1:22: RuntimeError: duplicate dict key 1\n"
+  }
+}

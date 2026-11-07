@@ -1047,11 +1047,15 @@ class S6CollectionsCliTests(unittest.TestCase):
         self.assertEqual(result.stderr, b"")
 
     def test_each_empty_array_expression_once_and_iteration_scope(self) -> None:
+        # S42: `values` became a dict built-in; the local helper is renamed to
+        # `values_snapshot` so this S6 test keeps checking the same behavior
+        # (the empty-array iterable is evaluated exactly once and the iteration
+        # scope is fresh) without colliding with the new built-in name.
         source = (
             "let calls = 0; let item = 99; "
-            "fn values() { calls = calls + 1; return [3, 4]; } "
+            "fn values_snapshot() { calls = calls + 1; return [3, 4]; } "
             "each (item in []) { emit 0; } "
-            "each (item in values()) { let local = item; emit local; item = 8; } "
+            "each (item in values_snapshot()) { let local = item; emit local; item = 8; } "
             "emit calls; emit item;"
         )
         _, result = run_source(source)

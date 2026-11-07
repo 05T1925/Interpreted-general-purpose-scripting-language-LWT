@@ -1,0 +1,19 @@
+{
+  "id": "dict-put-returns-null",
+  "spec_refs": [
+    "6"
+  ],
+  "tags": [
+    "boundary",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "null\n",
+    "stderr": ""
+  }
+}

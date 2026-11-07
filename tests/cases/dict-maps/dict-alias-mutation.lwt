@@ -1,0 +1,4 @@
+let d = dict{"a": 1};
+let e = d;
+put(e, "b", 2);
+emit d;

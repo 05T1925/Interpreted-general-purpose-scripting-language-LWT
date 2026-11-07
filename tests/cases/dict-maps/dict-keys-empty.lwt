@@ -1,0 +1,3 @@
+emit keys(dict{});
+emit values(dict{});
+emit items(dict{});

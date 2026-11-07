@@ -293,6 +293,46 @@ def generate_semantic_cases(seed: int, start_index: int) -> list[PropertyCase]:
             r'emit split("a||b|", "|"); emit trim("\t x "); emit to_int("-00012");' + "\n",
             b'["a", "", "b", ""]\nx\n-12\n',
         ),
+        (
+            "dict-insertion-order-and-builtins",
+            'let d = dict{"b": 1, "a": 2, 1: "one"};\n'
+            'emit d; emit keys(d); emit values(d); emit items(d); emit len(d);\n',
+            b'dict{"b": 1, "a": 2, 1: "one"}\n'
+            b'["b", "a", 1]\n[1, 2, "one"]\n[["b", 1], ["a", 2], [1, "one"]]\n3\n',
+        ),
+        (
+            "dict-put-append-and-update-position",
+            'let d = dict{"a": 1, "b": 2};\n'
+            'put(d, "a", 9); put(d, "c", 3); d["b"] = 8; d["d"] = 4; emit d;\n',
+            b'dict{"a": 9, "b": 8, "c": 3, "d": 4}\n',
+        ),
+        (
+            "dict-has-get-delete",
+            'let d = dict{"x": 1, 2: "two"};\n'
+            'emit has(d, "x"); emit has(d, "no"); emit get(d, "no", 7);\n'
+            'emit delete(d, 2); emit delete(d, 2); emit d;\n',
+            b'true\nfalse\n7\ntrue\nfalse\ndict{"x": 1}\n',
+        ),
+        (
+            "dict-identity-and-cycle",
+            'let d = dict{"k": 1}; let alias = d;\n'
+            'emit d == alias; emit d == dict{"k": 1};\n'
+            'let node = dict{}; put(node, "self", node); emit node;\n',
+            b'true\nfalse\ndict{"self": <cycle>}\n',
+        ),
+        (
+            "throw-finally-ordering",
+            'attempt { throw "x"; emit "no"; } recover (p) {\n'
+            '  emit p.category; emit p.message;\n} finally { emit "fin"; }\n'
+            'emit "after";\n',
+            b'User\nx\nfin\nafter\n',
+        ),
+        (
+            "finally-overrides-pending-return",
+            'fn f() { attempt { throw "x"; } recover (p) { return 7; }\n'
+            '  finally { return 9; } return 0; } emit f();\n',
+            b'9\n',
+        ),
     ]
     return [
         PropertyCase(start_index + offset, name, source, expected)

@@ -1,0 +1,5 @@
+let n = 0;
+fn k() { n = n + 1; return "k" + str(n); }
+let d = dict{k(): k()};
+emit d;
+emit n;

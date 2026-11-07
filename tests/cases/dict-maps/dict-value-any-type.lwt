@@ -1,0 +1,3 @@
+record R { x };
+let d = dict{"r": R{x: 1}, "n": null, "b": true};
+emit d;

@@ -1,0 +1,3 @@
+let d = dict{"a": 1};
+let e = d;
+emit d == e;

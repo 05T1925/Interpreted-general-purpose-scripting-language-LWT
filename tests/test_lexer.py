@@ -209,6 +209,24 @@ class LexerTests(unittest.TestCase):
                 self.assertEqual(eof.kind, TokenKind.EOF)
                 self.assertEqual((eof.line, eof.column), expected)
 
+    def test_s42_reserved_words_are_distinct_tokens(self) -> None:
+        tokens = scan("dict throw finally dictValue thrower finally_block")[:-1]
+        self.assertEqual(
+            [token.kind for token in tokens],
+            [
+                TokenKind.DICT,
+                TokenKind.THROW,
+                TokenKind.FINALLY,
+                TokenKind.IDENT,
+                TokenKind.IDENT,
+                TokenKind.IDENT,
+            ],
+        )
+        self.assertEqual(
+            [token.lexeme for token in tokens],
+            ["dict", "throw", "finally", "dictValue", "thrower", "finally_block"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

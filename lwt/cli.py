@@ -8,11 +8,13 @@ import sys
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, BinaryIO, Sequence, TextIO
 
 from .errors import LwtError, format_diagnostic
+from .lexer import scan
 from .modules import load_module_graph
-from .runtime import execute
+from .parser import parse
+from .runtime import ReplSession, execute
 
 if TYPE_CHECKING:
     from .analyzer import Diagnostic
@@ -356,11 +358,139 @@ def _run_profile(argv: Sequence[str]) -> int:
     return 0
 
 
+_REPL_HELP = (
+    "LWT REPL commands:\n"
+    "  .help     show this help\n"
+    "  .vars     list visible top-level bindings\n"
+    "  .reset    discard session bindings, functions and records\n"
+    "  .exit     exit the REPL (also .quit or end of input)\n"
+    "Enter LWT statements; multi-line blocks are read until complete.\n"
+)
+
+_REPL_META = frozenset({".help", ".vars", ".reset", ".exit", ".quit"})
+
+
+def _is_incomplete(source: str) -> tuple[bool, LwtError | None]:
+    """Return whether ``source`` is an incomplete snippet awaiting more lines.
+
+    A snippet is incomplete when lexing reports an unterminated string, or when
+    parsing reaches EOF while expecting a token (unclosed block/paren/list or a
+    statement still needing its semicolon). A genuine syntax error elsewhere is
+    reported immediately and clears the buffer.
+    """
+
+    try:
+        tokens = scan(source, "<repl>")
+    except LwtError as error:
+        if error.category == "LexError" and (
+            "unterminated" in error.message or "incomplete" in error.message
+        ):
+            return True, None
+        return False, error
+    try:
+        parse(tokens)
+        return False, None
+    except LwtError as error:
+        eof = tokens[-1]
+        # EOF sits at the end of normalized source; if the parser failed there
+        # while expecting something, the user is still typing a construct.
+        if error.location is not None and error.location.line >= eof.line:
+            if "expected" in error.message:
+                return True, None
+        return False, error
+
+
+def _run_repl(input_stream: BinaryIO, output_stream: TextIO) -> int:
+    """Interactive read-eval-print loop over a persistent LWT session."""
+
+    session = ReplSession(input_stream, output_stream)
+    buffer: list[str] = []
+
+    def prompt(text: str) -> None:
+        sys.stderr.write(text)
+        sys.stderr.flush()
+
+    prompt("LWT 0.2 REPL — .help for commands, .exit to quit\n")
+    while True:
+        prompt("..." if buffer else ">>> ")
+        raw = sys.stdin.readline()
+        if raw == "":
+            # End of input: if a partial snippet is pending, do not execute it
+            # silently; report it and exit deterministically with 0.
+            if buffer:
+                sys.stderr.write("\n")
+            return 0
+        line = raw.rstrip("\r\n")
+        stripped = line.strip()
+
+        if not buffer and stripped in _REPL_META:
+            if stripped in {".exit", ".quit"}:
+                return 0
+            if stripped == ".help":
+                sys.stderr.write(_REPL_HELP)
+                continue
+            if stripped == ".reset":
+                session.reset()
+                prompt("session reset\n")
+                continue
+            if stripped == ".vars":
+                bindings = session.visible_bindings()
+                if not bindings:
+                    prompt("(no bindings)\n")
+                else:
+                    for name, value in bindings:
+                        try:
+                            rendered = _display_repl_value(value)
+                        except RecursionError:
+                            rendered = "<unrepresentable>"
+                        prompt(f"{name} = {rendered}\n")
+                continue
+
+        # Comment-only or blank lines inside a packet are kept so line numbers
+        # and multi-line constructs stay faithful; a blank line at top level is
+        # a no-op.
+        if not buffer and (stripped == "" or stripped.startswith("#")):
+            continue
+
+        buffer.append(line)
+        source = "\n".join(buffer) + "\n"
+        incomplete, error = _is_incomplete(source)
+        if incomplete:
+            continue
+        buffer = []
+        if error is not None:
+            sys.stderr.write(format_diagnostic(error, "<repl>") + "\n")
+            continue
+
+        try:
+            session.submit(parse(scan(source, "<repl>")))
+        except LwtError as runtime_error:
+            sys.stderr.write(format_diagnostic(runtime_error, "<repl>") + "\n")
+        except RecursionError:
+            sys.stderr.write("lwt: RuntimeError: host recursion limit reached\n")
+
+
+def _display_repl_value(value: object) -> str:
+    from .runtime import _display_value
+
+    return _display_value(value)
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Read, lex, parse, and execute one LWT source file."""
 
     _configure_standard_streams()
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] == "--repl":
+        if len(arguments) != 1:
+            sys.stderr.write(
+                format_diagnostic(
+                    LwtError("CliError", "--repl takes no arguments", 4)
+                )
+                + "\n"
+            )
+            return 4
+        return _run_repl(sys.stdin.buffer, sys.stdout)
     if arguments and arguments[0] == "--check":
         return _run_check(arguments)
     if arguments and arguments[0] == "--profile":

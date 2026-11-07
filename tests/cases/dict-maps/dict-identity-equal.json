@@ -1,0 +1,20 @@
+{
+  "id": "dict-identity-equal",
+  "spec_refs": [
+    "4.2",
+    "4.4"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": ""
+  }
+}

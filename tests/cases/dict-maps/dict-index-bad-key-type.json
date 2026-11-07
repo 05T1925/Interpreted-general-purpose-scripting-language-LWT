@@ -1,0 +1,19 @@
+{
+  "id": "dict-index-bad-key-type",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "error",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/dict-maps/dict-index-bad-key-type.lwt:2:7: RuntimeError: dict key must be an integer or string\n"
+  }
+}

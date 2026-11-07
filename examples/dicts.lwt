@@ -1,0 +1,43 @@
+# LWT 0.2 映射类型（dict）示例。
+# 键限定为整数或字符串；显示与遍历按插入顺序；相等性为身份相等。
+
+let scores = dict{"Li": 87, "Wu": 56, 1: "one"};
+emit scores;                    # dict{"Li": 87, "Wu": 56, 1: "one"}
+emit scores["Li"];              # 87
+emit len(scores);               # 3
+emit keys(scores);              # ["Li", "Wu", 1]
+emit values(scores);            # [87, 56, "one"]
+emit items(scores);             # [["Li", 87], ["Wu", 56], [1, "one"]]
+emit has(scores, "Li");         # true
+emit has(scores, "missing");    # false
+emit get(scores, "missing", 0); # 0
+
+# put 新键追加到插入序末尾；put 已存在键保留原位置。
+put(scores, "Zhao", 73);
+put(scores, "Li", 90);
+emit scores;                    # dict{"Li": 90, "Wu": 56, 1: "one", "Zhao": 73}
+
+# 下标赋值同样追加新键并更新已有键。
+scores["Qian"] = 61;
+scores["Wu"] = 60;
+emit scores;                    # dict{"Li": 90, "Wu": 60, 1: "one", "Zhao": 73, "Qian": 61}
+
+# delete 返回是否删除成功。
+emit delete(scores, 1);         # true
+emit delete(scores, 1);         # false
+emit scores;                    # dict{"Li": 90, "Wu": 60, "Zhao": 73, "Qian": 61}
+
+# 遍历键：each 不直接遍历 dict，用 keys(d) 得到插入序数组。
+each (name in keys(scores)) {
+    emit name + "=" + str(scores[name]);
+}
+
+# 身份相等：同一对象相等，不同对象即使内容相同也不等。
+let alias = scores;
+emit alias == scores;           # true
+emit dict{} == dict{};          # false
+
+# 自引用按当前路径显示 <cycle>。
+let node = dict{};
+put(node, "self", node);
+emit node;                      # dict{"self": <cycle>}

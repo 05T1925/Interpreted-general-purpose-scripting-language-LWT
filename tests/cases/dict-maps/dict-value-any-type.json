@@ -1,0 +1,19 @@
+{
+  "id": "dict-value-any-type",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "dict{\"r\": R{x: 1}, \"n\": null, \"b\": true}\n",
+    "stderr": ""
+  }
+}

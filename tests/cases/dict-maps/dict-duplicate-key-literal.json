@@ -1,0 +1,19 @@
+{
+  "id": "dict-duplicate-key-literal",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "error",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "tests/cases/dict-maps/dict-duplicate-key-literal.lwt:1:22: RuntimeError: duplicate dict key \"a\"\n"
+  }
+}

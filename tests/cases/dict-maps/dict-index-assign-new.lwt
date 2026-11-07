@@ -1,0 +1,4 @@
+let d = dict{};
+d["k"] = 5;
+emit d;
+emit d["k"];

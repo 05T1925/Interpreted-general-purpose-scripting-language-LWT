@@ -1,0 +1,3 @@
+let d = dict{};
+put(d, "self", d);
+emit d;

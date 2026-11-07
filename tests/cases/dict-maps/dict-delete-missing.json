@@ -1,0 +1,19 @@
+{
+  "id": "dict-delete-missing",
+  "spec_refs": [
+    "6"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "false\ndict{\"a\": 1}\n",
+    "stderr": ""
+  }
+}

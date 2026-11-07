@@ -1,0 +1,19 @@
+{
+  "id": "dict-len-empty",
+  "spec_refs": [
+    "6"
+  ],
+  "tags": [
+    "boundary",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  }
+}

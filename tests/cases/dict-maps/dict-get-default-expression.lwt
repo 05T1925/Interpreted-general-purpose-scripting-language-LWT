@@ -1,0 +1,1 @@
+emit get(dict{}, "x", 1 + 2);

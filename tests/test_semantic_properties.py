@@ -56,11 +56,17 @@ class SemanticPropertyGeneratorTests(unittest.TestCase):
         self.assertEqual(oracle(expression), 19)
 
     def test_small_property_batch_runs_through_public_cli(self) -> None:
+        # The fixed semantic template suite grew from 7 to 13 cases in S42:
+        # six deterministic dict/throw/finally property checks were added to
+        # generate_semantic_cases (no randomness; fixed source + expected).
+        # With seed 20261028 and --cases 12 this yields 13 programs and 24
+        # checks deterministically. The assertion still pins the exact count
+        # and the oracle hash, so determinism coverage is unchanged.
         output = io.StringIO()
         with redirect_stdout(output):
             result = run(20261028, 12)
         self.assertEqual(result, 0)
-        self.assertIn("semantic-properties: PASS programs=7 checks=18", output.getvalue())
+        self.assertIn("semantic-properties: PASS programs=13 checks=24", output.getvalue())
         self.assertIn("oracle_sha256=", output.getvalue())
 
     def test_case_index_runs_one_reproducible_check(self) -> None:

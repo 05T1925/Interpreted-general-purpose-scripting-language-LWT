@@ -16,6 +16,8 @@ from .ast_nodes import (
     Block,
     CallExpression,
     ContinueStatement,
+    DictEntry,
+    DictExpression,
     EachStatement,
     EmitStatement,
     Expression,
@@ -32,6 +34,7 @@ from .ast_nodes import (
     RecordDeclaration,
     ReturnStatement,
     Statement,
+    ThrowStatement,
     UnaryExpression,
     VariableExpression,
     WhenStatement,
@@ -109,6 +112,25 @@ class _RecordValue:
         self.field_names = field_names
         # Insert in declaration order so display is deterministic.
         self.fields = {name: fields[name] for name in field_names}
+
+
+class _DictValue:
+    """A mutable insertion-ordered map whose equality is object identity.
+
+    Keys are restricted at runtime to LWT ``int`` or ``str``. Python's ``bool``
+    is a subclass of ``int`` but is deliberately rejected as a key so that LWT's
+    strict ``int`` type is preserved and a boolean can never alias integer 0/1.
+    """
+
+    __slots__ = ("entries",)
+
+    def __init__(self) -> None:
+        self.entries: dict[int | str, object] = {}
+
+    def key_for(self, key: object, location: SourceLocation) -> int | str:
+        if type(key) is int or type(key) is str:
+            return key
+        _runtime_error("dict key must be an integer or string", location)
 
 
 class _RuntimeContext:
@@ -443,9 +465,17 @@ def _unsupported_statement(statement: object) -> SourceLocation | None:
             statement.body
         )
     if isinstance(statement, AttemptStatement):
-        return _unsupported_statement(statement.body) or _unsupported_statement(
-            statement.recover_body
+        return (
+            _unsupported_statement(statement.body)
+            or _unsupported_statement(statement.recover_body)
+            or (
+                _unsupported_statement(statement.finally_body)
+                if statement.finally_body is not None
+                else None
+            )
         )
+    if isinstance(statement, ThrowStatement):
+        return _unsupported_expression(statement.value)
     # A future AST node remains unsupported until this checker explicitly
     # admits it.
     return getattr(statement, "location", SourceLocation(1, 1))
@@ -494,6 +524,14 @@ def _unsupported_expression(expression: Expression) -> SourceLocation | None:
     if isinstance(expression, ArrayExpression):
         for element in expression.elements:
             location = _unsupported_expression(element)
+            if location is not None:
+                return location
+        return None
+    if isinstance(expression, DictExpression):
+        for entry in expression.entries:
+            location = _unsupported_expression(entry.key) or _unsupported_expression(
+                entry.value
+            )
             if location is not None:
                 return location
         return None
@@ -546,7 +584,11 @@ def _execute_statement(
             try:
                 _execute_statement(statement.body, environment, runtime)
             except LwtError as error:
-                if error.category != "RuntimeError" or error.exit_code != 3:
+                # Any exit-code 3 error is recoverable: ordinary RuntimeErrors
+                # plus errors produced by `throw` (category User or a custom
+                # category carried by a thrown Error value). Lexical, syntax,
+                # CLI and file errors keep their own exit codes and propagate.
+                if error.exit_code != 3:
                     attempt_outcome = "error"
                     raise
                 attempt_outcome = "recovered"
@@ -556,13 +598,18 @@ def _execute_statement(
                     if location is not None and location.source_path is not None
                     else runtime.source_path
                 )
-                error_value = _ErrorValue(
-                    error.category,
-                    error.message,
-                    source,
-                    location.line if location is not None else None,
-                    location.column if location is not None else None,
-                )
+                origin = getattr(error, "error_origin", None)
+                if isinstance(origin, _ErrorValue):
+                    # Re-throwing an Error value preserves its identity/fields.
+                    error_value = origin
+                else:
+                    error_value = _ErrorValue(
+                        error.category,
+                        error.message,
+                        source,
+                        location.line if location is not None else None,
+                        location.column if location is not None else None,
+                    )
                 handler_scope = Environment(environment)
                 handler_scope.values[statement.error_name.name] = error_value
                 if runtime.observer is not None:
@@ -586,8 +633,10 @@ def _execute_statement(
             else:
                 attempt_outcome = "normal"
         finally:
-            # Return/break/continue signals pass through unchanged. A finally
-            # hook records the normal attempt edge without catching them.
+            # Return/break/continue signals and unrecoverable errors pass
+            # through unchanged. If a finally body raises its own error or
+            # control-flow signal, Python replaces the in-flight transfer with
+            # it — exactly the S42 "finally overrides pending outcome" rule.
             if attempt_outcome is None:
                 attempt_outcome = "normal"
             if attempt_outcome == "normal" and runtime.observer is not None:
@@ -599,7 +648,40 @@ def _execute_statement(
                     "attempt",
                     "normal",
                 )
+            if statement.finally_body is not None:
+                # `problem` is bound only in the recover handler scope; a
+                # finally body runs in a fresh child of the enclosing scope and
+                # therefore cannot see it. It runs at most once per attempt.
+                _execute_statement(
+                    statement.finally_body, Environment(environment), runtime
+                )
         return
+
+    if isinstance(statement, ThrowStatement):
+        value = _evaluate(statement.value, environment, runtime)
+        if type(value) is str:
+            error = LwtError("User", value, 3, statement.location)
+        elif isinstance(value, _ErrorValue):
+            error = LwtError(
+                value.category,
+                value.message,
+                3,
+                statement.location,
+            )
+            # Preserve the original Error value's fields and identity on
+            # re-throw; the recover handler binds this exact object.
+            error.error_origin = value
+            if value.source is not None:
+                error.location = SourceLocation(
+                    value.line if value.line is not None else statement.location.line,
+                    value.column if value.column is not None else statement.location.column,
+                    value.source,
+                )
+        else:
+            _runtime_error(
+                "throw requires a string or an error value", statement.location
+            )
+        raise error
 
     if isinstance(statement, ReturnStatement):
         value = (
@@ -725,12 +807,17 @@ def _evaluate(
         # A list comprehension evaluates each element exactly once, left-to-right.
         return [_evaluate(element, environment, runtime) for element in expression.elements]
 
+    if isinstance(expression, DictExpression):
+        return _construct_dict(expression, environment, runtime)
+
     if isinstance(expression, RecordConstructionExpression):
         return _construct_record(expression, environment, runtime)
 
     if isinstance(expression, IndexExpression):
         receiver = _evaluate(expression.object, environment, runtime)
         index = _evaluate(expression.index, environment, runtime)
+        if isinstance(receiver, _DictValue):
+            return _dict_get(receiver, index, expression.access_location)
         checked_index = _checked_array_index(receiver, index, expression.access_location)
         return receiver[checked_index]
 
@@ -771,6 +858,11 @@ def _evaluate(
         if isinstance(target, IndexExpression):
             receiver = _evaluate(target.object, environment, runtime)
             index = _evaluate(target.index, environment, runtime)
+            if isinstance(receiver, _DictValue):
+                key = receiver.key_for(index, target.access_location)
+                value = _evaluate(expression.value, environment, runtime)
+                receiver.entries[key] = value
+                return value
             checked_index = _checked_array_index(
                 receiver, index, target.access_location
             )
@@ -987,7 +1079,15 @@ def _invoke_builtin(
         value = arguments[0]
         if type(value) is str or type(value) is list:
             return len(value)
+        if isinstance(value, _DictValue):
+            return len(value.entries)
+        # Keep the S8-era diagnostic text byte-for-byte stable for existing
+        # error-recovery cases; dict is a valid new argument, but a wrong-type
+        # argument still reports the original message.
         _runtime_error("len expects a string or array", location)
+
+    if name in _DICT_BUILTINS:
+        return _invoke_dict_builtin(name, arguments, location)
 
     if name == "split":
         if len(arguments) != 2:
@@ -1042,7 +1142,119 @@ def _invoke_builtin(
             profile_message="program requested failure (user message redacted)",
         )
 
+    if name == "error":
+        if len(arguments) != 2:
+            _runtime_error("error expects 2 arguments", location)
+        category, message = arguments
+        if type(category) is not str or type(message) is not str:
+            _runtime_error("error expects two strings", location)
+        return _ErrorValue(
+            category,
+            message,
+            location.source_path or runtime.source_path,
+            location.line,
+            location.column,
+        )
+
     raise AssertionError(f"unknown built-in function: {name!r}")
+
+
+_DICT_BUILTINS = frozenset(
+    {"keys", "values", "items", "has", "get", "put", "delete"}
+)
+
+
+def _expect_dict(value: object, name: str, location: SourceLocation) -> _DictValue:
+    if not isinstance(value, _DictValue):
+        _runtime_error(f"{name} first argument must be a dict", location)
+    return value
+
+
+def _invoke_dict_builtin(
+    name: str, arguments: list[object], location: SourceLocation
+) -> object:
+    """Apply a dict built-in after its arguments have been evaluated."""
+
+    if name == "keys":
+        if len(arguments) != 1:
+            _runtime_error("keys expects 1 argument", location)
+        target = _expect_dict(arguments[0], name, location)
+        return list(target.entries.keys())
+
+    if name == "values":
+        if len(arguments) != 1:
+            _runtime_error("values expects 1 argument", location)
+        target = _expect_dict(arguments[0], name, location)
+        return list(target.entries.values())
+
+    if name == "items":
+        if len(arguments) != 1:
+            _runtime_error("items expects 1 argument", location)
+        target = _expect_dict(arguments[0], name, location)
+        return [[key, value] for key, value in target.entries.items()]
+
+    if name == "has":
+        if len(arguments) != 2:
+            _runtime_error("has expects 2 arguments", location)
+        target = _expect_dict(arguments[0], name, location)
+        key = target.key_for(arguments[1], location)
+        return key in target.entries
+
+    if name == "get":
+        if len(arguments) != 3:
+            _runtime_error("get expects 3 arguments", location)
+        target = _expect_dict(arguments[0], name, location)
+        key = target.key_for(arguments[1], location)
+        return target.entries.get(key, arguments[2])
+
+    if name == "put":
+        if len(arguments) != 3:
+            _runtime_error("put expects 3 arguments", location)
+        target = _expect_dict(arguments[0], name, location)
+        key = target.key_for(arguments[1], location)
+        target.entries[key] = arguments[2]
+        return None
+
+    if name == "delete":
+        if len(arguments) != 2:
+            _runtime_error("delete expects 2 arguments", location)
+        target = _expect_dict(arguments[0], name, location)
+        key = target.key_for(arguments[1], location)
+        if key not in target.entries:
+            return False
+        del target.entries[key]
+        return True
+
+    raise AssertionError(f"unknown dict built-in: {name!r}")
+
+
+def _construct_dict(
+    expression: DictExpression,
+    environment: Environment,
+    runtime: _RuntimeContext,
+) -> _DictValue:
+    result = _DictValue()
+    for entry in expression.entries:
+        key = _evaluate(entry.key, environment, runtime)
+        checked = result.key_for(key, entry.location)
+        if checked in result.entries:
+            _runtime_error(
+                f"duplicate dict key {_format_value(key, set(), nested=True)}",
+                entry.location,
+            )
+        # Evaluate the value only after the key is validated and checked unique.
+        value = _evaluate(entry.value, environment, runtime)
+        result.entries[checked] = value
+    return result
+
+
+def _dict_get(target: _DictValue, index: object, location: SourceLocation) -> object:
+    key = target.key_for(index, location)
+    if key not in target.entries:
+        _runtime_error(
+            f"dict has no key {_format_value(index, set(), nested=True)}", location
+        )
+    return target.entries[key]
 
 
 def _construct_record(
@@ -1174,8 +1386,8 @@ def _evaluate_binary(
             equal = False
         elif type(left) in {int, str, bool} or left is None:
             equal = left == right
-        elif type(left) is list or isinstance(left, (_RecordValue, _ErrorValue)):
-            # Never invoke Python's recursive container/record equality.
+        elif type(left) is list or isinstance(left, (_RecordValue, _ErrorValue, _DictValue)):
+            # Never invoke Python's recursive container/record/dict equality.
             equal = left is right
         else:
             raise AssertionError(f"unknown LWT value in equality: {type(left)!r}")
@@ -1290,6 +1502,20 @@ def _format_value(value: object, active: set[int], nested: bool) -> str:
             return f"{value.type_name}{{{fields}}}"
         finally:
             active.remove(identity)
+    if isinstance(value, _DictValue):
+        identity = id(value)
+        if identity in active:
+            return "<cycle>"
+        active.add(identity)
+        try:
+            entries = ", ".join(
+                f"{_format_value(key, active, nested=True)}: "
+                f"{_format_value(item, active, nested=True)}"
+                for key, item in value.entries.items()
+            )
+            return f"dict{{{entries}}}"
+        finally:
+            active.remove(identity)
     if isinstance(value, _ErrorValue):
         source = "null" if value.source is None else _quote_string(value.source)
         line = "null" if value.line is None else format_decimal_integer(value.line)
@@ -1339,3 +1565,95 @@ def _runtime_error(
 
 
 _ERROR_FIELDS = frozenset({"category", "message", "source", "line", "column"})
+
+
+class ReplSession:
+    """A persistent top-level LWT session for the ``--repl`` tool.
+
+    It reuses the ordinary runtime: one root variable environment plus a
+    function/record namespace that survive across submitted source snippets.
+    It is a development tool, not a new source-language construct; the normal
+    ``python -m lwt SOURCE`` entry point is unchanged.
+    """
+
+    __slots__ = ("_context", "_source_name")
+
+    def __init__(
+        self,
+        input_stream: BinaryIO,
+        output_stream: TextIO,
+        *,
+        program_args: tuple[str, ...] = (),
+        source_name: str = "<repl>",
+    ) -> None:
+        self._source_name = source_name
+        self._context = self._new_context(input_stream, output_stream, program_args)
+
+    def _new_context(
+        self, input_stream: BinaryIO, output_stream: TextIO, program_args: tuple[str, ...]
+    ) -> _RuntimeContext:
+        unit = ModuleUnit(
+            Path.cwd() / self._source_name, None, Program((), SourceLocation(1, 1))
+        )
+        return _RuntimeContext(
+            input_stream,
+            output_stream,
+            {},
+            {},
+            program_args,
+            source_path=self._source_name,
+            module_unit=unit,
+        )
+
+    def reset(self) -> None:
+        context = self._context
+        self._context = self._new_context(
+            context.input_stream, context.output_stream, context.program_args
+        )
+
+    @property
+    def environment(self) -> Environment:
+        return self._context.global_environment
+
+    def visible_bindings(self) -> list[tuple[str, object]]:
+        """Return the root-scope bindings in insertion order."""
+        return list(self._context.global_environment.values.items())
+
+    def submit(self, program: Program) -> None:
+        """Register declarations and execute top-level statements of one snippet."""
+
+        unsupported = _first_unsupported(program)
+        if unsupported is not None:
+            raise LwtError(
+                "Incomplete",
+                "runtime support for this syntax is not implemented yet",
+                1,
+                unsupported,
+            )
+        context = self._context
+        for item in program.items:
+            if isinstance(item, FunctionDeclaration):
+                name = item.name.name
+                if name in _BUILTIN_NAMES:
+                    _runtime_error(
+                        f"function name {name!r} conflicts with a built-in",
+                        item.name.location,
+                    )
+                if name in context.functions:
+                    _runtime_error(
+                        f"duplicate function declaration {name!r}", item.name.location
+                    )
+                context.functions[name] = item
+            elif isinstance(item, RecordDeclaration):
+                name = item.name.name
+                if name in context.record_types:
+                    _runtime_error(
+                        f"duplicate record declaration {name!r}", item.name.location
+                    )
+                context.record_types[name] = tuple(field.name for field in item.fields)
+        for item in program.items:
+            if isinstance(
+                item, (ImportDeclaration, FunctionDeclaration, RecordDeclaration)
+            ):
+                continue
+            _execute_statement(item, context.global_environment, context)

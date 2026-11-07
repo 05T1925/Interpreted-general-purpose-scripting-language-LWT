@@ -1,0 +1,19 @@
+{
+  "id": "dict-literal-display-order",
+  "spec_refs": [
+    "4.4"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "dict{\"a\": 1, \"b\": 2}\n",
+    "stderr": ""
+  }
+}

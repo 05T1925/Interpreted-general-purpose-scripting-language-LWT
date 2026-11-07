@@ -21,6 +21,7 @@ from .ast_nodes import (
     Program,
     ReturnStatement,
     Statement,
+    ThrowStatement,
     WhenStatement,
     WhileStatement,
     BreakStatement,
@@ -40,6 +41,7 @@ _EXECUTABLE_STATEMENT_TYPES = (
     ExpressionStatement,
     LetStatement,
     ReturnStatement,
+    ThrowStatement,
     WhenStatement,
     WhileStatement,
 )
@@ -279,6 +281,8 @@ class DebuggerController:
             elif isinstance(statement, AttemptStatement):
                 visit(statement.body)
                 visit(statement.recover_body)
+                if statement.finally_body is not None:
+                    visit(statement.finally_body)
 
         for item in program.items:
             if isinstance(item, FunctionDeclaration):

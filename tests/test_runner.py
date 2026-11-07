@@ -280,7 +280,7 @@ class SelectionAndJsonTests(unittest.TestCase):
         payload = runner.inventory_to_json(self.cases)
         self.assertEqual(payload["schema"], "lwt.test-inventory")
         self.assertEqual(payload["schema_version"], 1)
-        self.assertEqual(payload["case_count"], 287)
+        self.assertEqual(payload["case_count"], len(self.cases))
         ids = {item["id"] for item in payload["cases"]}
         self.assertEqual(ids, set(self.by_id))
         normal = next(item for item in payload["cases"] if item["id"] == "args-empty")
@@ -324,7 +324,7 @@ class SelectionAndJsonTests(unittest.TestCase):
         payload = json.loads(stdout.getvalue())
         self.assertEqual(status, 0)
         self.assertEqual(stderr.getvalue(), "")
-        self.assertEqual(payload["case_count"], 287)
+        self.assertEqual(payload["case_count"], len(self.cases))
 
     def test_inventory_validation_happens_before_selection(self) -> None:
         stdout = StringIO()

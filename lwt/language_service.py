@@ -512,6 +512,10 @@ def _build_features(unit: ModuleUnit, text: str) -> DocumentFeatures:
             add_use(expression.name, scope, hidden_here=hidden_here)
         elif isinstance(expression, ast.ArrayExpression):
             for element in expression.elements: visit_expression(element, scope, hidden_here)
+        elif isinstance(expression, ast.DictExpression):
+            for entry in expression.entries:
+                visit_expression(entry.key, scope, hidden_here)
+                visit_expression(entry.value, scope, hidden_here)
         elif isinstance(expression, ast.RecordConstructionExpression):
             record = records.get(expression.type_name.name)
             if record is not None:
@@ -607,6 +611,10 @@ def _visit_statement_full(statement, scope, visit_expression, add_use, definitio
         hovers[error_key] = f"variable {statement.error_name.name} (recover error)"
         handler = _Scope(scope, {statement.error_name.name: error_ref})
         _visit_statement_list_full(statement.recover_body.statements, _Scope(handler), visit_expression, add_use, definition, hovers, definitions)
+        if statement.finally_body is not None:
+            _visit_statement_full(statement.finally_body, scope, visit_expression, add_use, definition, hovers, definitions)
+    elif isinstance(statement, ast.ThrowStatement):
+        visit_expression(statement.value, scope)
     elif isinstance(statement, ast.EachStatement):
         visit_expression(statement.iterable, scope)
         loop_ref = definition(statement.variable)
