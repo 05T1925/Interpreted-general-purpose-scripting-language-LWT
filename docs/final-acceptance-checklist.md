@@ -11,7 +11,7 @@
 | 5 人/AI 指南 | [开发指南](developer-guide.md)、[策略 SDK](strategy-sdk.md)、`.agents/skills/` | 新克隆按入口运行、相对链接检查 |
 | 6 Agent LWT 应用/记录 | [日志应用](../app/log_report.lwt)、[LWT 游戏](../app/lwt_snake/game.lwt)、[开发记录](agent-dev-log.md) | 有效行数、真实 CLI、S39–S41 复验 |
 | 7 Git 历史 | `git log --oneline --decorate` | 祖先、阶段分支、远端与工作区分别核对 |
-| 8 系统 PPT | [可编辑 PPTX](../slides/LWT介绍.pptx) | 12 页导出、渲染逐页查读性 |
+| 8 系统 PPT | [可编辑 PPTX](../slides/LWT介绍.pptx) | 18 页导出、渲染逐页查读性（旧第 10 页原生图表 12 数值点未变） |
 
 ## 现场预检
 
@@ -33,7 +33,7 @@
 | 三态见证 | [`reports/s42-schedules/`](../reports/s42-schedules/) | found 200 种子 2 类、absent 200 种子 1 类、tampered 三篡改均 exit 4 | 执行实现完成 |
 | 并发应用（30 分抓手） | [`app/concurrent_log_report.lwt`](../app/concurrent_log_report.lwt)、[开发记录](s42-app-dev-log.md) | 233 有效行、4 fixture 差分等价、坏文件 recover、10 次确定 | 执行实现完成 |
 | 诚实性能实验 | [`reports/concurrency-performance.md`](../reports/concurrency-performance.md) | 4 组对照、Amdahl 上限、不宣称 CPU 加速 | 执行实现完成 |
-| 指南 / PPT / 答辩 | 开发指南、`slides/LWT介绍.pptx`、[答辩卡](defense-qa-card.md) | PPT 12→15 页、旧图表 12 数值点未变、旧/新 SHA 记录 | 执行实现完成 |
+| 指南 / PPT / 答辩 | 开发指南、`slides/LWT介绍.pptx`、[答辩卡](defense-qa-card.md) | PPT 15→17→18 页、旧图表 12 数值点未变、旧/新 SHA 记录（S45 新 SHA `b8c15c03…`） | 执行实现完成 |
 | Agent 盲测 pass@1 | [`docs/s42-agent-blind-test.md`](s42-agent-blind-test.md) | 无上下文会话不可开 → 如实写"未执行"，不自测冒充 | 未执行 |
 | 远端精确 SHA 的 CI | 无（本阶段不推送） | 功能分支未推送，Actions 未查询 | 未验证 |
 
@@ -48,8 +48,24 @@
 | 局部优化 P1 | [优化台账](s44-optimization-ledger.md) | P1-2 <2% 已回滚零残留；P1-4 保留；P1-1/P1-3 未做理由在台账 | 执行实现完成 |
 | S11-v2 分层基准 | [`reports/s44-performance/benchmark-v2.md`](../reports/s44-performance/benchmark-v2.md)、`tools/benchmark_v2.py` | 126 次 oracle 全通过；端到端/纯执行分列；旧 S11 数据零改动 | 执行实现完成 |
 | 门槛判定与覆盖闭环 | `tools/compare_perf.py`、`tools/check_project_integrity.py --require-all-referenced`、[矩阵](test-matrix.md) §4.5.3 | `compare_perf` 全 PASS；`referenced_cases=400/400; unreferenced=0` | 执行实现完成 |
-| 全量回归与保护数据 | [S44 执行报告](s44-performance.md) | 400/400 黑盒、595+ unittest、46×10 确定性、S28 事件计数；S11/S42/S43 保护数据差异空 | 执行实现完成 |
+| 全量回归与保护数据 | [S44 执行报告](s44-performance.md) | 400/400 黑盒、632 unittest、46×10 确定性、S28 事件计数；S11/S42/S43 保护数据差异空 | 执行实现完成 |
 | Agent 盲测 pass@1 | 无（无法新开无上下文会话） | 如实写"未执行"，不把自测当盲测 | 未执行 |
 | 远端精确 SHA 的 CI / Python 3.10 / Linux | 无（本阶段不推送） | 未在这些环境实测 | 未验证 |
 
 **重要（S44）**：用户授权叠加在**未复核的 S43** 之上，本节只记录**执行窗口自测**，**不替代现场人工 GUI A–E 验收**，也不替代主窗口审查、合入 main、远端 CI 与教师线下验收。诊断工具严禁写入 `bench/results.json`、`reports/performance.md` 等 S11/S42/S43 固定证据；本阶段已加输出路径拒绝并核对保护路径差异为空。S44 阶段报告见 [s44-performance.md](s44-performance.md)。
+
+## S45 最终交付加固核对（执行窗口自测；基线未经主窗口复核 S43/S44）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| 版本与交付清单 | [`docs/delivery-manifest.json`](delivery-manifest.json) | 版本 0.3.0（主窗口裁决）；`lwt.__version__`、`--version`、规范标题、README 由 `tests/test_doc_consistency.py` 校验一致 | 执行实现完成 |
+| CLI `--help`/`--version` | `lwt/cli.py`、[规范](language-spec.md) §6、[指南](developer-guide.md) | 二者 exit 0；无参数仍 CliError/4；`--` 后的 `--help` 属于程序实参；`tests/test_cli.py` 6 项 | 执行实现完成 |
+| Agent 盲测 | [任务](agent-eval/tasks.json)、[协议](agent-eval/README.md)、`tools/run_agent_eval.py` | 6 题 + 客观判分器；参考解验证 ALL_PASS 后删除；正式盲测须用户新会话，当前 **NOT_RUN** | 未执行（不伪造 pass@1） |
+| DAP 协议帧级 spawn 拒绝 | `tests/test_dap_spawn_rejection.py` | 真实 `python -m lwt.dap_server` 子进程；`Content-Length` 按 UTF-8 字节；exit 4；无 stopped/断点；无 stdout 泄漏 | 执行实现完成 |
+| 一键验收自检包 | `tools/run_acceptance_selfcheck.py` | 一条命令跑 Git/保护路径/完整性/黑盒/确定性/性能门槛/文档一致性/PPT 静态检查，输出 `reports/s45-acceptance/selfcheck-*.{json,md}` | 执行实现完成 |
+| 文档一致性 | `tests/test_doc_consistency.py` | 当前状态文档不含旧版本号、旧 unittest 计数、旧黑盒基数、旧 PPT 页数与「S12 未完成」类过期状态；历史报告 allowlist 豁免 | 执行实现完成 |
+| PPT 最终对齐 | [`slides/LWT介绍.pptx`](../slides/LWT介绍.pptx) | 18 页；第 10 页原生图表 12 数值点未变；新 SHA `b8c15c03…` 记入 manifest | 执行实现完成 |
+| Python 3.10 / Linux / CI | 无（3.10 未安装；Linux 仅 Actions） | 本机 3.11.16 与 3.13.x 实测；功能分支已推送并在报告记录精确 SHA 四格 | 见 S45 报告 |
+| 现场人工 GUI A–E | 无 | 自检包打印清单，不自动化、不声称通过 | 未验证 |
+
+**重要（S45）**：以上只记录**执行窗口自测**。用户明确授权叠加在**未复核的 S43/S44** 之上（S45 报告首段已粗体标注），因此本清单不替代主窗口审查、合入 main、教师线下验收与现场人工 GUI A–E。S45 报告见 [s45-final-hardening.md](s45-final-hardening.md)。

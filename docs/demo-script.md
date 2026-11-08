@@ -1,22 +1,23 @@
-# LWT 答辩演示脚本（候选版）
+# LWT 答辩演示脚本（S45 最终候选）
 
-从仓库根目录运行。建议提前打开 [系统介绍 PPT](../slides/LWT介绍.pptx)，准备 Python 3.13 和终端。所有命令均使用公开 CLI；固定证据保持只读。现场按教师要求调整顺序。预计主流程 5–8 分钟，其中策略证据链约 3–5 分钟；新进程重验耗时随机器变化。
+从仓库根目录运行。建议提前打开[系统介绍 PPT](../slides/LWT介绍.pptx)（18 页），准备 Python 3.13 和终端。所有命令均使用公开 CLI；固定证据保持只读。现场按教师要求调整顺序。**主线目标 8–10 分钟**；附录片段按时间取舍。
 
-## 主流程
+## 主流程（8–10 分钟）
 
 | 时间 | 操作与讲解 | 命令或证据 |
 |---|---|---|
-| 0:00–0:35 | 说明课程五项评分与八项提交物。LWT 用 `record`、`when/otherwise`、`each`、`emit` 组合语法。 | [课程要求](../大作业内容.md)、[正式规范](language-spec.md) |
-| 0:35–1:05 | 跑最小程序，说明源码经 lexer、parser、AST 和树遍历运行。再演示可定位的除零错误。 | `python -m lwt examples/guide/hello.lwt`；`python -m lwt examples/language_lab/division_by_zero.lwt`（退出 3） |
-| 1:05–1:35 | 展示 S42 语言核心增量：dict 映射的插入序与内置、throw/finally 的控制流覆盖，以及可交互 REPL。 | `python -m lwt examples/dicts.lwt`；`python -m lwt examples/throw_finally.lwt`；下方“REPL 片段” |
-| 1:05–1:40 | 展示一键黑盒和覆盖矩阵。现场时间不足可展示已记录的新克隆完整输出，再抽跑用例，不把旧记录说成现场运行。 | `python tools/run_tests.py`；`python tools/check_project_integrity.py`；[矩阵](test-matrix.md) |
-| 1:40–2:20 | 展示 LWT 日志分析器对坏行、等级和关键字的处理。Python 工作台只解析报告并绘图。 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log`；加 `--level WARN --keyword retry --top 2` |
-| 2:20–3:50 | S43 并发：多文件每个一个任务并发读取、按输入顺序归并（字节等价串行版）；换种子得到另一交错，轨迹可记录/重放，篡改被拒。 | `python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log`；下方“并发演示片段”；`reports/s42-schedules/summary.md` |
-| 2:20–2:55 | 展示 Agent 策略模板、独立产出记录和真实协议检查。 | [SDK](strategy-sdk.md)、[Agent 记录](s39-agent-record.md)；`python -m app.lwt_snake.arena --check-strategy mobility-lookahead --catalog app/lwt_snake/strategies/strategy-catalog.json` |
-| 2:55–4:30 | 依次验 S39 原局、S41 自动差异和 S40 一步分支。说明双方收到的是**同一已验证观察前缀**；第一处分歧只在给定清单、排序及预算内成立。 | 下方“证据链命令” |
-| 4:30–5:20 | 复制固定见证到仓库外临时目录，只改副本的反馈字段，展示拒绝。原始 `reports/` 不改。 | 下方“篡改拒绝” |
-| 5:20–6:15 | PPT 说明 S11 六组端到端性能中位数、S10 独立进程一致性边界、Git/CI 与未验证项。 | [性能报告](../reports/performance.md)、[并发说明](app-concurrency.md) |
-| 6:15–7:00 | 若桌面归属明确，选一条已预检 GUI 操作；否则执行 CLI 后退并说明人工输入法/视觉项未验证。 | `python -m app.language_lab` 或 `python -m app.lwt_snake.counterfactual_ui` |
+| 0:00–0:40 | 说明课程五项评分与八项提交物；先报当前身份：**LWT 0.3.0**，400 黑盒 / 632 unittest / 18 页 PPT，S42–S45 执行完成、待主窗口复核。 | `python -m lwt --version`；`python -m lwt --help`；[交付清单](delivery-manifest.json) |
+| 0:40–1:30 | 跑最小程序，说明源码经 lexer、parser、AST 和树遍历运行；再演示可定位的除零错误（退出 3）。点出 `record`/`when-otherwise`/`each`/`emit` 的语法特色。 | `python -m lwt examples/guide/hello.lwt`；`python -m lwt examples/language_lab/division_by_zero.lwt` |
+| 1:30–2:20 | S42 语言核心增量：dict 插入序与内置、throw/finally 的控制流覆盖；时间紧可只看两条 emit。 | `python -m lwt examples/dicts.lwt`；`python -m lwt examples/throw_finally.lwt` |
+| 2:20–3:20 | **测试抓手**：一条命令跑 400 项黑盒并显示分类统计；再用完整性检查证明 400 个用例全部被矩阵链接（unreferenced=0）。不在现场重跑时，展示已记录输出并说明是记录值。 | `python tools/run_tests.py`；`python tools/check_project_integrity.py --require-all-referenced`；[矩阵](test-matrix.md) |
+| 3:20–4:20 | **性能抓手**：先给 S11 正式结论（端到端 2.7–5.0×，明确未做优化），再给 S44 附录的分层对照：启动 1.256×/1.224×，纯执行 N=5000 1.45–2.99×；强调端到端仍比 Python 慢、两种口径不混用。 | `python tools/compare_perf.py`；[S11](../reports/performance.md)；[S44](s44-performance.md) |
+| 4:20–6:00 | **并发子语言**：多文件每文件一任务并发读取、按输入顺序归并（与串行逐字节等价）；换种子得到另一交错，轨迹可记录/重放。 | `python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log`；下方“并发演示片段” |
+| 6:00–7:00 | **Agent 应用**：日志分析器 243 行有效 LWT（坏行/等级/关键字/top-k）；并发版 233 行。若桌面可用，再开 LWT Snake；否则说明 GUI 为展示层、规则在 .lwt。 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log --level WARN --keyword retry --top 2`；`python tools/count_lwt_lines.py app/log_report.lwt` |
+| 7:00–8:00 | **策略证据链**（可选压缩）：S39 原局复核 → S41 自动差异见证 → S40 一步分支；强调同一已验证观察前缀与预算内成立。 | 下方“证据链命令” |
+| 8:00–9:20 | **交付自检**：一条命令跑 Git/保护路径/完整性/黑盒/确定性/性能门槛/文档一致性/PPT 静态检查，输出 JSON+MD；并明确 Agent 盲测与人工 GUI 仍未执行/未验证。 | `python tools/run_acceptance_selfcheck.py`；`reports/s45-acceptance/selfcheck-*.md` |
+| 9:20–10:00 | 收尾：读 `git status -sb`（干净、未推送）与未验证项清单（Python 3.10/Linux CI、Agent 盲测、现场 GUI）。 | `git status -sb`；[S45 报告](s45-final-hardening.md) |
+
+**取舍**：时间只有 5–8 分钟时，保留 0:00–0:40、0:40–1:30、2:20–3:20、3:20–4:20、4:20–6:00、8:00–9:20，其余口头带过。
 
 ## 策略证据链命令
 
@@ -74,7 +75,7 @@ python -m lwt --schedule-replay reports/s42-schedules/found/lost-update/trace-de
 
 ```powershell
 # 1) 启动惰性化：非 spawn 程序不加载并发模块（约 10 秒）
-python -m lwt --help                      # 当前解释器：该路径返回退出码 4，仍触发完整包导入
+python -m lwt --help                      # S45 起该路径正常退出 0（S44 时代是 exit 4 错误路径）
 python -c "import sys, lwt.cli; print('concurrency loaded:', 'lwt.concurrency' in sys.modules)"   # False
 
 # 2) 一键对照 before/after 门槛（只读 reports/s44-performance/ 的新 JSON）
@@ -84,7 +85,7 @@ python tools/compare_perf.py             # 文本表：启动 --help 1.256× / h
 python tools/benchmark_v2.py --help        # 协议说明；正式结果见 reports/s44-performance/benchmark-v2.md
 ```
 
-预期：第 1 步 `lwt.cli` 导入后 `lwt.concurrency` 不在 `sys.modules`（P0-1 惰性化）；第 2 步 `compare_perf.py` 对启动两项与纯执行三负载均报 PASS，退出码 0；第 3 步展示分层报告，说明端到端 LWT/Python 倍率（约 1.4–1.5×）与纯执行提升（1.45–2.99×）是**不同口径**，不混用。完整方法、环境、逐项台账与未验证项见 [S44 执行报告](s44-performance.md)、[性能计划](s44-performance-plan.md) 与 [优化台账](s44-optimization-ledger.md)。
+预期：第 1 步 `lwt.cli` 导入后 `lwt.concurrency` 不在 `sys.modules`（P0-1 惰性化）；第 2 步 `compare_perf.py` 对启动两项与纯执行三负载均报 PASS，退出码 0；第 3 步展示分层报告，说明端到端 LWT/Python 倍率（约 1.48–1.79×）与纯执行提升（1.45–2.99×）是**不同口径**，不混用。**注意 S44 的 `--help` 测量是 exit 4 的历史证据，不能与 S45 的 exit 0 数字直接相减比较**；S45 启动重测见 `reports/s45-acceptance/startup.md`。完整方法、环境、逐项台账与未验证项见 [S44 执行报告](s44-performance.md)、[性能计划](s44-performance-plan.md) 与 [优化台账](s44-optimization-ledger.md)。
 
 ## 无 GUI 后退
 
