@@ -16,7 +16,7 @@
 | WP1 | 统一版本与状态文字 | 完成：`lwt/__init__.py` 0.3.0 + 真实能力 docstring；规范标题「LWT 0.3.0 正式语言规范（S1–S44 已实现；S42–S44 待主窗口复核）」并删过期「S24–S27 等待审查」；developer-guide、test-matrix 同步；README 顶部状态与快速开始、S12 已完成、当前基数 400；project.md 日期/632/未复核；checklist 18 页/632；s44 报告 §6 595→632（§4 的 595 基线保留）。历史报告 s12–s44 旧数字未改。 |
 | WP2 | CLI `--help`/`--version` | 完成：`-h`/`--help`/`--version` 单独出现时早退、退出 0、不执行源码；无参数仍 CliError/4；`--` 后的同名参数仍属程序实参。规范 §6、指南、README、project 命令入口更新；`tests/test_cli.py` 新增 6 项。S45 启动重测写 `reports/s45-acceptance/startup.*`（三命令全 exit 0）。 |
 | WP3 | Agent 盲测任务与判分器 | 完成：`docs/agent-eval/tasks.json` 6 题（dict top-k、throw/finally、生产者消费者通道、模块+record+dict、each 快照与别名、CLI+文本）；`tools/run_agent_eval.py` 只做客观检查（`--check` 0、退出码+stdout 字节、5 次逐字节、禁止构造）；`docs/agent-eval/README.md` 记录隔离协议。执行窗口用参考解验证判分器 6/6 ALL_PASS 后**删除参考解**；正式盲测 **NOT_RUN**，未填 pass@1。 |
-| WP4 | DAP 帧级 + 跨平台 | 完成：`tests/test_dap_spawn_rejection.py` 2 项，真实 `python -m lwt.dap_server` 子进程、手写封帧、UTF-8 `Content-Length`（含中文文件名）、`configurationDone` 后 exit 4、无 stopped/断点、无 debuggee stdout 泄漏、适配器 exit 0。本机无 Python 3.10（`py -0` 只有 3.13/3.12/3.11），3.11.16 补跑兼容验证；CI 见 §5。 |
+| WP4 | DAP 帧级 + 跨平台 | 完成：`tests/test_dap_spawn_rejection.py` 2 项，真实 `python -m lwt.dap_server` 子进程、手写封帧、UTF-8 `Content-Length`（含中文文件名）、`configurationDone` 后 exit 4、无 stopped/断点、无 debuggee stdout 泄漏、适配器 exit 0。本机无 Python 3.10（`py -0` 只有 3.13/3.12/3.11），3.11.16 补跑兼容验证；Python 3.10 与 Linux 由功能分支 CI 四格覆盖，见 §5。 |
 | WP5 | 一键验收自检包 | 完成：`tools/run_acceptance_selfcheck.py` 一条命令跑 Git/HEAD、保护路径 diff、完整性、黑盒、确定性（独立 `--out`，不碰 S42 证据）、compare_perf、文档一致性、PPT 静态检查（zip/xml 数页数与图表数值点、SHA）、Agent eval 状态；输出 `reports/s45-acceptance/selfcheck-<UTC>.{json,md}` 并打印人工 GUI 清单；失败写 FAIL、跳过写 SKIP。 |
 | WP6 | PPT/答辩/演示对齐 | 完成：PPT 17→**18 页**（新增「八项交付物 → 证据与一条命令」），旧第 10 页原生图表 **12 数值点未变**，旧 SHA `2b0d1df3…` → 新 `b8c15c03…` 记入 manifest；清单 18 页/632/400 一致；demo-script 重排为 8–10 分钟主线（语言→400 黑盒→S11/S44 性能→并发→Agent 应用→策略证据→交付自检）保留 CLI 后退；答辩卡 +6 问。 |
 | WP7 | 收口 | 全量回归、状态文档、按 WP 分提交、停止写入交主窗口复核。 |
@@ -70,7 +70,13 @@
 
 ## 5. 远端 CI（精确 SHA 单独记录）
 
-（收口推送后填：精确 SHA、run 链接、四格结论；失败则记录失败格与修复/未修，不把 push 成功当 CI 通过。）
+**功能分支**：`origin/feature/delivery-hardening`（用户明确授权推送；不推送 main、不合并、不打标签）。
+
+- **精确 SHA**：`879b9421c3143351df469f9b86be4ce080d72db6`
+- **Run**：[42497482254](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42497482254)，`LWT tests`，结论 **success**
+- **四格**：`ubuntu-latest / Python 3.10` ✅、`windows-latest / Python 3.10` ✅、`ubuntu-latest / Python 3.13` ✅、`windows-latest / Python 3.13` ✅
+- 同分支前一提交 `0b58739`（与本 SHA 仅差自检证据文档）的 run [42496684474](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42496684474) 同样四格 success。
+- **口径**：这是**功能分支**的 CI 结论，不是 `main` 的；推送成功与 CI 通过分开记录；本地未跑的 Linux/Python 3.10 由 CI 覆盖，不把本地 Windows 通过外推为其他平台通过。
 
 ## 6. 本轮发现并修复的真实缺陷
 
@@ -107,8 +113,8 @@ join(t);
 ## 9. 未验证项
 
 - **Agent 盲测 pass@1**：未执行（NOT_RUN）。需用户开新的无上下文会话运行；执行窗口不伪造。
-- **Python 3.10**：本机未安装，未实测；3.11.16/3.12/3.13 已实测（3.12 启动器路径损坏，未能运行，如实记录）。
-- **Linux**：仅 GitHub Actions；本地无法验证。
+- **Python 3.10（本地）**：本机未安装，本地未执行；功能分支 CI 的 Ubuntu/Windows × 3.10 两格已 success（§5），但那是 CI 环境而非本机。3.11.16 本机实测、3.12 启动器路径损坏未能运行，均如实记录。
+- **Linux（本地）**：本地无法验证；仅 GitHub Actions 的 ubuntu-latest 两格（3.10/3.13）覆盖（§5）。
 - **现场人工 GUI A–E**：未验证（语义实验室、日志工作台、LWT Snake、S41 查看器、PPT 逐页播放、桌面无遮挡/输入归属）。
 - **DAP 其他边界**：本轮只补 spawn 拒绝的帧级证据；断点/单步的帧级覆盖沿用既有测试。
 - **CI**：见 §5；未跑过的组合不声称通过。
