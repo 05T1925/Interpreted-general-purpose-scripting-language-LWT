@@ -1,4 +1,4 @@
-# LWT 0.1 黑盒覆盖矩阵（S8 主窗口审查通过）
+# LWT 0.3.0 黑盒覆盖矩阵（S8 主窗口审查通过；当前基数 400 项）
 
 > 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24、S25 和 S26 的实测快照分列于 §4。S8 当时尚无远端 GitHub Actions 结果；S32 精确 SHA 的四格结果见 [主窗口复核](s32-main-review.md)。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
 
@@ -13,7 +13,7 @@
 | 分支循环 | [`when-otherwise`](../tests/cases/control-functions/when-otherwise.lwt)、[`while-break`](../tests/cases/control-functions/while-break.lwt)、[`each-continue-snapshot`](../tests/cases/control-functions/each-continue-snapshot.lwt) | §3、§5 | 分支循环是课程硬要求；`break`/`continue` 是本方案增加的循环控制扩展。 |
 | 函数定义和调用 | [`function-forward-call`](../tests/cases/control-functions/function-forward-call.lwt)、[`recursive-factorial`](../tests/cases/control-functions/recursive-factorial.lwt) | §3、§5 | 课程硬要求；前向调用、递归和具体作用域是规范规则。 |
 | 静态跨文件函数库 | §9 的 `import`、别名限定调用、相对路径和模块错误规则 | §3、§5、§9 | 方案扩展，不是课程硬性最低要求；用于 Agent 维护较大的多文件程序。 |
-| 完整黑盒测试集及一条命令 | S26 当前 287 对 `.lwt`/JSON 测试用例，由 `python tools/run_tests.py` 运行；282 项执行配对 LWT 源程序，5 项仅测试 CLI argv 契约 | §2–§10 | 课程交付要求；模块和错误恢复是可选扩展，不改变课程硬性功能边界。 |
+| 完整黑盒测试集及一条命令 | S26 当时 287 对 `.lwt`/JSON 测试用例，由 `python tools/run_tests.py` 运行；282 项执行配对 LWT 源程序，5 项仅测试 CLI argv 契约 | §2–§10 | 课程交付要求；模块和错误恢复是可选扩展，不改变课程硬性功能边界。 |
 | 性能报告、开发指南、Agent 应用、Git 历史、PPT 和线下答辩 | 未作为 LWT 语言语义覆盖 | 不适用 | 属项目后续交付，不伪装为 S8 测试；性能、指南、应用和答辩资料留待后续阶段。 |
 
 ## 2. 用例格式、发现和比较规则
@@ -262,7 +262,7 @@ S43（确定性并发）新增 **46 项** `concurrency` 黑盒（含任务书一
 
 ## 5. 开发工具验证（S27，不计入语言黑盒）
 
-静态检查 CLI 的目标是验证运行前工具行为，不是执行 LWT 语义用例。因此这些用例位于 unittest，而不加入 `tests/cases/`，也不改变上方 287 项语言黑盒契约。`tests/test_static_checker.py` 通过 `python -m lwt --check` 子进程覆盖模块图扫描、名称/调用/record 诊断、词法/语法/CLI/文件错误、JSON schema、作用域边界与不执行语义；无效 AST 夹具由测试临时目录创建。阶段报告记录 S27 本轮实际测试结果，不将工具用例数量并入语言黑盒总数。
+静态检查 CLI 的目标是验证运行前工具行为，不是执行 LWT 语义用例。因此这些用例位于 unittest，而不加入 `tests/cases/`，也不改变上方 400 项语言黑盒契约。`tests/test_static_checker.py` 通过 `python -m lwt --check` 子进程覆盖模块图扫描、名称/调用/record 诊断、词法/语法/CLI/文件错误、JSON schema、作用域边界与不执行语义；无效 AST 夹具由测试临时目录创建。阶段报告记录 S27 本轮实际测试结果，不将工具用例数量并入语言黑盒总数。
 
 ## 6. 执行档案工具验证（S28，不计入语言黑盒）
 

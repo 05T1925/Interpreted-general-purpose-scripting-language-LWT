@@ -15,7 +15,7 @@
 | WP2 | 热路径 P0-3/P0-4 | 完成：`_execute_statement`(12 类)/`_evaluate`(13 类) 顶层 AST 分派 `isinstance` → 精确 `type() is`（无子类、未知类型断言保留、扫描函数不变），`_evaluate_binary` 运算符集合提为模块 `frozenset`；新增依赖无关 `lwt/_decimal.py`，INT 字面量解析期预解码；`tests/test_dispatch_completeness.py` 9 项节点分派完整性；纯执行 A/B 三负载全部 ≥1.45×。 |
 | WP3 | 局部优化 P1 | 完成：P1-2（`resolve` 哨兵）实测 <2% 且有回归迹象 → **回滚、零残留**；P1-4（小整数 `str(int)` 快路径）实测 N=5000 +3.5%~16.4%、6000 位精度保持 → **保留**；P1-1/P1-3 按台账理由未做。最终 after 证据重测。 |
 | WP4 | S11-v2 基准 | 完成：`tools/benchmark_v2.py`（不改旧输出路径）、`bench/dict_counts.py`（与 LWT 同算法同输出、`oracle` 独立）、`tools/compare_perf.py`（门槛判定、只读）；3 负载 × 3 规模 × 2 预热 × 7 正式 = 126 次正式、逐字节 oracle 全通过；`reports/s44-performance/benchmark-v2.{json,md}` 分层（端到端 / 纯执行）。 |
-| WP5 | 回归 + 覆盖闭环 | 完成：400/400 黑盒、595+ unittest、46×10 确定性、S28 固定 profile 事件计数、`--check`/`--profile`/debugger/DAP/LSP 不回归、compileall、`git diff --check`；覆盖矩阵补 52 个未链接用例 → `referenced_cases=400/400; unreferenced=0`，`check_project_integrity.py` 加 `--require-all-referenced`/`--exempt`；`tests/test_perf_tools.py` 17 项（schema/oracle/配对/输出路径防护）。 |
+| WP5 | 回归 + 覆盖闭环 | 完成：400/400 黑盒、632 unittest、46×10 确定性、S28 固定 profile 事件计数、`--check`/`--profile`/debugger/DAP/LSP 不回归、compileall、`git diff --check`；覆盖矩阵补 52 个未链接用例 → `referenced_cases=400/400; unreferenced=0`，`check_project_integrity.py` 加 `--require-all-referenced`/`--exempt`；`tests/test_perf_tools.py` 17 项（schema/oracle/配对/输出路径防护）。 |
 | WP6 | 文档/PPT/答辩 | 完成：本文、`s44-performance-plan.md`、`s44-optimization-ledger.md`；答辩卡 +6 问、演示脚本 +45 秒、PPT 追加 1–2 页（旧 15 页与第 10 页图表 12 数值点保留，记录旧/新 SHA）；统一版本/状态标识文字。 |
 | WP7 | 收口 | 全量回归、状态文档更新、按 WP 分提交、停止写入交主窗口复核。 |
 
@@ -111,7 +111,7 @@ S44 把端到端拆成**四段**，避免把端到端倍率说成纯执行倍率
 | 测试 20 / WP1/2/3/5 | 启动断言、AST 分派完整性、性能工具测试、覆盖闭环 | `tests/test_startup.py`(10)、`tests/test_dispatch_completeness.py`(9)、`tests/test_perf_tools.py`(17)、`docs/test-matrix.md` §4.5.3、`tools/check_project_integrity.py --require-all-referenced` |
 | 性能 10 / WP0/4 | S11-v2 分层基准 + 门槛判定 | `tools/benchmark_v2.py`、`tools/measure_startup.py`、`tools/compare_perf.py`、`bench/dict_counts.py`、`reports/s44-performance/{before,after}/*`、`benchmark-v2.{json,md}` |
 | 指南 20 / WP6 | 方法/计划/台账/答辩/演示 | `docs/s44-performance.md`、`s44-performance-plan.md`、`s44-optimization-ledger.md`、`docs/concurrency.md`(S43)、`docs/defense-qa-card.md`、`docs/demo-script.md` |
-| 证据闭环 / WP0/5 | 全量回归 + 保护路径 | 400/400 黑盒、595 unittest、46×10 确定性、S28 事件计数（见 §4） |
+| 证据闭环 / WP0/5 | 全量回归 + 保护路径 | 400/400 黑盒、632 unittest、46×10 确定性、S28 事件计数（见 §4 的 595 基线历史） |
 | 收口 / WP7 | 状态与清单 | `project.md`、`README.md`、`阶段执行与审查路线图.md`、`docs/final-acceptance-checklist.md`、本报告 |
 
 ## 7. 已知问题与未验证项

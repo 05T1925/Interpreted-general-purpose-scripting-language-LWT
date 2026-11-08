@@ -694,11 +694,44 @@ def _run_schedule(argv: Sequence[str]) -> int:
     return exit_code
 
 
+def _help_text() -> str:
+    """S45 WP2: static usage text for ``-h``/``--help`` (exit 0)."""
+
+    from . import __version__
+
+    return (
+        f"LWT {__version__} -- tree-walk interpreter for the LWT language\n"
+        "\n"
+        "Usage:\n"
+        "  python -m lwt SOURCE [-- PROGRAM_ARGS...]   run a program\n"
+        "  python -m lwt --check [--format=json] SOURCE  static check only, no execution\n"
+        "  python -m lwt --profile OUTPUT SOURCE [-- ARGS...]  collect an execution profile\n"
+        "  python -m lwt --repl                       interactive REPL (stdin)\n"
+        "  python -m lwt [--schedule=POLICY] [--schedule-log=FILE | --schedule-replay=FILE] SOURCE\n"
+        "  python -m lwt -h | --help                  show this help\n"
+        "  python -m lwt --version                    show the version\n"
+        "\n"
+        "Schedule policies: fifo (default) or random:SEED.\n"
+        "Exit codes: 0 success; 2 static check errors; 3 runtime error; 4 CLI/file error.\n"
+        "Language rules: docs/language-spec.md\n"
+    )
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Read, lex, parse, and execute one LWT source file."""
 
     _configure_standard_streams()
     arguments = list(sys.argv[1:] if argv is None else argv)
+    # S45 WP2: help/version are early exits that never touch a source file.
+    # Only a lone flag is intercepted, so a program path can never be shadowed.
+    if len(arguments) == 1 and arguments[0] in ("-h", "--help"):
+        sys.stdout.write(_help_text())
+        return 0
+    if len(arguments) == 1 and arguments[0] == "--version":
+        from . import __version__
+
+        sys.stdout.write(f"lwt {__version__}\n")
+        return 0
     if arguments and arguments[0] == "--repl":
         if len(arguments) != 1:
             sys.stderr.write(

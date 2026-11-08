@@ -1510,5 +1510,53 @@ class S7BuiltinCliTests(unittest.TestCase):
         )
 
 
+class CliHelpVersionTests(unittest.TestCase):
+    """S45 WP2: -h/--help and --version are zero-exit early exits."""
+
+    def test_help_long_exits_zero_and_lists_entry_points(self) -> None:
+        result = run_lwt("--help")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        text = result.stdout.decode("utf-8")
+        for token in ("Usage:", "--check", "--profile", "--repl", "--schedule", "--version"):
+            self.assertIn(token, text)
+        self.assertEqual(result.stderr, b"")
+
+    def test_help_short_exits_zero(self) -> None:
+        result = run_lwt("-h")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(b"Usage:", result.stdout)
+
+    def test_version_exits_zero_and_matches_package(self) -> None:
+        import lwt
+
+        result = run_lwt("--version")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.decode("utf-8").strip(), f"lwt {lwt.__version__}")
+
+    def test_no_arguments_is_still_cli_error_not_help(self) -> None:
+        # Existing contract: no source path -> CliError/4 on stderr.
+        result = run_lwt()
+        self.assertEqual(result.returncode, 4)
+        self.assertEqual(result.stdout, b"")
+        self.assertIn(b"CliError", result.stderr)
+
+    def test_help_after_source_is_not_intercepted(self) -> None:
+        # A program argument named --help must never trigger the help branch.
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "args.lwt"
+            path.write_text('emit args()[0];\n', encoding="utf-8")
+            result = run_lwt(str(path), "--", "--help")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(result.stdout, b"--help\n")
+
+    def test_unknown_flag_is_still_rejected(self) -> None:
+        # Pre-existing behavior: an unknown leading flag is treated as a source
+        # path and fails with exit 4 (FileError). S45 must not change that.
+        result = run_lwt("--bogus")
+        self.assertEqual(result.returncode, 4)
+        self.assertEqual(result.stdout, b"")
+        self.assertTrue(result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
