@@ -1,0 +1,56 @@
+{
+  "generated_at_utc": "2026-11-08T15:00:33Z",
+  "note": "Blind eval must be run by the user in a new context-free session. NOT_RUN means no submission was found; it is never reported as a pass.",
+  "overall": "NOT_RUN",
+  "pass_at_1": null,
+  "pass_at_k_formula": "pass@k = 1 - C(n-c,k)/C(n,k); single sample == pass@1",
+  "passed": 0,
+  "results": [
+    {
+      "checks": {},
+      "detail": "no docs/agent-eval/submissions/dict-word-frequency-topk/{program,main}.lwt",
+      "id": "dict-word-frequency-topk",
+      "status": "NOT_SUBMITTED",
+      "title": "dict 词频统计 + top-k"
+    },
+    {
+      "checks": {},
+      "detail": "no docs/agent-eval/submissions/throw-finally-cleanup/{program,main}.lwt",
+      "id": "throw-finally-cleanup",
+      "status": "NOT_SUBMITTED",
+      "title": "throw/finally 清理与自定义错误"
+    },
+    {
+      "checks": {},
+      "detail": "no docs/agent-eval/submissions/producer-consumer-channel/{program,main}.lwt",
+      "id": "producer-consumer-channel",
+      "status": "NOT_SUBMITTED",
+      "title": "确定性生产者/消费者 + 通道 + attempt/recover"
+    },
+    {
+      "checks": {},
+      "detail": "no docs/agent-eval/submissions/module-record-dict-mix/{program,main}.lwt",
+      "id": "module-record-dict-mix",
+      "status": "NOT_SUBMITTED",
+      "title": "模块导入 + record + dict 组合"
+    },
+    {
+      "checks": {},
+      "detail": "no docs/agent-eval/submissions/each-snapshot-alias/{program,main}.lwt",
+      "id": "each-snapshot-alias",
+      "status": "NOT_SUBMITTED",
+      "title": "each 浅快照与数组/record 别名"
+    },
+    {
+      "checks": {},
+      "detail": "no docs/agent-eval/submissions/cli-args-text-processing/{program,main}.lwt",
+      "id": "cli-args-text-processing",
+      "status": "NOT_SUBMITTED",
+      "title": "CLI 参数 + 文本文件处理"
+    }
+  ],
+  "schema_version": 1,
+  "submitted": 0,
+  "tasks_total": 6,
+  "tool": "lwt-agent-eval"
+}

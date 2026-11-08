@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "note": "S45 WP3 Agent blind-eval task. The blind agent may read ONLY the docs listed in allowed_docs plus this file; it must not read tests/cases, app/, or other tasks' expected output.",
+  "tasks": [
+    {
+      "id": "dict-word-frequency-topk",
+      "title": "dict 词频统计 + top-k",
+      "prompt": "编写程序 freq.lwt：从 stdin 逐行读取（每行若干以单个空格分隔的单词），统计每个单词出现次数，按次数从高到低、同次数按单词升序输出前 3 行，每行格式 `word count`（单个空格），无输入时输出 `EMPTY`。stdin 通过 `input()` 读取，EOF 结束。程序不接收命令行参数。",
+      "allowed_docs": ["docs/language-spec.md", "docs/developer-guide.md", ".agents/skills/lwt-app/SKILL.md", "docs/concurrency.md"],
+      "stdin": "apple banana apple\nbanana apple cherry\nbanana\n",
+      "args": [],
+      "expected_stdout": "apple 3\nbanana 3\ncherry 1\n",
+      "expected_exit_code": 0,
+      "check_required": true,
+      "deterministic_runs": 5,
+      "forbidden_constructs": ["float", "class ", "lambda", "sleep", "lock(", "async ", "await "],
+      "forbidden_note": "不得使用浮点、类、lambda、sleep/锁等非目标能力；不得改用 Python 或其他语言生成输出。"
+    },
+    {
+      "id": "throw-finally-cleanup",
+      "title": "throw/finally 清理与自定义错误",
+      "prompt": "编写程序 cleanup.lwt：定义一个函数 `charge(n)`，当 n 小于 0 时 `throw error(\"Validation\", \"negative amount\")`，否则返回 n 的两倍。主程序用 `attempt { emit str(charge(-5)); } recover (problem) { emit problem.category; emit problem.message; } finally { emit \"cleanup\"; }`，随后再 `emit str(charge(4));`。不接收参数与 stdin。",
+      "allowed_docs": ["docs/language-spec.md", "docs/developer-guide.md", ".agents/skills/lwt-app/SKILL.md"],
+      "stdin": "",
+      "args": [],
+      "expected_stdout": "Validation\nnegative amount\ncleanup\n8\n",
+      "expected_exit_code": 0,
+      "check_required": true,
+      "deterministic_runs": 5,
+      "forbidden_constructs": ["float", "class ", "lambda", "sleep", "spawn", "channel("],
+      "forbidden_note": "不得使用并发或非目标能力；错误必须由 throw/recover/finally 产生，不能直接 emit 字面结果。"
+    },
+    {
+      "id": "producer-consumer-channel",
+      "title": "确定性生产者/消费者 + 通道 + attempt/recover",
+      "prompt": "编写程序 pipeline.lwt：用 `spawn` 启动一个生产者任务，它依次向通道 `ch` 发送 1、2、3 后 `close(ch)`；主任务用 `receive` 循环累加直到收到 `null`，输出 `sum 6`。再启动一个会 throw 的任务，用 `attempt { join(t); } recover (p) { emit \"caught:\" + p.message; }` 捕获并输出。程序必须在默认 fifo 策略下每次输出完全一致。不接收参数与 stdin。",
+      "allowed_docs": ["docs/language-spec.md", "docs/concurrency.md", "docs/developer-guide.md", ".agents/skills/lwt-app/SKILL.md"],
+      "stdin": "",
+      "args": [],
+      "expected_stdout": "sum 6\ncaught:task failed\n",
+      "expected_exit_code": 0,
+      "check_required": true,
+      "deterministic_runs": 5,
+      "forbidden_constructs": ["float", "class ", "lambda", "sleep", "async ", "await "],
+      "forbidden_note": "只允许规范 §11 的协作式并发子集；不得用 sleep/锁/线程库或依赖任务完成墙钟顺序。"
+    },
+    {
+      "id": "module-record-dict-mix",
+      "title": "模块导入 + record + dict 组合",
+      "prompt": "编写两个文件：`lib.lwt`（只含顶部 import 与函数声明）提供 `fn tax(amount) { return amount * 8 / 100; }`，以及主程序 `mix.lwt` 用 `import \"lib.lwt\" as lib;` 导入，定义 `record Item {name, price};`，构造 `Item{name: \"book\", price: 200}`，把 `lib.tax(item.price)` 存入 `dict{\"book\": 16}`，最后输出 `book 16`。不接收参数与 stdin。",
+      "allowed_docs": ["docs/language-spec.md", "docs/developer-guide.md", ".agents/skills/lwt-app/SKILL.md", "examples/modules/main.lwt"],
+      "stdin": "",
+      "args": [],
+      "expected_stdout": "book 16\n",
+      "expected_exit_code": 0,
+      "check_required": true,
+      "deterministic_runs": 5,
+      "forbidden_constructs": ["float", "class ", "lambda", "sleep", "spawn"],
+      "forbidden_note": "模块必须是静态函数库（顶层只有 import 与 fn）；不得在模块顶层写执行语句。"
+    },
+    {
+      "id": "each-snapshot-alias",
+      "title": "each 浅快照与数组/record 别名",
+      "prompt": "编写程序 snapshot.lwt：构造数组 `[1, 2, 3]`，在 `each (v in values)` 循环体内用 `push(values, 99)` 追加元素（验证循环遍历的是进入循环时的浅快照，仍只迭代 3 次），统计迭代次数并输出 `iterations 3`。再构造 `record Box {value};` 的实例 `b`，令 `alias = b`，`alias.value = 9`，输出 `b.value 9` 与 `b == alias true`。不接收参数与 stdin。",
+      "allowed_docs": ["docs/language-spec.md", "docs/developer-guide.md", ".agents/skills/lwt-app/SKILL.md"],
+      "stdin": "",
+      "args": [],
+      "expected_stdout": "iterations 3\nb.value 9\nb == alias true\n",
+      "expected_exit_code": 0,
+      "check_required": true,
+      "deterministic_runs": 5,
+      "forbidden_constructs": ["float", "class ", "lambda", "sleep", "spawn"],
+      "forbidden_note": "不得用 while 手写索引冒充 each 快照语义；必须真实使用 each。"
+    },
+    {
+      "id": "cli-args-text-processing",
+      "title": "CLI 参数 + 文本文件处理",
+      "prompt": "编写程序 wordcount.lwt：读取 `args()[0]` 指定的文本文件（用 `read_text`），统计非空行数与非空行中的单词总数（单词以单个空格分隔），输出 `lines <L> words <W>`。程序通过 `python -m lwt wordcount.lwt -- <path>` 调用；文件末尾无换行也必须正确计数。不读取 stdin。",
+      "allowed_docs": ["docs/language-spec.md", "docs/developer-guide.md", ".agents/skills/lwt-app/SKILL.md"],
+      "stdin": "",
+      "args": ["fixture"],
+      "fixture_content": "alpha beta\n\n gamma\n\ndelta epsilon zeta",
+      "expected_stdout": "lines 3 words 6\n",
+      "expected_exit_code": 0,
+      "check_required": true,
+      "deterministic_runs": 5,
+      "forbidden_constructs": ["float", "class ", "lambda", "sleep", "spawn", "input("],
+      "forbidden_note": "必须通过 args() 取路径并用 read_text 读取；不得用 input() 或硬编码文件内容。"
+    }
+  ]
+}
