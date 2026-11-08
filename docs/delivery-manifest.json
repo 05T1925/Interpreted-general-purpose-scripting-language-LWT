@@ -47,7 +47,7 @@
     "s44_performance": "docs/s44-performance.md",
     "s45_hardening": "docs/s45-final-hardening.md"
   },
-  "last_verified_utc": "2026-11-08T14:40:00Z",
+  "last_verified_utc": "2026-11-08T15:58:14Z",
   "notes": [
     "unittest_count 为 S45 收口实测 653（S44 的 632 + 文档一致性 11 + CLI help/version 6 + DAP 帧 2 + 通道精确一次 2）。",
     "ppt_pages / ppt_sha256 为 S45 最终 PPT（17→18 页，新增「八项交付物→证据与命令」映射页；旧第 10 页原生图表 12 数值点未变）。",

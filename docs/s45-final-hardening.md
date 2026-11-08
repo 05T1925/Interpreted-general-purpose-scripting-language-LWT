@@ -66,7 +66,7 @@
 
 ### 4.2 一键自检包
 
-（收口时填：`reports/s45-acceptance/selfcheck-<UTC>.md` 的总判定与各步状态。）
+`python tools/run_acceptance_selfcheck.py` → **PASS**，产物 `reports/s45-acceptance/selfcheck-20261108T154909Z.json/.md`：git PASS（HEAD `0b58739`、分支 `feature/delivery-hardening`、工作树干净）、protected_diff PASS（空）、integrity PASS（cases=400, referenced=400, unref=0）、blackbox PASS（400/400）、determinism PASS（stable=True, failures=0，独立输出 `reports/s45-acceptance/s45-determinism.json`）、compare_perf PASS（all_pass=true）、doc_consistency PASS（11 项）、ppt PASS（18 页、图表 12 数值点、SHA `b8c15c03…`）、agent_eval N/A（NOT_RUN，明确不当作通过）。
 
 ## 5. 远端 CI（精确 SHA 单独记录）
 

@@ -1,0 +1,91 @@
+{
+  "all_pass": true,
+  "environment": {
+    "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.14 (main, Jun 11 2026, 04:04:46) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "generated_at_utc": "2026-11-08T15:57:41Z",
+  "gui_checklist": [
+    "语义实验室：python -m app.language_lab，提交预测→运行→对照反馈",
+    "日志工作台：python -m app.lwt_workbench（若存在），真实鼠标选择/滚动/切换",
+    "LWT Snake：python -m app.lwt_snake，方向键、吃食物、结束重开、失焦恢复",
+    "S41 策略查看器：真实 Tk 窗口打开见证目录并逐步解释",
+    "PPT 逐页播放：17/18 页在放映模式下无溢出、图表可读",
+    "桌面无遮挡与输入归属：窗口置顶/焦点/输入法不误触"
+  ],
+  "note": "Agent blind eval and on-site GUI acceptance are separate: NOT_RUN / 未验证 is never a pass. Heavy steps can be skipped only with --skip-heavy, and show as null, not true.",
+  "schema_version": 1,
+  "steps": {
+    "agent_eval": {
+      "detail": "blind eval must be run by the user in a new context; NOT_RUN is not a pass",
+      "pass": null,
+      "pass_at_1": null,
+      "passed": 0,
+      "status": "NOT_RUN",
+      "submitted": 0
+    },
+    "blackbox": {
+      "exit_code": 0,
+      "parsed": {
+        "failed": 0,
+        "passed": 400,
+        "total": 400
+      },
+      "pass": true,
+      "seconds": 212.592
+    },
+    "compare_perf": {
+      "all_pass": true,
+      "exit_code": 0,
+      "pass": true
+    },
+    "determinism": {
+      "exit_code": 0,
+      "failures_zero": true,
+      "output": "reports\\s45-acceptance\\s45-determinism.json",
+      "pass": true,
+      "seconds": 296.719,
+      "stable": true
+    },
+    "doc_consistency": {
+      "exit_code": 0,
+      "pass": true
+    },
+    "git": {
+      "branch": "feature/delivery-hardening",
+      "clean": true,
+      "commits_since_main": 24,
+      "head": "0b58739513f26ad48dba52c9fcf99c7335006b37",
+      "pass": true,
+      "status_porcelain": "## feature/delivery-hardening...origin/feature/delivery-hardening"
+    },
+    "integrity": {
+      "exit_code": 0,
+      "parsed": {
+        "cases": 400,
+        "matrix_links": 497,
+        "referenced_cases": 400,
+        "unreferenced": 0
+      },
+      "pass": true,
+      "stderr": ""
+    },
+    "ppt": {
+      "chart_points": 12,
+      "chart_series": 2,
+      "manifest_chart_points": 12,
+      "manifest_pages": 18,
+      "pass": true,
+      "sha256": "b8c15c03de1c51053c643951c2020823da28b9a0d3807a998e6cc88a89c1895a",
+      "sha_matches_manifest": true,
+      "slides": 18
+    },
+    "protected_diff": {
+      "dirty": [],
+      "exit_code": 0,
+      "pass": true
+    }
+  },
+  "tool": "lwt-acceptance-selfcheck"
+}
