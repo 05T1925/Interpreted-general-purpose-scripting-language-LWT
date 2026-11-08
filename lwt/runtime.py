@@ -1547,11 +1547,15 @@ def _invoke_concurrency_builtin(
         if channel.closed:
             _runtime_error("send on a closed channel", location)
         with scheduler.cond:
-            channel.send(value)
-            # If a receiver is blocked, hand it the value directly; the
-            # waiting task's switch() returns the injected value.
+            # S45 fix: a blocked receiver must take the value INSTEAD of the
+            # queue, not in addition to it. The previous code appended the
+            # value and then also injected it into the waiting task, so the
+            # next receive returned the same element twice (spec 11.5 says a
+            # channel is FIFO and each element is delivered exactly once).
             if channel.waiting:
                 scheduler.wake_receiver(channel_value.channel_id, value)
+            else:
+                channel.send(value)
         return None
 
     if name == "receive":

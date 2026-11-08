@@ -334,5 +334,41 @@ class TraceReplayTests(unittest.TestCase):
             self.assertIn(b"mutually exclusive", r.stderr)
 
 
+class ChannelExactlyOnceTests(unittest.TestCase):
+    """S45 regression: a blocked receiver must consume the value, not share it.
+
+    Before the fix, ``send`` appended the value to the queue AND injected the
+    same value into the blocked receiver, so the next ``receive`` returned the
+    same element twice (spec 11.5 says a channel is FIFO and each element is
+    delivered exactly once).
+    """
+
+    def test_blocked_receiver_does_not_duplicate_value(self) -> None:
+        out, err, code = _run_source(
+            "fn produce(ch) { send(ch, 7); close(ch); }\n"
+            "let ch = channel();\n"
+            "let t = spawn produce(ch);\n"
+            "emit str(receive(ch));\n"
+            "emit str(receive(ch));\n"
+            "join(t);\n"
+        )
+        self.assertIsNone(code, err)
+        self.assertEqual(out, "7\nnull\n")
+
+    def test_blocked_receiver_then_queued_values_keep_fifo(self) -> None:
+        out, err, code = _run_source(
+            "fn produce(ch) { send(ch, 1); send(ch, 2); send(ch, 3); close(ch); }\n"
+            "let ch = channel();\n"
+            "let t = spawn produce(ch);\n"
+            "let sum = 0;\n"
+            "let v = receive(ch);\n"
+            "while (v != null) { sum = sum + v; v = receive(ch); }\n"
+            "join(t);\n"
+            "emit str(sum);\n"
+        )
+        self.assertIsNone(code, err)
+        self.assertEqual(out, "6\n")
+
+
 if __name__ == "__main__":
     unittest.main()
