@@ -68,6 +68,10 @@
   - `ubuntu-latest / Python 3.13` success 4m24s；`ubuntu-latest / Python 3.10` success 4m36s；
   - `windows-latest / Python 3.13` success 7m55s；`windows-latest / Python 3.10` success 7m07s。
 - 口径：这是 **main 的 CI**（不再是功能分支）；后续仅文档/证据的提交会再触发一次 run，若结论不同会单独记录，不把本次 success 外推到新 SHA。
+- **main 最新两次 run**（均在 `main` 分支，四格全 success）：
+  - `bd3fb7f`（自检证据提交）：run [42654006456](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42654006456)，四格 success。
+  - `446bd2d`（最终包哈希提交，重构包前的内容 tip）：run [42654883479](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42654883479)，四格 success：ubuntu 3.13 7m04s、ubuntu 3.10 7m48s、windows 3.13 6m04s、windows 3.10 9m42s。
+  - 其后仅剩“打包哈希回填”这一笔文档提交；它不改变代码/测试/PPT，CI 结论不外推，最终 SHA 由主窗口 `git log -1` 核对。
 
 ## 7. 保护数据
 
