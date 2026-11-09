@@ -51,11 +51,11 @@
 
 | 项 | 实测值 |
 |---|---|
-| 包目录 | `dist/lwt-submission-20261109T162142Z/`（`dist/` 已 gitignore） |
-| bundle | `lwt-history.bundle`，SHA-256 `8d29bec743c38f3b...`；`git bundle verify` 退出 0；仅 branches/tags/HEAD（**0 个 worktree refs**） |
-| zip | `lwt-submission.zip`，SHA-256 `7835693f0fc138aa...`，1368 项，`testzip` 通过；`manifest.sha256` 覆盖除自身外全部 1367 项且逐项匹配 |
-| SUBMISSION.md | SHA-256 `be407c575a524538...` |
-| 新克隆 | HEAD `bd3fb7f9ce178057afaec7e84f1eaa831e80e07f`（= main = feature）；clone/version/check/blackbox/compileall/integrity **6 条命令全部 exit 0**；黑盒 **400/400**（178.6 s），总 185.1 s |
+| 包目录 | `dist/lwt-submission-20261109T164153Z/`（`dist/` 已 gitignore） |
+| bundle | `lwt-history.bundle`，SHA-256 `b30450f65568b80e...`；`git bundle verify` 退出 0；仅 branches/tags/HEAD（**0 个 worktree refs**） |
+| zip | `lwt-submission.zip`，SHA-256 `123ee0f1b2fa2596...`，1368 项，`testzip` 通过；`manifest.sha256` 覆盖除自身外全部 1367 项且逐项匹配 |
+| SUBMISSION.md | SHA-256 `e4b75ea3fe377d7b...` |
+| 新克隆 | HEAD `224e4ae9fd178d34a5c9d96da7dbe665627bf8a6`（= 打包内容 tip）；clone/version/check/blackbox/compileall/integrity **6 条命令全部 exit 0**；黑盒 **400/400**（189.1 s），总 195.0 s |
 
 **环境性 flake（如实记录）**：第一次新克隆出现 `spawn-join-null` 5 s 超时（输出已完整 `ran\nnull\n`），同一 bundle 第二次克隆 400/400。随后在主工作区高频复现：`run_tests --case spawn-join-null` 20 次、直接运行 30 次全部通过（最慢 1.7 s）。判断为克隆后杀毒/磁盘首次扫描导致的启动慢，而非产品缺陷；未修改 5 s 超时或放宽用例。
 
