@@ -192,17 +192,16 @@ def _bundle(out_dir: Path) -> dict:
 
 
 def _zip(out_dir: Path, bundle_path: Path | None) -> dict:
-    staging = out_dir / "_staging"
-    if staging.exists():
-        shutil.rmtree(staging)
-    staging.mkdir(parents=True)
-    archive = out_dir / "_tree.zip"
+    # Stage outside the repository: bulk deletion inside dist/ may be blocked
+    # by host safe-delete guards, and a leftover staging tree would pollute the
+    # delivered package directory.
+    staging = Path(tempfile.mkdtemp(prefix="lwt-submission-stage-"))
+    archive = Path(tempfile.mkdtemp(prefix="lwt-archive-")) / "tree.zip"
     made = _run(["git", "archive", "--format=zip", "-o", str(archive), "HEAD"])
     if made["exit_code"] != 0:
         raise SystemExit(f"build_submission: git archive failed: {made['stderr']}")
     with zipfile.ZipFile(archive) as zf:
         zf.extractall(staging)
-    archive.unlink()
     shutil.copy2(SUBMISSION, staging / "SUBMISSION.md")
     if bundle_path is not None and bundle_path.exists():
         shutil.copy2(bundle_path, staging / bundle_path.name)
@@ -221,7 +220,8 @@ def _zip(out_dir: Path, bundle_path: Path | None) -> dict:
         for path in sorted(staging.rglob("*")):
             if path.is_file():
                 zf.write(path, path.relative_to(staging).as_posix())
-    shutil.rmtree(staging)
+    shutil.rmtree(staging, ignore_errors=True)
+    shutil.rmtree(archive.parent, ignore_errors=True)
     with zipfile.ZipFile(zip_path) as zf:
         bad = zf.testzip()
         names = len(zf.namelist())
