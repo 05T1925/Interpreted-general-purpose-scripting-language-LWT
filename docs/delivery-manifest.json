@@ -49,7 +49,7 @@
     "s46_concurrency_model": "docs/s46-concurrency-verification.md",
     "s46_tool": "docs/concurrency-model-check.md"
   },
-  "last_verified_utc": "2026-11-08T15:58:14Z",
+  "last_verified_utc": "2026-11-09T03:43:10Z",
   "notes": [
     "unittest_count 为 S46 收口实测 664（S45 的 653 + S46 模型检查 11）。",
     "ppt_pages / ppt_sha256 为 S46 最终 PPT（18→19 页，新增「有界调度探索」页；旧第 10 页原生图表 12 数值点未变）。",

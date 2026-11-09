@@ -45,7 +45,8 @@
 | `python tools/model_check_concurrency.py --corpus tests/concurrency-model --max-runs 300 --time-budget 90 --require-clean` | 0 | `programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0`；8/8 `COMPLETE`；6.97 s |
 | 同上 `--mutant duplicate-delivery --expect-violation --max-runs 200` | 0 | `violations=4`；4 个通道程序各 1；最小前缀 `[]`；replay `matches=true`；9.76 s |
 | 同上 `--max-runs 1 --require-clean`（预算自测） | 1 | `budget_exhausted=3`、`all_pass=false`；**未写 PASS** |
-| `python -m unittest tests.test_concurrency_model -q` | 0 | `Ran 11 tests ... OK`（17.099 s） |
+| `python -m unittest tests.test_concurrency_model -q` | 0 | `Ran 11 tests ... OK`（27.5 s） |
+| `python tools/run_acceptance_selfcheck.py`（干净树） | 0 | **PASS** → `reports/s45-acceptance/selfcheck-20261109T033422Z.json`；git/protected_diff/integrity/blackbox(400)/determinism(46×10)/compare_perf/doc_consistency/ppt(19 页,12 点)/model_check(32 runs,0 违反) 全 PASS；agent_eval 如实 `NOT_RUN` |
 | `python tools/check_project_integrity.py --require-all-referenced` | 0 | `cases=400; referenced_cases=400; unreferenced=0` |
 | `python tools/compare_perf.py --format json` | 0 | `all_pass: true` |
 | `python -m unittest tests.test_doc_consistency -q` | 0 | `Ran 11 tests ... OK` |
@@ -118,7 +119,8 @@ S45 的重复投递缺陷在 **46 项并发黑盒**下未暴露：没有任何�
 
 ## 10. 提交与 CI
 
-- 分支 `feature/concurrency-model-check`，基线 `252122c`；提交按 WP 分组（见 `git log`）。最终 SHA 与 CI 四格在推送后由主窗口核对。
+- 分支 `feature/concurrency-model-check`，基线 `252122c`；提交按 WP 分组（见 `git log`），最终 SHA 由主窗口核对。
+- 一键自检证据：`reports/s45-acceptance/selfcheck-20261109T033422Z.{json,md}`（PASS）。模型检查在该次自检中写入 `reports/s46-concurrency-model/selfcheck/`（32 runs、0 违反、`PASS`）。
 - 推送策略：功能分支推送需用户授权；未推送时 CI 写"未验证"，不把本地 Windows 通过外推为 Linux/3.10 通过。
 
 ## 11. 状态分层
