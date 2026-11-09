@@ -121,6 +121,11 @@ S45 的重复投递缺陷在 **46 项并发黑盒**下未暴露：没有任何�
 
 - 分支 `feature/concurrency-model-check`，基线 `252122c`；提交按 WP 分组（见 `git log`），最终 SHA 由主窗口核对。
 - 一键自检证据：`reports/s45-acceptance/selfcheck-20261109T033422Z.{json,md}`（PASS）。模型检查在该次自检中写入 `reports/s46-concurrency-model/selfcheck/`（32 runs、0 违反、`PASS`）。
+- **功能分支已按用户授权推送**（只推功能分支，不推 main、不合并、不打标签）：
+  - 精确 SHA：`4f5f59212b9e6c7838f49d546dd88c59cc29b1eb`
+  - Run：[42557993854](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42557993854)（`LWT tests` #44），结论 **success**，用时 **9m25s**。
+  - 四格矩阵未改，**四格全部 success**（逐 job 明细见 §12）；新增的「Bounded concurrency model check」步骤在四格中均随 job 通过。
+  - 口径：这是**功能分支**的 CI，不是 `main`；推送成功与 CI 通过分开记录，本机 Windows 通过不外推为其他平台通过。
 - 推送策略：功能分支推送需用户授权；未推送时 CI 写"未验证"，不把本地 Windows 通过外推为 Linux/3.10 通过。
 
 ## 11. 状态分层
@@ -133,3 +138,16 @@ S45 的重复投递缺陷在 **46 项并发黑盒**下未暴露：没有任何�
 | 合入 main | 未合入 |
 | 远端 CI | 推送后按精确 SHA 记录；未推送则未验证 |
 | 现场人工 GUI | 未验证 |
+
+## 12. CI 四格明细
+
+2026-11-09 03:44 UTC 推送 `4f5f592`，run 42557993854 于 9m25s 后 **success**；GitHub REST API 查询到的逐 job 结果：
+
+| Job | 结论 | 开始（UTC） | 结束（UTC） | 用时 |
+|---|---|---|---|---|
+| `ubuntu-latest / Python 3.13` | success | 03:44:06 | 03:48:07 | 4m01s |
+| `ubuntu-latest / Python 3.10` | success | 03:44:05 | 03:50:04 | 5m59s |
+| `windows-latest / Python 3.13` | success | 03:44:05 | 03:51:29 | 7m24s |
+| `windows-latest / Python 3.10` | success | 03:44:05 | 03:53:28 | 9m23s |
+
+口径：这是**功能分支**的 CI，不是 `main`；推送成功与 CI 通过分开记录；本地 Windows 通过不外推为其他平台通过。最慢的 Windows 3.10 用时 9m23s，仍低于 15 分钟 job 上限，说明新增的模型检查步骤没有拖垮矩阵。
