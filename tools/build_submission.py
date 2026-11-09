@@ -174,7 +174,7 @@ def _write_submission() -> str:
 
 def _bundle(out_dir: Path) -> dict:
     target = out_dir / "lwt-history.bundle"
-    create = _run(["git", "bundle", "create", str(target), "--all"])
+    create = _run(["git", "bundle", "create", str(target), "--branches", "--tags", "HEAD"])
     verify = _run(["git", "bundle", "verify", str(target)])
     heads = _run(["git", "bundle", "list-heads", str(target)])
     graph = _run(["git", "log", "--graph", "--oneline", "--decorate", "--all"])
