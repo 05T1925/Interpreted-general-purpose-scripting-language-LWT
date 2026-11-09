@@ -49,15 +49,31 @@
 
 ## 5. 收口数据（实测）
 
-（收口时填：bundle/zip SHA-256、条目数、fresh-clone 五条命令退出码与 400/400、自检 PASS 文件。）
+| 项 | 实测值 |
+|---|---|
+| 包目录 | `dist/lwt-submission-20261109T092857Z/`（`dist/` 已 gitignore） |
+| bundle | `lwt-history.bundle`，SHA-256 `bdc005223e9536a3...`；`git bundle verify` 退出 0；54 个 refs（branches/tags/HEAD），**0 个 worktree refs** |
+| zip | `lwt-submission.zip`，SHA-256 `79fb2e3f7b4db4e0...`，1352 项，`testzip` 通过；`manifest.sha256` 覆盖除自身外全部 1351 项且逐项匹配 |
+| SUBMISSION.md | SHA-256 `be407c575a524538...` |
+| 新克隆 | HEAD `7ce4431`；clone/version/check/blackbox/compileall/integrity **6 条命令全部 exit 0**；黑盒 **400/400**（214.8 s），总 222.0 s |
+
+**环境性 flake（如实记录）**：第一次新克隆出现 `spawn-join-null` 5 s 超时（输出已完整 `ran\nnull\n`），同一 bundle 第二次克隆 400/400。随后在主工作区高频复现：`run_tests --case spawn-join-null` 20 次、直接运行 30 次全部通过（最慢 1.7 s）。判断为克隆后杀毒/磁盘首次扫描导致的启动慢，而非产品缺陷；未修改 5 s 超时或放宽用例。
 
 ## 6. WP3：main 收敛（B1）
 
-（收口时填：FF 前/后 SHA、`git push origin main` 输出、精确 SHA、CI run 与四格耗时。）
+- FF 前：`main = 5027860`；FF 目标：`feature/concurrency-model-check`（线性链，`main` 是祖先）。
+- 第一次 FF：`5027860..336e736`（36 提交），普通推送 `git push origin main` 成功，main = `336e736c45f3822977d8c0cc5aca82c6bde0cc21`。
+- 第二次 FF（bundle refs 修复）：`336e736..7ce4431`，main = `7ce4431c5095a4fc92b8ab951d1800d43ebf8582`；证据提交后还会再 FF 一次，最终 SHA 由主窗口 `git log -1` 核对。
+- **main 的 CI**：run [42591148360](https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42591148360)（`LWT tests` #46，`336e736`）**success 7m59s**，四格：
+  - `ubuntu-latest / Python 3.13` success 4m24s；`ubuntu-latest / Python 3.10` success 4m36s；
+  - `windows-latest / Python 3.13` success 7m55s；`windows-latest / Python 3.10` success 7m07s。
+- 口径：这是 **main 的 CI**（不再是功能分支）；后续仅文档/证据的提交会再触发一次 run，若结论不同会单独记录，不把本次 success 外推到新 SHA。
 
 ## 7. 保护数据
 
-`bench/results.json`、`reports/performance.md`、S10/S28/S29/S37–S46 固定证据、`reports/s42-*`、`tests/cases/**`、`app/log_report.lwt`、`app/lwt_snake/game.lwt`、PPT 第 10 页图表 12 数值点：全部零改动。S47 新证据只写 `reports/s47-submission/`、`docs/agent-eval/submissions/`、`dist/`（忽略）。
+- **S47 自身**：`git diff --stat 252122c..main -- <保护路径>` 为空；PPT 第 10 页原生图表 12 数值点未变（19→20 页仅追加一页）。
+- **main FF 带入的历史改动**：`5027860..main` 会显示 `tests/cases` 从 354→400、`app/log_report.lwt` 的 S42 dict 改造（提交 `aec6076`）、46 项并发用例（提交 `fa37ec4`）与 S42/S43 证据。这些是**已记录的历史提交**，不是 S47 覆盖；`main` 与 `feature/concurrency-model-check` 在 FF 后同树（`git diff main..feature` 为空）。
+- S47 新证据只写 `reports/s47-submission/`、`docs/agent-eval/submissions/`、`dist/`（忽略）；`dist/` 不进入 Git。
 
 ## 8. 未验证项
 
