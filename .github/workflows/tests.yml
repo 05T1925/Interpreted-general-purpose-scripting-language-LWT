@@ -29,6 +29,8 @@ jobs:
         run: python tools/check_project_integrity.py
       - name: Run LWT black-box suite
         run: python tools/run_tests.py
+      - name: Bounded concurrency model check
+        run: python tools/model_check_concurrency.py --corpus tests/concurrency-model --max-runs 300 --time-budget 90 --require-clean --out reports/s46-concurrency-model
       - name: Run Tk GUI integration tests (Linux)
         if: runner.os == 'Linux'
         run: |

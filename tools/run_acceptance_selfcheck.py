@@ -12,6 +12,7 @@ Runs, in order, and records a real exit code + parsed summary for each step:
   7. ``tests.test_doc_consistency``
   8. PPT static check via zip/xml (slide count, native chart value points, SHA-256)
   9. Agent-eval status (executed vs NOT_RUN; never fabricated)
+ 10. S46 bounded concurrency model check (clean corpus; BUDGET_EXHAUSTED is FAIL)
 
 Writes ``reports/s45-acceptance/selfcheck-<UTC>.json`` and ``.md`` and prints the
 manual GUI checklist. It never rewrites S10/S11/S37-S44 evidence; a failing step
@@ -52,7 +53,7 @@ GUI_CHECKLIST = [
     "日志工作台：python -m app.lwt_workbench（若存在），真实鼠标选择/滚动/切换",
     "LWT Snake：python -m app.lwt_snake，方向键、吃食物、结束重开、失焦恢复",
     "S41 策略查看器：真实 Tk 窗口打开见证目录并逐步解释",
-    "PPT 逐页播放：17/18 页在放映模式下无溢出、图表可读",
+    "PPT 逐页播放：18/19 页在放映模式下无溢出、图表可读",
     "桌面无遮挡与输入归属：窗口置顶/焦点/输入法不误触",
 ]
 
@@ -166,9 +167,50 @@ def _step_agent_eval() -> dict[str, Any]:
     }
 
 
+def _step_model_check(budget: float) -> dict[str, Any]:
+    """S46: bounded schedule exploration; budget exhaustion is never a pass."""
+
+    out = ROOT / "reports" / "s46-concurrency-model" / "selfcheck"
+    completed = run(
+        [sys.executable, "tools/model_check_concurrency.py",
+         "--corpus", "tests/concurrency-model",
+         "--max-runs", "300", "--time-budget", str(budget),
+         "--require-clean", "--out", str(out.relative_to(ROOT))],
+        timeout=int(budget) + 180,
+    )
+    summary: dict[str, Any] = {}
+    path = out / "summary.json"
+    if path.exists():
+        try:
+            summary = json.loads(path.read_text(encoding="utf-8"))
+        except ValueError:
+            summary = {}
+    totals = summary.get("totals", {})
+    budget_exhausted = totals.get("budget_exhausted")
+    if completed["exit_code"] == 0 and summary.get("all_pass") is True:
+        status = "PASS"
+    elif budget_exhausted:
+        status = "BUDGET_EXHAUSTED"
+    else:
+        status = "FAIL"
+    return {
+        "exit_code": completed["exit_code"],
+        "pass": status == "PASS",
+        "status": status,
+        "runs": totals.get("runs"),
+        "violations": totals.get("violations"),
+        "budget_exhausted": budget_exhausted,
+        "invalid_prefixes": totals.get("invalid_prefixes"),
+        "output": str(path.relative_to(ROOT)),
+        "seconds": completed["seconds"],
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--timeout", type=int, default=900)
+    parser.add_argument("--model-budget", type=float, default=60.0,
+                        help="S46 model-check wall-clock budget (seconds)")
     parser.add_argument("--skip-heavy", action="store_true",
                         help="skip black-box and determinism (fast structural check only)")
     args = parser.parse_args(argv)
@@ -192,7 +234,7 @@ def main(argv: list[str] | None = None) -> int:
             "exit_code": blackbox["exit_code"], "pass": blackbox["exit_code"] == 0,
             "parsed": parsed, "seconds": blackbox["seconds"],
         }
-        det_out = OUT_DIR / "s45-determinism.json"
+        det_out = ROOT / "reports" / "s46-concurrency-model" / "selfcheck-determinism.json"
         determinism = run(
             [sys.executable, "tools/run_concurrency_determinism.py", "--repeat", "10",
              "--out", str(det_out.relative_to(ROOT))],
@@ -228,6 +270,10 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     steps["ppt"] = _step_ppt()
+    if args.skip_heavy:
+        steps["model_check"] = {"skipped": True, "pass": None}
+    else:
+        steps["model_check"] = _step_model_check(args.model_budget)
     steps["agent_eval"] = _step_agent_eval()
 
     graded = [v for v in steps.values() if isinstance(v, dict) and v.get("pass") is not None]
@@ -301,6 +347,10 @@ def render(doc: dict[str, Any]) -> str:
         elif name == "ppt":
             detail = (f"slides={value.get('slides')} chart_points={value.get('chart_points')} "
                       f"sha={str(value.get('sha256'))[:12]}")
+        elif name == "model_check":
+            detail = (f"{value.get('status')} runs={value.get('runs')} "
+                      f"violations={value.get('violations')} "
+                      f"budget_exhausted={value.get('budget_exhausted')}")
         elif name == "agent_eval":
             detail = f"{value.get('status')} (submitted={value.get('submitted')})"
         lines.append(f"| {name} | {state} | {detail} |")
