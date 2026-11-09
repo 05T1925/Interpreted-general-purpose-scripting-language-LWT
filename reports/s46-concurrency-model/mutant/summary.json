@@ -1,0 +1,680 @@
+{
+  "all_pass": false,
+  "environment": {
+    "platform": "win32",
+    "python": "3.13.14"
+  },
+  "generated_at_utc": "2026-11-09T03:21:00Z",
+  "mode": {
+    "elapsed_s": 9.765,
+    "max_decisions": 30,
+    "max_runs": 200,
+    "mutant": "duplicate-delivery",
+    "time_budget_s": 60.0
+  },
+  "programs": [
+    {
+      "decision_points": 0,
+      "depth_limit": 30,
+      "id": "channel-blocked-then-queued",
+      "invalid_prefixes": 0,
+      "max_depth": 2,
+      "model": "tests/concurrency-model/channel-blocked-then-queued.model.json",
+      "outcomes": [
+        {
+          "count": 1,
+          "exit_code": 0,
+          "first_prefix": [],
+          "stderr": "",
+          "stdout": "1,1,2\n",
+          "witness": {
+            "replay": {
+              "command": [
+                "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+                "-c",
+                "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+                "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-blocked-then-queued/outcome-1-trace.json",
+                "tests/concurrency-model/channel-blocked-then-queued.lwt"
+              ],
+              "exit_code": 0,
+              "expected_exit_code": 0,
+              "expected_stdout_sha256": "f93bb9618e747e0e37d87f18ff7eb1a1edb5e90a500d77131b38d6b5e91753bb",
+              "matches": true,
+              "mode": "tool-harness-duplicate-delivery",
+              "ok": true,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "f93bb9618e747e0e37d87f18ff7eb1a1edb5e90a500d77131b38d6b5e91753bb"
+            },
+            "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-blocked-then-queued/outcome-1-trace.json"
+          }
+        }
+      ],
+      "prefixes_discovered": 1,
+      "program": "tests/concurrency-model/channel-blocked-then-queued.lwt",
+      "queued_when_stopped": 0,
+      "replay_failures": 0,
+      "runs": 1,
+      "seconds": 0.002,
+      "spec_refs": [
+        "§11.5",
+        "§11.7"
+      ],
+      "status": "COMPLETE",
+      "tags": [
+        "channel",
+        "regression",
+        "s45"
+      ],
+      "thread_leaks": [],
+      "violation_count": 1,
+      "violations": [
+        {
+          "exit_code": 0,
+          "minimized_prefix": [],
+          "original_prefix": [],
+          "replay": {
+            "command": [
+              "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+              "-c",
+              "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+              "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-blocked-then-queued/violation-1-trace.json",
+              "tests/concurrency-model/channel-blocked-then-queued.lwt"
+            ],
+            "exit_code": 0,
+            "matches": true,
+            "mode": "tool-harness-duplicate-delivery",
+            "ok": true,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "f93bb9618e747e0e37d87f18ff7eb1a1edb5e90a500d77131b38d6b5e91753bb"
+          },
+          "stderr": "",
+          "stdout": "1,1,2\n",
+          "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-blocked-then-queued/violation-1-trace.json"
+        }
+      ],
+      "witness": {
+        "minimized_prefix": [],
+        "original_prefix": [],
+        "replay": {
+          "command": [
+            "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+            "-c",
+            "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+            "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-blocked-then-queued/violation-1-trace.json",
+            "tests/concurrency-model/channel-blocked-then-queued.lwt"
+          ],
+          "exit_code": 0,
+          "matches": true,
+          "mode": "tool-harness-duplicate-delivery",
+          "ok": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "f93bb9618e747e0e37d87f18ff7eb1a1edb5e90a500d77131b38d6b5e91753bb"
+        },
+        "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-blocked-then-queued/violation-1-trace.json"
+      }
+    },
+    {
+      "decision_points": 0,
+      "depth_limit": 30,
+      "id": "channel-close-drain",
+      "invalid_prefixes": 0,
+      "max_depth": 2,
+      "model": "tests/concurrency-model/channel-close-drain.model.json",
+      "outcomes": [
+        {
+          "count": 1,
+          "exit_code": 0,
+          "first_prefix": [],
+          "stderr": "",
+          "stdout": "1\n1\n2\n",
+          "witness": {
+            "replay": {
+              "command": [
+                "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+                "-c",
+                "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+                "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-close-drain/outcome-1-trace.json",
+                "tests/concurrency-model/channel-close-drain.lwt"
+              ],
+              "exit_code": 0,
+              "expected_exit_code": 0,
+              "expected_stdout_sha256": "03788f5859bc8f03020b2afa2f7340f66333a891efa32ef50e8f945c2a96a719",
+              "matches": true,
+              "mode": "tool-harness-duplicate-delivery",
+              "ok": true,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "03788f5859bc8f03020b2afa2f7340f66333a891efa32ef50e8f945c2a96a719"
+            },
+            "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-close-drain/outcome-1-trace.json"
+          }
+        }
+      ],
+      "prefixes_discovered": 1,
+      "program": "tests/concurrency-model/channel-close-drain.lwt",
+      "queued_when_stopped": 0,
+      "replay_failures": 0,
+      "runs": 1,
+      "seconds": 0.001,
+      "spec_refs": [
+        "§11.5",
+        "§11.7"
+      ],
+      "status": "COMPLETE",
+      "tags": [
+        "channel",
+        "close"
+      ],
+      "thread_leaks": [],
+      "violation_count": 1,
+      "violations": [
+        {
+          "exit_code": 0,
+          "minimized_prefix": [],
+          "original_prefix": [],
+          "replay": {
+            "command": [
+              "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+              "-c",
+              "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+              "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-close-drain/violation-1-trace.json",
+              "tests/concurrency-model/channel-close-drain.lwt"
+            ],
+            "exit_code": 0,
+            "matches": true,
+            "mode": "tool-harness-duplicate-delivery",
+            "ok": true,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "03788f5859bc8f03020b2afa2f7340f66333a891efa32ef50e8f945c2a96a719"
+          },
+          "stderr": "",
+          "stdout": "1\n1\n2\n",
+          "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-close-drain/violation-1-trace.json"
+        }
+      ],
+      "witness": {
+        "minimized_prefix": [],
+        "original_prefix": [],
+        "replay": {
+          "command": [
+            "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+            "-c",
+            "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+            "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-close-drain/violation-1-trace.json",
+            "tests/concurrency-model/channel-close-drain.lwt"
+          ],
+          "exit_code": 0,
+          "matches": true,
+          "mode": "tool-harness-duplicate-delivery",
+          "ok": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "03788f5859bc8f03020b2afa2f7340f66333a891efa32ef50e8f945c2a96a719"
+        },
+        "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-close-drain/violation-1-trace.json"
+      }
+    },
+    {
+      "decision_points": 0,
+      "depth_limit": 30,
+      "id": "channel-exactly-once",
+      "invalid_prefixes": 0,
+      "max_depth": 2,
+      "model": "tests/concurrency-model/channel-exactly-once.model.json",
+      "outcomes": [
+        {
+          "count": 1,
+          "exit_code": 0,
+          "first_prefix": [],
+          "stderr": "",
+          "stdout": "7\n7\n",
+          "witness": {
+            "replay": {
+              "command": [
+                "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+                "-c",
+                "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+                "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-exactly-once/outcome-1-trace.json",
+                "tests/concurrency-model/channel-exactly-once.lwt"
+              ],
+              "exit_code": 0,
+              "expected_exit_code": 0,
+              "expected_stdout_sha256": "dfc76087174d832f34d0210d926f4c40a579e70e12286619f74d8796a467900e",
+              "matches": true,
+              "mode": "tool-harness-duplicate-delivery",
+              "ok": true,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "dfc76087174d832f34d0210d926f4c40a579e70e12286619f74d8796a467900e"
+            },
+            "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-exactly-once/outcome-1-trace.json"
+          }
+        }
+      ],
+      "prefixes_discovered": 1,
+      "program": "tests/concurrency-model/channel-exactly-once.lwt",
+      "queued_when_stopped": 0,
+      "replay_failures": 0,
+      "runs": 1,
+      "seconds": 0.001,
+      "spec_refs": [
+        "§11.5",
+        "§11.7"
+      ],
+      "status": "COMPLETE",
+      "tags": [
+        "channel",
+        "exactly-once"
+      ],
+      "thread_leaks": [],
+      "violation_count": 1,
+      "violations": [
+        {
+          "exit_code": 0,
+          "minimized_prefix": [],
+          "original_prefix": [],
+          "replay": {
+            "command": [
+              "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+              "-c",
+              "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+              "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-exactly-once/violation-1-trace.json",
+              "tests/concurrency-model/channel-exactly-once.lwt"
+            ],
+            "exit_code": 0,
+            "matches": true,
+            "mode": "tool-harness-duplicate-delivery",
+            "ok": true,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "dfc76087174d832f34d0210d926f4c40a579e70e12286619f74d8796a467900e"
+          },
+          "stderr": "",
+          "stdout": "7\n7\n",
+          "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-exactly-once/violation-1-trace.json"
+        }
+      ],
+      "witness": {
+        "minimized_prefix": [],
+        "original_prefix": [],
+        "replay": {
+          "command": [
+            "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+            "-c",
+            "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+            "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-exactly-once/violation-1-trace.json",
+            "tests/concurrency-model/channel-exactly-once.lwt"
+          ],
+          "exit_code": 0,
+          "matches": true,
+          "mode": "tool-harness-duplicate-delivery",
+          "ok": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "dfc76087174d832f34d0210d926f4c40a579e70e12286619f74d8796a467900e"
+        },
+        "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-exactly-once/violation-1-trace.json"
+      }
+    },
+    {
+      "decision_points": 0,
+      "depth_limit": 30,
+      "id": "channel-fifo-three",
+      "invalid_prefixes": 0,
+      "max_depth": 2,
+      "model": "tests/concurrency-model/channel-fifo-three.model.json",
+      "outcomes": [
+        {
+          "count": 1,
+          "exit_code": 0,
+          "first_prefix": [],
+          "stderr": "",
+          "stdout": "1123\n",
+          "witness": {
+            "replay": {
+              "command": [
+                "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+                "-c",
+                "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+                "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-fifo-three/outcome-1-trace.json",
+                "tests/concurrency-model/channel-fifo-three.lwt"
+              ],
+              "exit_code": 0,
+              "expected_exit_code": 0,
+              "expected_stdout_sha256": "0ed8ee124d83c6d9daf1fc266d11c0452b363b363bbf68f756e3c861fa6da897",
+              "matches": true,
+              "mode": "tool-harness-duplicate-delivery",
+              "ok": true,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "0ed8ee124d83c6d9daf1fc266d11c0452b363b363bbf68f756e3c861fa6da897"
+            },
+            "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-fifo-three/outcome-1-trace.json"
+          }
+        }
+      ],
+      "prefixes_discovered": 1,
+      "program": "tests/concurrency-model/channel-fifo-three.lwt",
+      "queued_when_stopped": 0,
+      "replay_failures": 0,
+      "runs": 1,
+      "seconds": 0.001,
+      "spec_refs": [
+        "§11.5",
+        "§11.7"
+      ],
+      "status": "COMPLETE",
+      "tags": [
+        "channel",
+        "fifo"
+      ],
+      "thread_leaks": [],
+      "violation_count": 1,
+      "violations": [
+        {
+          "exit_code": 0,
+          "minimized_prefix": [],
+          "original_prefix": [],
+          "replay": {
+            "command": [
+              "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+              "-c",
+              "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+              "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-fifo-three/violation-1-trace.json",
+              "tests/concurrency-model/channel-fifo-three.lwt"
+            ],
+            "exit_code": 0,
+            "matches": true,
+            "mode": "tool-harness-duplicate-delivery",
+            "ok": true,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "0ed8ee124d83c6d9daf1fc266d11c0452b363b363bbf68f756e3c861fa6da897"
+          },
+          "stderr": "",
+          "stdout": "1123\n",
+          "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-fifo-three/violation-1-trace.json"
+        }
+      ],
+      "witness": {
+        "minimized_prefix": [],
+        "original_prefix": [],
+        "replay": {
+          "command": [
+            "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+            "-c",
+            "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+            "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/channel-fifo-three/violation-1-trace.json",
+            "tests/concurrency-model/channel-fifo-three.lwt"
+          ],
+          "exit_code": 0,
+          "matches": true,
+          "mode": "tool-harness-duplicate-delivery",
+          "ok": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "0ed8ee124d83c6d9daf1fc266d11c0452b363b363bbf68f756e3c861fa6da897"
+        },
+        "trace": "reports/s46-concurrency-model/mutant/witnesses/channel-fifo-three/violation-1-trace.json"
+      }
+    },
+    {
+      "decision_points": 3,
+      "depth_limit": 30,
+      "id": "deadlock-two-receivers",
+      "invalid_prefixes": 0,
+      "max_depth": 3,
+      "model": "tests/concurrency-model/deadlock-two-receivers.model.json",
+      "outcomes": [
+        {
+          "count": 3,
+          "exit_code": 3,
+          "first_prefix": [],
+          "stderr": "tests/concurrency-model/deadlock-two-receivers.lwt:4:5: RuntimeError: deadlock detected\n",
+          "stdout": "",
+          "witness": {
+            "replay": {
+              "command": [
+                "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+                "-c",
+                "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+                "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/deadlock-two-receivers/outcome-1-trace.json",
+                "tests/concurrency-model/deadlock-two-receivers.lwt"
+              ],
+              "exit_code": 3,
+              "expected_exit_code": 3,
+              "expected_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "matches": true,
+              "mode": "tool-harness-duplicate-delivery",
+              "ok": true,
+              "stderr_sha256": "5f8f615dbd8fff0447b455db9cfdd0aff6db377f06fba909d13d55a176e8f4ca",
+              "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "trace": "reports/s46-concurrency-model/mutant/witnesses/deadlock-two-receivers/outcome-1-trace.json"
+          }
+        }
+      ],
+      "prefixes_discovered": 3,
+      "program": "tests/concurrency-model/deadlock-two-receivers.lwt",
+      "queued_when_stopped": 0,
+      "replay_failures": 0,
+      "runs": 3,
+      "seconds": 0.02,
+      "spec_refs": [
+        "§11.8"
+      ],
+      "status": "COMPLETE",
+      "tags": [
+        "deadlock",
+        "channel"
+      ],
+      "thread_leaks": [],
+      "violation_count": 0,
+      "violations": [],
+      "witness": null
+    },
+    {
+      "decision_points": 0,
+      "depth_limit": 30,
+      "id": "join-error-origin",
+      "invalid_prefixes": 0,
+      "max_depth": 2,
+      "model": "tests/concurrency-model/join-error-origin.model.json",
+      "outcomes": [
+        {
+          "count": 1,
+          "exit_code": 0,
+          "first_prefix": [],
+          "stderr": "",
+          "stdout": "Boom\noriginal message\n",
+          "witness": {
+            "replay": {
+              "command": [
+                "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+                "-c",
+                "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+                "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/join-error-origin/outcome-1-trace.json",
+                "tests/concurrency-model/join-error-origin.lwt"
+              ],
+              "exit_code": 0,
+              "expected_exit_code": 0,
+              "expected_stdout_sha256": "3ce5aec415af83352def783def0221109e5cd1c6dfd6f405470bf4b36fba8631",
+              "matches": true,
+              "mode": "tool-harness-duplicate-delivery",
+              "ok": true,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "3ce5aec415af83352def783def0221109e5cd1c6dfd6f405470bf4b36fba8631"
+            },
+            "trace": "reports/s46-concurrency-model/mutant/witnesses/join-error-origin/outcome-1-trace.json"
+          }
+        }
+      ],
+      "prefixes_discovered": 1,
+      "program": "tests/concurrency-model/join-error-origin.lwt",
+      "queued_when_stopped": 0,
+      "replay_failures": 0,
+      "runs": 1,
+      "seconds": 0.001,
+      "spec_refs": [
+        "§11.6",
+        "§11.9"
+      ],
+      "status": "COMPLETE",
+      "tags": [
+        "join",
+        "error-propagation"
+      ],
+      "thread_leaks": [],
+      "violation_count": 0,
+      "violations": [],
+      "witness": null
+    },
+    {
+      "decision_points": 69,
+      "depth_limit": 30,
+      "id": "lost-update",
+      "invalid_prefixes": 0,
+      "max_depth": 6,
+      "model": "tests/concurrency-model/lost-update.model.json",
+      "outcomes": [
+        {
+          "count": 13,
+          "exit_code": 0,
+          "first_prefix": [],
+          "stderr": "",
+          "stdout": "1\n",
+          "witness": {
+            "replay": {
+              "command": [
+                "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+                "-c",
+                "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+                "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/lost-update/outcome-1-trace.json",
+                "tests/concurrency-model/lost-update.lwt"
+              ],
+              "exit_code": 0,
+              "expected_exit_code": 0,
+              "expected_stdout_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+              "matches": true,
+              "mode": "tool-harness-duplicate-delivery",
+              "ok": true,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+            },
+            "trace": "reports/s46-concurrency-model/mutant/witnesses/lost-update/outcome-1-trace.json"
+          }
+        },
+        {
+          "count": 6,
+          "exit_code": 0,
+          "first_prefix": [
+            1,
+            1
+          ],
+          "stderr": "",
+          "stdout": "2\n",
+          "witness": {
+            "replay": {
+              "command": [
+                "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+                "-c",
+                "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+                "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/lost-update/outcome-2-trace.json",
+                "tests/concurrency-model/lost-update.lwt"
+              ],
+              "exit_code": 0,
+              "expected_exit_code": 0,
+              "expected_stdout_sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+              "matches": true,
+              "mode": "tool-harness-duplicate-delivery",
+              "ok": true,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+            },
+            "trace": "reports/s46-concurrency-model/mutant/witnesses/lost-update/outcome-2-trace.json"
+          }
+        }
+      ],
+      "prefixes_discovered": 19,
+      "program": "tests/concurrency-model/lost-update.lwt",
+      "queued_when_stopped": 0,
+      "replay_failures": 0,
+      "runs": 19,
+      "seconds": 0.027,
+      "spec_refs": [
+        "§11.3",
+        "§11.4"
+      ],
+      "status": "COMPLETE",
+      "tags": [
+        "divergence",
+        "witness",
+        "shared-state"
+      ],
+      "thread_leaks": [],
+      "violation_count": 0,
+      "violations": [],
+      "witness": null
+    },
+    {
+      "decision_points": 9,
+      "depth_limit": 30,
+      "id": "nested-spawn-drain",
+      "invalid_prefixes": 0,
+      "max_depth": 4,
+      "model": "tests/concurrency-model/nested-spawn-drain.model.json",
+      "outcomes": [
+        {
+          "count": 5,
+          "exit_code": 0,
+          "first_prefix": [],
+          "stderr": "",
+          "stdout": "done\n",
+          "witness": {
+            "replay": {
+              "command": [
+                "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+                "-c",
+                "\nimport sys\nsys.path.insert(0, 'C:\\\\Users\\\\28641\\\\Desktop\\\\大三上\\\\程序设计实践\\\\大作业')\nfrom lwt.concurrency import Scheduler\n_original = Scheduler.wake_receiver\ndef _patched(self, channel_id, value):\n    channel = self.channels[channel_id]\n    had_receiver = bool(channel.waiting)\n    _original(self, channel_id, value)\n    if had_receiver and value is not None:\n        channel.items.append(value)\nScheduler.wake_receiver = _patched\nfrom lwt.cli import main\nraise SystemExit(main(sys.argv[1:]))\n",
+                "--schedule-replay=C:/Users/28641/Desktop/大三上/程序设计实践/大作业/reports/s46-concurrency-model/mutant/witnesses/nested-spawn-drain/outcome-1-trace.json",
+                "tests/concurrency-model/nested-spawn-drain.lwt"
+              ],
+              "exit_code": 0,
+              "expected_exit_code": 0,
+              "expected_stdout_sha256": "d117fa006ba9208500b2930ce69cbde436c647afa917cb7396a9bc9111a46dd2",
+              "matches": true,
+              "mode": "tool-harness-duplicate-delivery",
+              "ok": true,
+              "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdout_sha256": "d117fa006ba9208500b2930ce69cbde436c647afa917cb7396a9bc9111a46dd2"
+            },
+            "trace": "reports/s46-concurrency-model/mutant/witnesses/nested-spawn-drain/outcome-1-trace.json"
+          }
+        }
+      ],
+      "prefixes_discovered": 5,
+      "program": "tests/concurrency-model/nested-spawn-drain.lwt",
+      "queued_when_stopped": 0,
+      "replay_failures": 0,
+      "runs": 5,
+      "seconds": 0.008,
+      "spec_refs": [
+        "§11.9"
+      ],
+      "status": "COMPLETE",
+      "tags": [
+        "shutdown",
+        "drain",
+        "spawn"
+      ],
+      "thread_leaks": [],
+      "violation_count": 0,
+      "violations": [],
+      "witness": null
+    }
+  ],
+  "schema": "lwt-s46-model-check/1",
+  "schema_version": 1,
+  "tool": "tools/model_check_concurrency.py",
+  "totals": {
+    "budget_exhausted": 0,
+    "invalid_prefixes": 0,
+    "programs": 8,
+    "replay_failures": 0,
+    "runs": 32,
+    "thread_leaks": 0,
+    "violations": 4
+  }
+}

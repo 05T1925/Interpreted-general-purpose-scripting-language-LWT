@@ -1,0 +1,27 @@
+{
+  "decisions": [
+    {
+      "chosen": 1,
+      "index": 0,
+      "ready": [
+        1
+      ]
+    },
+    {
+      "chosen": 0,
+      "index": 1,
+      "ready": [
+        0
+      ]
+    }
+  ],
+  "expected_exit_code": 0,
+  "expected_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "expected_stdout_sha256": "03788f5859bc8f03020b2afa2f7340f66333a891efa32ef50e8f945c2a96a719",
+  "policy": "fifo",
+  "program_args": [],
+  "schema": "lwt-schedule-trace/1",
+  "schema_version": 1,
+  "source": "tests/concurrency-model/channel-close-drain.lwt",
+  "source_sha256": "14a170bd2c4f1ed53c06fff0fb5f681393e0a147c43966e6f50383b003f65161"
+}

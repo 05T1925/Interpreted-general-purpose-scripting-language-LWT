@@ -1,0 +1,27 @@
+{
+  "decisions": [
+    {
+      "chosen": 1,
+      "index": 0,
+      "ready": [
+        1
+      ]
+    },
+    {
+      "chosen": 0,
+      "index": 1,
+      "ready": [
+        0
+      ]
+    }
+  ],
+  "expected_exit_code": 0,
+  "expected_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "expected_stdout_sha256": "f93bb9618e747e0e37d87f18ff7eb1a1edb5e90a500d77131b38d6b5e91753bb",
+  "policy": "fifo",
+  "program_args": [],
+  "schema": "lwt-schedule-trace/1",
+  "schema_version": 1,
+  "source": "tests/concurrency-model/channel-blocked-then-queued.lwt",
+  "source_sha256": "5deb5d4f6dc223d170eb3bbcd55e9fa742f0ab5219ff03cbb31ae3992e8552a1"
+}

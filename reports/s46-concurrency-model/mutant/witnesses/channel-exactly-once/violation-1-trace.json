@@ -1,0 +1,27 @@
+{
+  "decisions": [
+    {
+      "chosen": 1,
+      "index": 0,
+      "ready": [
+        1
+      ]
+    },
+    {
+      "chosen": 0,
+      "index": 1,
+      "ready": [
+        0
+      ]
+    }
+  ],
+  "expected_exit_code": 0,
+  "expected_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "expected_stdout_sha256": "dfc76087174d832f34d0210d926f4c40a579e70e12286619f74d8796a467900e",
+  "policy": "fifo",
+  "program_args": [],
+  "schema": "lwt-schedule-trace/1",
+  "schema_version": 1,
+  "source": "tests/concurrency-model/channel-exactly-once.lwt",
+  "source_sha256": "2db3654bfb93d3343d0c9e490d53cf3347eed23b06b44eeccd3b1edee459dfa1"
+}

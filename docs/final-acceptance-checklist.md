@@ -11,7 +11,7 @@
 | 5 人/AI 指南 | [开发指南](developer-guide.md)、[策略 SDK](strategy-sdk.md)、`.agents/skills/` | 新克隆按入口运行、相对链接检查 |
 | 6 Agent LWT 应用/记录 | [日志应用](../app/log_report.lwt)、[LWT 游戏](../app/lwt_snake/game.lwt)、[开发记录](agent-dev-log.md) | 有效行数、真实 CLI、S39–S41 复验 |
 | 7 Git 历史 | `git log --oneline --decorate` | 祖先、阶段分支、远端与工作区分别核对 |
-| 8 系统 PPT | [可编辑 PPTX](../slides/LWT介绍.pptx) | 18 页导出、渲染逐页查读性（旧第 10 页原生图表 12 数值点未变） |
+| 8 系统 PPT | [可编辑 PPTX](../slides/LWT介绍.pptx) | 19 页导出、渲染逐页查读性（第 10 页原生图表 12 数值点自 S43 起未变） |
 
 ## 现场预检
 
@@ -69,3 +69,20 @@
 | 现场人工 GUI A–E | 无 | 自检包打印清单，不自动化、不声称通过 | 未验证 |
 
 **重要（S45）**：以上只记录**执行窗口自测**。用户明确授权叠加在**未复核的 S43/S44** 之上（S45 报告首段已粗体标注），因此本清单不替代主窗口审查、合入 main、教师线下验收与现场人工 GUI A–E。S45 报告见 [s45-final-hardening.md](s45-final-hardening.md)。
+
+## S46 并发有界系统探索核对（执行窗口自测；基线未经主窗口复核 S43/S44/S45）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| 工具 API | `lwt/concurrency.py`、`lwt/runtime.py` | `execute(..., schedule_choices=)` 仅工具使用；默认 None 时 400 黑盒/46×10 零变化；非法前缀 exit 4、无挂死、无线程泄漏 | 执行实现完成 |
+| 模型检查器 | `tools/model_check_concurrency.py` | 前缀 BFS + 结果分类 + 贪心最小化 + `--schedule-replay` 复核；预算耗尽写 `BUDGET_EXHAUSTED` | 执行实现完成 |
+| corpus 与不变量 | `tests/concurrency-model/`（8 程序 + `.model.json`） | 通道精确一次/FIFO/close 排空、join 错误重抛、死锁、后代收尾、`lost-update` 允许分歧；**不在** `tests/cases/`，黑盒仍 400 | 执行实现完成 |
+| clean 探索 | `reports/s46-concurrency-model/summary.json` | 8 程序/32 runs/81 决策点/最大深度 6；violations=0、budget_exhausted=0、thread_leaks=0；8/8 `COMPLETE` | 执行实现完成 |
+| mutant 自测 | `reports/s46-concurrency-model/mutant/` | `duplicate-delivery`：4 个通道程序各 1 违反；最小前缀 `[]`；harness 重放 `7\n7\n`；边界：合成故障注入，不是产品 bug | 执行实现完成 |
+| 预算/非法前缀 | `tests/test_concurrency_model.py`（11 项） | `--max-runs 1` → `BUDGET_EXHAUSTED` 且退出 1；非法前缀 `choice 0: 99 not in ready [1, 2]`、exit 4、无线程 | 执行实现完成 |
+| CI 步骤 | `.github/workflows/tests.yml` | 四格矩阵不变，新增 `--max-runs 300 --time-budget 90 --require-clean` 一步 | 执行实现完成（CI 结论见 S46 报告） |
+| 一键自检 | `tools/run_acceptance_selfcheck.py` | 新增 `model_check` 步骤（`--model-budget`）；预算耗尽记 FAIL，不写 PASS | 执行实现完成 |
+| PPT / manifest | `slides/LWT介绍.pptx`、`docs/delivery-manifest.json` | 19 页；旧第 10 页图表 12 数值点未变；SHA `44e9c8bd…`；unittest 664 | 执行实现完成 |
+| 现场人工 GUI A–E | 无 | 不自动化、不声称通过 | 未验证 |
+
+**重要（S46）**：以上只记录**执行窗口自测**；基线 S43/S44/S45 未经主窗口复核，本清单不替代主窗口审查、合入 main、远端 CI 与现场人工 GUI 验收。Agent 盲测仍为 `NOT_RUN`。S46 报告见 [s46-concurrency-verification.md](s46-concurrency-verification.md)。

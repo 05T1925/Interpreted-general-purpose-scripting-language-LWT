@@ -1,0 +1,27 @@
+{
+  "decisions": [
+    {
+      "chosen": 1,
+      "index": 0,
+      "ready": [
+        1
+      ]
+    },
+    {
+      "chosen": 0,
+      "index": 1,
+      "ready": [
+        0
+      ]
+    }
+  ],
+  "expected_exit_code": 0,
+  "expected_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "expected_stdout_sha256": "3ce5aec415af83352def783def0221109e5cd1c6dfd6f405470bf4b36fba8631",
+  "policy": "fifo",
+  "program_args": [],
+  "schema": "lwt-schedule-trace/1",
+  "schema_version": 1,
+  "source": "tests/concurrency-model/join-error-origin.lwt",
+  "source_sha256": "118b5c1d5b793ed85216eef8c8cdd9de15b8e56c7f938cf2b309bb505c9888ac"
+}
