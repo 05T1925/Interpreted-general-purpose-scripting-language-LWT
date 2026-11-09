@@ -36,7 +36,8 @@ from typing import Any
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = ROOT / "reports" / "s45-acceptance"
+DEFAULT_OUT_DIR = ROOT / "reports" / "s45-acceptance"
+OUT_DIR = DEFAULT_OUT_DIR
 PPT = ROOT / "slides" / "LWT介绍.pptx"
 MANIFEST = ROOT / "docs" / "delivery-manifest.json"
 
@@ -225,7 +226,7 @@ def _step_submission() -> dict[str, Any]:
 def _step_model_check(budget: float) -> dict[str, Any]:
     """S46: bounded schedule exploration; budget exhaustion is never a pass."""
 
-    out = ROOT / "reports" / "s46-concurrency-model" / "selfcheck"
+    out = OUT_DIR / "model-check"
     completed = run(
         [sys.executable, "tools/model_check_concurrency.py",
          "--corpus", "tests/concurrency-model",
@@ -264,11 +265,18 @@ def _step_model_check(budget: float) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--timeout", type=int, default=900)
+    parser.add_argument("--out", default=str(DEFAULT_OUT_DIR),
+                        help="output directory for selfcheck evidence")
     parser.add_argument("--model-budget", type=float, default=60.0,
                         help="S46 model-check wall-clock budget (seconds)")
     parser.add_argument("--skip-heavy", action="store_true",
                         help="skip black-box and determinism (fast structural check only)")
     args = parser.parse_args(argv)
+
+    global OUT_DIR
+    OUT_DIR = Path(args.out)
+    if not OUT_DIR.is_absolute():
+        OUT_DIR = ROOT / OUT_DIR
 
     stamp = utc_stamp()
     steps: dict[str, Any] = {}
@@ -289,7 +297,7 @@ def main(argv: list[str] | None = None) -> int:
             "exit_code": blackbox["exit_code"], "pass": blackbox["exit_code"] == 0,
             "parsed": parsed, "seconds": blackbox["seconds"],
         }
-        det_out = ROOT / "reports" / "s46-concurrency-model" / "selfcheck-determinism.json"
+        det_out = OUT_DIR / "determinism.json"
         determinism = run(
             [sys.executable, "tools/run_concurrency_determinism.py", "--repeat", "10",
              "--out", str(det_out.relative_to(ROOT))],
