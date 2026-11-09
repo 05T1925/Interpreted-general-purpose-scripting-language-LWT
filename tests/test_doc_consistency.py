@@ -193,5 +193,18 @@ class StatusConsistencyTests(unittest.TestCase):
         self.assertIn("287", joined, "expected at least one historical report to quote 287")
 
 
+
+    def test_s47_report_quotes_current_manifest_counts(self) -> None:
+        # S47 closes the delivery: the submission report must quote the same
+        # unittest count and PPT page count as the manifest. Written before the
+        # S47 doc was updated, so it fails first and then goes green.
+        doc = _load_manifest()
+        report = REPO_ROOT / "docs" / "s47-final-submission.md"
+        self.assertTrue(report.exists(), "docs/s47-final-submission.md is missing")
+        text = report.read_text(encoding="utf-8")
+        self.assertIn(str(doc["unittest_count"]), text)
+        self.assertIn(f"{doc['ppt_pages']} 页", text)
+
+
 if __name__ == "__main__":
     unittest.main()

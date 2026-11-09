@@ -4,9 +4,9 @@
   "version": "0.3.0",
   "version_rationale": "S42 语言核心增强（dict/throw/finally/REPL）与 S43 确定性并发子语言（规范 §11）为新增语言特性，S44 为性能与可验证加速；按语义化版本属次版本升级。版本号由主窗口裁决（2026-11-08），执行窗口按裁决写入，不自行二选一。",
   "blackbox_cases": 400,
-  "unittest_count": 664,
-  "ppt_pages": 19,
-  "ppt_sha256": "44e9c8bdedbb5a50f18b1f6b35e79e5368e2c03c61a25a76d1245188b3df1735",
+  "unittest_count": 677,
+  "ppt_pages": 20,
+  "ppt_sha256": "90369685846a17d5d4b7c0b4bf5ea537ed2d0c2eab371eaee6e72473d3a6c9b0",
   "ppt_chart_points": 12,
   "protected_paths": [
     "bench/results.json",
@@ -47,13 +47,19 @@
     "s44_performance": "docs/s44-performance.md",
     "s45_hardening": "docs/s45-final-hardening.md",
     "s46_concurrency_model": "docs/s46-concurrency-verification.md",
-    "s46_tool": "docs/concurrency-model-check.md"
+    "s46_tool": "docs/concurrency-model-check.md",
+    "s47_submission": "docs/s47-final-submission.md",
+    "s47_agent_eval": "docs/s47-agent-eval.md"
   },
   "last_verified_utc": "2026-11-09T03:43:10Z",
   "notes": [
-    "unittest_count 为 S46 收口实测 664（S45 的 653 + S46 模型检查 11）。",
-    "ppt_pages / ppt_sha256 为 S46 最终 PPT（18→19 页，新增「有界调度探索」页；旧第 10 页原生图表 12 数值点未变）。",
+    "unittest_count 为 S47 收口实测 677（S46 的 664 + Agent 判分器 7 + 提交包 5 + 文档一致性 1）。",
+    "ppt_pages / ppt_sha256 为 S47 最终 PPT（19→20 页，新增「教师入口与一键提交包」页；旧第 10 页原生图表 12 数值点未变）。",
     "protected_paths 为 S10/S11/S28/S29/S37-S44 固定证据与既有应用源码，S45 只读。",
-    "S46 的模型检查 corpus 在 tests/concurrency-model/，不属于 tests/cases 的 400 项黑盒；模型检查证据在 reports/s46-concurrency-model/。"
-  ]
+    "S46 的模型检查 corpus 在 tests/concurrency-model/，不属于 tests/cases 的 400 项黑盒；模型检查证据在 reports/s46-concurrency-model/。",
+    "S47 的 Agent 盲测首轮 5/6；唯一失败为题面欠定，澄清题面后单题隔离复跑 1/1（post-hoc，不并入首轮）。"
+  ],
+  "submission_bundle": "dist/latest.json",
+  "agent_eval_status": "PARTIAL 5/6 (pass@1=0.833; task-defect clarified re-run 1/1)",
+  "default_branch": "main"
 }

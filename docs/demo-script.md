@@ -102,6 +102,21 @@ python -c "import json;d=json.load(open('reports/s46-concurrency-model/mutant/su
 
 讲解词：**有界探索不是形式化证明**——只覆盖 `max_runs × max_decisions` 内的前缀；预算耗尽写 `BUDGET_EXHAUSTED`，不写 PASS。mutant 是**合成故障注入**，证明检查器能抓到 S45 那种抽样漏掉的交接时序，不是说当前产品有 bug。clean 的 lost-update 会给出 `1`/`2` 两种结果，那是 `allowed_outcomes`，不是违规。
 
+## 教师视角收尾片段（S47，约 40 秒）
+
+```bash
+# 1) 打开教师入口：8 项提交内容 → 路径/命令/证据
+cat SUBMISSION.md
+
+# 2) 一条命令生成提交包（SUBMISSION.md + bundle + zip + manifest.sha256）
+python tools/build_submission.py
+
+# 3) 从 bundle 新克隆并跑 400 黑盒（验证交付可达）
+python tools/verify_fresh_clone.py
+```
+
+讲解词：`SUBMISSION.md` 是教师第一眼入口；`dist/lwt-submission-<UTC>/lwt-history.bundle` 含全部 refs 与历史，`lwt-submission.zip` 附逐文件 SHA-256；新克隆验证在空目录里重跑 400/400，证明交付不依赖本工作区未跟踪文件。
+
 ## 无 GUI 后退
 
 无需桌面、网络或第三方 GUI 库即可运行上面的 CLI。展示游戏规则时使用 `python -m app.lwt_snake.replay --verify app/lwt_snake/replays/demo-parent.json`；展示语言模块时使用 `python -m lwt examples/modules/main.lwt`。GUI/Tk 自动测试证明控件回调集成，不能代替现场真实鼠标、键盘、焦点和视觉检查。

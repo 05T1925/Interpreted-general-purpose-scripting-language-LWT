@@ -86,3 +86,18 @@
 | 现场人工 GUI A–E | 无 | 不自动化、不声称通过 | 未验证 |
 
 **重要（S46）**：以上只记录**执行窗口自测**；基线 S43/S44/S45 未经主窗口复核，本清单不替代主窗口审查、合入 main、远端 CI 与现场人工 GUI 验收。Agent 盲测仍为 `NOT_RUN`。S46 报告见 [s46-concurrency-verification.md](s46-concurrency-verification.md)。
+
+## S47 提交可达性与盲测核对（执行窗口自测；基线未经主窗口复核 S43–S46）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| 教师入口 | `SUBMISSION.md` | 8 项提交内容逐项列出分值/路径/一条命令/证据/状态；README 第一段链接到它 | 执行实现完成 |
+| Agent 盲测 | `docs/s47-agent-eval.md`、`docs/agent-eval/submissions/`、`reports/s47-submission/agent-eval.{json,md}` | 6 题 × 6 个全新子代理会话 × 独立 worktree；首轮 5/6（pass@1=0.833），唯一失败为题面欠定；澄清后单题复跑通过（补充证据） | 已完成（n=1/题） |
+| 判分器字段覆盖 | `tools/run_agent_eval.py`、`tests/test_agent_eval.py` | `stdin`/`args`/`check_required`/`deterministic_runs`/`forbidden_constructs`/pass@1 分母；7 项测试 | 执行实现完成 |
+| 提交包 | `tools/build_submission.py`、`dist/lwt-submission-<UTC>/` | `SUBMISSION.md` + `lwt-history.bundle`（verify/list-heads）+ zip（`manifest.sha256` 自洽） | 执行实现完成 |
+| 新克隆验证 | `tools/verify_fresh_clone.py`、`reports/s47-submission/fresh-clone.{json,md}` | 从 bundle 克隆到空目录，跑 version/check/400 黑盒/compileall/完整性，逐条记录退出码 | 执行实现完成 |
+| main 收敛 | Git 历史 | B1：`main` FF 到本分支并普通推送；精确 SHA 与 CI 四格见 S47 报告 §6 | 见 S47 报告 |
+| PPT / manifest | `slides/LWT介绍.pptx`、`docs/delivery-manifest.json` | 20 页；旧第 10 页图表 12 数值点未变；SHA 与 unittest 计数写入 manifest | 执行实现完成 |
+| 现场人工 GUI A–E | 无 | 不自动化、不声称通过 | 未验证 |
+
+**重要（S47）**：以上只记录**执行窗口自测**。基线 S43–S46 未经主窗口复核；本清单不替代主窗口审查、教师线下验收与现场人工 GUI。Agent 盲测为单样本，pass@1 不是统计显著结论。报告见 [s47-final-submission.md](s47-final-submission.md)。
