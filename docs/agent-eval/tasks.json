@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "S45 WP3 Agent blind-eval task. The blind agent may read ONLY the docs listed in allowed_docs plus this file; it must not read tests/cases, app/, or other tasks' expected output.",
+  "note": "S45 WP3 Agent blind-eval task. The blind agent may read ONLY the docs listed in allowed_docs plus this file; it must not read tests/cases, app/, or other tasks' expected output. S47: task producer-consumer-channel prompt clarified after the first blind round; expected output unchanged.",
   "tasks": [
     {
       "id": "dict-word-frequency-topk",
@@ -33,7 +33,7 @@
     {
       "id": "producer-consumer-channel",
       "title": "确定性生产者/消费者 + 通道 + attempt/recover",
-      "prompt": "编写程序 pipeline.lwt：用 `spawn` 启动一个生产者任务，它依次向通道 `ch` 发送 1、2、3 后 `close(ch)`；主任务用 `receive` 循环累加直到收到 `null`，输出 `sum 6`。再启动一个会 throw 的任务，用 `attempt { join(t); } recover (p) { emit \"caught:\" + p.message; }` 捕获并输出。程序必须在默认 fifo 策略下每次输出完全一致。不接收参数与 stdin。",
+      "prompt": "编写程序 pipeline.lwt：用 `spawn` 启动一个生产者任务，它依次向通道 `ch` 发送 1、2、3 后 `close(ch)`；主任务用 `receive` 循环累加直到收到 `null`，输出 `sum 6`。再启动一个会 throw 的任务，错误消息必须是 `task failed`（即 `throw \"task failed\";`），用 `attempt { join(t); } recover (p) { emit \"caught:\" + p.message; }` 捕获并输出 `caught:task failed`。程序必须在默认 fifo 策略下每次输出完全一致。不接收参数与 stdin。",
       "allowed_docs": ["docs/language-spec.md", "docs/concurrency.md", "docs/developer-guide.md", ".agents/skills/lwt-app/SKILL.md"],
       "stdin": "",
       "args": [],

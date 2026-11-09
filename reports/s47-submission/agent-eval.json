@@ -1,0 +1,243 @@
+{
+  "generated_at_utc": "2026-11-09T08:26:14Z",
+  "note": "Blind eval must be run by the user in a new context-free session. NOT_RUN means no submission was found; it is never reported as a pass.",
+  "overall": "PARTIAL",
+  "pass_at_1": 0.8333333333333334,
+  "pass_at_k_formula": "pass@k = 1 - C(n-c,k)/C(n,k); single sample == pass@1",
+  "pass_rate_over_submitted": 0.8333333333333334,
+  "passed": 5,
+  "results": [
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "actual_text": "apple 3\nbanana 3\ncherry 1\n",
+          "expected_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions/dict-word-frequency-topk/program.lwt",
+      "id": "dict-word-frequency-topk",
+      "status": "PASS",
+      "title": "dict 词频统计 + top-k"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "actual_text": "Validation\nnegative amount\ncleanup\n8\n",
+          "expected_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions/throw-finally-cleanup/program.lwt",
+      "id": "throw-finally-cleanup",
+      "status": "PASS",
+      "title": "throw/finally 清理与自定义错误"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "c3VtIDYKY2F1Z2h0OmJvb20K",
+          "actual_text": "sum 6\ncaught:boom\n",
+          "expected_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "pass": false
+        }
+      },
+      "entry": "docs/agent-eval/submissions/producer-consumer-channel/program.lwt",
+      "id": "producer-consumer-channel",
+      "status": "FAIL",
+      "title": "确定性生产者/消费者 + 通道 + attempt/recover"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "Ym9vayAxNgo=",
+          "actual_text": "book 16\n",
+          "expected_b64": "Ym9vayAxNgo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions/module-record-dict-mix/main.lwt",
+      "id": "module-record-dict-mix",
+      "status": "PASS",
+      "title": "模块导入 + record + dict 组合"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "actual_text": "iterations 3\nb.value 9\nb == alias true\n",
+          "expected_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions/each-snapshot-alias/program.lwt",
+      "id": "each-snapshot-alias",
+      "status": "PASS",
+      "title": "each 浅快照与数组/record 别名"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "actual_text": "lines 3 words 6\n",
+          "expected_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions/cli-args-text-processing/program.lwt",
+      "id": "cli-args-text-processing",
+      "status": "PASS",
+      "title": "CLI 参数 + 文本文件处理"
+    }
+  ],
+  "schema_version": 1,
+  "submitted": 6,
+  "tasks_total": 6,
+  "tool": "lwt-agent-eval"
+}

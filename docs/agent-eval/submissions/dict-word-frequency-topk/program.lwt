@@ -1,0 +1,90 @@
+# freq.lwt: 统计 stdin 每行中以单个空格分隔的单词出现次数，
+# 按次数降序、同次数按单词升序输出前 3 行 `word count`；无单词时输出 EMPTY。
+
+fn lessWord(a, b, counts) {
+    let ca = counts[a];
+    let cb = counts[b];
+    when (ca != cb) {
+        return ca > cb;
+    }
+    return a < b;
+}
+
+fn mergeSorted(left, right, counts) {
+    let merged = [];
+    let i = 0;
+    let j = 0;
+    while (i < len(left) and j < len(right)) {
+        when (lessWord(left[i], right[j], counts)) {
+            push(merged, left[i]);
+            i = i + 1;
+        } otherwise {
+            push(merged, right[j]);
+            j = j + 1;
+        }
+    }
+    while (i < len(left)) {
+        push(merged, left[i]);
+        i = i + 1;
+    }
+    while (j < len(right)) {
+        push(merged, right[j]);
+        j = j + 1;
+    }
+    return merged;
+}
+
+fn sortWords(items, counts) {
+    when (len(items) <= 1) {
+        return items;
+    }
+    let mid = len(items) / 2;
+    let left = [];
+    let right = [];
+    let i = 0;
+    while (i < len(items)) {
+        when (i < mid) {
+            push(left, items[i]);
+        } otherwise {
+            push(right, items[i]);
+        }
+        i = i + 1;
+    }
+    return mergeSorted(sortWords(left, counts), sortWords(right, counts), counts);
+}
+
+fn countLine(counts, line) {
+    let parts = split(line, " ");
+    each (part in parts) {
+        when (part != "") {
+            when (has(counts, part)) {
+                counts[part] = counts[part] + 1;
+            } otherwise {
+                counts[part] = 1;
+            }
+        }
+    }
+}
+
+let counts = dict{};
+let line = input();
+while (line != null) {
+    countLine(counts, line);
+    line = input();
+}
+
+let words = keys(counts);
+when (len(words) == 0) {
+    emit "EMPTY";
+} otherwise {
+    words = sortWords(words, counts);
+    let limit = 3;
+    when (len(words) < limit) {
+        limit = len(words);
+    }
+    let i = 0;
+    while (i < limit) {
+        emit words[i] + " " + str(counts[words[i]]);
+        i = i + 1;
+    }
+}

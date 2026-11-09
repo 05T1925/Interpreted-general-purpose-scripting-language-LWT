@@ -1,0 +1,34 @@
+# pipeline.lwt
+# 生产者任务向无界 FIFO 通道 ch 依次发送 1、2、3 后 close(ch)；
+# 主任务用 receive 循环累加至收到 null，输出 sum 6。
+# 随后再派生一个 throw 任务，用 attempt/join/recover 捕获并输出。
+# 默认 fifo 策略下输出完全一致。
+
+fn produce(ch) {
+    send(ch, 1);
+    send(ch, 2);
+    send(ch, 3);
+    close(ch);
+}
+
+fn explode() {
+    throw "boom";
+}
+
+let ch = channel();
+let producer = spawn produce(ch);
+
+let total = 0;
+let item = receive(ch);
+while (item != null) {
+    total = total + item;
+    item = receive(ch);
+}
+emit "sum " + str(total);
+
+let t = spawn explode();
+attempt {
+    join(t);
+} recover (p) {
+    emit "caught:" + p.message;
+}

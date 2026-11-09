@@ -1,13 +1,15 @@
-"""S45 WP3: objective grader for the Agent blind-eval task set.
+"""Objective grader for the Agent blind-eval task set (S45; reused by S47).
 
 The blind agent must run in a *new, context-free* session; this window only
 prepares tasks and the grader. The grader performs mechanical checks only and
 never judges style:
 
-  1. ``python -m lwt --check`` on the submitted program exits 0.
+  1. ``python -m lwt --check`` on the submitted program exits 0
+     (skipped only when the task sets ``check_required: false``).
+  4. No forbidden construct appears in any submitted ``*.lwt`` file.
   2. The program's exit code and stdout bytes match the task's expected values.
   3. ``--deterministic-runs`` repeated runs are byte-identical.
-  4. No forbidden construct appears in the source text.
+
 
 Submissions live at ``docs/agent-eval/submissions/<task-id>/`` with either
 ``program.lwt`` (single file) or ``main.lwt`` plus sibling ``.lwt`` modules.
@@ -48,6 +50,13 @@ def _run(cmd: list[str], *, stdin: bytes = b"", cwd: Path = ROOT,
     )
 
 
+def _display(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
 def _entry(submission_dir: Path) -> Path | None:
     for name in ("program.lwt", "main.lwt"):
         candidate = submission_dir / name
@@ -77,23 +86,30 @@ def grade_task(task: dict[str, Any], *, timeout: int = 30) -> dict[str, Any]:
             "detail": "no docs/agent-eval/submissions/%s/{program,main}.lwt" % task_id,
         }
 
-    source = entry.read_text(encoding="utf-8")
+    sources = {
+        path.name: path.read_text(encoding="utf-8")
+        for path in sorted(submission_dir.glob("*.lwt"))
+    }
     result: dict[str, Any] = {
         "id": task_id, "title": task["title"], "status": "FAIL",
-        "entry": entry.relative_to(ROOT).as_posix(), "checks": {},
+        "entry": _display(entry), "checks": {},
     }
     checks: dict[str, Any] = {}
 
-    # 1) static check
-    check = _run([sys.executable, "-m", "lwt", "--check", str(entry)], timeout=timeout)
-    checks["check_exit_zero"] = {
-        "pass": check.returncode == 0,
-        "exit_code": check.returncode,
-        "stderr": check.stderr.decode("utf-8", "replace")[:400],
-    }
+    # 1) static check (honor the task's check_required field)
+    if task.get("check_required", True):
+        check = _run([sys.executable, "-m", "lwt", "--check", str(entry)], timeout=timeout)
+        checks["check_exit_zero"] = {
+            "pass": check.returncode == 0,
+            "exit_code": check.returncode,
+            "stderr": check.stderr.decode("utf-8", "replace")[:400],
+        }
 
-    # 2) forbidden constructs
-    hits = _forbidden_hits(source, task.get("forbidden_constructs", []))
+    # 2) forbidden constructs, across every submitted module
+    hits: list[str] = []
+    for name, text in sources.items():
+        for token in _forbidden_hits(text, task.get("forbidden_constructs", [])):
+            hits.append(f"{name}:{token}")
     checks["no_forbidden_constructs"] = {"pass": not hits, "hits": hits}
 
     # 3) run with args/stdin; compare exit + stdout
@@ -166,7 +182,9 @@ def grade_all(task_filter: str | None = None, timeout: int = 30) -> dict[str, An
         "passed": len(passed),
         "overall": overall,
         "results": results,
-        "pass_at_1": (len(passed) / len(submitted)) if submitted else None,
+        # Task book S47 section 4: overall pass@1 = passed tasks / all tasks.
+        "pass_at_1": (len(passed) / len(results)) if submitted else None,
+        "pass_rate_over_submitted": (len(passed) / len(submitted)) if submitted else None,
         "pass_at_k_formula": "pass@k = 1 - C(n-c,k)/C(n,k); single sample == pass@1",
     }
 

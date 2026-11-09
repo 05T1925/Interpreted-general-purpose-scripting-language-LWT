@@ -1,0 +1,6 @@
+import "lib.lwt" as lib;
+
+record Item { name, price };
+let item = Item{name: "book", price: 200};
+let totals = dict{"book": lib.tax(item.price)};
+emit "book " + str(totals["book"]);

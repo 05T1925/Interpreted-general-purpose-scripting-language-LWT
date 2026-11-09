@@ -1,0 +1,48 @@
+{
+  "generated_at_utc": "2026-11-09T08:36:51Z",
+  "note": "First blind round used the original task prompt, which did not state the thrown message; the agent produced caught:boom and the oracle required caught:task failed. The prompt was clarified (message must be task failed) and the task was re-run in a NEW isolated session. This file is supplementary evidence; the primary pass@1 stays 5/6 from the frozen first round.",
+  "pass_at_1": 1.0,
+  "passed": 1,
+  "round": "clarified-post-hoc",
+  "schema_version": 1,
+  "submitted": 1,
+  "task": {
+    "checks": {
+      "check_exit_zero": {
+        "exit_code": 0,
+        "pass": true,
+        "stderr": ""
+      },
+      "deterministic_bytes": {
+        "pass": true,
+        "runs": 5
+      },
+      "exit_code_matches": {
+        "actual": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "expected": 0,
+        "pass": true
+      },
+      "no_forbidden_constructs": {
+        "hits": [],
+        "pass": true
+      },
+      "stdout_matches": {
+        "actual_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+        "actual_text": "sum 6\ncaught:task failed\n",
+        "expected_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+        "pass": true
+      }
+    },
+    "entry": "reports/s47-submission/clarified/producer-consumer-channel/program.lwt",
+    "id": "producer-consumer-channel",
+    "status": "PASS",
+    "title": "确定性生产者/消费者 + 通道 + attempt/recover"
+  },
+  "tool": "lwt-agent-eval"
+}

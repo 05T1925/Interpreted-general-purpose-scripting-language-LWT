@@ -1,0 +1,36 @@
+# wordcount.lwt
+# 统计 args()[0] 指定文本文件的非空行数与非空行中的单词总数。
+# 单词以单个空格分隔；只用 read_text 读文件，不读取 stdin。
+
+fn count_words(text) {
+    let parts = split(text, " ");
+    let n = 0;
+    each (part in parts) {
+        when (part != "") {
+            n = n + 1;
+        }
+    }
+    return n;
+}
+
+let argv = args();
+when (len(argv) < 1) {
+    fail("wordcount: missing file path argument");
+}
+
+# read_text 已剥除开头一个 BOM，并把 CRLF/CR 规范化为 LF。
+let content = read_text(argv[0]);
+# 文件末尾无换行时 split 不会产生额外元素；有换行时多出的末尾空字段按空行跳过。
+let lines = split(content, "\n");
+
+let line_total = 0;
+let word_total = 0;
+each (line in lines) {
+    let text = trim(line);
+    when (text != "") {
+        line_total = line_total + 1;
+        word_total = word_total + count_words(text);
+    }
+}
+
+emit "lines " + str(line_total) + " words " + str(word_total);

@@ -1,0 +1,17 @@
+# charge(n): 负数金额校验失败时抛出自定义类别错误，否则返回两倍。
+fn charge(n) {
+    when (n < 0) {
+        throw error("Validation", "negative amount");
+    }
+    return n * 2;
+}
+
+attempt {
+    emit str(charge(-5));
+} recover (problem) {
+    emit problem.category;
+    emit problem.message;
+} finally {
+    emit "cleanup";
+}
+emit str(charge(4));

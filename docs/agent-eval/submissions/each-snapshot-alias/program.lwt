@@ -1,0 +1,18 @@
+# snapshot.lwt -- each 浅快照与记录别名身份验证
+record Box { value };
+
+# 1) each 遍历进入循环时的浅快照：循环体追加 99 不应增加迭代次数
+let values = [1, 2, 3];
+let iterations = 0;
+each (v in values) {
+    push(values, 99);
+    iterations = iterations + 1;
+}
+emit "iterations " + str(iterations);
+
+# 2) 记录按引用传递：alias 与 b 指向同一实例，身份相等
+let b = Box{value: 0};
+let alias = b;
+alias.value = 9;
+emit "b.value " + str(b.value);
+emit "b == alias " + str(b == alias);
