@@ -1,0 +1,13 @@
+# S46 invariant: close() lets receivers drain queued values before null.
+fn produce(ch) {
+    send(ch, 1);
+    send(ch, 2);
+    close(ch);
+}
+
+let ch = channel();
+let t = spawn produce(ch);
+emit str(receive(ch));
+emit str(receive(ch));
+emit str(receive(ch));
+join(t);

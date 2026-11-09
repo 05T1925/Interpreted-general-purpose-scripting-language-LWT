@@ -1,0 +1,12 @@
+{
+  "id": "lost-update",
+  "spec_refs": ["§11.3", "§11.4"],
+  "max_decisions": 30,
+  "tags": ["divergence", "witness", "shared-state"],
+  "expected": {
+    "allowed_outcomes": [
+      {"exit": 0, "stdout": "1\n"},
+      {"exit": 0, "stdout": "2\n"}
+    ]
+  }
+}

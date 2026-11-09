@@ -1,0 +1,10 @@
+{
+  "id": "channel-close-drain",
+  "spec_refs": ["§11.5", "§11.7"],
+  "max_decisions": 30,
+  "tags": ["channel", "close"],
+  "expected": {
+    "exit": 0,
+    "stdout": "1\n2\nnull\n"
+  }
+}

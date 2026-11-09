@@ -1,0 +1,16 @@
+# S46 divergence showcase (NOT a bug): read-yield-write on a shared variable
+# may lose one update. Both 1 and 2 are allowed outcomes; the explorer must
+# report the divergence and a witness instead of flagging a violation.
+let counter = 0;
+
+fn bump() {
+    let value = counter;
+    yield();
+    counter = value + 1;
+}
+
+let a = spawn bump();
+let b = spawn bump();
+join(a);
+join(b);
+emit str(counter);

@@ -1,0 +1,10 @@
+{
+  "id": "deadlock-two-receivers",
+  "spec_refs": ["§11.8"],
+  "max_decisions": 30,
+  "tags": ["deadlock", "channel"],
+  "expected": {
+    "exit": 3,
+    "stderr_contains": "deadlock detected"
+  }
+}

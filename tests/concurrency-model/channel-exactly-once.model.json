@@ -1,0 +1,10 @@
+{
+  "id": "channel-exactly-once",
+  "spec_refs": ["§11.5", "§11.7"],
+  "max_decisions": 30,
+  "tags": ["channel", "exactly-once"],
+  "expected": {
+    "exit": 0,
+    "stdout": "7\nnull\n"
+  }
+}

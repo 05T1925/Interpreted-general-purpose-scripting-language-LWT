@@ -1,0 +1,13 @@
+# S46 invariant: join rethrows the task's original category and message,
+# and the rethrow is catchable by attempt/recover in the joiner.
+fn boom() {
+    throw error("Boom", "original message");
+}
+
+let t = spawn boom();
+attempt {
+    join(t);
+} recover (problem) {
+    emit problem.category;
+    emit problem.message;
+}

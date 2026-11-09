@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, fields, is_dataclass
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, BinaryIO, NoReturn, TextIO
+from typing import TYPE_CHECKING, Any, BinaryIO, NoReturn, Sequence, TextIO
 
 # S44 P0-1: only the lightweight scheduling primitives are imported eagerly.
 # The heavy scheduler stack (concurrent.futures, hashlib, json, tempfile and
@@ -402,6 +402,7 @@ def execute(
     schedule_replay: str | None = None,
     source_texts: dict[str, str] | None = None,
     schedule_decisions: list[dict[str, Any]] | None = None,
+    schedule_choices: Sequence[int] | None = None,
 ) -> None:
     """Execute a supported LWT program or raise a located LWT error.
 
@@ -417,6 +418,10 @@ def execute(
     appended to it on success; the CLI binds them with captured output bytes
     to write a schedule trace. ``schedule_replay`` supplies the trace whose
     decisions are forced (binding validation happens in the CLI).
+    ``schedule_choices`` is an S46 tool-only hook: the first N scheduling
+    decisions are forced to the given task ids (validated against the ready
+    set) and later decisions fall back to ``schedule_policy``. Normal CLI
+    callers never pass it, so their behavior is unchanged.
     """
 
     if input_stream is None:
@@ -531,7 +536,11 @@ def execute(
                 replay=replay_doc,
             )
             tracer.validate_bindings()
-            scheduler = Scheduler(policy=schedule_policy, tracer=tracer)
+            scheduler = Scheduler(
+                policy=schedule_policy,
+                tracer=tracer,
+                schedule_choices=schedule_choices,
+            )
             for ctx in contexts.values():
                 ctx.scheduler = scheduler
             set_current_task_id(0)
@@ -563,6 +572,11 @@ def execute(
                 scheduler.stop()
                 scheduler.close()
                 set_current_task_id(0)
+            # S46: collect decisions on failure paths too (deadlock / invalid
+            # forced choice). The CLI only writes a trace on exit 0, so this
+            # does not change any CLI-observable behavior.
+            if schedule_decisions is not None and tracer is not None:
+                schedule_decisions.extend(tracer.decisions)
     except LwtError as error:
         if observer is not None:
             status = "runtime_error" if error.category == "RuntimeError" and error.exit_code == 3 else "error"
@@ -586,10 +600,6 @@ def execute(
     else:
         if observer is not None:
             _notify_observer(observer, "program_end", profile_entry, program.location, "success", 0)
-        # Expose scheduling decisions to the CLI, which owns the captured
-        # stdout/stderr bytes needed to bind the full trace document.
-        if schedule_decisions is not None and tracer is not None:
-            schedule_decisions.extend(tracer.decisions)
     return None
 
 

@@ -1,0 +1,10 @@
+{
+  "id": "join-error-origin",
+  "spec_refs": ["§11.6", "§11.9"],
+  "max_decisions": 30,
+  "tags": ["join", "error-propagation"],
+  "expected": {
+    "exit": 0,
+    "stdout": "Boom\noriginal message\n"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "nested-spawn-drain",
+  "spec_refs": ["§11.9"],
+  "max_decisions": 30,
+  "tags": ["shutdown", "drain", "spawn"],
+  "expected": {
+    "exit": 0,
+    "stdout": "done\n"
+  }
+}

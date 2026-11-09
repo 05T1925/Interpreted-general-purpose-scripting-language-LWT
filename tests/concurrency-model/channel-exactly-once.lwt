@@ -1,0 +1,12 @@
+# S46 invariant: a value sent to a blocked receiver is delivered exactly once.
+# The next receive after it must be null (channel closed, queue empty).
+fn produce(ch) {
+    send(ch, 7);
+    close(ch);
+}
+
+let ch = channel();
+let t = spawn produce(ch);
+emit str(receive(ch));
+emit str(receive(ch));
+join(t);

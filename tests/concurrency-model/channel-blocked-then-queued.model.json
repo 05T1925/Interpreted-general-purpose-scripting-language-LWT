@@ -1,0 +1,10 @@
+{
+  "id": "channel-blocked-then-queued",
+  "spec_refs": ["§11.5", "§11.7"],
+  "max_decisions": 30,
+  "tags": ["channel", "regression", "s45"],
+  "expected": {
+    "exit": 0,
+    "stdout": "1,2,null\n"
+  }
+}

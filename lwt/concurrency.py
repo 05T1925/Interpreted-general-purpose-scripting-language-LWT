@@ -25,7 +25,7 @@ import json
 import os
 import tempfile
 import threading
-from typing import Any, Callable
+from typing import Any, Callable, Sequence
 
 from .errors import LwtError, SourceLocation
 # S44 P0-1: the scheduling exceptions and thread-local task id live in a
@@ -225,9 +225,19 @@ class Scheduler:
         policy: str,
         tracer: ScheduleTracer,
         max_workers: int = 8,
+        schedule_choices: Sequence[int] | None = None,
     ) -> None:
+        if schedule_choices is not None and tracer.replay is not None:
+            raise ValueError("schedule_choices cannot be combined with replay")
         self.policy = policy
         self.tracer = tracer
+        # S46 tool API: force the first len(schedule_choices) scheduling
+        # decisions, then fall back to the configured policy. This is used only
+        # by tools/model_check_concurrency.py; normal CLI paths pass None and
+        # are byte-identical to the pre-S46 behavior.
+        self.schedule_choices = (
+            list(schedule_choices) if schedule_choices is not None else None
+        )
         # RLock is required: send/receive/close hold ``cond`` and call
         # wake_receiver, which re-enters ``cond``. A plain Lock self-deadlocks.
         self.cond = threading.Condition(threading.RLock())
@@ -301,7 +311,20 @@ class Scheduler:
 
         snapshot = sorted(self._queue)
         index = len(self.tracer.decisions)
-        if self.tracer.replay is not None:
+        if (
+            self.schedule_choices is not None
+            and index < len(self.schedule_choices)
+        ):
+            # S46 tool API: a forced choice must be a member of the current
+            # ready set. An invalid prefix is a tool error, not a program
+            # failure; raise through the same fatal path as replay mismatch so
+            # switch() wakes every peer task instead of leaving one blocked.
+            chosen = self.schedule_choices[index]
+            if chosen not in snapshot:
+                raise ScheduleReplayMismatch(
+                    f"choice {index}: {chosen!r} not in ready {snapshot}"
+                )
+        elif self.tracer.replay is not None:
             chosen = self.tracer.replay_choice(index, snapshot)
         elif self.prng is None:
             chosen = self._queue[0]

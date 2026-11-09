@@ -1,0 +1,11 @@
+# S46 invariant: two tasks blocked on distinct empty channels while main joins
+# one of them must report "deadlock detected" (exit 3), never hang.
+fn wait_on(ch) {
+    receive(ch);
+}
+
+let first = channel();
+let second = channel();
+let t1 = spawn wait_on(first);
+let t2 = spawn wait_on(second);
+join(t1);

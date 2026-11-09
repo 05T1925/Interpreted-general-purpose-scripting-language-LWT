@@ -1,0 +1,10 @@
+# S46 invariant: program shutdown drains descendants created by a task.
+# Only main emits, so the expected output is schedule-independent.
+fn leaf(n) {
+    when (n > 0) {
+        spawn leaf(n - 1);
+    }
+}
+
+spawn leaf(2);
+emit "done";

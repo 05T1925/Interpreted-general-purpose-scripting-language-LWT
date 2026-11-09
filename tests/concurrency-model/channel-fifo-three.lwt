@@ -1,0 +1,18 @@
+# S46 invariant: channel is FIFO; three sends are received as 1,2,3.
+fn produce(ch) {
+    send(ch, 1);
+    send(ch, 2);
+    send(ch, 3);
+    close(ch);
+}
+
+let ch = channel();
+let t = spawn produce(ch);
+let sum = 0;
+let value = receive(ch);
+while (value != null) {
+    sum = sum * 10 + value;
+    value = receive(ch);
+}
+join(t);
+emit str(sum);

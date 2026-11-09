@@ -1,0 +1,10 @@
+{
+  "id": "channel-fifo-three",
+  "spec_refs": ["§11.5", "§11.7"],
+  "max_decisions": 30,
+  "tags": ["channel", "fifo"],
+  "expected": {
+    "exit": 0,
+    "stdout": "123\n"
+  }
+}
