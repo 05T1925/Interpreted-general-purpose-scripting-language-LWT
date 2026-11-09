@@ -13,6 +13,7 @@ Runs, in order, and records a real exit code + parsed summary for each step:
   8. PPT static check via zip/xml (slide count, native chart value points, SHA-256)
   9. Agent-eval status (executed vs NOT_RUN; never fabricated)
  10. S46 bounded concurrency model check (clean corpus; BUDGET_EXHAUSTED is FAIL)
+ 11. S47 submission package: SUBMISSION.md, dist/latest.json, bundle verify, zip manifest
 
 Writes ``reports/s45-acceptance/selfcheck-<UTC>.json`` and ``.md`` and prints the
 manual GUI checklist. It never rewrites S10/S11/S37-S44 evidence; a failing step
@@ -155,7 +156,9 @@ def _step_ppt() -> dict[str, Any]:
 
 
 def _step_agent_eval() -> dict[str, Any]:
-    path = OUT_DIR / "agent-eval.json"
+    path = ROOT / "reports" / "s47-submission" / "agent-eval.json"
+    if not path.exists():
+        path = OUT_DIR / "agent-eval.json"
     if not path.exists():
         return {"status": "NOT_RUN", "pass": None, "detail": "no agent-eval.json"}
     doc = json.loads(path.read_text(encoding="utf-8"))
@@ -163,7 +166,59 @@ def _step_agent_eval() -> dict[str, Any]:
         "status": doc.get("overall"), "pass": None,
         "submitted": doc.get("submitted"), "passed": doc.get("passed"),
         "pass_at_1": doc.get("pass_at_1"),
-        "detail": "blind eval must be run by the user in a new context; NOT_RUN is not a pass",
+        "detail": f"{path.relative_to(ROOT)}; blind eval is not a pass/fail gate, "
+                  f"and a clarified post-hoc re-run is recorded separately",
+    }
+
+
+def _step_submission() -> dict[str, Any]:
+    """S47: the teacher-facing package must exist, verify and be self-consistent."""
+
+    submission = ROOT / "SUBMISSION.md"
+    latest_path = ROOT / "dist" / "latest.json"
+    if not submission.exists():
+        return {"pass": False, "detail": "SUBMISSION.md missing"}
+    if not latest_path.exists():
+        return {"pass": False, "detail": "dist/latest.json missing; run tools/build_submission.py"}
+    latest = json.loads(latest_path.read_text(encoding="utf-8"))
+    bundle = ROOT / str(latest.get("bundle") or "")
+    zip_path = ROOT / str(latest.get("zip") or "")
+    if not bundle.is_file() or not zip_path.is_file():
+        return {"pass": False, "detail": f"bundle/zip missing: {bundle} / {zip_path}"}
+    verify = run(["git", "bundle", "verify", str(bundle)], timeout=180)
+    zip_ok = False
+    entries = 0
+    try:
+        with zipfile.ZipFile(zip_path) as archive:
+            names = set(archive.namelist())
+            entries = len(names)
+            manifest_lines = archive.read("manifest.sha256").decode("utf-8").splitlines()
+            listed = {}
+            for line in manifest_lines:
+                digest, rel = line.split("  ", 1)
+                listed[rel] = digest
+            zip_ok = (
+                archive.testzip() is None
+                and "SUBMISSION.md" in names
+                and "lwt-history.bundle" in names
+                and set(listed) == names - {"manifest.sha256"}
+                and all(
+                    hashlib.sha256(archive.read(rel)).hexdigest() == digest
+                    for rel, digest in listed.items()
+                )
+            )
+    except (OSError, ValueError, KeyError):
+        zip_ok = False
+    passed = verify["exit_code"] == 0 and zip_ok
+    return {
+        "pass": passed,
+        "submission_md": str(submission.relative_to(ROOT)),
+        "bundle": str(bundle.relative_to(ROOT)),
+        "zip": str(zip_path.relative_to(ROOT)),
+        "bundle_verify_exit": verify["exit_code"],
+        "zip_entries": entries,
+        "zip_manifest_ok": zip_ok,
+        "seconds": verify["seconds"],
     }
 
 
@@ -274,6 +329,7 @@ def main(argv: list[str] | None = None) -> int:
         steps["model_check"] = {"skipped": True, "pass": None}
     else:
         steps["model_check"] = _step_model_check(args.model_budget)
+    steps["submission"] = _step_submission()
     steps["agent_eval"] = _step_agent_eval()
 
     graded = [v for v in steps.values() if isinstance(v, dict) and v.get("pass") is not None]
@@ -351,6 +407,10 @@ def render(doc: dict[str, Any]) -> str:
             detail = (f"{value.get('status')} runs={value.get('runs')} "
                       f"violations={value.get('violations')} "
                       f"budget_exhausted={value.get('budget_exhausted')}")
+        elif name == "submission":
+            detail = (f"bundle_verify={value.get('bundle_verify_exit')} "
+                      f"zip_entries={value.get('zip_entries')} "
+                      f"manifest_ok={value.get('zip_manifest_ok')}")
         elif name == "agent_eval":
             detail = f"{value.get('status')} (submitted={value.get('submitted')})"
         lines.append(f"| {name} | {state} | {detail} |")
