@@ -517,7 +517,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
                 f"minimized_prefix={violation['minimized_prefix']}"
             )
         lines.append("")
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines).rstrip("\n") + "\n"
 
 
 def build_summary(

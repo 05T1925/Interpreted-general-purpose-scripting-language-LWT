@@ -56,4 +56,3 @@
 
 ### nested-spawn-drain
 - exit=0 stdout=`done\n` count=5 first_prefix=[]
-
