@@ -48,6 +48,6 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 
 ## 交付包
 
-- `lwt-history.bundle`：`git bundle --all`，含全部 refs 与历史；`git bundle verify` 见 `reports/s47-submission/build.json`。
+- `lwt-history.bundle`：`git bundle --branches --tags HEAD`，含全部分支/标签与历史（排除临时 worktree refs）；`git bundle verify` 见 `reports/s47-submission/build.json`。
 - `lwt-submission.zip`：HEAD 跟踪树 + 本文件 + bundle；`manifest.sha256` 逐文件摘要。
 - 重新生成：`python tools/build_submission.py`；新克隆验证：`python tools/verify_fresh_clone.py --bundle <bundle>`。
