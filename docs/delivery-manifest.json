@@ -51,7 +51,7 @@
     "s47_submission": "docs/s47-final-submission.md",
     "s47_agent_eval": "docs/s47-agent-eval.md"
   },
-  "last_verified_utc": "2026-11-09T03:43:10Z",
+  "last_verified_utc": "2026-11-09T16:21:28Z",
   "notes": [
     "unittest_count 为 S47 收口实测 677（S46 的 664 + Agent 判分器 7 + 提交包 5 + 文档一致性 1）。",
     "ppt_pages / ppt_sha256 为 S47 最终 PPT（19→20 页，新增「教师入口与一键提交包」页；旧第 10 页原生图表 12 数值点未变）。",
