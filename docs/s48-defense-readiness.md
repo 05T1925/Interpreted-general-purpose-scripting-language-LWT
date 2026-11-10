@@ -118,8 +118,9 @@ S48 相对 S47（`5a61ab9`）共 14 笔，按 WP 分组：
 | `e8d64b5` | 索引提交（只含索引） |
 | `f46ff08` | 新克隆 400/400、lag 仅索引 |
 
-- **推送状态（如实）**：2026-11-10 08:00–08:20 UTC 连续 20 次 `git push origin main` 均在传输层失败
-  （`Recv failure: Connection was aborted`；同一时段 `curl https://github.com` 与代理探测也失败），因此
-  **本轮未推送、CI 未验证**。本地 `main` 领先 `origin/main` 15 笔；网络恢复后执行 `git push origin main`
-  并按该精确 SHA 查询四格即可。**不把“本地通过”写成“CI 通过”**，也不伪造 run 链接。
+- **推送状态（历史与当前）**：2026-11-10 08:00–08:20 UTC 当时连续 20 次 `git push origin main` 在传输层失败
+  （`Recv failure: Connection was aborted`；同一时段 `curl https://github.com` 与代理探测也失败），因此 S48 收口时
+  **当时未推送、CI 未验证**。根因是 git 配置残留失效代理 `127.0.0.1:7897`，而当前环境代理为 `127.0.0.1:50793`。
+  同日主窗口复核时用当前代理成功推送：`origin/main = 724dc7c`，16 笔同步完成；**精确 SHA 的 CI 四格仍待查询**。
+  **不把“本地通过”写成“CI 通过”**，也不伪造 run 链接。
 - 包与最终 tip 的关系：bundle 截止 `bfda042`，索引提交 `e8d64b5` 及其后的报告/证据提交都在 `diff_whitelist` 内；`verify_fresh_clone` 在 `e8d64b5` 实测 `lag=['reports/s48-defense/package-index.json']`、`lag_ok=true`、6 条命令 exit 0、400/400。
