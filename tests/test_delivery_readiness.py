@@ -90,5 +90,100 @@ class GuiRegistrationTests(unittest.TestCase):
             self.assertIsNone(doc["pass"])
 
 
+class S49RunbookTests(unittest.TestCase):
+    """S49: 21-slide runbook, offline console navigation and rehearsal tooling."""
+
+    def _pages(self) -> dict:
+        return json.loads((ROOT / "docs" / "defense-pages.json").read_text(encoding="utf-8"))
+
+    def _claims(self) -> dict:
+        return json.loads((ROOT / "docs" / "defense-claims.json").read_text(encoding="utf-8"))
+
+    def test_pages_cover_all_slides_with_valid_claims(self) -> None:
+        pages = self._pages()["pages"]
+        self.assertEqual([p["page"] for p in pages], list(range(1, 22)),
+                         "defense-pages.json must map all 21 slides in order")
+        ids = {claim["id"] for claim in self._claims()["claims"]}
+        for page in pages:
+            self.assertTrue(page["claims"], f"page {page['page']} has no claim")
+            self.assertTrue(set(page["claims"]) <= ids,
+                            f"page {page['page']} references unknown claim")
+            self.assertIn(page["mode"], {"live", "recorded", "talk"})
+            self.assertIn("title", page)
+
+    def test_runbook_has_one_row_per_slide(self) -> None:
+        text = (ROOT / "docs" / "defense-runbook.md").read_text(encoding="utf-8")
+        rows = {}
+        for line in text.splitlines():
+            cells = [cell.strip() for cell in line.split("|")]
+            if len(cells) > 3 and cells[1].isdigit():
+                rows[int(cells[1])] = line
+        self.assertEqual(sorted(rows), list(range(1, 22)), "runbook must cover 21 slides")
+        for page in self._pages()["pages"]:
+            line = rows[page["page"]]
+            self.assertIn(page["title"][:8], line, f"page {page['page']} title mismatch")
+            for cid in page["claims"]:
+                self.assertIn(cid, line, f"page {page['page']} misses claim {cid}")
+
+    def test_offline_console_has_anchors_and_no_network(self) -> None:
+        from tools import build_defense_index
+
+        html = (ROOT / "docs" / "defense-index.html").read_text(encoding="utf-8")
+        self.assertEqual(html.count('id="claim-'), 24)
+        self.assertEqual(html.count('id="page-'), 21)
+        self.assertNotIn("{cls}", html, "unrendered template placeholder")
+        self.assertNotIn("http://", html)
+        self.assertNotIn("https://", html)
+        self.assertNotIn("<script src=", html)
+        # The committed file must match the generator, otherwise the console and
+        # the claims JSON drift apart.
+        self.assertEqual(html, build_defense_index.render(),
+                         "docs/defense-index.html is stale; rerun tools/build_defense_index.py")
+
+    def test_rehearsal_dry_run_plans_every_slide(self) -> None:
+        from tools import rehearse_defense
+
+        with tempfile.TemporaryDirectory(prefix="s49-rehearse-") as folder:
+            out = Path(folder) / "rehearsal.json"
+            code = rehearse_defense.main(["--pages", "1-21", "--dry-run", "--out", str(out)])
+            self.assertEqual(code, 0)
+            doc = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual(doc["mode"], "dry-run")
+        self.assertGreaterEqual(doc["planned"], 21)
+        self.assertEqual(doc["passed"], 0, "dry run must not claim a pass")
+        self.assertEqual({row["page"] for row in doc["rows"]}, set(range(1, 22)))
+        self.assertTrue(all(row["status"] == "PLANNED" for row in doc["rows"]))
+        self.assertIn("NOT the teacher", doc["what"])
+
+    def test_gui_quickref_has_five_scenarios_and_cli_fallback(self) -> None:
+        text = (ROOT / "docs" / "gui-acceptance-quickref.md").read_text(encoding="utf-8")
+        for letter in "ABCDE":
+            self.assertIn(f"## {letter}.", text)
+        self.assertIn("CLI 降级", text)
+        self.assertIn("NOT_RUN", text)
+        self.assertIn("BLOCKED", text)
+
+
+class PackageLagTests(unittest.TestCase):
+    """S49: the lag checker must honour exact and directory-prefix whitelists."""
+
+    def test_classify_exact_and_prefix(self) -> None:
+        from tools.check_package_lag import classify
+
+        inside, outside = classify(
+            ["reports/a.json", "reports/s49-rehearsal/x.json", "docs/b.md", "lwt/cli.py"],
+            ["reports/a.json", "reports/s49-rehearsal/", "docs/b.md"],
+        )
+        self.assertEqual(inside, ["reports/a.json", "reports/s49-rehearsal/x.json", "docs/b.md"])
+        self.assertEqual(outside, ["lwt/cli.py"])
+
+    def test_empty_whitelist_flags_everything(self) -> None:
+        from tools.check_package_lag import classify
+
+        inside, outside = classify(["docs/a.md"], [])
+        self.assertEqual(inside, [])
+        self.assertEqual(outside, ["docs/a.md"])
+
+
 if __name__ == "__main__":
     unittest.main()

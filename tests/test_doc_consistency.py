@@ -61,9 +61,10 @@ HISTORICAL_MARKERS = (
     "旧图表",
 )
 
-# Lines carrying an explicit dated review record (e.g. "（2026-10-07）") are
-# historical records inside current-state documents such as the roadmap.
-HISTORICAL_DATE_RE = re.compile(r"[（(]20\d\d-\d\d-\d\d[）)]")
+# Lines carrying an explicit dated review record (e.g. "（2026-10-07）" or
+# "（S44，2026-11-07）") are historical records inside current-state documents
+# such as README's phase blocks and project.md's stage paragraphs.
+HISTORICAL_DATE_RE = re.compile(r"20\d\d-\d\d-\d\d")
 
 # The roadmap's phase table rows (``| S5 | ... |``) are a frozen stage index, not
 # a current-status sentence; they are allowed to say "未推送" of that stage.
@@ -254,7 +255,7 @@ class SemanticStatusConsistencyTests(unittest.TestCase):
         docs = [
             "README.md", "project.md", "SUBMISSION.md",
             "docs/final-acceptance-checklist.md", "docs/demo-script.md",
-            "docs/defense-qa-card.md", "docs/s48-defense-readiness.md",
+            "docs/defense-qa-card.md", "docs/s49-defense-rehearsal.md",
         ]
         offenders: list[str] = []
         for rel in docs:
@@ -279,12 +280,294 @@ class SemanticStatusConsistencyTests(unittest.TestCase):
 
 
     def test_s48_report_quotes_current_manifest_counts(self) -> None:
-        # S48 closes the defense phase: its report must quote the same unittest
-        # and PPT counts as the manifest. Written before the report existed so
-        # the red -> green sequence is reproducible.
-        doc = _load_manifest()
+        # S48 is now a historical phase report: like S47 it must keep its own
+        # frozen numbers (695 unittest, 21-page PPT) instead of tracking the
+        # S49 manifest values.
         report = REPO_ROOT / "docs" / "s48-defense-readiness.md"
         self.assertTrue(report.exists(), "docs/s48-defense-readiness.md is missing")
+        text = report.read_text(encoding="utf-8")
+        self.assertIn("695", text)
+        self.assertIn("21 页", text)
+
+
+# ---------------------------------------------------------------------------
+# S49 WP1: manifest is the single source of truth for every current number.
+#
+# The S48 suite could only catch four hand-picked stale values (595/287/12 页).
+# S49 generalises it: any current-state document that quotes a unittest count,
+# a black-box count or a PPT page count must quote the manifest value, and the
+# intermediate values of earlier phases (595/632/664/677/685 and 17–20 页) may
+# only survive on a line that is *provably* historical — a dated record or a
+# frozen stage section of docs/final-acceptance-checklist.md.
+# ---------------------------------------------------------------------------
+
+# Documents a reviewer reads as "the current state". Phase reports are excluded
+# on purpose: docs/s47-final-submission.md and docs/s48-defense-readiness.md are
+# frozen snapshots whose numbers must not be rewritten.
+NUMBER_DOCS = [
+    "README.md",
+    "SUBMISSION.md",
+    "project.md",
+    "docs/demo-script.md",
+    "docs/defense-qa-card.md",
+    "docs/final-acceptance-checklist.md",
+    "docs/language-spec.md",
+    "docs/developer-guide.md",
+    "docs/test-matrix.md",
+    "docs/concurrency.md",
+    "docs/agent-eval/README.md",
+    "docs/defense-runbook.md",
+    "docs/gui-acceptance-quickref.md",
+]
+
+# Push/CI claims are also checked inside the latest phase report, because that
+# is where a reader looks for "is this pushed?".
+# The S48 report is a frozen snapshot: its "not pushed yet" line was true when
+# written and must not be rewritten. Only the S49 report is a current claim.
+STATUS_DOCS = NUMBER_DOCS + ["docs/s49-defense-rehearsal.md"]
+
+# A heading like ``## S45 最终交付加固核对`` starts a frozen stage section. Every
+# line up to the next ``## `` heading is a historical snapshot, so the precise
+# allowlist is a line range, never a blanket file exemption.
+STAGE_SECTION_RE = re.compile(r"^##\s+S\d+\b")
+
+UNIT_COUNT_RE = re.compile(
+    r"unittest[^0-9\n]{0,10}(\d{3,4})|(\d{3,4})\s*(?:项)?\s*unittest"
+)
+BLACKBOX_RE = re.compile(
+    r"(?<![\d.])(\d{3})(?![\d.])\s*(?:项)?\s*黑盒"
+    r"|黑盒[^0-9\n]{0,8}(?<![\d.])(\d{3})(?![\d.])"
+)
+PAGES_RE = re.compile(r"(?<![\d.第])(?<!第\s)(\d{1,2})\s*页")
+INTERMEDIATE_COUNT_RE = re.compile(r"(?<![\d.])(595|632|664|677|685)(?![\d.])")
+INTERMEDIATE_PAGE_RE = re.compile(r"(?<![\d.第])(?<!第\s)(17|18|19|20)\s*页")
+
+
+def _stage_section_lines(path: Path) -> set[int]:
+    """Line numbers inside a ``## S<NN> ...`` stage section of *path*."""
+
+    marked: set[int] = set()
+    inside = False
+    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if STAGE_SECTION_RE.match(line):
+            inside = True
+            marked.add(number)
+            continue
+        if line.startswith("## "):
+            inside = False
+        if inside:
+            marked.add(number)
+    return marked
+
+
+def _iter_matches(pattern: re.Pattern[str], docs: list[str]):
+    """Yield ``(rel, line_number, line, value, historical)`` for every match."""
+
+    cache: dict[Path, set[int]] = {}
+    for rel in docs:
+        path = REPO_ROOT / rel
+        if not path.exists():
+            continue
+        if path not in cache:
+            cache[path] = _stage_section_lines(path)
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            for match in pattern.finditer(line):
+                value = next((g for g in match.groups() if g), None)
+                historical = number in cache[path] or _has_historical_marker(line)
+                yield rel, number, line, value, historical
+
+
+class ManifestSingleSourceTests(unittest.TestCase):
+    """400 / unittest / PPT page counts in current docs must equal the manifest."""
+
+    def test_unittest_counts_match_manifest(self) -> None:
+        want = str(_load_manifest()["unittest_count"])
+        bad = [
+            f"{rel}:{number}: {line.strip()[:140]}"
+            for rel, number, line, value, historical in _iter_matches(UNIT_COUNT_RE, NUMBER_DOCS)
+            if not historical and value != want
+        ]
+        self.assertEqual(
+            bad, [],
+            f"current-state documents must quote unittest_count={want} (manifest):\n"
+            + "\n".join(bad),
+        )
+
+    def test_blackbox_counts_match_manifest(self) -> None:
+        want = str(_load_manifest()["blackbox_cases"])
+        bad = [
+            f"{rel}:{number}: {line.strip()[:140]}"
+            for rel, number, line, value, historical in _iter_matches(BLACKBOX_RE, NUMBER_DOCS)
+            # A line that records a progression ("354 -> 400") is a historical
+            # statement, not a current claim, as long as it also quotes the
+            # current value.
+            if not historical and value != want and want not in line
+        ]
+        self.assertEqual(
+            bad, [],
+            f"current-state documents must quote blackbox_cases={want} (manifest):\n"
+            + "\n".join(bad),
+        )
+
+    def test_ppt_pages_match_manifest(self) -> None:
+        want = str(_load_manifest()["ppt_pages"])
+        bad = [
+            f"{rel}:{number}: {line.strip()[:140]}"
+            for rel, number, line, value, historical in _iter_matches(PAGES_RE, NUMBER_DOCS)
+            if not historical and value != want
+        ]
+        self.assertEqual(
+            bad, [],
+            f"current-state documents must quote ppt_pages={want} (manifest):\n"
+            + "\n".join(bad),
+        )
+
+    def test_no_intermediate_unittest_counts_as_current(self) -> None:
+        # 595 (S44 baseline), 632 (S44), 664 (S46), 677 (S47), 685 (S48 close)
+        # are all superseded. Only dated records and frozen stage sections keep
+        # them.
+        bad = [
+            f"{rel}:{number}: {line.strip()[:140]}"
+            for rel, number, line, value, historical in _iter_matches(
+                INTERMEDIATE_COUNT_RE, NUMBER_DOCS
+            )
+            if not historical
+        ]
+        self.assertEqual(
+            bad, [],
+            "intermediate unittest counts presented as current:\n" + "\n".join(bad),
+        )
+
+    def test_no_intermediate_ppt_pages_as_current(self) -> None:
+        bad = [
+            f"{rel}:{number}: {line.strip()[:140]}"
+            for rel, number, line, value, historical in _iter_matches(
+                INTERMEDIATE_PAGE_RE, NUMBER_DOCS
+            )
+            if not historical
+        ]
+        self.assertEqual(
+            bad, [],
+            "intermediate PPT page counts presented as current:\n" + "\n".join(bad),
+        )
+
+    def test_frozen_stage_sections_are_actually_exempt(self) -> None:
+        # Guard against a blanket exemption: the *current* part of the checklist
+        # (before the first stage heading) must not be exempt, while the S45/S46
+        # sections must be. If the parser broke, both answers would be equal.
+        path = REPO_ROOT / "docs" / "final-acceptance-checklist.md"
+        marked = _stage_section_lines(path)
+        lines = path.read_text(encoding="utf-8").splitlines()
+        s45 = next(i for i, line in enumerate(lines, 1) if line.startswith("## S45"))
+        s46 = next(i for i, line in enumerate(lines, 1) if line.startswith("## S46"))
+        self.assertIn(s45, marked)
+        self.assertIn(s46, marked)
+        self.assertNotIn(14, marked, "the current top table must not be exempt")
+
+
+class PushStatusTests(unittest.TestCase):
+    """A current document must not claim 'not pushed' once origin matches HEAD."""
+
+    @staticmethod
+    def _git(*args: str) -> str | None:
+        import subprocess
+
+        result = subprocess.run(["git", *args], cwd=REPO_ROOT, capture_output=True, text=True)
+        if result.returncode != 0:
+            return None
+        return result.stdout.strip()
+
+    def test_push_status_matches_origin(self) -> None:
+        head = self._git("rev-parse", "HEAD")
+        origin = self._git("rev-parse", "origin/main")
+        if not head or not origin:
+            self.skipTest("origin/main is not resolvable in this clone")
+
+        # "Pushed" means the delivered content is on origin. Evidence-only
+        # commits after a push (docs/reports/evidence) do not make the delivery
+        # unpushed, otherwise every recorded proof would flip the status back.
+        ahead_paths: list[str] = []
+        if head != origin:
+            diff = self._git("diff", "--name-only", f"{origin}..{head}") or ""
+            ahead_paths = [line for line in diff.splitlines() if line.strip()]
+        evidence_only = all(
+            path.startswith(("docs/", "reports/", "evidence/")) or path.endswith(".md")
+            for path in ahead_paths
+        )
+        pushed = head == origin or (bool(ahead_paths) and evidence_only)
+
+        stale: list[str] = []
+        todo: list[str] = []
+        for rel in STATUS_DOCS:
+            path = REPO_ROOT / rel
+            if not path.exists():
+                continue
+            marked = _stage_section_lines(path)
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if number in marked or _has_historical_marker(line):
+                    continue
+                if "未推送" in line or "未合入 main" in line:
+                    stale.append(f"{rel}:{number}: {line.strip()[:140]}")
+                if "待推送" in line:
+                    todo.append(f"{rel}:{number}: {line.strip()[:140]}")
+        if pushed:
+            self.assertEqual(stale, [], "origin/main has this content but docs still say not pushed:\n" + "\n".join(stale))
+        else:
+            self.assertTrue(todo, "origin/main is behind HEAD (non-evidence changes) but no current doc says 待推送")
+
+
+class EvidenceReachabilityTests(unittest.TestCase):
+    """Every path a reviewer may copy from SUBMISSION.md / claims must exist."""
+
+    @staticmethod
+    def _submission_paths(text: str) -> list[str]:
+        paths: list[str] = []
+        for line in text.splitlines():
+            if not line.startswith("| "):
+                continue
+            for token in re.findall(r"`([^`]+)`", line):
+                for part in token.split("、"):
+                    part = part.split("（")[0].strip()
+                    part = part.replace("dist/ 内的 ", "")
+                    if "=" in part or not part:
+                        continue  # metrics such as referenced_cases=400/400
+                    looks_like_path = "." in part.rsplit("/", 1)[-1] or part.endswith("/")
+                    if "/" in part and looks_like_path and not part.startswith(("python", "git", "http")):
+                        paths.append(part)
+        return paths
+
+    def test_submission_table_paths_exist(self) -> None:
+        text = (REPO_ROOT / "SUBMISSION.md").read_text(encoding="utf-8")
+        missing = [
+            path
+            for path in self._submission_paths(text)
+            if not path.startswith("dist/") and not (REPO_ROOT / path).exists()
+        ]
+        self.assertEqual(missing, [], f"SUBMISSION.md points at missing paths: {missing}")
+
+    def test_defense_claim_evidence_paths_exist(self) -> None:
+        doc = json.loads((REPO_ROOT / "docs" / "defense-claims.json").read_text(encoding="utf-8"))
+        missing = [c["evidence_path"] for c in doc["claims"] if not (REPO_ROOT / c["evidence_path"]).exists()]
+        self.assertEqual(missing, [], f"defense claims point at missing evidence: {missing}")
+
+    def test_public_cli_is_runnable(self) -> None:
+        # The task book asks for at least "--help works" from the documented
+        # entry point, not just that the file exists.
+        import subprocess
+        import sys
+
+        result = subprocess.run(
+            [sys.executable, "-m", "lwt", "--help"], cwd=REPO_ROOT, capture_output=True, text=True
+        )
+        self.assertEqual(result.returncode, 0, result.stderr[-400:])
+        self.assertIn("--check", result.stdout)
+
+
+class S49ReportTests(unittest.TestCase):
+    def test_s49_report_quotes_current_manifest_counts(self) -> None:
+        doc = _load_manifest()
+        report = REPO_ROOT / "docs" / "s49-defense-rehearsal.md"
+        self.assertTrue(report.exists(), "docs/s49-defense-rehearsal.md is missing")
         text = report.read_text(encoding="utf-8")
         self.assertIn(str(doc["unittest_count"]), text)
         self.assertIn(f"{doc['ppt_pages']} 页", text)

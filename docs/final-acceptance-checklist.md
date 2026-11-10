@@ -11,7 +11,7 @@
 | 5 人/AI 指南 | [开发指南](developer-guide.md)、[策略 SDK](strategy-sdk.md)、`.agents/skills/` | 新克隆按入口运行、相对链接检查 |
 | 6 Agent LWT 应用/记录 | [日志应用](../app/log_report.lwt)、[LWT 游戏](../app/lwt_snake/game.lwt)、[开发记录](agent-dev-log.md) | 有效行数、真实 CLI、S39–S41 复验 |
 | 7 Git 历史 | `git log --oneline --decorate` | 祖先、阶段分支、远端与工作区分别核对 |
-| 8 系统 PPT | [可编辑 PPTX](../slides/LWT介绍.pptx) | 19 页导出、渲染逐页查读性（第 10 页原生图表 12 数值点自 S43 起未变） |
+| 8 系统 PPT | [可编辑 PPTX](../slides/LWT介绍.pptx) | 21 页（以 manifest 为准）、渲染逐页查读性（第 10 页原生图表 12 数值点自 S43 起未变） |
 
 ## 现场预检
 
@@ -115,3 +115,18 @@
 | 现场人工 GUI | 无 | 不自动化、不声称通过 | 未验证 |
 
 **重要（S48）**：以上只记录执行窗口自测；S43–S47 未经主窗口复核，本清单不替代主窗口审查、教师线下验收与现场人工 GUI。S48 报告见 [s48-defense-readiness.md](s48-defense-readiness.md)。
+
+## S49 答辩彩排与一致性收敛核对（执行窗口自测；基线未经主窗口复核 S43–S48）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| 21 页逐页讲稿 | `docs/defense-runbook.md`、`docs/defense-pages.json` | 每页含口播要点、追问与一句话回答、断言 ID、现场命令与降级证据；`tests/test_delivery_readiness.py` 校验 21 页齐全且断言 ID 有效 | 执行实现完成 |
+| 随机质询彩排 | `tools/rehearse_defense.py`、`reports/s49-rehearsal/` | `--pages/--random/--dry-run/--offline/--timeout`；随机 5 条真实执行并留 JSON+MD；彩排 ≠ 教师验收 | 执行实现完成 |
+| 文档一致性 | `tests/test_doc_consistency.py`（27 项） | manifest 单一来源（unittest/黑盒/页数）、S44–S48 旧计数与旧页数扫描、推送状态正反向、证据路径可达；先红后绿 | 执行实现完成 |
+| CI 四格 | `reports/s49-rehearsal/ci-cells.json` | 按 `724dc7c`/`446ed4d`/`0df0e40` 逐格记录 OS × Python、结论、耗时；`724dc7c` 四格失败（文档一致性抓到过期表述） | 执行实现完成 |
+| 包索引复核 | `tools/check_package_lag.py`、`reports/s49-rehearsal/package-lag*.json` | 以 `git diff --name-only X..HEAD` 重算并分类；S48 索引对 0df0e40 有 1 个白名单外文件，S49 重建后 outside=0 | 执行实现完成 |
+| GUI A–E 双轨 | `docs/gui-acceptance-quickref.md`、`tools/register_gui_evidence.py` | 一页纸速查 + CLI 降级轨；登记仍为 `REGISTERED 0/5`，不自动判 PASS | 工具完成，人工 NOT_RUN |
+| PPT / manifest | `slides/LWT介绍.pptx`、`docs/delivery-manifest.json` | 21 页；第 18–21 页仅改页脚状态文案；第 10 页图表 12 数值点未变；SHA `0be34afa…`→`7cb28b13…` | 执行实现完成 |
+| 现场人工 GUI A–E | 无 | 不自动化、不声称通过 | 未验证 |
+
+**重要（S49）**：以上只记录执行窗口自测与本地彩排；S43–S48 未经主窗口复核，本清单不替代主窗口审查、教师线下验收与现场人工 GUI。报告见 [s49-defense-rehearsal.md](s49-defense-rehearsal.md)。

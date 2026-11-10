@@ -112,7 +112,7 @@
     {
       "id": "unittest",
       "area": "交付物 2/3",
-      "claim": "全量 unittest 677+ 通过",
+      "claim": "全量 unittest 713 项通过",
       "command": [
         "python",
         "-m",
@@ -396,7 +396,7 @@
     {
       "id": "doc-consistency",
       "area": "交付物 1/5",
-      "claim": "当前状态文档与 manifest 一致（15 项）",
+      "claim": "当前状态文档与 manifest 一致（27 项，全部通过）",
       "command": [
         "python",
         "-m",
