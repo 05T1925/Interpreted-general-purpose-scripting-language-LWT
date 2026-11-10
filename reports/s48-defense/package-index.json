@@ -1,21 +1,23 @@
 {
   "bundle_ref_matches_final_tip": true,
-  "bundle_ref_sha": "bfda042c50264210b29920b4285bc0feb3b88ff4",
-  "bundle_sha256": "3fbf56ff97b7817701fdc7d3383cea2b3a189009623a46427f79b97b620dd36f",
+  "bundle_ref_sha": "3b8ca0d887151725a5019d431cfa69009ca1ff9e",
+  "bundle_sha256": "b92a26a02217cc3c057bae4b87dd301c55a22848691c26a0d651a05ae9cfa6f3",
   "diff_paths": [],
   "diff_whitelist": [
     "reports/s48-defense/package-index.json",
-    "reports/s48-defense/fresh-clone.json",
-    "reports/s48-defense/fresh-clone.md",
-    "reports/s48-defense/selfcheck/",
-    "docs/s48-defense-readiness.md"
+    "reports/s49-rehearsal/fresh-clone.json",
+    "reports/s49-rehearsal/fresh-clone.md",
+    "reports/s49-rehearsal/selfcheck/",
+    "reports/s49-rehearsal/defense-probe.json",
+    "reports/s49-rehearsal/defense-probe.md",
+    "docs/s49-defense-rehearsal.md"
   ],
-  "final_tip_sha": "bfda042c50264210b29920b4285bc0feb3b88ff4",
-  "generated_at_utc": "2026-11-10T07:49:14Z",
+  "final_tip_sha": "3b8ca0d887151725a5019d431cfa69009ca1ff9e",
+  "generated_at_utc": "2026-11-10T10:40:29Z",
   "note": "bundle 截止 SHA 见 bundle_ref_sha；本索引提交是其后唯一允许的差异（diff_whitelist）。复核：git fetch <bundle> main && git log <bundle_ref_sha>..<final_tip_sha>",
-  "package_dir": "dist/lwt-submission-20261110T074855Z",
+  "package_dir": "dist/lwt-submission-20261110T103957Z",
   "rebuild_command": "python tools/build_submission.py",
   "schema_version": 1,
   "tool": "tools/build_submission.py",
-  "zip_sha256": "11a85447c9935c41ec61ad8c7892d32751352d0988368e011a8bf9a507bbdab6"
+  "zip_sha256": "de2449ef3b68196b4bdab78502836c57dc4f8368ad568dce5b137d39b0e02455"
 }
