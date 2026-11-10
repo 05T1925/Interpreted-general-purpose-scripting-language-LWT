@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-10T09:45:48Z",
+  "generated_at_utc": "2026-11-10T15:22:51Z",
   "source": "public GitHub HTML (commit checks page + per-job page); REST API was rate-limited (60/h anonymous, 0 remaining, reset 09:25Z) and no token/gh was available",
   "method": "job names, conclusions and durations parsed from https://github.com/<repo>/commit/<sha>/checks and https://github.com/<repo>/actions/runs/<run>/job/<job_id>; conclusions cross-checked against the \"This job succeeded/failed\" labels (4 per run)",
   "warning": "a run-level success badge is NOT used as evidence; each cell below comes from its own job page",
@@ -121,6 +121,46 @@
           "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788506291/job/129735663868"
         }
       ]
+    },
+    "7deb43b3e0824de5048ff17aedb49cc14b086ed8": {
+      "run_id": "42829656911",
+      "run_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42829656911",
+      "checks_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/commit/7deb43b3e0824de5048ff17aedb49cc14b086ed8/checks",
+      "cells": [
+        {
+          "os": "ubuntu-latest",
+          "python": "3.10",
+          "job_id": "129876081637",
+          "conclusion": "success",
+          "duration": "4m 36s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42829656911/job/129876081637"
+        },
+        {
+          "os": "ubuntu-latest",
+          "python": "3.13",
+          "job_id": "129876081146",
+          "conclusion": "success",
+          "duration": "7m 7s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42829656911/job/129876081146"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.10",
+          "job_id": "129876081607",
+          "conclusion": "success",
+          "duration": "7m 26s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42829656911/job/129876081607"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.13",
+          "job_id": "129876081494",
+          "conclusion": "success",
+          "duration": "7m 44s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42829656911/job/129876081494"
+        }
+      ],
+      "note": "S49 final green run; the two earlier S49 SHAs (1f52eaf, 6d1685d) were red and their causes are documented in the report."
     }
   }
 }

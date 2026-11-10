@@ -232,7 +232,9 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 | `0df0e40` | S48 收口 | 4/4 success | — |
 | `1f52eaf` | S49 第一次打包（Tk 阈值修复后） | 4/4 **failed** | 证据台缓存了未入库的探针状态，干净检出下生成器回落到 S48 状态 → HTML 比对失败 |
 | `6d1685d` | 去缓存 + 第二次打包 | 4/4 **failed** | `defense-claims` 指向 `reports/s49-rehearsal/fresh-clone.json`，而该文件在 `8d32a19` 才入库 |
-| 最终 SHA | 见仓库 `git log -1` | 见 `reports/s49-rehearsal/ci-cells.json` | 推送后按同一方法查；若网络不可达则写“未验证” |
+| **`7deb43b`（S49 内容 tip，已推送）** | 全部 S49 代码/文档/证据 | **4/4 success**：ubuntu 3.10 `4m36s`、ubuntu 3.13 `7m07s`、windows 3.10 `7m26s`、windows 3.13 `7m44s`（run 42829656911） | 网络恢复后按同一方法逐 job 复核，已写入 `ci-cells.json` |
+
+四格明细（含每格 job id 与 URL）见 `reports/s49-rehearsal/ci-cells.json`。CI 验证的 SHA 是 **`7deb43b`**（内容 tip）；其后只允许文档/证据提交，若再有代码改动必须重新查四格，不得外推。
 
 **失败复盘（可复现，不靠猜）**：用 `git clone . <tmp> && git checkout <sha>` 模拟 CI 的干净检出，在 `6d1685d` 上跑 `tests.test_doc_consistency tests.test_delivery_readiness`，两个用例报 `defense claims point at missing evidence: ['reports/s49-rehearsal/fresh-clone.json', ...]`；同一克隆切到含该证据的 `ec5a395` 后 **40/40 OK**。这就是两次红灯的完整因果链，已由后续提交修掉。
 
