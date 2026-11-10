@@ -209,7 +209,22 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 
 说明：包在内容 tip `957b9cb` 生成，索引提交 `6d1685d` 是其后唯一一笔；再往后的克隆/自检/报告提交全部在 `diff_whitelist` 内，由 `check_package_lag` 每次重算。
 
-## 8. 未验证项（如实）
+## 8. CI 四格与失败复盘
+
+按裁决 B 推送 `main` 并按精确 SHA 查四格。方法同 §3.2：公开 HTML 的 `/commit/<sha>/checks` 与单 job 页，**不用 run 级徽章**。
+
+| SHA | 内容 | 四格 | 结论 |
+|---|---|---|---|
+| `724dc7c` | S48 记录推送失败 | 4/4 **failed** | 文档一致性抓到“未推送/领先 15 笔”过期表述 |
+| `446ed4d` | 修复该表述 | 4/4 success | — |
+| `0df0e40` | S48 收口 | 4/4 success | — |
+| `1f52eaf` | S49 第一次打包（Tk 阈值修复后） | 4/4 **failed** | 证据台缓存了未入库的探针状态，干净检出下生成器回落到 S48 状态 → HTML 比对失败 |
+| `6d1685d` | 去缓存 + 第二次打包 | 4/4 **failed** | `defense-claims` 指向 `reports/s49-rehearsal/fresh-clone.json`，而该文件在 `8d32a19` 才入库 |
+| 最终 SHA | 见仓库 `git log -1` | 见 `reports/s49-rehearsal/ci-cells.json` | 推送后按同一方法查；若网络不可达则写“未验证” |
+
+**失败复盘（可复现，不靠猜）**：用 `git clone . <tmp> && git checkout <sha>` 模拟 CI 的干净检出，在 `6d1685d` 上跑 `tests.test_doc_consistency tests.test_delivery_readiness`，两个用例报 `defense claims point at missing evidence: ['reports/s49-rehearsal/fresh-clone.json', ...]`；同一克隆切到含该证据的 `ec5a395` 后 **40/40 OK**。这就是两次红灯的完整因果链，已由后续提交修掉。
+
+## 9. 未验证项（如实）
 
 - **现场人工 GUI A–E**：`REGISTERED 0/5`、全部 `NOT_RUN`；工具、速查与 CLI 降级已就绪，但**没有**本人现场证据。
 - **教师线下验收与评分**：未发生。
