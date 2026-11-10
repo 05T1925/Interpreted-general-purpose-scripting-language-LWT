@@ -59,11 +59,17 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 |---|---|---|
 | 基线 `0df0e40` 单进程全量 | 695 项 | **OK**，`950.0 s` |
 | S49 树 · 非 GUI 45 个模块 | 687 项 | **OK**，`835.8 s` |
-| S49 树 · GUI 5 个模块 | 26 项 | **OK**，`151.6 s` |
+| S49 树 · GUI 5 个模块 | 26 项 | **OK**，`101.2 s`（复跑第二次；第一次 `151.6 s` 也 OK） |
 | **合计** | **687 + 26 = 713** | 与 `discover` 的 713 一致，0 failure / 0 error |
 | 基线非 GUI 批（对照） | 669 项 | `1055.3 s`，1 failure + 1 error（同一 arena 用例，负载下超时） |
 
 分批是**执行环境的 20 分钟上限**导致的等价覆盖，不是跳过用例：两批合起来正好是 `discover` 的全部 713 项，且没有任何 `skip`。报告不把“两批通过”写成“单命令一次跑完”。
+
+### 2.3 第二个阈值：GUI 收敛上限 45 s
+
+单进程全量（`713` 项，`1247.1 s`）里仍有 1 个失败：`CounterfactualTkTests.test_load_real_s41_witness_with_button_and_reverify` 的 `Tk worker did not settle within bounded event loop`。单跑复现 **2/3 失败**（每次约 61 s），根因是该用例把“验证 `reports/s41-found`（32 步、每分支一个 LWT 进程）”的收敛上限定成 **45 s**，而本机实测 50–60 s。
+
+处理：把这一处的上限改为 **120 s** 并注明它是**挂起检测**、不是性能断言（仍要求 worker 收敛，仍断言 `扫描 2/32` 与 `LWA1|000002|MOVE|D|FOOD`）。改后该模块 2/2 OK，GUI 批 26/26 OK（101.2 s）。同样**没有**删断言、没有 skip。
 
 ## 3. WP0：包索引诚实化、CI 四格、环境债务
 

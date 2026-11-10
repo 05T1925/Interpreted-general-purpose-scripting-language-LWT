@@ -69,7 +69,11 @@ class CounterfactualTkTests(unittest.TestCase):
             ui.load_button.invoke()
         self.assertIn('旧结果已清除', ui.text.get('1.0', 'end'))
         ui.verify_button.invoke()
-        self.until(lambda: not ui.busy, seconds=45)
+        # S49: verifying reports/s41-found replays 32 steps and spawns one LWT
+        # process per branch; measured 50-60 s on this machine, so the old 45 s
+        # bound failed roughly two runs out of three. This bound is a hang
+        # detector, not a performance assertion.
+        self.until(lambda: not ui.busy, seconds=120)
         shown = ui.text.get('1.0', 'end')
         self.assertIn('扫描 2/32', shown)
         self.assertIn('LWA1|000002|MOVE|D|FOOD', shown)
