@@ -73,9 +73,10 @@ def _forbidden_hits(source: str, forbidden: list[str]) -> list[str]:
     return hits
 
 
-def grade_task(task: dict[str, Any], *, timeout: int = 30) -> dict[str, Any]:
+def grade_task(task: dict[str, Any], *, timeout: int = 30,
+               submission_dir: Path | None = None) -> dict[str, Any]:
     task_id = task["id"]
-    submission_dir = SUBMISSIONS / task_id
+    submission_dir = submission_dir or (SUBMISSIONS / task_id)
     entry = _entry(submission_dir) if submission_dir.exists() else None
     if entry is None:
         return {
@@ -83,7 +84,7 @@ def grade_task(task: dict[str, Any], *, timeout: int = 30) -> dict[str, Any]:
             "title": task["title"],
             "status": "NOT_SUBMITTED",
             "checks": {},
-            "detail": "no docs/agent-eval/submissions/%s/{program,main}.lwt" % task_id,
+            "detail": f"no submission under {_display(submission_dir)}/{{program,main}}.lwt",
         }
 
     sources = {
@@ -155,14 +156,31 @@ def grade_task(task: dict[str, Any], *, timeout: int = 30) -> dict[str, Any]:
     return result
 
 
-def grade_all(task_filter: str | None = None, timeout: int = 30) -> dict[str, Any]:
-    doc = json.loads(TASKS_PATH.read_text(encoding="utf-8"))
+def grade_all(task_filter: str | None = None, timeout: int = 30,
+              tasks_path: Path | None = None,
+              submissions_dir: Path | None = None,
+              samples: int = 1,
+              group: str | None = None) -> dict[str, Any]:
+    # Resolve module globals at call time so tests can monkey-patch them.
+    tasks_path = tasks_path or TASKS_PATH
+    submissions_dir = submissions_dir or SUBMISSIONS
+    doc = json.loads(tasks_path.read_text(encoding="utf-8"))
     tasks = doc["tasks"]
     if task_filter:
         tasks = [t for t in tasks if t["id"] == task_filter]
         if not tasks:
             raise SystemExit(f"run_agent_eval: unknown task {task_filter!r}")
-    results = [grade_task(t, timeout=timeout) for t in tasks]
+    results: list[dict[str, Any]] = []
+    for task in tasks:
+        for index in range(1, max(1, samples) + 1):
+            if samples == 1:
+                directory = submissions_dir / task["id"]
+            else:
+                directory = submissions_dir / task["id"] / f"sample-{index}"
+            result = grade_task(task, timeout=timeout, submission_dir=directory)
+            result["sample"] = index
+            result["group"] = group
+            results.append(result)
     submitted = [r for r in results if r["status"] != "NOT_SUBMITTED"]
     passed = [r for r in submitted if r["status"] == "PASS"]
     if not submitted:
@@ -171,8 +189,18 @@ def grade_all(task_filter: str | None = None, timeout: int = 30) -> dict[str, An
         overall = "ALL_PASS"
     else:
         overall = "PARTIAL"
+    per_task: dict[str, tuple[int, int]] = {}
+    for task in tasks:
+        rows = [r for r in results if r["id"] == task["id"]]
+        submitted_rows = [r for r in rows if r["status"] != "NOT_SUBMITTED"]
+        per_task[task["id"]] = (
+            sum(1 for r in submitted_rows if r["status"] == "PASS"),
+            len(submitted_rows),
+        )
+    from tools.agent_eval_stats import summarize_group
+    stats = summarize_group(group or "default", per_task, k=min(samples, 5)) if submitted else None
     return {
-        "schema_version": 1,
+        "schema_version": 2 if samples > 1 else 1,
         "tool": "lwt-agent-eval",
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "note": "Blind eval must be run by the user in a new context-free session. "
@@ -186,6 +214,9 @@ def grade_all(task_filter: str | None = None, timeout: int = 30) -> dict[str, An
         "pass_at_1": (len(passed) / len(results)) if submitted else None,
         "pass_rate_over_submitted": (len(passed) / len(submitted)) if submitted else None,
         "pass_at_k_formula": "pass@k = 1 - C(n-c,k)/C(n,k); single sample == pass@1",
+        "group": group,
+        "samples_per_task": samples,
+        "stats": stats,
     }
 
 
@@ -235,9 +266,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--task", default=None, help="grade a single task id")
     parser.add_argument("--timeout", type=int, default=30)
     parser.add_argument("--out", default=str(DEFAULT_OUT))
+    parser.add_argument("--tasks", default=str(TASKS_PATH))
+    parser.add_argument("--submissions", default=str(SUBMISSIONS))
+    parser.add_argument("--group", default=None, choices=["T", "C"])
+    parser.add_argument("--samples", type=int, default=1)
     args = parser.parse_args(argv)
 
-    doc = grade_all(args.task, args.timeout)
+    tasks_path = Path(args.tasks)
+    if not tasks_path.is_absolute():
+        tasks_path = ROOT / tasks_path
+    submissions_dir = Path(args.submissions)
+    if not submissions_dir.is_absolute():
+        submissions_dir = ROOT / submissions_dir
+    doc = grade_all(args.task, args.timeout, tasks_path=tasks_path,
+                    submissions_dir=submissions_dir, samples=args.samples,
+                    group=args.group)
     out = ROOT / args.out
     _atomic(out, json.dumps(doc, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
     _atomic(out.with_suffix(".md"), render(doc))
