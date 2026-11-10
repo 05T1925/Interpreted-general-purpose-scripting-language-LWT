@@ -1,0 +1,43 @@
+{
+  "decisions": [
+    {
+      "chosen": 1,
+      "index": 0,
+      "ready": [
+        1
+      ]
+    },
+    {
+      "chosen": 2,
+      "index": 1,
+      "ready": [
+        0,
+        2
+      ]
+    },
+    {
+      "chosen": 0,
+      "index": 2,
+      "ready": [
+        0,
+        3
+      ]
+    },
+    {
+      "chosen": 3,
+      "index": 3,
+      "ready": [
+        3
+      ]
+    }
+  ],
+  "expected_exit_code": 0,
+  "expected_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "expected_stdout_sha256": "d117fa006ba9208500b2930ce69cbde436c647afa917cb7396a9bc9111a46dd2",
+  "policy": "fifo",
+  "program_args": [],
+  "schema": "lwt-schedule-trace/1",
+  "schema_version": 1,
+  "source": "tests/concurrency-model/nested-spawn-drain.lwt",
+  "source_sha256": "08d2ed0a3433c9763413dea8b26e091fe07511be69e6c3072071390c5f3ceb37"
+}

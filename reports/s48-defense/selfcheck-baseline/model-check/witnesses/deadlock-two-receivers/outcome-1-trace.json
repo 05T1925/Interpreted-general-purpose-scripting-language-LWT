@@ -1,0 +1,35 @@
+{
+  "decisions": [
+    {
+      "chosen": 1,
+      "index": 0,
+      "ready": [
+        1,
+        2
+      ]
+    },
+    {
+      "chosen": 2,
+      "index": 1,
+      "ready": [
+        2
+      ]
+    },
+    {
+      "chosen": 0,
+      "index": 2,
+      "ready": [
+        0
+      ]
+    }
+  ],
+  "expected_exit_code": 3,
+  "expected_stderr_sha256": "5f8f615dbd8fff0447b455db9cfdd0aff6db377f06fba909d13d55a176e8f4ca",
+  "expected_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "policy": "fifo",
+  "program_args": [],
+  "schema": "lwt-schedule-trace/1",
+  "schema_version": 1,
+  "source": "tests/concurrency-model/deadlock-two-receivers.lwt",
+  "source_sha256": "a76ad0d49678f9d0c79731f7bc952c5fe8dbb44727385a2abd5fa2c1a3af2813"
+}
