@@ -14,6 +14,8 @@ Runs, in order, and records a real exit code + parsed summary for each step:
   9. Agent-eval status (executed vs NOT_RUN; never fabricated)
  10. S46 bounded concurrency model check (clean corpus; BUDGET_EXHAUSTED is FAIL)
  11. S47 submission package: SUBMISSION.md, dist/latest.json, bundle verify, zip manifest
+ 12. S48 GUI evidence registration (counts only; never auto-PASS)
+ 13. S48 defense probe results (PASS only when every recorded row passed)
 
 Writes ``reports/s45-acceptance/selfcheck-<UTC>.json`` and ``.md`` and prints the
 manual GUI checklist. It never rewrites S10/S11/S37-S44 evidence; a failing step
@@ -169,6 +171,45 @@ def _step_agent_eval() -> dict[str, Any]:
         "pass_at_1": doc.get("pass_at_1"),
         "detail": f"{path.relative_to(ROOT)}; blind eval is not a pass/fail gate, "
                   f"and a clarified post-hoc re-run is recorded separately",
+    }
+
+
+def _step_defense_probe() -> dict[str, Any]:
+    """S48: summarize the last defense-probe run; never invent a pass."""
+
+    path = ROOT / "reports" / "s48-defense" / "defense-probe.json"
+    if not path.exists():
+        return {"status": "NOT_RUN", "pass": None,
+                "detail": "run tools/run_defense_probe.py --all --skip-heavy"}
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    passed = doc.get("passed", 0)
+    ran = doc.get("ran", 0)
+    failed = doc.get("failed", 0)
+    return {
+        "status": "PASS" if ran and failed == 0 else "FAIL",
+        "pass": bool(ran and failed == 0),
+        "ran": ran,
+        "passed": passed,
+        "failed": failed,
+        "detail": f"last probe PASS {passed}/{ran}; rerun --all to include heavy rows",
+    }
+
+
+def _step_gui_evidence() -> dict[str, Any]:
+    """S48: report registered GUI material; presence is never a pass."""
+
+    doc = ROOT / "reports" / "s48-defense" / "gui-acceptance.json"
+    if not doc.exists():
+        return {"status": "NOT_RUN", "pass": None, "registered": 0, "total": 5,
+                "detail": "run tools/register_gui_evidence.py after the on-site session"}
+    data = json.loads(doc.read_text(encoding="utf-8"))
+    return {
+        "status": data.get("overall"),
+        "pass": None,
+        "registered": data.get("registered"),
+        "total": data.get("total"),
+        "not_automated": True,
+        "detail": "GUI A-E must be confirmed by the user; this step only counts registered evidence",
     }
 
 
@@ -338,6 +379,8 @@ def main(argv: list[str] | None = None) -> int:
     else:
         steps["model_check"] = _step_model_check(args.model_budget)
     steps["submission"] = _step_submission()
+    steps["gui_evidence"] = _step_gui_evidence()
+    steps["defense_probe"] = _step_defense_probe()
     steps["agent_eval"] = _step_agent_eval()
 
     graded = [v for v in steps.values() if isinstance(v, dict) and v.get("pass") is not None]
@@ -419,6 +462,10 @@ def render(doc: dict[str, Any]) -> str:
             detail = (f"bundle_verify={value.get('bundle_verify_exit')} "
                       f"zip_entries={value.get('zip_entries')} "
                       f"manifest_ok={value.get('zip_manifest_ok')}")
+        elif name == "defense_probe":
+            detail = f"{value.get('status')} {value.get('passed')}/{value.get('ran')} (failed {value.get('failed')})"
+        elif name == "gui_evidence":
+            detail = f"{value.get('status')} (registered {value.get('registered')}/{value.get('total')})"
         elif name == "agent_eval":
             detail = f"{value.get('status')} (submitted={value.get('submitted')})"
         lines.append(f"| {name} | {state} | {detail} |")

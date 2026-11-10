@@ -1,0 +1,54 @@
+{
+  "evidence_dir": "evidence/gui",
+  "generated_at_utc": "2026-11-10T07:31:18Z",
+  "items": {
+    "A": {
+      "files": [],
+      "label": "语义实验室（预测/运行/解释/重置/缩放/输入法/焦点）",
+      "note": "登记不等于通过；PASS 必须由本人现场确认",
+      "pass": null,
+      "registered": false,
+      "status": "NOT_RUN"
+    },
+    "B": {
+      "files": [],
+      "label": "日志工作台（WARN/retry/top=2、原始报告、坏文件恢复）",
+      "note": "登记不等于通过；PASS 必须由本人现场确认",
+      "pass": null,
+      "registered": false,
+      "status": "NOT_RUN"
+    },
+    "C": {
+      "files": [],
+      "label": "LWT Snake（方向键/提示/自动驾驶/失焦/录制回放）",
+      "note": "登记不等于通过；PASS 必须由本人现场确认",
+      "pass": null,
+      "registered": false,
+      "status": "NOT_RUN"
+    },
+    "D": {
+      "files": [],
+      "label": "S41 只读 Tk 查看器",
+      "note": "登记不等于通过；PASS 必须由本人现场确认",
+      "pass": null,
+      "registered": false,
+      "status": "NOT_RUN"
+    },
+    "E": {
+      "files": [],
+      "label": "PPT 逐页播放 + 桌面无遮挡/输入归属",
+      "note": "登记不等于通过；PASS 必须由本人现场确认",
+      "pass": null,
+      "registered": false,
+      "status": "NOT_RUN"
+    }
+  },
+  "not_automated": true,
+  "overall": "REGISTERED 0/5",
+  "pass": null,
+  "registered": 0,
+  "schema_version": 1,
+  "tool": "tools/register_gui_evidence.py",
+  "total": 5,
+  "warning": "人工 GUI 验收不能由本工具判定；未登记项为 NOT_RUN，遮挡/不可归因为 BLOCKED。"
+}
