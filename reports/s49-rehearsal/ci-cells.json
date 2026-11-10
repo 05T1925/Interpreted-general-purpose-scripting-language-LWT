@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-10T15:22:51Z",
+  "generated_at_utc": "2026-11-10T16:31:53Z",
   "source": "public GitHub HTML (commit checks page + per-job page); REST API was rate-limited (60/h anonymous, 0 remaining, reset 09:25Z) and no token/gh was available",
   "method": "job names, conclusions and durations parsed from https://github.com/<repo>/commit/<sha>/checks and https://github.com/<repo>/actions/runs/<run>/job/<job_id>; conclusions cross-checked against the \"This job succeeded/failed\" labels (4 per run)",
   "warning": "a run-level success badge is NOT used as evidence; each cell below comes from its own job page",
@@ -161,6 +161,46 @@
         }
       ],
       "note": "S49 final green run; the two earlier S49 SHAs (1f52eaf, 6d1685d) were red and their causes are documented in the report."
+    },
+    "f3e209c68354751d10a1ffdc4b149c6f0b959621": {
+      "run_id": "42844502753",
+      "run_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42844502753",
+      "checks_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/commit/f3e209c68354751d10a1ffdc4b149c6f0b959621/checks",
+      "cells": [
+        {
+          "os": "ubuntu-latest",
+          "python": "3.10",
+          "job_id": "129928242444",
+          "conclusion": "success",
+          "duration": "7m 47s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42844502753/job/129928242444"
+        },
+        {
+          "os": "ubuntu-latest",
+          "python": "3.13",
+          "job_id": "129928242449",
+          "conclusion": "success",
+          "duration": "5m 46s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42844502753/job/129928242449"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.10",
+          "job_id": "129928241831",
+          "conclusion": "success",
+          "duration": "9m 13s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42844502753/job/129928241831"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.13",
+          "job_id": "129928242483",
+          "conclusion": "success",
+          "duration": "8m 39s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42844502753/job/129928242483"
+        }
+      ],
+      "note": "S49 close-out tip; four cells parsed individually from the public checks page (4 succeeded / 0 failed) and per-job pages (durations)."
     }
   }
 }

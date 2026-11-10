@@ -130,3 +130,19 @@
 | 现场人工 GUI A–E | 无 | 不自动化、不声称通过 | 未验证 |
 
 **重要（S49）**：以上只记录执行窗口自测与本地彩排；S43–S48 未经主窗口复核，本清单不替代主窗口审查、教师线下验收与现场人工 GUI。报告见 [s49-defense-rehearsal.md](s49-defense-rehearsal.md)。
+
+## S50 单命令 unittest 红线清零（执行窗口自测；基线未经主窗口复核 S43–S49）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| 根因对照实验 | `reports/s50-closeout/unittest-interpreter-root-cause.json` | 同一命令两种解释器：无 Tk 的 3.13.14 → 711 项 + 2 个 tkinter 失败；`py -3.13`（3.13.7+Tk 8.6）→ 713 OK；日志 SHA-256 双份核对 | 主窗口实测 |
+| 断言解释器口径 | `docs/defense-claims.json` | `requires.tkinter` + `import tkinter` 前置检查 + 单命令工具；探针解析 Tk 解释器并记录 `sys.executable`/`TkVersion` | 执行实现完成 |
+| 固化测试 | `tests/test_unittest_claim.py` | 6 项：断言声明、非两批口径、探针解析/替换、证据字段、S49 历史保留与 S50 修正段 | 6/6 通过 |
+| 探针 | `reports/s50-closeout/defense-probe-merge.json` | 以 S49 的 24 行为底稿，只重跑 `unittest` 并合并；`719` 项 `OK`、`exit 0`、`717.5 s` | **24/24 PASS** |
+| 一键自检 | `reports/s50-closeout/selfcheck/` | `git/protected_diff/integrity/blackbox/determinism/compare_perf/doc_consistency/ppt/model_check/submission/defense_probe` 全 PASS；GUI/agent N/A | **12/12** |
+| CI 四格 | `reports/s49-rehearsal/ci-cells.json` | `f3e209c`（run 42844502753）逐 job：ubuntu 3.10 7m47s、ubuntu 3.13 5m46s、windows 3.10 9m13s、windows 3.13 8m39s，4 succeeded | 4/4 通过 |
+| PPT | `slides/LWT介绍.pptx` | 本阶段不改内容；21 页、第 10 页图表 12 数值点、SHA `7cb28b13…` 静态校验 | 未改动 |
+| 现场人工 GUI A–E | 无 | 用户本人稍后执行；登记前保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
+
+**重要（S50）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。报告见 [s50-closeout.md](s50-closeout.md)。
+

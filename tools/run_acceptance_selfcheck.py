@@ -188,12 +188,18 @@ def _step_agent_eval() -> dict[str, Any]:
 def _step_defense_probe() -> dict[str, Any]:
     """S48: summarize the last defense-probe run; never invent a pass."""
 
-    path = ROOT / "reports" / "s49-rehearsal" / "defense-probe.json"
-    if not path.exists():
-        path = ROOT / "reports" / "s48-defense" / "defense-probe.json"
-    if not path.exists():
+    # S50 keeps its merged probe (23 carried rows + a fresh unittest row) in
+    # reports/s50-closeout/; fall back to the frozen S49/S48 files when absent.
+    candidates = [
+        ROOT / "reports" / "s50-closeout" / "defense-probe-merge.json",
+        ROOT / "reports" / "s49-rehearsal" / "defense-probe.json",
+        ROOT / "reports" / "s48-defense" / "defense-probe.json",
+    ]
+    path = next((item for item in candidates if item.exists()), None)
+    if path is None:
         return {"status": "NOT_RUN", "pass": None,
-                "detail": "run tools/run_defense_probe.py --all --out reports/s49-rehearsal/defense-probe.json"}
+                "detail": "run tools/run_defense_probe.py --claim unittest --merge "
+                          "--out reports/s50-closeout/defense-probe-merge.json"}
     doc = json.loads(path.read_text(encoding="utf-8"))
     passed = doc.get("passed", 0)
     ran = doc.get("ran", 0)
