@@ -207,7 +207,19 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 | lag 实测 | `tools/check_package_lag.py`：X=`957b9cb`、HEAD=`6d1685d`、lag **1** 个文件（索引本身）、`outside_whitelist=[]`、退出 0 |
 | 新克隆 | HEAD `957b9cb`；clone/version/check/blackbox/compileall/integrity **6 条 exit 0**；黑盒 **400/400**（233.3 s），总 **242.0 s**；`lag_ok=true` |
 
-说明：包在内容 tip `957b9cb` 生成，索引提交 `6d1685d` 是其后唯一一笔；再往后的克隆/自检/报告提交全部在 `diff_whitelist` 内，由 `check_package_lag` 每次重算。
+说明：`reports/s48-defense/` 下**唯一**改动是活跃索引 `package-index.json`（它本来就是指向最新包的指针，不是冻结证据）；S48 的 fresh-clone/selfcheck/ablation 等冻结文件零改动。包在内容 tip `957b9cb` 生成，索引提交 `6d1685d` 是其后唯一一笔；再往后的克隆/自检/报告提交全部在 `diff_whitelist` 内，由 `check_package_lag` 每次重算。
+
+### 7.3 一键自检（S49 树，实测）
+
+`python tools/run_acceptance_selfcheck.py --out reports/s49-rehearsal/selfcheck`：
+
+| 步骤 | 结果 |
+|---|---|
+| git / protected_diff / integrity / blackbox / determinism / compare_perf / doc_consistency / ppt / model_check / submission | **PASS**（10 步） |
+| gui_evidence / agent_eval | N/A（人工 GUI 与盲测状态，不作为门禁） |
+| **defense_probe** | **FAIL**：`last probe PASS 23/24`，唯一失败行是 `unittest`（§2.4） |
+
+**自检整体 FAIL，原因是且仅是 `unittest` 那一行**。不把 FAIL 写成 PASS；等价证据是两批 713/713。过程中修掉一个自检自身的缺陷：`git` 步骤曾把自检自己写入的未跟踪目录算作脏树（`?? reports/s49-rehearsal/selfcheck/`），导致“自己把自己判红”；现在该步骤忽略 `--out` 下的未跟踪项，其它改动仍然判红。
 
 ## 8. CI 四格与失败复盘
 
