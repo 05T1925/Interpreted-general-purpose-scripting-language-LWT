@@ -190,9 +190,18 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 | PPT 改动 | 仅第 18–21 页页脚状态文案（695/21/已推送/CI 结论）；**不新增页**；第 10 页原生图表 **12 数值点未变** |
 | evidence.s49_rehearsal / s49_ci | `docs/s49-defense-rehearsal.md` / `reports/s49-rehearsal/ci-cells.json` |
 
-### 7.2 包索引（S49 重建后）
+### 7.2 包索引与克隆（S49 重建后，实测）
 
-（重建与克隆结果见 §7.4，最终值以 `reports/s48-defense/package-index.json` 与实际 `check_package_lag` 输出为准。）
+| 项 | 值 |
+|---|---|
+| 包目录 | `dist/lwt-submission-20261110T121801Z/`（`dist/` gitignore） |
+| bundle | `550ed0689ec0...`，`git bundle verify` = 0，仅 branches/tags/HEAD |
+| zip | `17d56d55abf7...`，**1654 项**，`testzip` 通过，`manifest.sha256` 逐项匹配 |
+| 包索引 | `bundle_ref_sha=957b9cb`、`final_tip_sha=957b9cb`、白名单 7 条（索引/克隆对/selfcheck 目录/探针对/报告） |
+| lag 实测 | `tools/check_package_lag.py`：X=`957b9cb`、HEAD=`6d1685d`、lag **1** 个文件（索引本身）、`outside_whitelist=[]`、退出 0 |
+| 新克隆 | HEAD `957b9cb`；clone/version/check/blackbox/compileall/integrity **6 条 exit 0**；黑盒 **400/400**（233.3 s），总 **242.0 s**；`lag_ok=true` |
+
+说明：包在内容 tip `957b9cb` 生成，索引提交 `6d1685d` 是其后唯一一笔；再往后的克隆/自检/报告提交全部在 `diff_whitelist` 内，由 `check_package_lag` 每次重算。
 
 ## 8. 未验证项（如实）
 

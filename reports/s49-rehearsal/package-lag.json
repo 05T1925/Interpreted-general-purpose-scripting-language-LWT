@@ -1,0 +1,17 @@
+{
+  "bundle_ref_sha": "957b9cb6d7a1c6f762d59f1365d288d5f039afac",
+  "declared_final_tip_sha": "957b9cb6d7a1c6f762d59f1365d288d5f039afac",
+  "generated_at_utc": "2026-11-10T12:22:44Z",
+  "head": "6d1685d967f1ce63e98d2c190a58a09a68b4535e",
+  "in_whitelist": [
+    "reports/s48-defense/package-index.json"
+  ],
+  "index": "reports/s48-defense/package-index.json",
+  "lag_paths": [
+    "reports/s48-defense/package-index.json"
+  ],
+  "ok": true,
+  "outside_whitelist": [],
+  "schema_version": 1,
+  "tool": "tools/check_package_lag.py"
+}
