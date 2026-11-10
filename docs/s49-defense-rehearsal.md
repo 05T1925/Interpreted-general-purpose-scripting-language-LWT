@@ -75,7 +75,9 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 | 2 | FAIL（exit 1） | `1466.8 s` | 阈值修好后仍 exit 1；探针只保留输出前 600 字符，失败名不可见 |
 | 3 | 挂起后被终止 | — | 子进程持有 stdout/stderr 管道，`subprocess.run(capture_output=True)` 等不到 EOF；探针本身卡住，手动终止 |
 
-**结论**：不把该断言写成 PASS。全量的等价证据是 §2.2 的两批 **713/713**（687 + 26，0 failure / 0 error，均已 `OK`）。探针记 `FAIL`，报告与答辩口径都按“单命令未跑成、两批全绿”陈述；这属于**测试/采集**问题，不是语言或应用回归。
+**第 4 次定位（`--failfast`，2026-11-10 20:30）**：全量跑到第 452 项时，失败用例是 `ArenaTests.test_v2_policy_tampering_and_explanation`，堆栈为 `BridgeFailure: timed out after 2s waiting for request 000001`——策略子进程 2 秒内没回应 INIT。同一时段实测「空 `python -c pass` 子进程」需 **334 ms**（正常约 60–100 ms），机器已明显降速；该轮 452 项耗时 `2570 s`，而此前 687 项只用 `835.8 s`。这是**环境时序**导致的 2 s 超时，不是语言/应用回归，也不再通过调大测试阈值来“修绿”。
+
+**结论**：不把该断言写成 PASS。全量的等价证据是 §2.2 的两批 **713/713**（687 + 26，0 failure / 0 error，均已 `OK`，且在机器降速前测得）。探针记 `FAIL`，报告、答辩卡与自检输出都按“单命令未跑成、两批全绿、原因是环境时序”陈述。
 
 ### 2.3 第二个阈值：GUI 收敛上限 45 s
 
@@ -167,6 +169,10 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 | 全 21 页 `--offline` | 32 | 全部 `SKIPPED_OFFLINE`（0 s） | `rehearsal-20261110T093945Z-offline.*` |
 
 **如实说明**：heavy 断言（400 黑盒约 281 s、全量 unittest 约 20 min、46×10）在 60 s 时间盒下必然 `TIMEOUT`；现场这几页应改为“只展示已记录证据”，或用 `--allow-heavy` 单独排练。本轮**没有**用 60 s 去跑 heavy 制造假 FAIL。
+
+### 5.4 一键自检的预期状态
+
+`tools/run_acceptance_selfcheck.py` 的 `defense_probe` 步骤读取 `reports/s49-rehearsal/defense-probe.json`，按“有 FAIL 行即 FAIL”判定。由于上述 `unittest` 行是 FAIL，**自检整体会是 FAIL**（其余步骤 PASS）。报告不把它写成 PASS；这正是 S48 定下的“任一步 FAIL 就整体 FAIL，不写基本通过”。
 
 ## 6. WP3：GUI A–E 双轨（按裁决 C=否）
 
