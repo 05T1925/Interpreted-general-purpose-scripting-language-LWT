@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "note": "S49: single source for the 21-slide defense runbook, the offline evidence console navigation and the rehearsal tool. Every claim id must exist in docs/defense-claims.json (asserted by tests/test_delivery_readiness.py). mode=live means the command must actually run on site; recorded means show the committed evidence only; talk means no command.",
+  "pages": [
+    {"page": 1, "title": "封面：LWT 可执行语言与可复验应用", "seconds": 30, "mode": "live", "claims": ["version"]},
+    {"page": 2, "title": "课程八项交付物", "seconds": 40, "mode": "talk", "claims": ["help"]},
+    {"page": 3, "title": "LWT 语言的特色组合", "seconds": 40, "mode": "live", "claims": ["hello"]},
+    {"page": 4, "title": "解释器执行路径", "seconds": 35, "mode": "live", "claims": ["check"]},
+    {"page": 5, "title": "关键语义与可定位错误", "seconds": 40, "mode": "live", "claims": ["hello", "dap"]},
+    {"page": 6, "title": "一键黑盒测试与覆盖矩阵", "seconds": 45, "mode": "live", "claims": ["blackbox", "integrity"]},
+    {"page": 7, "title": "Agent 指南与真实 LWT 应用", "seconds": 40, "mode": "talk", "claims": ["blind"]},
+    {"page": 8, "title": "日志分析器：公开 CLI 结果", "seconds": 40, "mode": "live", "claims": ["diff-eq"]},
+    {"page": 9, "title": "LWT Snake 与策略证据链", "seconds": 40, "mode": "recorded", "claims": ["replay"]},
+    {"page": 10, "title": "S11：新进程端到端性能", "seconds": 45, "mode": "recorded", "claims": ["s11", "compare-perf"]},
+    {"page": 11, "title": "并发记录与开发工具", "seconds": 40, "mode": "live", "claims": ["determinism"]},
+    {"page": 12, "title": "现场演示与交付边界", "seconds": 35, "mode": "talk", "claims": ["doc-consistency"]},
+    {"page": 13, "title": "S43：为什么做确定性并发", "seconds": 40, "mode": "talk", "claims": ["determinism"]},
+    {"page": 14, "title": "S43：调度、轨迹与三态证据", "seconds": 45, "mode": "live", "claims": ["replay"]},
+    {"page": 15, "title": "S43：应用与性能实验", "seconds": 40, "mode": "live", "claims": ["diff-eq"]},
+    {"page": 16, "title": "S44：启动与热路径为什么能更快", "seconds": 40, "mode": "live", "claims": ["no-concurrency", "s44-startup"]},
+    {"page": 17, "title": "S44：分层证据与诚实口径", "seconds": 40, "mode": "recorded", "claims": ["s44-exec", "compare-perf"]},
+    {"page": 18, "title": "S45：八项交付物到证据与一条命令", "seconds": 45, "mode": "live", "claims": ["unittest", "integrity"]},
+    {"page": 19, "title": "S46：有界调度探索抓出抽样漏掉的缺陷", "seconds": 45, "mode": "recorded", "claims": ["s46-clean", "s46-mutant"]},
+    {"page": 20, "title": "S47：教师入口与一键提交包", "seconds": 40, "mode": "live", "claims": ["bundle-index", "fresh-clone"]},
+    {"page": 21, "title": "S48：指南消融与现场可质询验收", "seconds": 60, "mode": "live", "claims": ["blind", "blind-ci", "ppt", "doc-consistency"]}
+  ]
+}

@@ -15,7 +15,7 @@ touch the declared whitelist (the index file itself), so "bundle tip verified"
 is never reported as "final tip verified".
 
 Every command's real exit code and key output is recorded in
-``reports/s48-defense/fresh-clone.{json,md}``.
+``reports/s49-rehearsal/fresh-clone.{json,md}``.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OUT = ROOT / "reports" / "s48-defense" / "fresh-clone.json"
+DEFAULT_OUT = ROOT / "reports" / "s49-rehearsal" / "fresh-clone.json"
 LATEST = ROOT / "dist" / "latest.json"
 
 

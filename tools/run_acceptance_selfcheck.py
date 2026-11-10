@@ -177,10 +177,12 @@ def _step_agent_eval() -> dict[str, Any]:
 def _step_defense_probe() -> dict[str, Any]:
     """S48: summarize the last defense-probe run; never invent a pass."""
 
-    path = ROOT / "reports" / "s48-defense" / "defense-probe.json"
+    path = ROOT / "reports" / "s49-rehearsal" / "defense-probe.json"
+    if not path.exists():
+        path = ROOT / "reports" / "s48-defense" / "defense-probe.json"
     if not path.exists():
         return {"status": "NOT_RUN", "pass": None,
-                "detail": "run tools/run_defense_probe.py --all --skip-heavy"}
+                "detail": "run tools/run_defense_probe.py --all --out reports/s49-rehearsal/defense-probe.json"}
     doc = json.loads(path.read_text(encoding="utf-8"))
     passed = doc.get("passed", 0)
     ran = doc.get("ran", 0)
