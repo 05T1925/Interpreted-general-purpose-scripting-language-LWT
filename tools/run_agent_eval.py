@@ -62,6 +62,17 @@ def _entry(submission_dir: Path) -> Path | None:
         candidate = submission_dir / name
         if candidate.exists():
             return candidate
+    # S48: the task prompt names the file (freq.lwt, cleanup.lwt, ...). Accept
+    # any single non-library module; prefer mix.lwt when both exist.
+    candidates = [
+        path for path in sorted(submission_dir.glob("*.lwt"))
+        if path.name not in {"lib.lwt"}
+    ]
+    if len(candidates) == 1:
+        return candidates[0]
+    for path in candidates:
+        if path.name == "mix.lwt":
+            return path
     return None
 
 
@@ -175,6 +186,8 @@ def grade_all(task_filter: str | None = None, timeout: int = 30,
         for index in range(1, max(1, samples) + 1):
             if samples == 1:
                 directory = submissions_dir / task["id"]
+                if group and (directory / "sample-1").exists():
+                    directory = directory / "sample-1"
             else:
                 directory = submissions_dir / task["id"] / f"sample-{index}"
             result = grade_task(task, timeout=timeout, submission_dir=directory)
@@ -197,7 +210,10 @@ def grade_all(task_filter: str | None = None, timeout: int = 30,
             sum(1 for r in submitted_rows if r["status"] == "PASS"),
             len(submitted_rows),
         )
-    from tools.agent_eval_stats import summarize_group
+    try:
+        from tools.agent_eval_stats import summarize_group
+    except ModuleNotFoundError:  # running as a script: sys.path[0] is tools/
+        from agent_eval_stats import summarize_group
     stats = summarize_group(group or "default", per_task, k=min(samples, 5)) if submitted else None
     return {
         "schema_version": 2 if samples > 1 else 1,
