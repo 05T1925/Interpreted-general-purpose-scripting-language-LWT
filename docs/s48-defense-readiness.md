@@ -99,5 +99,24 @@
 
 ## 10. 提交与 CI
 
-- 提交序列与最终 SHA：见本报告所在提交；`git log --oneline 5a61ab9..HEAD` 可复核。
-- CI：推送后按精确 SHA 查询四格，结论单独记录，不把“推送成功”当“CI 通过”。
+S48 相对 S47（`5a61ab9`）共 14 笔，按 WP 分组：
+
+| 提交 | 内容 |
+|---|---|
+| `9e2b7ea` | 基线回归证据（400/400、677/677、46×10） |
+| `76bb4fb` | WP0：bundle 自引用、文档语义、SUBMISSION 指向索引 |
+| `dcb0b1e` | 首个包索引（bundle `76bb4fb`） |
+| `3c82acf` | 修复 lag 比较使用真实 HEAD |
+| `d9daedd` | WP1 工具：tasks-v2、Wilson/pass@k、多样本判分 |
+| `11184e2` | WP1：60 会话与消融证据 |
+| `1b5eaca` | 判分器接受题目命名文件 |
+| `682fdd9` | WP2/WP3：GUI 包、24 断言、探针、HTML |
+| `a626994` | WP4：报告、21 页 PPT、manifest、清单/演示/答辩 |
+| `5619908` | 报告 EOF 修正 |
+| `bdde5d9` | 自检 PASS 证据（12 步） |
+| `bfda042` | 包在自检 tip 重建（白名单扩展） |
+| `e8d64b5` | 索引提交（只含索引） |
+| `f46ff08` | 新克隆 400/400、lag 仅索引 |
+
+- CI：推送后按精确 SHA 查询四格并单独记录；不把“推送成功”当“CI 通过”。若网络不可达，如实写“未验证”，不伪造。
+- 包与最终 tip 的关系：bundle 截止 `bfda042`，索引提交 `e8d64b5` 及其后的报告/证据提交都在 `diff_whitelist` 内；`verify_fresh_clone` 在 `e8d64b5` 实测 `lag=['reports/s48-defense/package-index.json']`、`lag_ok=true`、6 条命令 exit 0、400/400。
