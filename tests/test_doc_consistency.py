@@ -207,12 +207,13 @@ class StatusConsistencyTests(unittest.TestCase):
         # S47 closes the delivery: the submission report must quote the same
         # unittest count and PPT page count as the manifest. Written before the
         # S47 doc was updated, so it fails first and then goes green.
-        doc = _load_manifest()
+        # S47 is a historical report: it must keep its own frozen numbers (677
+        # unittest, 20-page PPT), not the current S48 manifest values.
         report = REPO_ROOT / "docs" / "s47-final-submission.md"
         self.assertTrue(report.exists(), "docs/s47-final-submission.md is missing")
         text = report.read_text(encoding="utf-8")
-        self.assertIn(str(doc["unittest_count"]), text)
-        self.assertIn(f"{doc['ppt_pages']} 页", text)
+        self.assertIn("677", text)
+        self.assertIn("20 页", text)
 
 
 class SemanticStatusConsistencyTests(unittest.TestCase):
@@ -235,7 +236,7 @@ class SemanticStatusConsistencyTests(unittest.TestCase):
 
     def test_blind_eval_status_matches_manifest(self) -> None:
         status = str(_load_manifest().get("agent_eval_status", ""))
-        if not ("PARTIAL" in status or status.startswith("PASS")):
+        if not ("PARTIAL" in status or "EXECUTED" in status or status.startswith("PASS")):
             self.skipTest("manifest does not record an executed blind evaluation")
         pattern = re.compile(r"未执行（NOT_RUN）|盲测未执行|Agent 盲测[^。|]{0,16}未执行")
         offenders = self._scan(pattern)
@@ -275,6 +276,18 @@ class SemanticStatusConsistencyTests(unittest.TestCase):
         submission = (REPO_ROOT / "SUBMISSION.md").read_text(encoding="utf-8")
         self.assertIn("reports/s48-defense/package-index.json", submission)
         self.assertTrue((REPO_ROOT / "reports/s48-defense/package-index.json").exists())
+
+
+    def test_s48_report_quotes_current_manifest_counts(self) -> None:
+        # S48 closes the defense phase: its report must quote the same unittest
+        # and PPT counts as the manifest. Written before the report existed so
+        # the red -> green sequence is reproducible.
+        doc = _load_manifest()
+        report = REPO_ROOT / "docs" / "s48-defense-readiness.md"
+        self.assertTrue(report.exists(), "docs/s48-defense-readiness.md is missing")
+        text = report.read_text(encoding="utf-8")
+        self.assertIn(str(doc["unittest_count"]), text)
+        self.assertIn(f"{doc['ppt_pages']} 页", text)
 
 
 if __name__ == "__main__":

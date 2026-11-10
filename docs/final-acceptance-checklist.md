@@ -101,3 +101,17 @@
 | 现场人工 GUI A–E | 无 | 不自动化、不声称通过 | 未验证 |
 
 **重要（S47）**：以上只记录**执行窗口自测**。基线 S43–S46 未经主窗口复核；本清单不替代主窗口审查、教师线下验收与现场人工 GUI。Agent 盲测为单样本，pass@1 不是统计显著结论。报告见 [s47-final-submission.md](s47-final-submission.md)。
+
+## S48 证据自洽与现场验收就绪核对（执行窗口自测；基线未经主窗口复核 S43–S47）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| bundle 自引用 | `tools/build_submission.py`、`reports/s48-defense/package-index.json` | `--final-tip/--allow-ref-lag/--package-index`；bundle `76bb4fb`、最终 tip `dcb0b1e`、lag 仅索引文件；`verify_fresh_clone --package-index` 同时验证 X 与 Y | 执行实现完成 |
+| 当前状态文档自洽 | `tests/test_doc_consistency.py`（16 项） | 语义断言：manifest 记录 EXECUTED 时不得再写 NOT_RUN 为当前结论；交付面不得出现过期的分支状态表述；submission_bundle 指向入库索引；先红后绿 | 执行实现完成 |
+| 指南消融 + 盲测 | `docs/s48-agent-eval.md`、`reports/s48-defense/ablation.*`、`docs/agent-eval/submissions-v2/` | 60 个独立会话：T 30/30（Wilson 0.886–1.000）、C 29/30（0.833–0.995）；T−C=+0.033 [−0.031,+0.098]；未触发指南修订 | 执行实现完成 |
+| GUI A–E 验收包 | `docs/gui-acceptance-kit.md`、`tools/register_gui_evidence.py`、`evidence/gui/` | 只登记材料与 SHA-256，不自动判 PASS；当前 REGISTERED 0/5 | 工具完成，人工 NOT_RUN |
+| 可质询证据台 | `docs/defense-claims.json`（24 条）、`tools/run_defense_probe.py`、`docs/defense-index.html` | `--claim/--random/--all` 真实子进程；非 heavy 21/21 PASS；HTML 离线可开 | 执行实现完成 |
+| PPT / manifest | `slides/LWT介绍.pptx`、`docs/delivery-manifest.json` | 21 页；第 10 页图表 12 数值点未变；SHA `0be34afa…`；unittest 685 | 执行实现完成 |
+| 现场人工 GUI | 无 | 不自动化、不声称通过 | 未验证 |
+
+**重要（S48）**：以上只记录执行窗口自测；S43–S47 未经主窗口复核，本清单不替代主窗口审查、教师线下验收与现场人工 GUI。S48 报告见 [s48-defense-readiness.md](s48-defense-readiness.md)。

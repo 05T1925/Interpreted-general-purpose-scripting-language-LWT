@@ -102,20 +102,23 @@ python -c "import json;d=json.load(open('reports/s46-concurrency-model/mutant/su
 
 讲解词：**有界探索不是形式化证明**——只覆盖 `max_runs × max_decisions` 内的前缀；预算耗尽写 `BUDGET_EXHAUSTED`，不写 PASS。mutant 是**合成故障注入**，证明检查器能抓到 S45 那种抽样漏掉的交接时序，不是说当前产品有 bug。clean 的 lost-update 会给出 `1`/`2` 两种结果，那是 `allowed_outcomes`，不是违规。
 
-## 教师视角收尾片段（S47，约 40 秒）
+## 教师视角收尾片段（S48，约 40 秒）
 
 ```bash
 # 1) 打开教师入口：8 项提交内容 → 路径/命令/证据
 cat SUBMISSION.md
 
-# 2) 一条命令生成提交包（SUBMISSION.md + bundle + zip + manifest.sha256）
-python tools/build_submission.py
+# 2) 现场随机抽一条可质询断言并复算（也可 --list / --random 3）
+python tools/run_defense_probe.py --claim blind
 
-# 3) 从 bundle 新克隆并跑 400 黑盒（验证交付可达）
-python tools/verify_fresh_clone.py
+# 3) 看包索引：bundle 截止 SHA、最终 tip、允许的 lag 白名单
+cat reports/s48-defense/package-index.json
+
+# 4) 从 bundle 新克隆并跑 400 黑盒（验证交付可达）
+python tools/verify_fresh_clone.py --package-index reports/s48-defense/package-index.json
 ```
 
-讲解词：`SUBMISSION.md` 是教师第一眼入口；`dist/lwt-submission-<UTC>/lwt-history.bundle` 含全部 refs 与历史，`lwt-submission.zip` 附逐文件 SHA-256；新克隆验证在空目录里重跑 400/400，证明交付不依赖本工作区未跟踪文件。
+讲解词：`SUBMISSION.md` 是教师第一眼入口；现场用 `run_defense_probe.py --claim <id>` 复算任一断言；`package-index.json` 明确写出 bundle 截止 SHA 与最终 tip 的差异白名单（自引用无法把“记录包的那一笔”打进包内）；新克隆在空目录重跑 400/400，不依赖本工作区未跟踪文件。
 
 ## 无 GUI 后退
 

@@ -159,13 +159,13 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 | S43 并发 | 46 项并发黑盒、46×10 逐字节确定、found/absent/tampered 三态 | `docs/s42-deterministic-concurrency.md`、`reports/s42-schedules/` |
 | S44 加速 | 纯执行 N=5000：1.454× / 1.552× / 2.992×；启动 1.256× / 1.224× | `docs/s44-performance.md`、`reports/s44-performance/` |
 | S46 模型检查 | clean 8 程序 / 32 runs / 0 violation；mutant 4 violation、最小前缀 `[]` | `reports/s46-concurrency-model/` |
-| S47 Agent 盲测 | 首轮 **5/6 = 0.833**（唯一失败为题面歧义）；澄清题面后单题复跑通过 | `reports/s47-submission/agent-eval.json`、`docs/s47-agent-eval.md` |
+| S48 Agent 盲测 | 60 会话（6 题 × T/C 两组 × 5 样本）：T **30/30**、C **29/30**；T−C=+0.033，95% 区间 [−0.031, +0.098] | `reports/s48-defense/ablation.json`、`docs/s48-agent-eval.md` |
 
 ## 未验证项（如实）
 
 - 现场人工 GUI A–E 验收未执行（语义实验室、日志工作台、LWT Snake、S41 查看器、PPT 逐页播放、桌面无遮挡/输入归属）。
 - 教师线下验收与评分未发生。
-- Agent 盲测为 6 题单样本；pass@1 不是统计显著的能力估计。
+- Agent 盲测为 60 会话的观察性对照（6 题 × 2 组 × 5 样本）；T−C 区间含 0，不是因果证明。
 - CI 结论按精确 SHA 记录；功能分支与 `main` 的 CI 分开写，不互相推断。
 
 ## 交付包
