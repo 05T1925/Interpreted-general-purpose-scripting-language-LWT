@@ -200,14 +200,14 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 
 | 项 | 值 |
 |---|---|
-| 包目录 | `dist/lwt-submission-20261110T121801Z/`（`dist/` gitignore） |
-| bundle | `550ed0689ec0...`，`git bundle verify` = 0，仅 branches/tags/HEAD |
-| zip | `17d56d55abf7...`，**1654 项**，`testzip` 通过，`manifest.sha256` 逐项匹配 |
-| 包索引 | `bundle_ref_sha=957b9cb`、`final_tip_sha=957b9cb`、白名单 7 条（索引/克隆对/selfcheck 目录/探针对/报告） |
-| lag 实测 | `tools/check_package_lag.py`：X=`957b9cb`、HEAD=`6d1685d`、lag **1** 个文件（索引本身）、`outside_whitelist=[]`、退出 0 |
-| 新克隆 | HEAD `957b9cb`；clone/version/check/blackbox/compileall/integrity **6 条 exit 0**；黑盒 **400/400**（233.3 s），总 **242.0 s**；`lag_ok=true` |
+| 包目录 | `dist/lwt-submission-20261110T152326Z/`（`dist/` gitignore） |
+| bundle | `7b0c69fd82b3...`，`git bundle verify` = 0，仅 branches/tags/HEAD |
+| zip | `e9134379a379...`，**1672 项**，`testzip` 通过，`manifest.sha256` 逐项匹配 |
+| 包索引 | `bundle_ref_sha=55229dbc`、`final_tip_sha=55229dbc`、白名单 7 条（索引/克隆对/selfcheck 目录/探针对/报告） |
+| lag 实测 | X=`55229dbc`、HEAD=`6bd9546`、lag **1** 个文件（索引本身）、`outside_whitelist=[]`、退出 0 |
+| 新克隆 | HEAD `55229dbc`；clone/version/check/blackbox/compileall/integrity **6 条 exit 0**；黑盒 **400/400**（145.6 s），总 **151.0 s**；`lag_ok=true` |
 
-说明：`reports/s48-defense/` 下**唯一**改动是活跃索引 `package-index.json`（它本来就是指向最新包的指针，不是冻结证据）；S48 的 fresh-clone/selfcheck/ablation 等冻结文件零改动。包在内容 tip `957b9cb` 生成，索引提交 `6d1685d` 是其后唯一一笔；再往后的克隆/自检/报告提交全部在 `diff_whitelist` 内，由 `check_package_lag` 每次重算。
+说明：`reports/s48-defense/` 下**唯一**改动是活跃索引 `package-index.json`（它本来就是指向最新包的指针，不是冻结证据）；S48 的 fresh-clone/selfcheck/ablation 等冻结文件零改动。第一次包停在 `957b9cb`，不含后来新增的 `tools/run_unittest_batches.py`，会被 `check_package_lag` 判为白名单外；因此在收口 tip 重新打包，这是**最终交付包**。
 
 ### 7.3 一键自检（S49 树，实测）
 
