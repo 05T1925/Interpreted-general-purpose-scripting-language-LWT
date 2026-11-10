@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "tool": "main-window复检/决定性对比实验",
+  "generated_at_utc": "2026-11-10T16:14:00Z",
+  "intent": "定位 S49 遗留的唯一红线：defense-claims.json 的 unittest 单命令行 FAIL。结论是解释器选择问题（tkinter 缺失），不是环境时序、不是 2s bridge 超时、不是语言或测试代码缺陷。",
+  "command": "python -m unittest discover -s tests -q",
+  "A_workbuddy_python": {
+    "sys_executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+    "reported_version": "3.13.14",
+    "tkinter": "ModuleNotFoundError: No module named 'tkinter'",
+    "exit_code": 1,
+    "ran": 711,
+    "skipped": 23,
+    "failures": 1,
+    "errors": 1,
+    "seconds": 1094.564,
+    "log": "reports/s50-closeout/unittest-workbuddy-python.log",
+    "log_sha256": "31d5702a3b393cc46d3b875765ca62f197efc3a1571754115413f3fd1ce8c244",
+    "failures_detail": [
+      {
+        "type": "ERROR",
+        "test": "test_lwt_snake_counterfactual_gui",
+        "reason": "module-level import tkinter -> ModuleNotFoundError (module not loaded, so 711 not 713)"
+      },
+      {
+        "type": "FAIL",
+        "test": "test_tcl_creation_failure_module_entry_exits_nonzero_without_traceback",
+        "expected_stderr_contains": "LWT 语义实验室不可用",
+        "actual_stderr": "Traceback ... ModuleNotFoundError: No module named 'tkinter'"
+      }
+    ]
+  },
+  "B_system_python": {
+    "sys_executable": "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "invoked_as": "py -3.13",
+    "reported_version": "3.13.7",
+    "tkinter": "Tk 8.6",
+    "exit_code": 0,
+    "ran": 713,
+    "ok": true,
+    "seconds": 641.762,
+    "log": "reports/s50-closeout/unittest-system-python.log",
+    "log_sha256": "4eb4f1646a49207ac7ee337626b73e7fc78945b5cf96c160a3df85cf5f7c2a1e"
+  },
+  "root_cause": "defense-claims.json 的 unittest 行 command 写死为 \"python\"。在本机 python 解析到 WorkBuddy 内置 3.13.14（无 tkinter），GUI 测试模块整块无法导入，只跑 711 项并产生 2 个 tkinter 相关失败；系统 py -3.13（3.13.7 + Tk 8.6）同命令 713 OK。S49 两批 run_unittest_batches.py 全绿时用的也是系统 Python 3.13.7+Tk，故两批与单命令的差异来自解释器，而非覆盖范围或超时。",
+  "machine_state": "复测时机器已恢复：空 python -c pass 实测约 0ms（S49 报告期为 334ms）。两次实验均用文件重定向而非 capture_output 管道，规避孙进程占用管道导致的永久等待。",
+  "implication_for_s50": [
+    "优先走分支 A：修 defense-claims.json 的 unittest command 为显式带 Tk 解释器或 sys.executable 语义，并加 tkinter 前置检查；无需改两批口径。",
+    "用本报告两份日志与哈希作为根因证据，执行窗口不必再跑 18 分钟全量。",
+    "分支 B（两批等价覆盖）仅在系统 Python 复测仍失败时采用，当前已被 A 组 exit 0 排除。",
+    "S49 的四次 FAIL 与『环境时序/2s bridge』判定保留为历史，追加本根因修正段，不删除、不改写。"
+  ],
+  "honesty": "本报告只证明『同一命令在带 Tk 的 Python 下 713 OK、在无 Tk 的 Python 下 711 FAIL』。它不声称探针已修、自检已绿、GUI 已验、教师已评分；这些仍需执行窗口按 S50 完成并留真实证据。"
+}
