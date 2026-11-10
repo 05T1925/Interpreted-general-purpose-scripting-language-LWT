@@ -118,5 +118,8 @@ S48 相对 S47（`5a61ab9`）共 14 笔，按 WP 分组：
 | `e8d64b5` | 索引提交（只含索引） |
 | `f46ff08` | 新克隆 400/400、lag 仅索引 |
 
-- CI：推送后按精确 SHA 查询四格并单独记录；不把“推送成功”当“CI 通过”。若网络不可达，如实写“未验证”，不伪造。
+- **推送状态（如实）**：2026-11-10 08:00–08:20 UTC 连续 20 次 `git push origin main` 均在传输层失败
+  （`Recv failure: Connection was aborted`；同一时段 `curl https://github.com` 与代理探测也失败），因此
+  **本轮未推送、CI 未验证**。本地 `main` 领先 `origin/main` 15 笔；网络恢复后执行 `git push origin main`
+  并按该精确 SHA 查询四格即可。**不把“本地通过”写成“CI 通过”**，也不伪造 run 链接。
 - 包与最终 tip 的关系：bundle 截止 `bfda042`，索引提交 `e8d64b5` 及其后的报告/证据提交都在 `diff_whitelist` 内；`verify_fresh_clone` 在 `e8d64b5` 实测 `lag=['reports/s48-defense/package-index.json']`、`lag_ok=true`、6 条命令 exit 0、400/400。
