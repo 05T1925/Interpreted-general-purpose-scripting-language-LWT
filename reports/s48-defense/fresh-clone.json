@@ -1,0 +1,112 @@
+{
+  "all_pass": true,
+  "blackbox_ok": true,
+  "branch": "main",
+  "bundle": "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\dist\\lwt-submission-20261110T024954Z\\lwt-history.bundle",
+  "bundle_ref_sha": "76bb4fb1e7dd00a9d5923f4f99e3f2b0b4225ee8",
+  "clone_dir": "(temporary, removed)",
+  "final_tip_sha": "dcb0b1e27fd4ba5620651f5cc3edf909b2241546",
+  "generated_at_utc": "2026-11-10T03:07:38Z",
+  "head": "76bb4fb1e7dd00a9d5923f4f99e3f2b0b4225ee8",
+  "index_declared_final_tip_sha": "76bb4fb1e7dd00a9d5923f4f99e3f2b0b4225ee8",
+  "lag_ok": true,
+  "lag_paths": [
+    "reports/s48-defense/package-index.json"
+  ],
+  "lag_whitelist": [
+    "reports/s48-defense/package-index.json"
+  ],
+  "schema_version": 1,
+  "seconds": 159.49,
+  "steps": [
+    {
+      "command": [
+        "git",
+        "clone",
+        "--quiet",
+        "-b",
+        "main",
+        "C:\\Users\\28641\\Desktop\\大三上\\程序设计实践\\大作业\\dist\\lwt-submission-20261110T024954Z\\lwt-history.bundle",
+        "C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s47-clone-ug0m1i21\\lwt"
+      ],
+      "exit_code": 0,
+      "name": "git clone",
+      "seconds": 0.939,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--version"
+      ],
+      "exit_code": 0,
+      "name": "version",
+      "seconds": 0.555,
+      "stderr": "",
+      "stdout": "lwt 0.3.0\n"
+    },
+    {
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--check",
+        "examples/modules/main.lwt"
+      ],
+      "exit_code": 0,
+      "name": "check",
+      "seconds": 0.41,
+      "stderr": "",
+      "stdout": "Check passed: 3 source file(s).\n"
+    },
+    {
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tools/run_tests.py"
+      ],
+      "exit_code": 0,
+      "name": "blackbox",
+      "parsed": {
+        "failed": 0,
+        "parsed": true,
+        "passed": 400,
+        "total": 400
+      },
+      "seconds": 154.378,
+      "stderr": "",
+      "stdout": "[PASS] array-alias-and-assignment-value\r\n[PASS] array-negative-index\r\n[PASS] array-noninteger-index\r\n[PASS] array-self-cycle-display\r\n[PASS] array-upper-bound\r\n[PASS] array-zero-index-and-nesting\r\n[PASS] different-record-types-not-equal\r\n[PASS] duplicate-record-declaration\r\n[PASS] each-iteration-has-fresh-scope\r\n[PASS] each-requires-array\r\n[PASS] each-snapshot-append\r\n[PASS] each-snapshot-keeps-object-reference\r\n[PASS] each-snapshot-replacement\r\n[PASS] each-variable-reassignment-does-not-replace-element\r\n[PASS] empty-each\r\n[PASS] field-on-nonrecord\r\n[PASS] index-nonarray\r\n[PASS] missing-record-field\r\n[PASS] push-first-argument-type\r\n[PASS] push-mutates-and-returns-null\r\n[PASS] record-construction-duplicate-field\r\n[PASS] record-construction-extra-field\r\n[PASS] record-construction-missing-field\r\n[PASS] record-field-declaration-order\r\n[PASS] record-field-mutation-and-alias\r\n[PASS] record-fields-accept-any-values\r\n[PASS] record-fields-evaluate-in-source-order\r\n[PASS] record-instance-identity\r\n[PASS] record-self-cycle-display\r\n[PASS] record-validation-before-field-evaluation\r\n[PASS] record-zero-fields\r\n[PASS] unknown-record-type\r\n[PASS] args-arity\r\n[PASS] args-boundaries\r\n[PASS] args-empty\r\n[PASS] args-returns-fresh-array\r\n[PASS] builtin-arity\r\n[PASS] builtin-type\r\n[PASS] display-control-characters\r\n[PASS] emit-and-str-match\r\n[PASS] fail-arity\r\n[PASS] fail-escapes-lines-and-keeps-prior-output\r\n[PASS] fail-requires-string\r\n[PASS] input-arity\r\n[PASS] input-empty-line-and-eof\r\n[PASS] input-final-line-without-lf\r\n[PASS] input-invalid-utf8\r\n[PASS] input-lf-and-crlf\r\n[PASS] input-remaining-cr-is-preserved\r\n[PASS] len-rejects-null\r\n[PASS] len-unicode-codepoints\r\n[PASS] nonselected-branch-has-no-side-effect\r\n[PASS] push-arity\r\n[PASS] read-text-arity\r\n[PASS] read-text-directory\r\n[PASS] read-text-invalid-utf8\r\n[PASS] read-text-missing-file\r\n[PASS] read-text-normalizes-bom-and-newlines\r\n[PASS] read-text-type\r\n[PASS] split-arity\r\n[PASS] split-empty-separator\r\n[PASS] split-overlap-is-nonoverlapping\r\n[PASS] split-preserves-empty-fields\r\n[PASS] split-type\r\n[PASS] str-arity\r\n[PASS] to-int-arity\r\n[PASS] to-int-empty-rejected\r\n[PASS] to-int-large-decimal\r\n[PASS] to-int-plus-rejected\r\n[PASS] to-int-sign-and-leading-zero\r\n[PASS] to-int-type\r\n[PASS] to-int-whitespace-rejected\r\n[PASS] trim-arity\r\n[PASS] trim-only-ascii-whitespace\r\n[PASS] unknown-function-does-not-evaluate-args\r\n[PASS] cli-args-require-separator\r\n[PASS] cli-bare-separator\r\n[PASS] cli-double-separator-data\r\n[PASS] cli-empty-argument-preserved\r\n[PASS] cli-missing-source-file\r\n[PASS] cli-no-arguments\r\n[PASS] cli-source-is-directory\r\n[PASS] diagnostic-path-keeps-cli-argument\r\n[PASS] invalid-utf8-source\r\n[PASS] lex-location-invalid-character\r\n[PASS] runtime-location-accessor\r\n[PASS] runtime-location-operator\r\n[PASS] syntax-eof-location\r\n[PASS] attempt-catches-task-error\r\n[PASS] channel-block-receive\r\n[PASS] channel-close-drain\r\n[PASS] channel-close-idempotent\r\n[PASS] channel-closed-empty-null\r\n[PASS] channel-display-array\r\n[PASS] channel-fifo\r\n[PASS] channel-multi-producer\r\n[PASS] channel-receive-type-error\r\n[PASS] channel-send-closed-error\r\n[PASS] channel-task-display\r\n[PASS] channel-value-any\r\n[PASS] check-spawn-undefined\r\n[PASS] deadlock-double-receive\r\n[PASS] deadlock-join-cycle\r\n[PASS] deadlock-mixed\r\n[PASS] drain-order\r\n[PASS] each-snapshot\r\n[PASS] fifo-order\r\n[PASS] join-non-task-error\r\n[PASS] join-preserves-output\r\n[PASS] join-reraises-location\r\n[PASS] join-self-error\r\n[PASS] join-twice\r\n[PASS] lost-update-fifo\r\n[PASS] profile-rejects-spawn\r\n[PASS] race-lost-update\r\n[PASS] shared-array-ref\r\n[PASS] shared-global\r\n[PASS] shared-record-ref\r\n[PASS] spawn-join-null\r\n[PASS] spawn-join-return\r\n[PASS] spawn-multi-args\r\n[PASS] spawn-nested\r\n[PASS] spawn-no-args\r\n[PASS] spawn-no-switch\r\n[PASS] task-display\r\n[PASS] task-error-preserves-identity\r\n[PASS] task-identity-equality\r\n[PASS] task-input-rejected\r\n[PASS] throw-in-task\r\n[PASS] unjoined-task-error\r\n[PASS] yield-in-function\r\n[PASS] yield-single-noop\r\n[PASS] yield-three-tasks\r\n[PASS] yield-two-alternate\r\n[PASS] argument-evaluation-order\r\n[PASS] argument-evaluation-order-distinct-effects\r\n[PASS] assignment-updates-nearest-binding\r\n[PASS] block-shadow-and-lifetime\r\n[PASS] block-variable-expires\r\n[PASS] break-through-when-block\r\n[PASS] builtin-name-is-not-keyword\r\n[PASS] call-arguments-left-to-right-before-arity\r\n[PASS] continue-through-otherwise-block\r\n[PASS] duplicate-function-prepass-before-statements\r\n[PASS] duplicate-let-before-initializer\r\n[PASS] each-break\r\n[PASS] each-continue-snapshot\r\n[PASS] explicit-empty-return-null\r\n[PASS] function-and-record-name-spaces\r\n[PASS] function-arity\r\n[PASS] function-array-arguments-are-references\r\n[PASS] function-forward-call\r\n[PASS] function-let-cannot-shadow-parameter-in-same-scope\r\n[PASS] function-local-lifetime\r\n[PASS] function-loop-control\r\n[PASS] function-name-cannot-replace-builtin\r\n[PASS] function-not-closure\r\n[PASS] function-too-many-arguments\r\n[PASS] implicit-return-null\r\n[PASS] loop-normal-completion-continues\r\n[PASS] mutual-recursion\r\n[PASS] nested-loop-break\r\n[PASS] nested-loop-continue\r\n[PASS] outer-visible-during-initializer\r\n[PASS] recursive-factorial\r\n[PASS] return-from-nested-block\r\n[PASS] return-through-each\r\n[PASS] return-through-while\r\n[PASS] top-level-call-before-global-init\r\n[PASS] unbound-self-initializer\r\n[PASS] when-condition-strict\r\n[PASS] when-otherwise\r\n[PASS] when-without-otherwise\r\n[PASS] while-break\r\n[PASS] while-condition-strict\r\n[PASS] while-continue\r\n[PASS] while-rechecks-condition\r\n[PASS] dict-alias-mutation\r\n[PASS] dict-bad-key-bool\r\n[PASS] dict-bad-key-null\r\n[PASS] dict-cycle-display\r\n[PASS] dict-delete-missing\r\n[PASS] dict-delete-present\r\n[PASS] dict-duplicate-int-key\r\n[PASS] dict-duplicate-key-literal\r\n[PASS] dict-each-keys\r\n[PASS] dict-empty-display\r\n[PASS] dict-get-default-expression\r\n[PASS] dict-get-missing-default\r\n[PASS] dict-get-present\r\n[PASS] dict-has-false\r\n[PASS] dict-has-non-dict\r\n[PASS] dict-has-true\r\n[PASS] dict-identity-equal\r\n[PASS] dict-identity-not-equal\r\n[PASS] dict-index-assign-new\r\n[PASS] dict-index-assign-update\r\n[PASS] dict-index-bad-key-type\r\n[PASS] dict-int-key-index\r\n[PASS] dict-items-order\r\n[PASS] dict-key-expression-order\r\n[PASS] dict-key-int-str-distinct\r\n[PASS] dict-keys-empty\r\n[PASS] dict-keys-non-dict\r\n[PASS] dict-keys-order\r\n[PASS] dict-len\r\n[PASS] dict-len-empty\r\n[PASS] dict-len-non-dict-unchanged\r\n[PASS] dict-literal-display-order\r\n[PASS] dict-missing-key-read\r\n[PASS] dict-mixed-key-literals\r\n[PASS] dict-neq-identity\r\n[PASS] dict-nested-display\r\n[PASS] dict-put-new-append\r\n[PASS] dict-put-returns-null\r\n[PASS] dict-put-update-keeps-position\r\n[PASS] dict-string-key-index\r\n[PASS] dict-value-any-type\r\n[PASS] dict-values-non-dict\r\n[PASS] dict-values-order\r\n[PASS] attempt-comments-between-blocks\r\n[PASS] attempt-empty-blocks\r\n[PASS] attempt-missing-recover\r\n[PASS] attempt-normal-flow\r\n[PASS] attempt-requires-blocks\r\n[PASS] attempt-reserved-module-alias\r\n[PASS] attempt-reserved-variable\r\n[PASS] attempt-semicolon-rejected\r\n[PASS] finally-break-passes\r\n[PASS] finally-cannot-see-problem\r\n[PASS] finally-category-dispatch\r\n[PASS] finally-continue-passes\r\n[PASS] finally-error-overrides-pending\r\n[PASS] finally-handler-emits-then-fin\r\n[PASS] finally-nested-once\r\n[PASS] finally-on-empty-blocks\r\n[PASS] finally-on-normal-flow\r\n[PASS] finally-override-break\r\n[PASS] finally-overrides-body-return\r\n[PASS] finally-overrides-handler-return\r\n[PASS] finally-return-in-body-runs-first\r\n[PASS] handler-error-caught-by-outer\r\n[PASS] legacy-attempt-unchanged\r\n[PASS] nested-attempt-inner-handled\r\n[PASS] recover-array-bounds\r\n[PASS] recover-division-by-zero\r\n[PASS] recover-each-break\r\n[PASS] recover-each-continue\r\n[PASS] recover-error-display-unicode\r\n[PASS] recover-error-fields-display\r\n[PASS] recover-error-identity\r\n[PASS] recover-error-index-type\r\n[PASS] recover-error-len-type\r\n[PASS] recover-error-not-record-type\r\n[PASS] recover-handler-error-not-self-caught\r\n[PASS] recover-handler-error-outer\r\n[PASS] recover-import-error-not-caught\r\n[PASS] recover-lex-error-not-caught\r\n[PASS] recover-module-chain-source\r\n[PASS] recover-nearest-handler\r\n[PASS] recover-parameter-one-only\r\n[PASS] recover-parameter-required\r\n[PASS] recover-preserves-side-effects\r\n[PASS] recover-readonly-error-fields\r\n[PASS] recover-reserved-function\r\n[PASS] recover-return\r\n[PASS] recover-standalone-rejected\r\n[PASS] recover-syntax-error-not-caught\r\n[PASS] recover-type-error\r\n[PASS] recover-undefined-variable\r\n[PASS] recover-unhandled-runtime-keeps-output\r\n[PASS] recover-unknown-error-field\r\n[PASS] recover-user-function\r\n[PASS] recover-variable-scope\r\n[PASS] recover-while-break\r\n[PASS] recover-while-continue\r\n[PASS] throw-error-builtin-source-fields\r\n[PASS] throw-error-rethrow\r\n[PASS] throw-in-function-propagates\r\n[PASS] throw-non-string-non-error\r\n[PASS] throw-null-is-error\r\n[PASS] throw-string-recovered\r\n[PASS] uncaught-throw-error-category\r\n[PASS] uncaught-throw-string\r\n[PASS] integrated-control-and-record\r\n[PASS] integrated-input-text-and-args\r\n[PASS] integrated-runtime-failure-preserves-stdout\r\n[PASS] all-string-escapes\r\n[PASS] array-trailing-comma\r\n[PASS] ascii-identifiers\r\n[PASS] bom-is-ordinary-inside-string\r\n[PASS] break-extra-token\r\n[PASS] break-label-rejected\r\n[PASS] break-missing-semicolon\r\n[PASS] break-no-partial-execution\r\n[PASS] break-outside-loop\r\n[PASS] break-outside-loop-in-function\r\n[PASS] call-trailing-comma\r\n[PASS] comment-bom-ignored\r\n[PASS] continue-extra-token\r\n[PASS] continue-label-rejected\r\n[PASS] continue-missing-semicolon\r\n[PASS] continue-no-partial-execution\r\n[PASS] continue-outside-loop\r\n[PASS] continue-outside-loop-in-function\r\n[PASS] duplicate-function-parameter\r\n[PASS] duplicate-record-decl-field\r\n[PASS] empty-array-call-record\r\n[PASS] empty-block\r\n[PASS] empty-program\r\n[PASS] hash-in-string\r\n[PASS] incomplete-string-escape\r\n[PASS] invalid-assignment-target\r\n[PASS] isolated-semicolon\r\n[PASS] keyword-not-identifier\r\n[PASS] keyword-prefix-is-name\r\n[PASS] leading-bom\r\n[PASS] leading-zero-decimal\r\n[PASS] lex-error-before-parse-error\r\n[PASS] lone-bom-outside-string\r\n[PASS] missing-semicolon\r\n[PASS] nested-function-declaration\r\n[PASS] non-ascii-identifier-rejected\r\n[PASS] normalized-cr-lines\r\n[PASS] only-one-initial-bom-is-removed\r\n[PASS] otherwise-alone\r\n[PASS] otherwise-comment-binding\r\n[PASS] otherwise-when-form\r\n[PASS] raw-newline-in-string\r\n[PASS] record-decl-trailing-comma\r\n[PASS] record-needs-semicolon\r\n[PASS] result-not-callable\r\n[PASS] return-outside-function\r\n[PASS] syntax-error-prevents-execution\r\n[PASS] unicode-codepoint-error-column\r\n[PASS] unicode-string-content\r\n[PASS] unknown-string-escape\r\n[PASS] unterminated-string\r\n[PASS] whitespace-and-comments\r\n[PASS] module-array-record-aliasing\r\n[PASS] module-direct-cycle\r\n[PASS] module-directory-dependency\r\n[PASS] module-dot-dot-module-path\r\n[PASS] module-duplicate-alias\r\n[PASS] module-entry-self-cycle\r\n[PASS] module-forward-recursion\r\n[PASS] module-import-after-top-level-item\r\n[PASS] module-import-in-function\r\n[PASS] module-import-reserved-identifier\r\n[PASS] module-indirect-cycle\r\n[PASS] module-missing-dependency-no-partial-output\r\n[PASS] module-alias-is-not-value\r\n[PASS] module-call-result-not-callable\r\n[PASS] module-cannot-call-main-function\r\n[PASS] module-cannot-read-main-global\r\n[PASS] module-module-lexer-source-location\r\n[PASS] module-module-parser-source-location\r\n[PASS] module-process-io\r\n[PASS] module-runtime-source-location\r\n[PASS] module-top-level-emit\r\n[PASS] module-top-level-let\r\n[PASS] module-top-level-record\r\n[PASS] module-multi-level-relative-import\r\n[PASS] module-same-name-namespaces\r\n[PASS] module-simple-alias-call\r\n[PASS] module-undefined-alias-link-error\r\n[PASS] module-undefined-member-link-error\r\n[PASS] module-unicode-space-module-path\r\n[PASS] module-unqualified-import-is-not-visible\r\n[PASS] arbitrary-precision-integer\r\n[PASS] arithmetic-precedence\r\n[PASS] arrays-identity-equality\r\n[PASS] assignment-evaluates-receiver-once\r\n[PASS] assignment-validates-target-before-rhs\r\n[PASS] boolean-and-right-evaluated\r\n[PASS] boolean-left-is-strict\r\n[PASS] boolean-null-and-equality\r\n[PASS] boolean-or-right-is-strict\r\n[PASS] boolean-right-is-strict\r\n[PASS] chained-comparison\r\n[PASS] comparison-operator-family\r\n[PASS] comparison-types\r\n[PASS] division-by-zero\r\n[PASS] division-requires-integers\r\n[PASS] integer-and-string-plus\r\n[PASS] left-associativity\r\n[PASS] minus-requires-integers\r\n[PASS] mixed-plus-types\r\n[PASS] modulo-by-zero\r\n[PASS] modulo-requires-integers\r\n[PASS] multiply-requires-integers\r\n[PASS] negative-floor-division-modulo\r\n[PASS] not-requires-boolean\r\n[PASS] or-right-evaluated\r\n[PASS] right-associative-assignment\r\n[PASS] shared-child-not-cycle\r\n[PASS] short-circuit-and\r\n[PASS] short-circuit-or\r\n[PASS] string-codepoint-comparison\r\n[PASS] unary-minus-requires-integer\r\nBlack-box tests: passed=400 failed=0 total=400; categories (passed/total): arrays-records-each=32/32, builtins-text-io=43/43, cli-errors=13/13, concurrency=46/46, control-functions=43/43, dict-maps=43/43, error-recovery=64/64, integrated=3/3, lexer-parser=52/52, modules=30/30, values-operators=31/31; elapsed=153.926s\r\n"
+    },
+    {
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "lwt",
+        "tests",
+        "tools"
+      ],
+      "exit_code": 0,
+      "name": "compileall",
+      "seconds": 2.203,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tools/check_project_integrity.py",
+        "--require-all-referenced"
+      ],
+      "exit_code": 0,
+      "name": "integrity",
+      "seconds": 0.884,
+      "stderr": "",
+      "stdout": "Project integrity: OK; cases=400; matrix_links=497; referenced_cases=400; unreferenced=0; exempt=0\r\n"
+    }
+  ],
+  "tool": "tools/verify_fresh_clone.py"
+}

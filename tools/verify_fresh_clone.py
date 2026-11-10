@@ -148,8 +148,9 @@ def main(argv: list[str] | None = None) -> int:
             index_doc = json.loads(index_path.read_text(encoding="utf-8"))
             if clone_head != index_doc.get("bundle_ref_sha"):
                 lag_ok = False
-            if final_tip is None:
-                final_tip = index_doc.get("final_tip_sha")
+            # Y is the workspace's current HEAD (the real final tip); the SHA
+            # stored in the index is only the build-time value and must not be
+            # used to make the lag check trivially pass.
             workspace_head = _run(["git", "rev-parse", "HEAD"], ROOT, timeout=30)["stdout"].strip()
             tip = final_tip or workspace_head
             diff = _run(["git", "diff", "--name-only", f"{clone_head}..{tip}"], ROOT, timeout=60)
@@ -169,6 +170,7 @@ def main(argv: list[str] | None = None) -> int:
             "head": clone_head,
             "bundle_ref_sha": index_doc.get("bundle_ref_sha"),
             "final_tip_sha": final_tip,
+            "index_declared_final_tip_sha": index_doc.get("final_tip_sha"),
             "lag_paths": lag_paths,
             "lag_whitelist": index_doc.get("diff_whitelist"),
             "lag_ok": lag_ok,
@@ -187,7 +189,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
         lines = [
-            "# S47 fresh-clone verification",
+            "# S48 fresh-clone verification",
             "",
             f"- Bundle: `{bundle_path}`",
             f"- Branch: `{args.branch}`；bundle HEAD `{(document['head'] or '')[:12]}`",
