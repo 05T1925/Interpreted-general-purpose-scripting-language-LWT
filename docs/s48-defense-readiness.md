@@ -83,7 +83,9 @@
 | 新克隆 | HEAD `bfda042`；clone/version/check/blackbox/compileall/integrity **6 条 exit 0**；黑盒 **400/400**（167.9 s），总 173.1 s |
 | 一键自检 | **PASS**，12 步：`reports/s48-defense/selfcheck/selfcheck-20261110T073401Z.{json,md}`（gui_evidence / agent_eval 为 N/A） |
 
-说明：包在 `bfda042` 生成；索引提交 `e8d64b5` 及其后的 fresh-clone/selfcheck/报告提交都只改白名单内文件。`verify_fresh_clone` 在 `e8d64b5` 实测 lag 仅索引文件并通过；其后新增的证据文件均在索引的 `diff_whitelist` 中声明——不把“旧 tip 克隆通过”写成“最终 tip 通过”。
+说明：包在 `bfda042` 生成；索引提交 `e8d64b5` 及其后的 fresh-clone/selfcheck/报告提交都只改白名单内文件。`verify_fresh_clone` 在 `e8d64b5` 实测 lag 仅索引文件并通过——不把“旧 tip 克隆通过”写成“最终 tip 通过”。
+
+> **S49 复核（2026-11-10，实测，不改写上面的 S48 结论）**：以 `git diff --name-only bfda042..HEAD` 重算，HEAD=`0df0e40` 时 lag 为 5 个文件，其中 `docs/demo-script.md` **不在**当时声明的 `diff_whitelist` 内，`tools/check_package_lag.py` 因此退出 1。结论：S48 的索引对之后的提交已过期。S49 在最终 tip 重建包并重算，重建后 `outside_whitelist=[]`；两次实测都记录在 [`s49-defense-rehearsal.md`](s49-defense-rehearsal.md) §2。
 
 ## 8. 保护数据
 
@@ -121,6 +123,6 @@ S48 相对 S47（`5a61ab9`）共 14 笔，按 WP 分组：
 - **推送状态（历史与当前）**：2026-11-10 08:00–08:20 UTC 当时连续 20 次 `git push origin main` 在传输层失败
   （`Recv failure: Connection was aborted`；同一时段 `curl https://github.com` 与代理探测也失败），因此 S48 收口时
   **当时未推送、CI 未验证**。根因是 git 配置残留失效代理 `127.0.0.1:7897`，而当前环境代理为 `127.0.0.1:50793`。
-  同日主窗口复核时用当前代理成功推送：`origin/main = 724dc7c`，16 笔同步完成；**精确 SHA 的 CI 四格仍待查询**。
+  同日主窗口复核时用当前代理成功推送：`origin/main = 724dc7c`，同步笔数以 `git rev-list --count` 实测（当时 16，不写死为当前值）；**精确 SHA 的 CI 四格当时仍待查询**，S49 已补查并逐格记录在 [`s49-defense-rehearsal.md`](s49-defense-rehearsal.md)。
   **不把“本地通过”写成“CI 通过”**，也不伪造 run 链接。
 - 包与最终 tip 的关系：bundle 截止 `bfda042`，索引提交 `e8d64b5` 及其后的报告/证据提交都在 `diff_whitelist` 内；`verify_fresh_clone` 在 `e8d64b5` 实测 `lag=['reports/s48-defense/package-index.json']`、`lag_ok=true`、6 条命令 exit 0、400/400。

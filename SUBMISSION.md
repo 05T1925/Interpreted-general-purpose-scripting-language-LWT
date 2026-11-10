@@ -1,6 +1,6 @@
 # LWT 提交入口（教师版）
 
-> 版本 **0.3.0** ｜ 黑盒 **400** ｜ unittest **695** ｜ PPT **21 页**
+> 版本 **0.3.0** ｜ 黑盒 **400** ｜ unittest **713** ｜ PPT **21 页**
 > 默认分支 `main` 与本交付分支同一提交；分支/CI 的精确 SHA 见 `docs/s47-final-submission.md`。
 > 本文件由 `tools/build_submission.py` 生成，数字取自 `docs/delivery-manifest.json`。
 

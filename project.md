@@ -16,6 +16,8 @@
 
 > **S48（2026-11-10，执行窗口，证据链自洽与现场验收就绪）：** 按裁决 A 在 `main` 工作、B1 冻结题面 v2 做 T/C 消融、C 由用户本人执行 GUI、D 授权推送。WP0 三处 P0：bundle 自引用用 `package-index.json` 显式声明（X=`76bb4fb`、Y=`dcb0b1e`、lag 仅索引）；`tests/test_doc_consistency.py` 新增语义断言并先红后绿；SUBMISSION 第 7 项指向入库索引。WP1：60 个独立会话，T 30/30=1.000（Wilson 0.886–1.000）、C 29/30=0.967（0.833–0.995），T−C=+0.033 [−0.031,+0.098]，唯一失败为输出格式，未触发指南修订。WP2：GUI A–E 验收包 + 登记工具（当前 REGISTERED 0/5、NOT_RUN）。WP3：24 条断言 + 现场探针（非 heavy 21/21 PASS）+ 离线 HTML。PPT 20→21 页（旧图表 12 点未变，SHA `90369685…`→`0be34afa…`）；unittest 685。全量黑盒 400/400、46×10 稳定、保护数据零改动。报告见 [S48 报告](docs/s48-defense-readiness.md)、[S48 盲测](docs/s48-agent-eval.md)。**未验证**：现场人工 GUI、教师线下验收；盲测为观察性、区间含 0。
 
+> **S49（2026-11-10，执行窗口，答辩彩排与验收一致性收敛）：** 裁决 A 从 `0df0e40` 建 `feature/defense-rehearsal`、B 授权推送并查四格、C 由用户本人执行 GUI（本轮未执行，保持 `REGISTERED 0/5`）。WP0：重算包索引 lag，发现 `docs/demo-script.md` 在白名单外（退出 1），S48 报告加日期化复核段；CI 四格按 `724dc7c`/`446ed4d`/`0df0e40` 逐 job 解析——**`724dc7c` 四格失败**（文档一致性抓到过期分支状态），后两者四格通过；清理 60 个 `lwt-s48-*` worktree（116.5 MB，0 失败，剩 5 条）。WP1：文档一致性 16→27 项，先红 5 项后转绿；行级段豁免经“禁用后命中 8 行”反证必要。WP2：21 页逐页讲稿 `docs/defense-runbook.md` + 映射 `docs/defense-pages.json`；`tools/rehearse_defense.py` 实跑随机 5 条 5/5、第 1–5 页 6/6，另有 dry-run/offline 32 条证据。WP3：`docs/gui-acceptance-quickref.md` 一页纸 + CLI 降级轨（Snake 协议回放已实跑一致），GUI 仍 NOT_RUN。PPT 21 页只改第 18–21 页页脚状态文案（`0be34afa…`→`7cb28b13…`，第 10 页图表 12 点未变）；unittest 713。报告见 [S49 报告](docs/s49-defense-rehearsal.md)。**未验证**：现场人工 GUI、教师验收、PPT 页脚渲染效果。
+
 ## 目标与课程评分
 
 依据[作业原文](大作业内容.md)，交付 LWT 解释型通用脚本语言及解释器、完整黑盒测试、LWT/Python 性能比较、人类与 Agent 开发指南、至少 200 行的 Agent 编写 LWT 应用及开发记录、Git 历史、介绍 PPT 和线下答辩。评分为解释器 20、测试 20、性能 10、指南 20、LWT 应用 30 分。

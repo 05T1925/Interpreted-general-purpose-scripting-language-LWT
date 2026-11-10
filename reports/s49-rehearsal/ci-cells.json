@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-10T09:45:48Z",
+  "source": "public GitHub HTML (commit checks page + per-job page); REST API was rate-limited (60/h anonymous, 0 remaining, reset 09:25Z) and no token/gh was available",
+  "method": "job names, conclusions and durations parsed from https://github.com/<repo>/commit/<sha>/checks and https://github.com/<repo>/actions/runs/<run>/job/<job_id>; conclusions cross-checked against the \"This job succeeded/failed\" labels (4 per run)",
+  "warning": "a run-level success badge is NOT used as evidence; each cell below comes from its own job page",
+  "runs": {
+    "0df0e40026ef59becd5cc2599d400ede36e90215": {
+      "run_id": "42789221823",
+      "run_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42789221823",
+      "checks_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/commit/0df0e40026ef59becd5cc2599d400ede36e90215/checks",
+      "cells": [
+        {
+          "os": "ubuntu-latest",
+          "python": "3.10",
+          "job_id": "129738063377",
+          "conclusion": "success",
+          "duration": "7m 46s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42789221823/job/129738063377"
+        },
+        {
+          "os": "ubuntu-latest",
+          "python": "3.13",
+          "job_id": "129738064658",
+          "conclusion": "success",
+          "duration": "6m 27s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42789221823/job/129738064658"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.10",
+          "job_id": "129738063331",
+          "conclusion": "success",
+          "duration": "5m 51s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42789221823/job/129738063331"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.13",
+          "job_id": "129738063030",
+          "conclusion": "success",
+          "duration": "5m 55s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42789221823/job/129738063030"
+        }
+      ]
+    },
+    "446ed4d029f7de6b00e173fe7d5585f3b29cd39f": {
+      "run_id": "42788879562",
+      "run_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788879562",
+      "checks_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/commit/446ed4d029f7de6b00e173fe7d5585f3b29cd39f/checks",
+      "cells": [
+        {
+          "os": "ubuntu-latest",
+          "python": "3.10",
+          "job_id": "129736931215",
+          "conclusion": "success",
+          "duration": "6m 8s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788879562/job/129736931215"
+        },
+        {
+          "os": "ubuntu-latest",
+          "python": "3.13",
+          "job_id": "129736929570",
+          "conclusion": "success",
+          "duration": "5m 51s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788879562/job/129736929570"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.10",
+          "job_id": "129736929811",
+          "conclusion": "success",
+          "duration": "9m 22s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788879562/job/129736929811"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.13",
+          "job_id": "129736929646",
+          "conclusion": "success",
+          "duration": "6m 23s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788879562/job/129736929646"
+        }
+      ]
+    },
+    "724dc7c5ab3d0c7e7a1f7340c244e51c3cc053b9": {
+      "run_id": "42788506291",
+      "run_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788506291",
+      "checks_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/commit/724dc7c5ab3d0c7e7a1f7340c244e51c3cc053b9/checks",
+      "cells": [
+        {
+          "os": "ubuntu-latest",
+          "python": "3.10",
+          "job_id": "129735664253",
+          "conclusion": "failure",
+          "duration": "6m 41s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788506291/job/129735664253"
+        },
+        {
+          "os": "ubuntu-latest",
+          "python": "3.13",
+          "job_id": "129735664150",
+          "conclusion": "failure",
+          "duration": "6m 58s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788506291/job/129735664150"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.10",
+          "job_id": "129735664357",
+          "conclusion": "failure",
+          "duration": "7m 21s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788506291/job/129735664357"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.13",
+          "job_id": "129735663868",
+          "conclusion": "failure",
+          "duration": "4m 41s",
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42788506291/job/129735663868"
+        }
+      ]
+    }
+  }
+}

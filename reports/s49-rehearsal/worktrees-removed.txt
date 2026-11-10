@@ -1,0 +1,66 @@
+# S49 worktree cleanup (confirmed by the user)
+# 60 lwt-s48-* worktrees removed with: git worktree remove --force
+# 0 failures; 5 entries remain: main + 3 lwt-s9-blind-* + s39-agent-strategy
+
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-cli-args-text-processing-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-cli-args-text-processing-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-cli-args-text-processing-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-cli-args-text-processing-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-dict-word-frequency-topk-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-cli-args-text-processing-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-dict-word-frequency-topk-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-dict-word-frequency-topk-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-dict-word-frequency-topk-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-dict-word-frequency-topk-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-dict-word-frequency-topk-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-cli-args-text-processing-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-cli-args-text-processing-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-cli-args-text-processing-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-dict-word-frequency-topk-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-dict-word-frequency-topk-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-module-record-dict-mix-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-throw-finally-cleanup-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-throw-finally-cleanup-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-producer-consumer-channel-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-cli-args-text-processing-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-throw-finally-cleanup-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-producer-consumer-channel-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-producer-consumer-channel-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-producer-consumer-channel-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-module-record-dict-mix-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-dict-word-frequency-topk-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-each-snapshot-alias-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-throw-finally-cleanup-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-cli-args-text-processing-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-producer-consumer-channel-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-each-snapshot-alias-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-module-record-dict-mix-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-each-snapshot-alias-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-producer-consumer-channel-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-module-record-dict-mix-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-producer-consumer-channel-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-module-record-dict-mix-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-each-snapshot-alias-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-each-snapshot-alias-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-dict-word-frequency-topk-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-producer-consumer-channel-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-module-record-dict-mix-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-module-record-dict-mix-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-each-snapshot-alias-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-throw-finally-cleanup-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-each-snapshot-alias-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-throw-finally-cleanup-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-throw-finally-cleanup-s1
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-T-producer-consumer-channel-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-producer-consumer-channel-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-throw-finally-cleanup-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-module-record-dict-mix-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-module-record-dict-mix-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-throw-finally-cleanup-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-each-snapshot-alias-s2
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-each-snapshot-alias-s4
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-each-snapshot-alias-s5
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-throw-finally-cleanup-s3
+     1.9 MB  C:/Users/28641/AppData/Local/Temp/lwt-s48-C-module-record-dict-mix-s5
+
+TOTAL 116.5 MB across 60 dirs

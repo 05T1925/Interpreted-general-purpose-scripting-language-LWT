@@ -4,9 +4,9 @@
   "version": "0.3.0",
   "version_rationale": "S42 语言核心增强（dict/throw/finally/REPL）与 S43 确定性并发子语言（规范 §11）为新增语言特性，S44 为性能与可验证加速；按语义化版本属次版本升级。版本号由主窗口裁决（2026-11-08），执行窗口按裁决写入，不自行二选一。",
   "blackbox_cases": 400,
-  "unittest_count": 695,
+  "unittest_count": 713,
   "ppt_pages": 21,
-  "ppt_sha256": "0be34afacb4b889eb514ae836a2a6c85f34a4f688babb5ca1e65468b08cb7773",
+  "ppt_sha256": "7cb28b13948942b7a4b1b8fb64fb68e8aba04ab627188272a8b55c367355878c",
   "ppt_chart_points": 12,
   "protected_paths": [
     "bench/results.json",
@@ -54,16 +54,19 @@
     "s48_agent_eval": "docs/s48-agent-eval.md",
     "s48_gui_kit": "docs/gui-acceptance-kit.md",
     "s48_probe": "reports/s48-defense/defense-probe.json",
-    "s48_package_index": "reports/s48-defense/package-index.json"
+    "s48_package_index": "reports/s48-defense/package-index.json",
+    "s49_rehearsal": "docs/s49-defense-rehearsal.md",
+    "s49_ci": "reports/s49-rehearsal/ci-cells.json"
   },
   "last_verified_utc": "2026-11-10T07:31:17Z",
   "notes": [
-    "unittest_count 为 S48 收口实测 695（S47 的 677 + 文档语义 4 + 统计/多样本判分 8 + 交付结构 6）。",
+    "unittest_count 为 S49 实测 713（S48 的 695 + 文档语义 11 + 交付结构 7）。",
     "ppt_pages / ppt_sha256 为 S48 最终 PPT（20→21 页，新增「指南消融与现场可质询验收」；旧第 10 页原生图表 12 数值点未变）。",
     "protected_paths 为 S10/S11/S28/S29/S37-S44 固定证据与既有应用源码，S45 只读。",
     "S46 的模型检查 corpus 在 tests/concurrency-model/，不属于 tests/cases 的 400 项黑盒；模型检查证据在 reports/s46-concurrency-model/。",
     "S47 的 Agent 盲测首轮 5/6；唯一失败为题面欠定，澄清题面后单题隔离复跑 1/1（post-hoc，不并入首轮）。",
-    "S48 盲测主口径为 tasks-v2 的 60 个独立会话（T 30/30、C 29/30）；S47 的 5/6 与澄清复跑只作对照，不并入。"
+    "S48 盲测主口径为 tasks-v2 的 60 个独立会话（T 30/30、C 29/30）；S47 的 5/6 与澄清复跑只作对照，不并入。",
+    "S49：第 18–21 页仅改页脚状态文案（不新增页），ppt_sha256 由 0be34afa… 变为 7cb28b13…；第 10 页原生图表 12 数值点未变。"
   ],
   "submission_bundle": "reports/s48-defense/package-index.json",
   "agent_eval_status": "EXECUTED; T 30/30 (1.000, Wilson 0.886-1.000); C 29/30 (0.967, 0.833-0.995); T-C +0.033 [-0.031,+0.098]",

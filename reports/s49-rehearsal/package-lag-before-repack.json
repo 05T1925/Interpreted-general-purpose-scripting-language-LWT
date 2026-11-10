@@ -1,0 +1,26 @@
+{
+  "bundle_ref_sha": "bfda042c50264210b29920b4285bc0feb3b88ff4",
+  "declared_final_tip_sha": "bfda042c50264210b29920b4285bc0feb3b88ff4",
+  "generated_at_utc": "2026-11-10T09:45:49Z",
+  "head": "0df0e40026ef59becd5cc2599d400ede36e90215",
+  "in_whitelist": [
+    "docs/s48-defense-readiness.md",
+    "reports/s48-defense/fresh-clone.json",
+    "reports/s48-defense/fresh-clone.md",
+    "reports/s48-defense/package-index.json"
+  ],
+  "index": "reports/s48-defense/package-index.json",
+  "lag_paths": [
+    "docs/demo-script.md",
+    "docs/s48-defense-readiness.md",
+    "reports/s48-defense/fresh-clone.json",
+    "reports/s48-defense/fresh-clone.md",
+    "reports/s48-defense/package-index.json"
+  ],
+  "ok": false,
+  "outside_whitelist": [
+    "docs/demo-script.md"
+  ],
+  "schema_version": 1,
+  "tool": "tools/check_package_lag.py"
+}
