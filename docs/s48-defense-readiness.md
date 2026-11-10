@@ -72,11 +72,24 @@
 | manifest | `unittest_count=685`、`ppt_pages=21`、`submission_bundle=reports/s48-defense/package-index.json`、`agent_eval_status` 含 n 与 Wilson 区间 |
 | 文档一致性 | 16 项（新增 S48 报告计数一致性，先红后绿） |
 
-## 7. 保护数据
+## 7. 提交包与自检
+
+| 项 | 实测 |
+|---|---|
+| 包目录 | `dist/lwt-submission-20261110T074855Z/`（`dist/` gitignore） |
+| bundle | `3fbf56ff97b78177...`，`git bundle verify` = 0，仅 branches/tags/HEAD |
+| zip | `11a85447c9935c41...`，1631 项，`testzip` 通过，`manifest.sha256` 逐项匹配 |
+| 包索引 | `bundle_ref_sha=bfda042`、`final_tip_sha=e8d64b5`、`lag=['reports/s48-defense/package-index.json']`、`lag_ok=true` |
+| 新克隆 | HEAD `bfda042`；clone/version/check/blackbox/compileall/integrity **6 条 exit 0**；黑盒 **400/400**（167.9 s），总 173.1 s |
+| 一键自检 | **PASS**，12 步：`reports/s48-defense/selfcheck/selfcheck-20261110T073401Z.{json,md}`（gui_evidence / agent_eval 为 N/A） |
+
+说明：包在 `bfda042` 生成；索引提交 `e8d64b5` 及其后的 fresh-clone/selfcheck/报告提交都只改白名单内文件。`verify_fresh_clone` 在 `e8d64b5` 实测 lag 仅索引文件并通过；其后新增的证据文件均在索引的 `diff_whitelist` 中声明——不把“旧 tip 克隆通过”写成“最终 tip 通过”。
+
+## 8. 保护数据
 
 `git diff 5a61ab9..HEAD -- <29 个保护路径>`（S11/S42/S43/S44/S45/S46/S47 原始证据、`tests/cases/**`、两个既有应用）为空；S48 只写 `reports/s48-defense/`、`docs/agent-eval/submissions-v2/`、`evidence/gui/`、`dist/`（忽略）。历史阶段报告的旧数字未改。
 
-## 8. 未验证项（如实）
+## 9. 未验证项（如实）
 
 - **现场人工 GUI A–E**：`REGISTERED 0/5`，全部 `NOT_RUN`；工具与清单已就绪，执行必须由用户本人在无遮挡桌面完成。
 - **教师线下验收**未发生。
@@ -84,7 +97,7 @@
 - 子代理“未读禁止目录”是自报；执行窗口能验证 worktree 构造与产物，不能证明其内部注意力。少数报告披露 `/tmp` 重定向或仅列目录名的 `ls`，已记录在 `docs/s48-agent-eval.md`。
 - Python 3.10/Linux 本地未跑（由 CI 覆盖）；CI 结论按精确 SHA 记录。
 
-## 9. 提交与 CI
+## 10. 提交与 CI
 
 - 提交序列与最终 SHA：见本报告所在提交；`git log --oneline 5a61ab9..HEAD` 可复核。
 - CI：推送后按精确 SHA 查询四格，结论单独记录，不把“推送成功”当“CI 通过”。
