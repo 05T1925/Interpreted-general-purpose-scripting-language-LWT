@@ -121,7 +121,10 @@ class StrategyBridge(LwtSnakeBridge):
         if process is not None and process.poll() is None and not self._broken:
             try:
                 process.stdin.close()  # EOF, not an invented strategy QUIT request.
-                process.wait(timeout=1)
+                # S49: a fresh interpreter needs ~0.55 s to start+exit on this
+                # machine (measured), so a fixed 1 s wait fails under full-suite
+                # load. Follow the bridge timeout instead of a hard-coded bound.
+                process.wait(timeout=max(1.0, float(self.timeout)))
                 if process.returncode!=0: raise self._process_failure('strategy exited unsuccessfully')
                 self._check_only_eof_after_exit()
             except (OSError,ValueError,ProtocolError,subprocess.TimeoutExpired) as error: pending=error
