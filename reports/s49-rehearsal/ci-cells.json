@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-10T16:31:53Z",
+  "generated_at_utc": "2026-11-10T17:13:37Z",
   "source": "public GitHub HTML (commit checks page + per-job page); REST API was rate-limited (60/h anonymous, 0 remaining, reset 09:25Z) and no token/gh was available",
   "method": "job names, conclusions and durations parsed from https://github.com/<repo>/commit/<sha>/checks and https://github.com/<repo>/actions/runs/<run>/job/<job_id>; conclusions cross-checked against the \"This job succeeded/failed\" labels (4 per run)",
   "warning": "a run-level success badge is NOT used as evidence; each cell below comes from its own job page",
@@ -201,6 +201,55 @@
         }
       ],
       "note": "S49 close-out tip; four cells parsed individually from the public checks page (4 succeeded / 0 failed) and per-job pages (durations)."
+    },
+    "496ccc02d5fe26a4f1139b2d6ec8c662ce49b335": {
+      "run_id": null,
+      "run_url": null,
+      "checks_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/commit/496ccc02d5fe26a4f1139b2d6ec8c662ce49b335/checks",
+      "cells": [
+        {
+          "os": "ubuntu-latest",
+          "python": "3.10",
+          "job_id": "129987039554",
+          "conclusion": "success",
+          "duration": "5m 42s",
+          "seconds": 342,
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42861078175/job/129987039554",
+          "check_run_url": "https://api.github.com/repos/05T1925/Interpreted-general-purpose-scripting-language-LWT/check-runs/129987039554"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.10",
+          "job_id": "129987039493",
+          "conclusion": "success",
+          "duration": "9m 07s",
+          "seconds": 547,
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42861078175/job/129987039493",
+          "check_run_url": "https://api.github.com/repos/05T1925/Interpreted-general-purpose-scripting-language-LWT/check-runs/129987039493"
+        },
+        {
+          "os": "ubuntu-latest",
+          "python": "3.13",
+          "job_id": "129987039424",
+          "conclusion": "success",
+          "duration": "6m 26s",
+          "seconds": 386,
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42861078175/job/129987039424",
+          "check_run_url": "https://api.github.com/repos/05T1925/Interpreted-general-purpose-scripting-language-LWT/check-runs/129987039424"
+        },
+        {
+          "os": "windows-latest",
+          "python": "3.13",
+          "job_id": "129987038856",
+          "conclusion": "success",
+          "duration": "4m 47s",
+          "seconds": 287,
+          "job_url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/42861078175/job/129987038856",
+          "check_run_url": "https://api.github.com/repos/05T1925/Interpreted-general-purpose-scripting-language-LWT/check-runs/129987038856"
+        }
+      ],
+      "method": "GitHub REST /repos/{owner}/{repo}/commits/{sha}/check-runs (curl; 4 completed check runs, each with its own conclusion and started/completed timestamps). github.com HTML was unreachable (http 000 / proxy 502) at this moment, api.github.com returned 200 with core 58/60.",
+      "note": "S50 content tip 496ccc0: all four cells completed/success. f3e209c (S49 close-out) is kept separately above."
     }
   }
 }

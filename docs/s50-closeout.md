@@ -5,7 +5,7 @@
 
 ## 1. 一句话
 
-S49 遗留的唯一红线（探针 `unittest` 行 FAIL，连带自检 `all_pass=false`）已清零。根因不是“环境时序”，而是**探针把 `python` 的解析结果当成固定运行时**：本机 `python` 是无 tkinter 的 3.13.14，GUI 模块无法导入，只跑 711 项并产生 2 个假失败；同一命令在系统 `py -3.13`（3.13.7 + Tk 8.6）下 **719 项 OK**。修复后探针 **24/24**、自检 **12/12**、CI 四格在 `f3e209c` **4/4 通过**。
+S49 遗留的唯一红线（探针 `unittest` 行 FAIL，连带自检 `all_pass=false`）已清零。根因不是“环境时序”，而是**探针把 `python` 的解析结果当成固定运行时**：本机 `python` 是无 tkinter 的 3.13.14，GUI 模块无法导入，只跑 711 项并产生 2 个假失败；同一命令在系统 `py -3.13`（3.13.7 + Tk 8.6）下 **719 项 OK**。修复后探针 **24/24**、自检 **all_pass=true**；CI 四格在 `f3e209c` 与 S50 内容 tip `496ccc0` 均 **4/4 通过**。
 
 ## 2. 开工状态
 
@@ -83,11 +83,14 @@ S49 遗留的唯一红线（探针 `unittest` 行 FAIL，连带自检 `all_pass=
 
 ## 6. CI 四格（精确 SHA，逐 job）
 
-| SHA | run | ubuntu 3.10 | ubuntu 3.13 | windows 3.10 | windows 3.13 |
-|---|---|---|---|---|---|
-| `f3e209c`（S49 内容 tip） | 42844502753 | success 7m47s | success 5m46s | success 9m13s | success 8m39s |
+| SHA | ubuntu 3.10 | ubuntu 3.13 | windows 3.10 | windows 3.13 |
+|---|---|---|---|---|
+| `f3e209c`（S49 内容 tip） | success 7m47s | success 5m46s | success 9m13s | success 8m39s |
+| **`496ccc0`（S50 内容 tip，已推送）** | success **5m42s** | success **6m26s** | success **9m07s** | success **4m47s** |
 
-`/commit/f3e209c…/checks` 显示 **4 succeeded / 0 failed**；每格耗时来自各自的 job 页，没有使用 run 级徽章。明细（job id 与 URL）写入 `reports/s49-rehearsal/ci-cells.json` 的新键。S50 自身提交推送后，按**新的精确 SHA** 再查一次，不把 `f3e209c` 的绿外推到新提交。
+`f3e209c` 来自 `/commit/<sha>/checks` 的 4 succeeded / 0 failed 与各自 job 页的耗时；`496ccc0` 改用 GitHub REST `commits/<sha>/check-runs`，返回 **4 个 completed check run，全部 success**，耗时由各自的 `started_at/completed_at` 计算（当时 `github.com` HTML 不可达、`api.github.com` 返回 200，core 58/60）。两种方式都逐格读取结论，**没有使用 run 级徽章**。
+
+明细（job id 与 URL）写入 `reports/s49-rehearsal/ci-cells.json` 的两个新键。`496ccc0` 是 S50 的**内容 tip**；其后只允许证据/文档提交，若再有代码改动必须按新 SHA 重查，不把这次的绿外推。
 
 ## 7. 交付包
 
