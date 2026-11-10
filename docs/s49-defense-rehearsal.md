@@ -65,6 +65,18 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 
 分批是**执行环境的 20 分钟上限**导致的等价覆盖，不是跳过用例：两批合起来正好是 `discover` 的全部 713 项，且没有任何 `skip`。报告不把“两批通过”写成“单命令一次跑完”。
 
+### 2.4 全量 unittest 断言的执行状态（如实）
+
+`docs/defense-claims.json` 的 `unittest` 断言要求“一条命令跑全量”。在本机它**没有跑成绿色**，三次真实尝试：
+
+| 次 | 结果 | 用时 | 说明 |
+|---|---|---|---|
+| 1 | FAIL（exit 1） | `1201.0 s` | 全量 713 项，1 个失败（当时 GUI 45 s 阈值尚未修） |
+| 2 | FAIL（exit 1） | `1466.8 s` | 阈值修好后仍 exit 1；探针只保留输出前 600 字符，失败名不可见 |
+| 3 | 挂起后被终止 | — | 子进程持有 stdout/stderr 管道，`subprocess.run(capture_output=True)` 等不到 EOF；探针本身卡住，手动终止 |
+
+**结论**：不把该断言写成 PASS。全量的等价证据是 §2.2 的两批 **713/713**（687 + 26，0 failure / 0 error，均已 `OK`）。探针记 `FAIL`，报告与答辩口径都按“单命令未跑成、两批全绿”陈述；这属于**测试/采集**问题，不是语言或应用回归。
+
 ### 2.3 第二个阈值：GUI 收敛上限 45 s
 
 单进程全量（`713` 项，`1247.1 s`）里仍有 1 个失败：`CounterfactualTkTests.test_load_real_s41_witness_with_button_and_reverify` 的 `Tk worker did not settle within bounded event loop`。单跑复现 **2/3 失败**（每次约 61 s），根因是该用例把“验证 `reports/s41-found`（32 步、每分支一个 LWT 进程）”的收敛上限定成 **45 s**，而本机实测 50–60 s。
