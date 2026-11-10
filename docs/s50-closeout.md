@@ -91,7 +91,18 @@ S49 遗留的唯一红线（探针 `unittest` 行 FAIL，连带自检 `all_pass=
 
 ## 7. 交付包
 
-S50 改了探针、断言、测试与文档，S49 的包（`55229dbc`）已不包含这些内容，因此会在收口 tip 重新打包，并对新包重跑 `verify_fresh_clone`（400 黑盒、6 条命令 exit 0、lag 仅白名单）。具体 bundle/zip/克隆数字在完成后回填本节；包索引仍是 `reports/s48-defense/package-index.json`（活跃指针，不是冻结证据）。
+S50 改了探针、断言、测试与文档，S49 的包（`55229dbc`）已不包含这些内容，因此在收口 tip **重建**了交付包：
+
+| 项 | 值 |
+|---|---|
+| 包目录 | `dist/lwt-submission-20261110T165953Z/`（`dist/` 被 gitignore） |
+| bundle | `20b7b98af2463074…`，`git bundle verify` exit 0，仅 branches/tags/HEAD |
+| zip | `55987f09c2ed2881…`，**1696 项**，`manifest.sha256` 逐项匹配 |
+| 包索引 | `bundle_ref_sha=final_tip_sha=7d985b3`，白名单 **8 条**（索引/克隆对/selfcheck/探针对/ci-cells/报告） |
+| lag 实测 | X=`7d985b3`、HEAD=`c0093ef`、lag **1** 个文件（索引本身）、`outside_whitelist=[]`、退出 0 |
+| 新克隆 | HEAD `7d985b3`；clone/version/check/blackbox/compileall/integrity **6 条 exit 0**；黑盒 **400/400**（130.9 s），总 **135.7 s**；`lag_ok=true`、`all_pass=true` |
+
+包索引仍是 `reports/s48-defense/package-index.json`（活跃指针，不是冻结证据）。克隆证据见 `reports/s50-closeout/fresh-clone.json`。
 
 ## 8. GUI A–E（B=是，等本人执行）
 
