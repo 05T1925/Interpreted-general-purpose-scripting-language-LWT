@@ -1,0 +1,62 @@
+# freq.lwt: count words from stdin, print top 3 by count desc then word asc.
+# Input: lines of space-separated words, read with input() until EOF.
+# Output: "word count" per line, at most 3 lines; "EMPTY" when no word is read.
+
+fn comesBefore(a, b, counts) {
+    let ca = counts[a];
+    let cb = counts[b];
+    when (ca != cb) {
+        return ca > cb;
+    }
+    return a < b;
+}
+
+fn sortRanked(words, counts) {
+    let arr = [];
+    each (w in words) {
+        push(arr, w);
+    }
+    let n = len(arr);
+    let i = 0;
+    while (i < n) {
+        let j = 0;
+        while (j < n - 1 - i) {
+            when (comesBefore(arr[j + 1], arr[j], counts)) {
+                let tmp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = tmp;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    return arr;
+}
+
+let counts = dict{};
+let line = input();
+while (line != null) {
+    let parts = split(line, " ");
+    each (w in parts) {
+        when (w != "") {
+            when (has(counts, w)) {
+                counts[w] = counts[w] + 1;
+            } otherwise {
+                counts[w] = 1;
+            }
+        }
+    }
+    line = input();
+}
+
+let words = keys(counts);
+when (len(words) == 0) {
+    emit "EMPTY";
+} otherwise {
+    let ranked = sortRanked(words, counts);
+    let i = 0;
+    while (i < len(ranked) and i < 3) {
+        emit ranked[i] + " " + str(counts[ranked[i]]);
+        i = i + 1;
+    }
+}

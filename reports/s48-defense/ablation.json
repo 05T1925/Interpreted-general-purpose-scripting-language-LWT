@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "tool": "tools/run_agent_eval.py + tools/agent_eval_stats.py",
+  "generated_at_utc": "2026-11-10T04:19:22Z",
+  "protocol": "docs/agent-eval/tasks-v2.json (pre-registered before any S48 session)",
+  "baseline_sha": "d9daeddd3a15ac4a76d409d8968a90761ec9ab22",
+  "design": {
+    "groups": {
+      "T": [
+        "docs/language-spec.md",
+        "docs/developer-guide.md",
+        ".agents/skills/lwt-app/SKILL.md",
+        "docs/concurrency.md"
+      ],
+      "C": [
+        "docs/language-spec.md"
+      ]
+    },
+    "tasks": 6,
+    "samples_per_task": 5,
+    "sessions": 60,
+    "isolation": "each session is a fresh context-free subagent in its own detached worktree; docs/agent-eval, tests, app, reports, tools removed; the task card contains no expected output",
+    "randomization": "batches interleaved T/C by sample; session start times recorded in the submissions' report.md"
+  },
+  "groups": {
+    "T": {
+      "group": "T",
+      "pass_at_1": 1.0,
+      "pass_at_k": {
+        "pass@5": 1.0
+      },
+      "passed": 30,
+      "per_task": {
+        "cli-args-text-processing": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        },
+        "dict-word-frequency-topk": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        },
+        "each-snapshot-alias": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        },
+        "module-record-dict-mix": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        },
+        "producer-consumer-channel": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        },
+        "throw-finally-cleanup": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        }
+      },
+      "samples": 30,
+      "tasks": 6,
+      "wilson_95": [
+        0.886483,
+        1.0
+      ]
+    },
+    "C": {
+      "group": "C",
+      "pass_at_1": 0.9666666666666667,
+      "pass_at_k": {
+        "pass@5": 1.0
+      },
+      "passed": 29,
+      "per_task": {
+        "cli-args-text-processing": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        },
+        "dict-word-frequency-topk": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        },
+        "each-snapshot-alias": {
+          "pass_at_1": 0.8,
+          "passed": 4,
+          "samples": 5,
+          "wilson_95": [
+            0.375528,
+            0.963777
+          ]
+        },
+        "module-record-dict-mix": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        },
+        "producer-consumer-channel": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        },
+        "throw-finally-cleanup": {
+          "pass_at_1": 1.0,
+          "passed": 5,
+          "samples": 5,
+          "wilson_95": [
+            0.565509,
+            1.0
+          ]
+        }
+      },
+      "samples": 30,
+      "tasks": 6,
+      "wilson_95": [
+        0.833292,
+        0.994092
+      ]
+    }
+  },
+  "difference": {
+    "T_minus_C": 0.033333,
+    "interval_95_wald": [
+      -0.030902,
+      0.097569
+    ],
+    "interpretation": "observational; interval includes 0, so no measurable increment of the extra guide/Skill/concurrency card at n=30 per group"
+  },
+  "failure_analysis": [
+    {
+      "group": "C",
+      "task": "each-snapshot-alias",
+      "sample": 4,
+      "expected": "iterations 3\nb.value 9\nb == alias true\n",
+      "actual": "iterations 3\n9\ntrue\n",
+      "cause": "the C-group agent emitted bare values instead of the labelled lines required by the prompt; spec-only reading did not supply the example style used in the guide",
+      "classification": "OUTPUT_FORMAT_MISMATCH (specification-comprehension, not a language-semantics error)"
+    },
+    {
+      "group": "T",
+      "task": null,
+      "sample": null,
+      "cause": "no T-group failures"
+    }
+  ],
+  "guide_revision": {
+    "triggered": false,
+    "reason": "no T-group failure and only one C-group failure; the failure is an output-format mismatch that the prompt states explicitly, not evidence that the guide/Skill text is missing a fact. Per task book S48 section 5, no change is manufactured."
+  },
+  "limitations": [
+    "observational comparison, not causal: model and routing unobserved, single platform, 6 small tasks",
+    "ceiling effect: both groups near 100%, so the design cannot detect a small guide increment",
+    "n=5 per task is small; Wilson interval is wide",
+    "same-platform only; no cross-model replication"
+  ]
+}

@@ -1,0 +1,32 @@
+# pipeline.lwt
+# 生产者-消费者：生产者向无界 FIFO 通道 ch 发送 1、2、3 后 close(ch)；
+# 主任务用 receive 循环累加，直到收到 null（关闭且排空）；再捕获一个失败任务。
+
+fn produce(c) {
+    send(c, 1);
+    send(c, 2);
+    send(c, 3);
+    close(c);
+}
+
+fn boom() {
+    throw "task failed";
+}
+
+let ch = channel();
+let producer = spawn produce(ch);
+
+let sum = 0;
+let v = receive(ch);
+while (v != null) {
+    sum = sum + v;
+    v = receive(ch);
+}
+emit "sum " + str(sum);
+
+let t = spawn boom();
+attempt {
+    join(t);
+} recover (p) {
+    emit "caught:" + p.message;
+}

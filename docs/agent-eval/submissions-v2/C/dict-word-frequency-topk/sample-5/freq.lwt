@@ -1,0 +1,52 @@
+# freq.lwt: read words from stdin, print top 3 by count desc then word asc.
+let counts = dict{};
+let line = input();
+while (line != null) {
+    when (line != "") {
+        let words = split(line, " ");
+        each (w in words) {
+            when (w != "") {
+                when (has(counts, w)) {
+                    put(counts, w, counts[w] + 1);
+                } otherwise {
+                    put(counts, w, 1);
+                }
+            }
+        }
+    }
+    line = input();
+}
+
+let names = keys(counts);
+let n = len(names);
+when (n == 0) {
+    emit "EMPTY";
+} otherwise {
+    let chosen = dict{};
+    let taken = 0;
+    while (taken < 3 and taken < n) {
+        let haveBest = false;
+        let bestName = "";
+        each (nm in names) {
+            when (not has(chosen, nm)) {
+                when (haveBest) {
+                    let cn = counts[nm];
+                    let cb = counts[bestName];
+                    when (cn > cb) {
+                        bestName = nm;
+                    } otherwise {
+                        when (cn == cb) {
+                            when (nm < bestName) { bestName = nm; }
+                        }
+                    }
+                } otherwise {
+                    bestName = nm;
+                    haveBest = true;
+                }
+            }
+        }
+        emit bestName + " " + str(counts[bestName]);
+        put(chosen, bestName, true);
+        taken = taken + 1;
+    }
+}

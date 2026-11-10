@@ -1,0 +1,45 @@
+# freq.lwt —— 统计 stdin 中每个单词出现次数，输出次数最多的前 3 名。
+# 每行若干以单个空格分隔的单词；输出按次数降序、同次数按单词升序。
+# 无输入（没有任何单词）时输出 EMPTY。
+
+let counts = dict{};
+let line = input();
+while (line != null) {
+    each (w in split(line, " ")) {
+        when (w != "") {
+            put(counts, w, get(counts, w, 0) + 1);
+        }
+    }
+    line = input();
+}
+
+# 对键做插入排序：次数大者在前，次数相同按单词升序。
+let order = keys(counts);
+let i = 1;
+while (i < len(order)) {
+    let cur = order[i];
+    let j = i - 1;
+    while (j >= 0) {
+        let prev = order[j];
+        let pc = counts[prev];
+        let cc = counts[cur];
+        when (pc < cc or (pc == cc and prev > cur)) {
+            order[j + 1] = order[j];
+            j = j - 1;
+        } otherwise {
+            break;
+        }
+    }
+    order[j + 1] = cur;
+    i = i + 1;
+}
+
+when (len(order) == 0) {
+    emit "EMPTY";
+} otherwise {
+    let k = 0;
+    while (k < len(order) and k < 3) {
+        emit order[k] + " " + str(counts[order[k]]);
+        k = k + 1;
+    }
+}

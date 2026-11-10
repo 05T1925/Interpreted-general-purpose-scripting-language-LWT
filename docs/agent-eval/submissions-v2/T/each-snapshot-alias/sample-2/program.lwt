@@ -1,0 +1,19 @@
+# snapshot.lwt
+# 1) each 的浅快照：循环体内 push(values, 99) 不改变本次遍历的快照。
+# 2) record 是引用类型：alias = b 后 alias.value 赋值对 b 可见，且 b == alias 为 true。
+
+let values = [1, 2, 3];
+let iterations = 0;
+each (v in values) {
+    push(values, 99);
+    iterations = iterations + 1;
+}
+emit "iterations " + str(iterations);
+
+record Box { value };
+
+let b = Box{value: 1};
+let alias = b;
+alias.value = 9;
+emit "b.value " + str(b.value);
+emit "b == alias " + str(b == alias);

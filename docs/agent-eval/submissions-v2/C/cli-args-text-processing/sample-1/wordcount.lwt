@@ -1,0 +1,34 @@
+# wordcount.lwt
+# 用法：python -m lwt wordcount.lwt -- <path>
+# 读取 args()[0] 指向的文本文件，统计非空行数与非空行中的单词总数，
+# 输出 "lines <L> words <W>"。不读取 stdin。
+#
+# 依据 docs/language-spec.md：
+#   §6  args() 返回 -- 之后的实参数组；read_text 读全文并把 CRLF/CR 规范化为 LF、
+#       剥除开头一个 BOM；split 保留首尾及连续分隔符产生的空字段；trim 只删两端 ASCII 空白。
+#   §5  each 遍历数组副本快照，块每次进入新建作用域。
+#   §4.3 str/emit 的显示规则。
+
+let path = args()[0];
+let text = read_text(path);
+
+# 末尾有换行时 split 产生一个尾随空字段，恰好对应"没有内容的那一行"；
+# 末尾无换行时最后一行仍有内容字段，因此两种情况行数都正确。
+let all_lines = split(text, "\n");
+
+let line_count = 0;
+let word_count = 0;
+
+each (line in all_lines) {
+    let content = trim(line);
+    when (content != "") {
+        line_count = line_count + 1;
+        each (word in split(content, " ")) {
+            when (word != "") {
+                word_count = word_count + 1;
+            }
+        }
+    }
+}
+
+emit "lines " + str(line_count) + " words " + str(word_count);

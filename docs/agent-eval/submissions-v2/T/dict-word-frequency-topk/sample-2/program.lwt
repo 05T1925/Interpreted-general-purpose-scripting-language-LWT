@@ -1,0 +1,67 @@
+# freq.lwt：统计 stdin 词频，按次数降序、同次数按单词升序输出前 3 行。
+
+record Entry { word, count };
+
+# a 是否应排在 b 之前：次数降序，同次数时单词升序。
+fn before(a, b) {
+    when (a.count > b.count) {
+        return true;
+    }
+    when (a.count < b.count) {
+        return false;
+    }
+    return a.word < b.word;
+}
+
+# 对 Entry 数组做插入排序，原地修改。
+fn sort_entries(items) {
+    let n = len(items);
+    let i = 1;
+    while (i < n) {
+        let j = i;
+        while (j > 0) {
+            when (before(items[j], items[j - 1])) {
+                let tmp = items[j];
+                items[j] = items[j - 1];
+                items[j - 1] = tmp;
+                j = j - 1;
+            } otherwise {
+                break;
+            }
+        }
+        i = i + 1;
+    }
+}
+
+let counts = dict{};
+let line = input();
+while (line != null) {
+    when (line != "") {
+        each (w in split(line, " ")) {
+            when (w != "") {
+                put(counts, w, get(counts, w, 0) + 1);
+            }
+        }
+    }
+    line = input();
+}
+
+let words = keys(counts);
+when (len(words) == 0) {
+    emit "EMPTY";
+} otherwise {
+    let items = [];
+    each (w in words) {
+        push(items, Entry{word: w, count: counts[w]});
+    }
+    sort_entries(items);
+    let limit = len(items);
+    when (limit > 3) {
+        limit = 3;
+    }
+    let k = 0;
+    while (k < limit) {
+        emit items[k].word + " " + str(items[k].count);
+        k = k + 1;
+    }
+}

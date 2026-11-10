@@ -1,0 +1,32 @@
+# pipeline.lwt: producer/consumer over an unbounded FIFO channel,
+# then a failing task joined inside attempt/recover.
+
+let ch = channel();
+
+fn produce(ch) {
+    send(ch, 1);
+    send(ch, 2);
+    send(ch, 3);
+    close(ch);
+}
+
+fn boom() {
+    throw "task failed";
+}
+
+spawn produce(ch);
+
+let total = 0;
+let value = receive(ch);
+while (value != null) {
+    total = total + value;
+    value = receive(ch);
+}
+emit "sum " + str(total);
+
+let t = spawn boom();
+attempt {
+    join(t);
+} recover (problem) {
+    emit "caught:" + problem.message;
+}

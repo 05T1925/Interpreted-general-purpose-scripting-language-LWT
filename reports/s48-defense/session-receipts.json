@@ -1,0 +1,751 @@
+{
+  "schema_version": 1,
+  "note": "S48 60 independent sessions; baseline d9daedd; each session used its own detached worktree; worktrees removed after collection.",
+  "generated_at_utc": "2026-11-10T04:19:48Z",
+  "sessions": 60,
+  "receipts": [
+    {
+      "group": "T",
+      "task": "cli-args-text-processing",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "b5971ab784e9097586824c1345cabbeee3caa286917f7f6c891f9959192efb18",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "cli-args-text-processing",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "1ed3be72a2add2fc69ae928df9b665e27a62c06eb86df345d5f248dcd775bb61",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "cli-args-text-processing",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "wordcount.lwt"
+      ],
+      "report_sha256": "27a761ff0434e0c520101788b2479cff61bac93ce34da002e5759a9add4b66ff",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "cli-args-text-processing",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "wordcount.lwt"
+      ],
+      "report_sha256": "573bcee4b354ec6f8083ddf7ca28247ab42e6d8acc26cfb43f435de9f0e45fb7",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "cli-args-text-processing",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "wordcount.lwt"
+      ],
+      "report_sha256": "bf525e29de4f3c9ef4265217dafc80341b24e184a0d872185a2f31bb7274a382",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "edc9f950c6e9da72b62ce9e1d788fb0b4224d07d62349aacfe38cc6631a1f682",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "b66cb19c3b6a9de2a716ba4e02e0f77ad2a4dac94f671e5efd122905f282a09d",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "freq.lwt",
+        "report.md"
+      ],
+      "report_sha256": "37904838f2ef147809934f179c41b6fe5690c352f269a8032084f6610211f756",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "freq.lwt",
+        "report.md"
+      ],
+      "report_sha256": "7f1e9ed4d4c9c0ad446f94c5b751f09850a9850f1e431c6e6985b763226d896c",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "freq.lwt",
+        "report.md"
+      ],
+      "report_sha256": "a685db45524aed7717ff1d94e0ea6f770ed3341d0f47dee6b66a401903fdbca2",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "each-snapshot-alias",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "c013f03576ebe6165bb4ab70429fbe45fee3db5b455ba024f8f51e56dc0148a3",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "each-snapshot-alias",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "f88d9932046d202be8e621fe4c1aeaa7ba9891a287097edeb8dae2a7d6b49921",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "each-snapshot-alias",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "snapshot.lwt"
+      ],
+      "report_sha256": "c06b629d0ae27172243c153ca53adfb33d35f329bccb02321e1b561d8b0ea672",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "each-snapshot-alias",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "snapshot.lwt"
+      ],
+      "report_sha256": "83ca0a6d81d0802e707cdf0e0203ba391a9242cc281eb7e178accad1e155c57f",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "each-snapshot-alias",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "snapshot.lwt"
+      ],
+      "report_sha256": "a06eb1130b778287cdd5299e618af7eb6dc597a033fd7cdd480e443ca1b24968",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "module-record-dict-mix",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "main.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "74631f0ba7bd95a81dd40cfab9b8c8a8f82bee0a293ef6a693e007ca84e7518d",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "module-record-dict-mix",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "main.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "cc9902997263348e1be9ddad16fb4b2c27762d60f183e4134ca4c26f21a9d0cb",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "module-record-dict-mix",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "b9a4ceb6710124138411d0a3f96edcddd6cd62b7dd494faa64da1f3622d72b38",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "module-record-dict-mix",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "a044e4497ca983550e4e8bae0c58ba4b0c14c44baba532f61f97eaf418341df8",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "module-record-dict-mix",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "159954b492606ef2ae6169665894b31506ea3914de9582d894289a23311808b9",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "producer-consumer-channel",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "f7e44c0e9c7b5d8b4243b4cc3b1001c373c192de32aa1b53e39e5fccffcc101a",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "producer-consumer-channel",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "eb801daad670c78d4e73ff74abe546cfb3e79013ecf1280494e075d2b04e7dc1",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "producer-consumer-channel",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "pipeline.lwt",
+        "report.md"
+      ],
+      "report_sha256": "1befd194da1b23c78c60f7b07fe3154a0a8f752ff4d2cd3a496f839f2c1c0f8a",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "producer-consumer-channel",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "pipeline.lwt",
+        "report.md"
+      ],
+      "report_sha256": "8ba2dc6943d1839ccf4234978d0ae72fb585e4f1469f4a01599ce476969505ed",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "producer-consumer-channel",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "pipeline.lwt",
+        "report.md"
+      ],
+      "report_sha256": "a0c4b97932a7f84a496485aa53f99154f181824b3ff084185487f631ce90a10e",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "581d640a6b29745f1155ebd5aa76642dfbfd737d9b445b26018fe51f4cc2f4ee",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "program.lwt",
+        "report.md"
+      ],
+      "report_sha256": "1541e86d4285c7b39569c3763b716b79796b46f03e119e5daad720b587b6df43",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "cleanup.lwt",
+        "report.md"
+      ],
+      "report_sha256": "f7ea549f99f5ec2dc9703604c0a485b1f02b660b24e33a9c82d1bfab44350377",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "cleanup.lwt",
+        "report.md"
+      ],
+      "report_sha256": "5103fdb2c473f7bc9105dfe6b6c895e8da138309ce50984cfc3191c9741311e0",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "T",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "cleanup.lwt",
+        "report.md"
+      ],
+      "report_sha256": "a692f67c5ddf20116603a0d08b7ffd35619d17506280722b876dd6a9f437bbd9",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "cli-args-text-processing",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "wordcount.lwt"
+      ],
+      "report_sha256": "e43008f6736ac7359452ebadcce50014974cec2f62ab028f2439f25d01a198df",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "cli-args-text-processing",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "wordcount.lwt"
+      ],
+      "report_sha256": "526cec1ffb0b67b47f4c9f35467a73f297b29195ae7d8e2a503b79140af6e6cf",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "cli-args-text-processing",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "t_big.txt",
+        "t_blank.txt",
+        "t_bom.txt",
+        "t_crlf.txt",
+        "t_empty.txt",
+        "t_nonl.txt",
+        "t_single.txt",
+        "t_spaces.txt",
+        "t_trailing.txt",
+        "wordcount.lwt"
+      ],
+      "report_sha256": "474ddb44fe6324815ff62bcd8da2964919affdb1f8e52cc0dac5e2cdd333c1aa",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "cli-args-text-processing",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "wordcount.lwt"
+      ],
+      "report_sha256": "b76f2fdc6fdcb38a2c24853f59af160b5f2c88e59462bf60fd2c8c606fdbae89",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "cli-args-text-processing",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "wordcount.lwt"
+      ],
+      "report_sha256": "0d98de6dee21a0a4cce3c872fedbf58a9ead82b7a3fde61b8045fd22e15898ea",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "freq.lwt",
+        "report.md"
+      ],
+      "report_sha256": "19e5a6e901bd277f5d87e18fc84e9758aa9545b9af22bdb56bfcff069bcf68c9",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "freq.lwt",
+        "report.md"
+      ],
+      "report_sha256": "5520dfa5c1282992cbe799c6ffd0c951923b25cce9edf159180dc199b277ce64",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "freq.lwt",
+        "report.md"
+      ],
+      "report_sha256": "9357f8271aff5f06e817f4daf888ba901311ecb3fbb1fc0349d6c3fa9adb0af5",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "freq.lwt",
+        "report.md"
+      ],
+      "report_sha256": "4e2532a27eda8ec4c71eeef677950d4e871a2c22e34bee48f3f7e10587d73f19",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "dict-word-frequency-topk",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "freq.lwt",
+        "report.md"
+      ],
+      "report_sha256": "964dd1deb062a4a4a40eabc6f892c5c2dca447babab41d22729dd8c308579059",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "each-snapshot-alias",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "snapshot.lwt"
+      ],
+      "report_sha256": "97afafa6146d663fb01cd6ecb494311caa0902ba71e59b69a1913ea7e182fc6a",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "each-snapshot-alias",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "snapshot.lwt"
+      ],
+      "report_sha256": "103268e82a52d87cdb11c6ecc7691f12b77a775aba8589411fc186d18b0bc5bf",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "each-snapshot-alias",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "snapshot.lwt"
+      ],
+      "report_sha256": "23f34614c1036be694fbfbadf625a1fd2e9e32d39e42c0155ce795a5ea206ddb",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "each-snapshot-alias",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "snapshot.lwt"
+      ],
+      "report_sha256": "4bacd6a9689da1fdd17200b14e01e6886a6956e639d432bff3172858c6eea3a1",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "each-snapshot-alias",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "report.md",
+        "snapshot.lwt"
+      ],
+      "report_sha256": "66910442918257701d407f3a6c81d0330189e27a6f4027b7bd0a2d039d41495e",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "module-record-dict-mix",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "9db4775ed4245c64f2ed937a93cd04a869f471a01acedc61ce2e20b06dc59ab7",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "module-record-dict-mix",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "dc03d22fd8ca24bf8c7bc7902856b50563323697ba387da56bcd15427bd16aa7",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "module-record-dict-mix",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "7446ae190f7d2a1c2011e40f6df30399d3ede0531b0649988f7cba221fe72dd3",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "module-record-dict-mix",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "adf7088f67173e0f91a44b09efb938bd54297d4656bbab18b9479d7e0e18918e",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "module-record-dict-mix",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "lib.lwt",
+        "mix.lwt",
+        "report.md"
+      ],
+      "report_sha256": "6307d8137e765c8a7327dec552ca36fc817af340c656ad030d464ce86948763a",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "producer-consumer-channel",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "pipeline.lwt",
+        "report.md"
+      ],
+      "report_sha256": "ccc4921fc00c70b1b0f014908f2eef8a5a040233d5223db58ca42e1d2cc0dd85",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "producer-consumer-channel",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "pipeline.lwt",
+        "report.md"
+      ],
+      "report_sha256": "8e2fa1c348c901628cda531c4c525f748fd7f9bc758e1c4adddb1859c19e718b",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "producer-consumer-channel",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "pipeline.lwt",
+        "report.md"
+      ],
+      "report_sha256": "56936e635661ffbc47915c78e4b447893eaa6cde5e7ffc5429cda32e32867c04",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "producer-consumer-channel",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "pipeline.lwt",
+        "report.md"
+      ],
+      "report_sha256": "76e4b7fa73590c39b0ab9e5c7b539ff1a5bcb967ad87997d36432554f0c7c960",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "producer-consumer-channel",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "pipeline.lwt",
+        "report.md"
+      ],
+      "report_sha256": "80852d3be02137f1a836b6925e49f827109645e3cc210bca284a039c6312fe9d",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-1",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "cleanup.lwt",
+        "report.md"
+      ],
+      "report_sha256": "dca18560f639bcdbe2b0339526cdc6be64072107d9e273df3df24392f7e15310",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-2",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "cleanup.lwt",
+        "report.md"
+      ],
+      "report_sha256": "527ba05b0cfdd67407cc94fad82393b12e7e802f6c2023b6ea5d491256505ecf",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-3",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "cleanup.lwt",
+        "report.md"
+      ],
+      "report_sha256": "b8f3fcce9d2e9f1eca7d06e8376fc64c0fba19a41a9826bed465bb0a5b1f7db5",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-4",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "cleanup.lwt",
+        "report.md"
+      ],
+      "report_sha256": "47ba68d92b21aedf91afc6e14fe7b452e8b68b88e612b652c4bda156dd42e651",
+      "isolation_statement_present": true
+    },
+    {
+      "group": "C",
+      "task": "throw-finally-cleanup",
+      "sample": "sample-5",
+      "baseline_sha": "d9daedd",
+      "files": [
+        "cleanup.lwt",
+        "report.md"
+      ],
+      "report_sha256": "1f260dcc8bfc56712ff123b88e2bdaa361a42ca2da123bbd12b79f8e4b681565",
+      "isolation_statement_present": true
+    }
+  ],
+  "isolation_statement_missing": 0,
+  "isolation_note": "Broad keyword check; a few reports disclose minor out-of-directory actions (a /tmp redirect or an ls that only listed names). These are recorded in docs/s48-agent-eval.md and were not used to judge task correctness."
+}

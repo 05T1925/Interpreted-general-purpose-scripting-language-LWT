@@ -1,0 +1,40 @@
+# freq.lwt: read lines of space-separated words from stdin,
+# print the top 3 words by count (desc) then word (asc), "word count" per line.
+let counts = dict{};
+let line = input();
+while (line != null) {
+  when (line != "") {
+    let words = split(line, " ");
+    each (w in words) {
+      when (w != "") {
+        when (has(counts, w)) {
+          put(counts, w, get(counts, w, 0) + 1);
+        } otherwise {
+          put(counts, w, 1);
+        }
+      }
+    }
+  }
+  line = input();
+}
+
+when (len(counts) == 0) {
+  emit "EMPTY";
+} otherwise {
+  let shown = 0;
+  while (shown < 3 and len(counts) > 0) {
+    let candidates = keys(counts);
+    let best = "";
+    let best_count = 0;
+    each (w in candidates) {
+      let c = get(counts, w, 0);
+      when (c > best_count or (c == best_count and w < best)) {
+        best = w;
+        best_count = c;
+      }
+    }
+    emit best + " " + str(best_count);
+    delete(counts, best);
+    shown = shown + 1;
+  }
+}

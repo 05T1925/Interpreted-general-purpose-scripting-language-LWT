@@ -1,0 +1,21 @@
+# wordcount.lwt
+# Usage: python -m lwt wordcount.lwt -- <path>
+# Prints: lines <L> words <W>
+# <L> = number of non-blank lines, <W> = words in those lines (single-space separated).
+
+let argv = args();
+let text = read_text(argv[0]);
+let parts = split(text, "\n");
+
+let line_count = 0;
+let word_count = 0;
+
+each (line in parts) {
+    let content = trim(line);
+    when (content != "") {
+        line_count = line_count + 1;
+        word_count = word_count + len(split(content, " "));
+    }
+}
+
+emit "lines " + str(line_count) + " words " + str(word_count);

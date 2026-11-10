@@ -1,0 +1,19 @@
+# 验证 each 的浅快照语义与 record 的引用别名语义。
+
+let values = [1, 2, 3];
+let iterations = 0;
+
+each (v in values) {
+    push(values, 99);
+    iterations = iterations + 1;
+}
+
+emit "iterations " + str(iterations);
+
+record Box { value };
+let b = Box{value: 0};
+let alias = b;
+alias.value = 9;
+
+emit "b.value " + str(b.value);
+emit "b == alias " + str(b == alias);

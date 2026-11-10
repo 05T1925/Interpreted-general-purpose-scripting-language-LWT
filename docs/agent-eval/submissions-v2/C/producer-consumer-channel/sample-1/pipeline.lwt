@@ -1,0 +1,37 @@
+# pipeline.lwt —— 生产者/消费者通道流水线 + 任务错误捕获
+# 规范依据：docs/language-spec.md §11.2、§11.3、§11.5、§11.6、§4.2、§10.6
+
+# 生产者任务：依次发送 1、2、3，然后关闭通道
+fn produce(c) {
+    send(c, 1);
+    send(c, 2);
+    send(c, 3);
+    close(c);
+    return null;
+}
+
+# 会失败的任务：抛出字符串，类别为 User，消息为 task failed
+fn boom() {
+    throw "task failed";
+}
+
+let ch = channel();
+let producer = spawn produce(ch);
+
+# 消费者：主任务循环接收并累加，直到通道关闭且取空后收到 null
+let total = 0;
+let item = receive(ch);
+while (item != null) {
+    total = total + item;
+    item = receive(ch);
+}
+emit "sum " + str(total);
+join(producer);
+
+# 启动失败任务，并用 attempt/recover 捕获 join 重新抛出的错误
+let t = spawn boom();
+attempt {
+    join(t);
+} recover (p) {
+    emit "caught:" + p.message;
+}

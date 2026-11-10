@@ -1,0 +1,47 @@
+# freq.lwt — read stdin lines of space-separated words, print the top 3
+# frequencies as "word count" (count desc, then word asc); EMPTY on no words.
+
+let counts = dict{};
+let line = input();
+while (line != null) {
+    let parts = split(line, " ");
+    each (w in parts) {
+        when (len(w) > 0) {
+            put(counts, w, get(counts, w, 0) + 1);
+        }
+    }
+    line = input();
+}
+
+let words = keys(counts);
+let tallies = [];
+each (w in words) {
+    push(tallies, counts[w]);
+}
+
+when (len(words) == 0) {
+    emit "EMPTY";
+} otherwise {
+    # Three selection passes over the remaining entries; a picked entry is
+    # marked with -1 so later passes skip it (real tallies are always >= 1).
+    let picked = 0;
+    while (picked < 3 and picked < len(words)) {
+        let best = -1;
+        let idx = 0;
+        while (idx < len(words)) {
+            when (tallies[idx] >= 0) {
+                when (best < 0) {
+                    best = idx;
+                } otherwise {
+                    when (tallies[idx] > tallies[best] or (tallies[idx] == tallies[best] and words[idx] < words[best])) {
+                        best = idx;
+                    }
+                }
+            }
+            idx = idx + 1;
+        }
+        emit words[best] + " " + str(tallies[best]);
+        tallies[best] = -1;
+        picked = picked + 1;
+    }
+}

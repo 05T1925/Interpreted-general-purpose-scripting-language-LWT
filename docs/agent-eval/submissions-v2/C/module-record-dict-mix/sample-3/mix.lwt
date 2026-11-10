@@ -1,0 +1,10 @@
+import "lib.lwt" as lib;
+
+record Item {name, price};
+
+let item = Item{name: "book", price: 200};
+let taxes = dict{"book": lib.tax(item.price)};
+
+each (name in keys(taxes)) {
+    emit name + " " + str(taxes[name]);
+}

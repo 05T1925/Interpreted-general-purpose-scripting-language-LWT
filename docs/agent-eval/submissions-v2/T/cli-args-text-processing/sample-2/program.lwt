@@ -1,0 +1,29 @@
+# wordcount.lwt
+# 读取 args()[0] 指定的 UTF-8 文本文件，统计非空行数与非空行中的单词总数。
+# 单词以单个空格分隔；read_text 已把 CRLF/CR 规范为 LF，并剥除开头 BOM。
+
+fn word_count(line) {
+    let total = 0;
+    each (part in split(line, " ")) {
+        when (part != "") {
+            total = total + 1;
+        }
+    }
+    return total;
+}
+
+fn scan_text(text) {
+    let lines = 0;
+    let words = 0;
+    each (raw in split(text, "\n")) {
+        let line = trim(raw);
+        when (line != "") {
+            lines = lines + 1;
+            words = words + word_count(line);
+        }
+    }
+    return [lines, words];
+}
+
+let summary = scan_text(read_text(args()[0]));
+emit "lines " + str(summary[0]) + " words " + str(summary[1]);

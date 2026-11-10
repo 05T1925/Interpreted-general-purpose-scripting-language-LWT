@@ -1,0 +1,51 @@
+# freq.lwt — 行内单词词频统计，输出前 3 行。
+# stdin 逐行读取，每行按单个空格切分；EOF（input() 返回 null）结束。
+# 排序：次数降序，同次数按单词（Unicode 码点）升序；无输入输出 EMPTY。
+
+let counts = dict{};
+
+let line = input();
+while (line != null) {
+    when (line != "") {
+        each (w in split(line, " ")) {
+            when (w != "") {
+                when (has(counts, w)) {
+                    counts[w] = counts[w] + 1;
+                } otherwise {
+                    counts[w] = 1;
+                }
+            }
+        }
+    }
+    line = input();
+}
+
+let words = keys(counts);
+let n = len(words);
+
+# 插入排序：counts 降序，同 counts 时单词升序。
+let i = 1;
+while (i < n) {
+    let cur = words[i];
+    let j = i - 1;
+    while (j >= 0 and (counts[words[j]] < counts[cur] or (counts[words[j]] == counts[cur] and words[j] > cur))) {
+        words[j + 1] = words[j];
+        j = j - 1;
+    }
+    words[j + 1] = cur;
+    i = i + 1;
+}
+
+when (n == 0) {
+    emit "EMPTY";
+} otherwise {
+    let limit = n;
+    when (limit > 3) {
+        limit = 3;
+    }
+    let k = 0;
+    while (k < limit) {
+        emit words[k] + " " + str(counts[words[k]]);
+        k = k + 1;
+    }
+}

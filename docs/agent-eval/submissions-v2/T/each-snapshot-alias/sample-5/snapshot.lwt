@@ -1,0 +1,17 @@
+# Proves that `each` iterates over a shallow snapshot taken on loop entry,
+# and that record assignment copies the reference (alias), not the object.
+
+let values = [1, 2, 3];
+let iterations = 0;
+each (v in values) {
+    iterations = iterations + 1;
+    push(values, 99);
+}
+emit "iterations " + str(iterations);
+
+record Box { value };
+let b = Box{value: 1};
+let alias = b;
+alias.value = 9;
+emit "b.value " + str(b.value);
+emit "b == alias " + str(b == alias);

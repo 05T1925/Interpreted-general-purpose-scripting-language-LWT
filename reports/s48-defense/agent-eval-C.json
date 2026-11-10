@@ -1,0 +1,1287 @@
+{
+  "generated_at_utc": "2026-11-10T04:18:45Z",
+  "group": "C",
+  "note": "Blind eval must be run by the user in a new context-free session. NOT_RUN means no submission was found; it is never reported as a pass.",
+  "overall": "PARTIAL",
+  "pass_at_1": 0.9666666666666667,
+  "pass_at_k_formula": "pass@k = 1 - C(n-c,k)/C(n,k); single sample == pass@1",
+  "pass_rate_over_submitted": 0.9666666666666667,
+  "passed": 29,
+  "results": [
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "actual_text": "apple 3\nbanana 3\ncherry 1\n",
+          "expected_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/dict-word-frequency-topk/sample-1/freq.lwt",
+      "group": "C",
+      "id": "dict-word-frequency-topk",
+      "sample": 1,
+      "status": "PASS",
+      "title": "dict 词频统计 + top-k"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "actual_text": "apple 3\nbanana 3\ncherry 1\n",
+          "expected_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/dict-word-frequency-topk/sample-2/freq.lwt",
+      "group": "C",
+      "id": "dict-word-frequency-topk",
+      "sample": 2,
+      "status": "PASS",
+      "title": "dict 词频统计 + top-k"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "actual_text": "apple 3\nbanana 3\ncherry 1\n",
+          "expected_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/dict-word-frequency-topk/sample-3/freq.lwt",
+      "group": "C",
+      "id": "dict-word-frequency-topk",
+      "sample": 3,
+      "status": "PASS",
+      "title": "dict 词频统计 + top-k"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "actual_text": "apple 3\nbanana 3\ncherry 1\n",
+          "expected_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/dict-word-frequency-topk/sample-4/freq.lwt",
+      "group": "C",
+      "id": "dict-word-frequency-topk",
+      "sample": 4,
+      "status": "PASS",
+      "title": "dict 词频统计 + top-k"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "actual_text": "apple 3\nbanana 3\ncherry 1\n",
+          "expected_b64": "YXBwbGUgMwpiYW5hbmEgMwpjaGVycnkgMQo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/dict-word-frequency-topk/sample-5/freq.lwt",
+      "group": "C",
+      "id": "dict-word-frequency-topk",
+      "sample": 5,
+      "status": "PASS",
+      "title": "dict 词频统计 + top-k"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "actual_text": "Validation\nnegative amount\ncleanup\n8\n",
+          "expected_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/throw-finally-cleanup/sample-1/cleanup.lwt",
+      "group": "C",
+      "id": "throw-finally-cleanup",
+      "sample": 1,
+      "status": "PASS",
+      "title": "throw/finally 清理与自定义错误"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "actual_text": "Validation\nnegative amount\ncleanup\n8\n",
+          "expected_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/throw-finally-cleanup/sample-2/cleanup.lwt",
+      "group": "C",
+      "id": "throw-finally-cleanup",
+      "sample": 2,
+      "status": "PASS",
+      "title": "throw/finally 清理与自定义错误"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "actual_text": "Validation\nnegative amount\ncleanup\n8\n",
+          "expected_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/throw-finally-cleanup/sample-3/cleanup.lwt",
+      "group": "C",
+      "id": "throw-finally-cleanup",
+      "sample": 3,
+      "status": "PASS",
+      "title": "throw/finally 清理与自定义错误"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "actual_text": "Validation\nnegative amount\ncleanup\n8\n",
+          "expected_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/throw-finally-cleanup/sample-4/cleanup.lwt",
+      "group": "C",
+      "id": "throw-finally-cleanup",
+      "sample": 4,
+      "status": "PASS",
+      "title": "throw/finally 清理与自定义错误"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "actual_text": "Validation\nnegative amount\ncleanup\n8\n",
+          "expected_b64": "VmFsaWRhdGlvbgpuZWdhdGl2ZSBhbW91bnQKY2xlYW51cAo4Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/throw-finally-cleanup/sample-5/cleanup.lwt",
+      "group": "C",
+      "id": "throw-finally-cleanup",
+      "sample": 5,
+      "status": "PASS",
+      "title": "throw/finally 清理与自定义错误"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "actual_text": "sum 6\ncaught:task failed\n",
+          "expected_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/producer-consumer-channel/sample-1/pipeline.lwt",
+      "group": "C",
+      "id": "producer-consumer-channel",
+      "sample": 1,
+      "status": "PASS",
+      "title": "确定性生产者/消费者 + 通道 + attempt/recover"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "actual_text": "sum 6\ncaught:task failed\n",
+          "expected_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/producer-consumer-channel/sample-2/pipeline.lwt",
+      "group": "C",
+      "id": "producer-consumer-channel",
+      "sample": 2,
+      "status": "PASS",
+      "title": "确定性生产者/消费者 + 通道 + attempt/recover"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "actual_text": "sum 6\ncaught:task failed\n",
+          "expected_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/producer-consumer-channel/sample-3/pipeline.lwt",
+      "group": "C",
+      "id": "producer-consumer-channel",
+      "sample": 3,
+      "status": "PASS",
+      "title": "确定性生产者/消费者 + 通道 + attempt/recover"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "actual_text": "sum 6\ncaught:task failed\n",
+          "expected_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/producer-consumer-channel/sample-4/pipeline.lwt",
+      "group": "C",
+      "id": "producer-consumer-channel",
+      "sample": 4,
+      "status": "PASS",
+      "title": "确定性生产者/消费者 + 通道 + attempt/recover"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "actual_text": "sum 6\ncaught:task failed\n",
+          "expected_b64": "c3VtIDYKY2F1Z2h0OnRhc2sgZmFpbGVkCg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/producer-consumer-channel/sample-5/pipeline.lwt",
+      "group": "C",
+      "id": "producer-consumer-channel",
+      "sample": 5,
+      "status": "PASS",
+      "title": "确定性生产者/消费者 + 通道 + attempt/recover"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "Ym9vayAxNgo=",
+          "actual_text": "book 16\n",
+          "expected_b64": "Ym9vayAxNgo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/module-record-dict-mix/sample-1/mix.lwt",
+      "group": "C",
+      "id": "module-record-dict-mix",
+      "sample": 1,
+      "status": "PASS",
+      "title": "模块导入 + record + dict 组合"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "Ym9vayAxNgo=",
+          "actual_text": "book 16\n",
+          "expected_b64": "Ym9vayAxNgo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/module-record-dict-mix/sample-2/mix.lwt",
+      "group": "C",
+      "id": "module-record-dict-mix",
+      "sample": 2,
+      "status": "PASS",
+      "title": "模块导入 + record + dict 组合"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "Ym9vayAxNgo=",
+          "actual_text": "book 16\n",
+          "expected_b64": "Ym9vayAxNgo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/module-record-dict-mix/sample-3/mix.lwt",
+      "group": "C",
+      "id": "module-record-dict-mix",
+      "sample": 3,
+      "status": "PASS",
+      "title": "模块导入 + record + dict 组合"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "Ym9vayAxNgo=",
+          "actual_text": "book 16\n",
+          "expected_b64": "Ym9vayAxNgo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/module-record-dict-mix/sample-4/mix.lwt",
+      "group": "C",
+      "id": "module-record-dict-mix",
+      "sample": 4,
+      "status": "PASS",
+      "title": "模块导入 + record + dict 组合"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "Ym9vayAxNgo=",
+          "actual_text": "book 16\n",
+          "expected_b64": "Ym9vayAxNgo=",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/module-record-dict-mix/sample-5/mix.lwt",
+      "group": "C",
+      "id": "module-record-dict-mix",
+      "sample": 5,
+      "status": "PASS",
+      "title": "模块导入 + record + dict 组合"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "actual_text": "iterations 3\nb.value 9\nb == alias true\n",
+          "expected_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/each-snapshot-alias/sample-1/snapshot.lwt",
+      "group": "C",
+      "id": "each-snapshot-alias",
+      "sample": 1,
+      "status": "PASS",
+      "title": "each 浅快照与数组/record 别名"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "actual_text": "iterations 3\nb.value 9\nb == alias true\n",
+          "expected_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/each-snapshot-alias/sample-2/snapshot.lwt",
+      "group": "C",
+      "id": "each-snapshot-alias",
+      "sample": 2,
+      "status": "PASS",
+      "title": "each 浅快照与数组/record 别名"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "actual_text": "iterations 3\nb.value 9\nb == alias true\n",
+          "expected_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/each-snapshot-alias/sample-3/snapshot.lwt",
+      "group": "C",
+      "id": "each-snapshot-alias",
+      "sample": 3,
+      "status": "PASS",
+      "title": "each 浅快照与数组/record 别名"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "aXRlcmF0aW9ucyAzCjkKdHJ1ZQo=",
+          "actual_text": "iterations 3\n9\ntrue\n",
+          "expected_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "pass": false
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/each-snapshot-alias/sample-4/snapshot.lwt",
+      "group": "C",
+      "id": "each-snapshot-alias",
+      "sample": 4,
+      "status": "FAIL",
+      "title": "each 浅快照与数组/record 别名"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "actual_text": "iterations 3\nb.value 9\nb == alias true\n",
+          "expected_b64": "aXRlcmF0aW9ucyAzCmIudmFsdWUgOQpiID09IGFsaWFzIHRydWUK",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/each-snapshot-alias/sample-5/snapshot.lwt",
+      "group": "C",
+      "id": "each-snapshot-alias",
+      "sample": 5,
+      "status": "PASS",
+      "title": "each 浅快照与数组/record 别名"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "actual_text": "lines 3 words 6\n",
+          "expected_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/cli-args-text-processing/sample-1/wordcount.lwt",
+      "group": "C",
+      "id": "cli-args-text-processing",
+      "sample": 1,
+      "status": "PASS",
+      "title": "CLI 参数 + 文本文件处理"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "actual_text": "lines 3 words 6\n",
+          "expected_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/cli-args-text-processing/sample-2/wordcount.lwt",
+      "group": "C",
+      "id": "cli-args-text-processing",
+      "sample": 2,
+      "status": "PASS",
+      "title": "CLI 参数 + 文本文件处理"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "actual_text": "lines 3 words 6\n",
+          "expected_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/cli-args-text-processing/sample-3/wordcount.lwt",
+      "group": "C",
+      "id": "cli-args-text-processing",
+      "sample": 3,
+      "status": "PASS",
+      "title": "CLI 参数 + 文本文件处理"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "actual_text": "lines 3 words 6\n",
+          "expected_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/cli-args-text-processing/sample-4/wordcount.lwt",
+      "group": "C",
+      "id": "cli-args-text-processing",
+      "sample": 4,
+      "status": "PASS",
+      "title": "CLI 参数 + 文本文件处理"
+    },
+    {
+      "checks": {
+        "check_exit_zero": {
+          "exit_code": 0,
+          "pass": true,
+          "stderr": ""
+        },
+        "deterministic_bytes": {
+          "pass": true,
+          "runs": 5
+        },
+        "exit_code_matches": {
+          "actual": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected": 0,
+          "pass": true
+        },
+        "no_forbidden_constructs": {
+          "hits": [],
+          "pass": true
+        },
+        "stdout_matches": {
+          "actual_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "actual_text": "lines 3 words 6\n",
+          "expected_b64": "bGluZXMgMyB3b3JkcyA2Cg==",
+          "pass": true
+        }
+      },
+      "entry": "docs/agent-eval/submissions-v2/C/cli-args-text-processing/sample-5/wordcount.lwt",
+      "group": "C",
+      "id": "cli-args-text-processing",
+      "sample": 5,
+      "status": "PASS",
+      "title": "CLI 参数 + 文本文件处理"
+    }
+  ],
+  "samples_per_task": 5,
+  "schema_version": 2,
+  "stats": {
+    "group": "C",
+    "pass_at_1": 0.9666666666666667,
+    "pass_at_k": {
+      "pass@5": 1.0
+    },
+    "passed": 29,
+    "per_task": {
+      "cli-args-text-processing": {
+        "pass_at_1": 1.0,
+        "passed": 5,
+        "samples": 5,
+        "wilson_95": [
+          0.565509,
+          1.0
+        ]
+      },
+      "dict-word-frequency-topk": {
+        "pass_at_1": 1.0,
+        "passed": 5,
+        "samples": 5,
+        "wilson_95": [
+          0.565509,
+          1.0
+        ]
+      },
+      "each-snapshot-alias": {
+        "pass_at_1": 0.8,
+        "passed": 4,
+        "samples": 5,
+        "wilson_95": [
+          0.375528,
+          0.963777
+        ]
+      },
+      "module-record-dict-mix": {
+        "pass_at_1": 1.0,
+        "passed": 5,
+        "samples": 5,
+        "wilson_95": [
+          0.565509,
+          1.0
+        ]
+      },
+      "producer-consumer-channel": {
+        "pass_at_1": 1.0,
+        "passed": 5,
+        "samples": 5,
+        "wilson_95": [
+          0.565509,
+          1.0
+        ]
+      },
+      "throw-finally-cleanup": {
+        "pass_at_1": 1.0,
+        "passed": 5,
+        "samples": 5,
+        "wilson_95": [
+          0.565509,
+          1.0
+        ]
+      }
+    },
+    "samples": 30,
+    "tasks": 6,
+    "wilson_95": [
+      0.833292,
+      0.994092
+    ]
+  },
+  "submitted": 30,
+  "tasks_total": 30,
+  "tool": "lwt-agent-eval"
+}

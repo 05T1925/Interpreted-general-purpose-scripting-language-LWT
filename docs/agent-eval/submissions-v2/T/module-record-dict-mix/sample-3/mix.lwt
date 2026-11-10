@@ -1,0 +1,7 @@
+# mix.lwt: 模块导入 + record 构造 + dict 映射 + 输出（规范 §9、§4.3、§4.4）。
+import "lib.lwt" as lib;
+
+record Item { name, price };
+let item = Item{name: "book", price: 200};
+let prices = dict{"book": lib.tax(item.price)};
+emit item.name + " " + str(prices["book"]);

@@ -1,0 +1,3 @@
+fn tax(amount) {
+    return amount * 8 / 100;
+}

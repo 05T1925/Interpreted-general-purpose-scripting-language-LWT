@@ -1,0 +1,49 @@
+# freq.lwt — 词频统计：按次数降序、次数相同按单词升序输出前 3 行
+
+fn ranks_before(left, right, counts) {
+    let left_count = get(counts, left, 0);
+    let right_count = get(counts, right, 0);
+    when (left_count > right_count) { return true; }
+    when (left_count < right_count) { return false; }
+    return left < right;
+}
+
+fn pick_best(words, counts, used) {
+    let best = null;
+    each (candidate in words) {
+        when (has(used, candidate)) { continue; }
+        when (best == null) { best = candidate; }
+        otherwise {
+            when (ranks_before(candidate, best, counts)) { best = candidate; }
+        }
+    }
+    return best;
+}
+
+let counts = dict{};
+let total = 0;
+while (true) {
+    let line = input();
+    when (line == null) { break; }
+    each (word in split(line, " ")) {
+        when (len(word) == 0) { continue; }
+        put(counts, word, get(counts, word, 0) + 1);
+        total = total + 1;
+    }
+}
+
+when (total == 0) {
+    emit "EMPTY";
+} otherwise {
+    let words = keys(counts);
+    let used = dict{};
+    let limit = len(words);
+    when (limit > 3) { limit = 3; }
+    let i = 0;
+    while (i < limit) {
+        let best = pick_best(words, counts, used);
+        put(used, best, true);
+        emit best + " " + str(get(counts, best, 0));
+        i = i + 1;
+    }
+}

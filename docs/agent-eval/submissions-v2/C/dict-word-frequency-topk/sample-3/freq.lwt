@@ -1,0 +1,63 @@
+# freq.lwt: 统计 stdin 中单词出现次数，输出前 3 名。
+# 每行以单个空格分隔单词；次数降序，同次数按单词升序。
+
+let counts = dict{};
+
+let line = input();
+while (line != null) {
+    when (len(line) > 0) {
+        let words = split(line, " ");
+        each (w in words) {
+            when (len(w) > 0) {
+                put(counts, w, get(counts, w, 0) + 1);
+            }
+        }
+    }
+    line = input();
+}
+
+let names = keys(counts);
+let n = len(names);
+
+when (n == 0) {
+    emit "EMPTY";
+}
+otherwise {
+    let limit = 3;
+    when (n < limit) {
+        limit = n;
+    }
+
+    # 只需选出前 limit 名：每轮在剩余项里选最优，
+    # 优先 counts 大，次数相同则 names 小。
+    let i = 0;
+    while (i < limit) {
+        let best = i;
+        let j = i + 1;
+        while (j < n) {
+            let cj = counts[names[j]];
+            let cb = counts[names[best]];
+            when (cj > cb) {
+                best = j;
+            }
+            otherwise {
+                when (cj == cb) {
+                    when (names[j] < names[best]) {
+                        best = j;
+                    }
+                }
+            }
+            j = j + 1;
+        }
+        let tmp = names[i];
+        names[i] = names[best];
+        names[best] = tmp;
+        i = i + 1;
+    }
+
+    let k = 0;
+    while (k < limit) {
+        emit names[k] + " " + str(counts[names[k]]);
+        k = k + 1;
+    }
+}

@@ -1,0 +1,17 @@
+# wordcount.lwt: 统计 args()[0] 指定文本文件的非空行数与这些行中的单词总数。
+# 单词约定以单个空格分隔；空行（含仅空白行）不计入行数。
+let path = args()[0];
+let text = read_text(path);
+let all_lines = split(text, "\n");
+let line_count = 0;
+let word_count = 0;
+each (raw in all_lines) {
+    let line = trim(raw);
+    when (len(line) > 0) {
+        line_count = line_count + 1;
+        each (word in split(line, " ")) {
+            when (len(word) > 0) { word_count = word_count + 1; }
+        }
+    }
+}
+emit "lines " + str(line_count) + " words " + str(word_count);

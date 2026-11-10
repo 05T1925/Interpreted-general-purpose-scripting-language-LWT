@@ -1,0 +1,2 @@
+# 税率库：仅含函数声明，供入口文件 import 使用。
+fn tax(amount) { return amount * 8 / 100; }

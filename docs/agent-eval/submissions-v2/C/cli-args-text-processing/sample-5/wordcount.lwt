@@ -1,0 +1,18 @@
+# wordcount.lwt: 统计非空行数与非空行中的单词总数
+let path = args()[0];
+let content = read_text(path);
+let lines = split(content, "\n");
+let line_count = 0;
+let word_count = 0;
+each (raw_line in lines) {
+    let line = trim(raw_line);
+    when (line != "") {
+        line_count = line_count + 1;
+        each (word in split(line, " ")) {
+            when (word != "") {
+                word_count = word_count + 1;
+            }
+        }
+    }
+}
+emit "lines " + str(line_count) + " words " + str(word_count);

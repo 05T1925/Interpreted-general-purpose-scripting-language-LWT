@@ -1,0 +1,8 @@
+# 入口程序：导入函数库，构造 record，把计算结果存入 dict，最后输出 book 16。
+import "lib.lwt" as lib;
+
+record Item { name, price };
+
+let item = Item{name: "book", price: 200};
+let totals = dict{item.name: lib.tax(item.price)};
+emit item.name + " " + str(totals[item.name]);

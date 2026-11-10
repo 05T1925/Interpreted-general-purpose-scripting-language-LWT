@@ -1,0 +1,58 @@
+# freq.lwt — read words from stdin, print the top 3 by (count desc, word asc).
+
+# Returns true when word a must be placed before word b.
+fn precedes(counts, a, b) {
+    let ca = counts[a];
+    let cb = counts[b];
+    when (ca > cb) { return true; }
+    when (ca < cb) { return false; }
+    return a < b;
+}
+
+# Insertion sort of the words array, in place, using the precedes order.
+fn sort_words(counts, words) {
+    let i = 1;
+    let n = len(words);
+    while (i < n) {
+        let j = i;
+        while (j > 0) {
+            when (precedes(counts, words[j], words[j - 1])) {
+                let tmp = words[j];
+                words[j] = words[j - 1];
+                words[j - 1] = tmp;
+                j = j - 1;
+            } otherwise {
+                break;
+            }
+        }
+        i = i + 1;
+    }
+}
+
+let counts = dict{};
+let line = input();
+while (line != null) {
+    each (word in split(line, " ")) {
+        when (word != "") {
+            when (has(counts, word)) {
+                counts[word] = counts[word] + 1;
+            } otherwise {
+                counts[word] = 1;
+            }
+        }
+    }
+    line = input();
+}
+
+when (len(counts) == 0) {
+    emit "EMPTY";
+} otherwise {
+    let words = keys(counts);
+    sort_words(counts, words);
+    let i = 0;
+    let n = len(words);
+    while (i < n and i < 3) {
+        emit words[i] + " " + str(counts[words[i]]);
+        i = i + 1;
+    }
+}

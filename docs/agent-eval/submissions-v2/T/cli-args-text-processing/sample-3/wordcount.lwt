@@ -1,0 +1,23 @@
+# 统计非空行数与非空行中的单词总数。
+# 用法：python -m lwt wordcount.lwt -- <path>
+
+fn count_lines_and_words(lines) {
+    let line_count = 0;
+    let word_count = 0;
+    each (line in lines) {
+        let body = trim(line);
+        when (body != "") {
+            line_count = line_count + 1;
+            each (part in split(body, " ")) {
+                when (part != "") {
+                    word_count = word_count + 1;
+                }
+            }
+        }
+    }
+    return [line_count, word_count];
+}
+
+let content = read_text(args()[0]);
+let totals = count_lines_and_words(split(content, "\n"));
+emit "lines " + str(totals[0]) + " words " + str(totals[1]);

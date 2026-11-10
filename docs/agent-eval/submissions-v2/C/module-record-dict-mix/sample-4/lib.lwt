@@ -1,0 +1,4 @@
+# lib.lwt — 静态函数库，仅含顶层导入与函数声明（规范 §9.1）
+fn tax(amount) {
+    return amount * 8 / 100;
+}

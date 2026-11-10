@@ -1,0 +1,6 @@
+import "lib.lwt" as lib;
+
+record Item { name, price };
+let item = Item{name: "book", price: 200};
+let ledger = dict{"book": lib.tax(item.price)};
+emit item.name + " " + str(ledger[item.name]);

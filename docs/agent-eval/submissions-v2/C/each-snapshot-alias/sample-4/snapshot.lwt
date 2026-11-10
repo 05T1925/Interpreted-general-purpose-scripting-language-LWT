@@ -1,0 +1,15 @@
+record Box {value};
+
+let values = [1, 2, 3];
+let count = 0;
+each (v in values) {
+    push(values, 99);
+    count = count + 1;
+}
+emit "iterations " + str(count);
+
+let b = Box{value: 0};
+let alias = b;
+alias.value = 9;
+emit b.value;
+emit b == alias;

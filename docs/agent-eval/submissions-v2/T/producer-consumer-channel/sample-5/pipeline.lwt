@@ -1,0 +1,35 @@
+# pipeline.lwt -- producer/consumer over a FIFO channel, then task error recovery.
+# Producer sends 1, 2, 3 and closes the channel; main drains it and sums until null.
+# A second task throws "task failed"; join rethrows it and attempt/recover reports it.
+
+let ch = channel();
+
+fn produce() {
+    send(ch, 1);
+    send(ch, 2);
+    send(ch, 3);
+    close(ch);
+}
+
+fn boom() {
+    throw "task failed";
+}
+
+let producer = spawn produce();
+
+let total = 0;
+while (true) {
+    let item = receive(ch);
+    when (item == null) { break; }
+    total = total + item;
+}
+
+join(producer);
+emit "sum " + str(total);
+
+let t = spawn boom();
+attempt {
+    join(t);
+} recover (problem) {
+    emit "caught:" + problem.message;
+}

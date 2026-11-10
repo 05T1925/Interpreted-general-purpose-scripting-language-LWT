@@ -1,0 +1,19 @@
+# wordcount.lwt: count non-empty lines and words in the file named by args()[0].
+let path = args()[0];
+let text = read_text(path);
+let all_lines = split(text, "\n");
+let line_count = 0;
+let word_count = 0;
+each (line in all_lines) {
+    let body = trim(line);
+    when (body != "") {
+        line_count = line_count + 1;
+        let fields = split(body, " ");
+        each (field in fields) {
+            when (field != "") {
+                word_count = word_count + 1;
+            }
+        }
+    }
+}
+emit "lines " + str(line_count) + " words " + str(word_count);

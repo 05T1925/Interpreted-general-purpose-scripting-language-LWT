@@ -1,0 +1,19 @@
+# wordcount.lwt: count non-empty lines and words in the file given by args()[0].
+# Usage: python -m lwt wordcount.lwt -- <path>
+let path = args()[0];
+let text = read_text(path);
+let lines = split(text, "\n");
+let line_count = 0;
+let word_count = 0;
+each (line in lines) {
+    let content = trim(line);
+    when (content != "") {
+        line_count = line_count + 1;
+        each (word in split(content, " ")) {
+            when (word != "") {
+                word_count = word_count + 1;
+            }
+        }
+    }
+}
+emit "lines " + str(line_count) + " words " + str(word_count);

@@ -1,0 +1,2 @@
+# 静态函数库：只含顶部 import（此处无）与顶层 fn 声明（规范 §9.1）
+fn tax(amount) { return amount * 8 / 100; }

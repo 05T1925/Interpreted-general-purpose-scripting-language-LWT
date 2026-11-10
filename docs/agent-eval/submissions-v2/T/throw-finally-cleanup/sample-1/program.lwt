@@ -1,0 +1,19 @@
+# cleanup.lwt: throw / attempt / recover / finally demo.
+# charge(n) rejects negative amounts with a custom "Validation" error.
+
+fn charge(n) {
+    when (n < 0) {
+        throw error("Validation", "negative amount");
+    }
+    return n * 2;
+}
+
+attempt {
+    emit str(charge(-5));
+} recover (problem) {
+    emit problem.category;
+    emit problem.message;
+} finally {
+    emit "cleanup";
+}
+emit str(charge(4));
