@@ -18,7 +18,7 @@
 
 > **S49（2026-11-10，执行窗口，答辩彩排与验收一致性收敛）：** 裁决 A 从 `0df0e40` 建 `feature/defense-rehearsal`、B 授权推送并查四格、C 由用户本人执行 GUI（本轮未执行，保持 `REGISTERED 0/5`）。WP0：重算包索引 lag，发现 `docs/demo-script.md` 在白名单外（退出 1），S48 报告加日期化复核段；CI 四格按 `724dc7c`/`446ed4d`/`0df0e40` 逐 job 解析——**`724dc7c` 四格失败**（文档一致性抓到过期分支状态），后两者四格通过；清理 60 个 `lwt-s48-*` worktree（116.5 MB，0 失败，剩 5 条）。WP1：文档一致性 16→27 项，先红 5 项后转绿；行级段豁免经“禁用后命中 8 行”反证必要。WP2：21 页逐页讲稿 `docs/defense-runbook.md` + 映射 `docs/defense-pages.json`；`tools/rehearse_defense.py` 实跑随机 5 条 5/5、第 1–5 页 6/6，另有 dry-run/offline 32 条证据。WP3：`docs/gui-acceptance-quickref.md` 一页纸 + CLI 降级轨（Snake 协议回放已实跑一致），GUI 仍 NOT_RUN。PPT 21 页只改第 18–21 页页脚状态文案（`0be34afa…`→`7cb28b13…`，第 10 页图表 12 点未变）；unittest 713。报告见 [S49 报告](docs/s49-defense-rehearsal.md)。**未验证**：现场人工 GUI、教师验收、PPT 页脚渲染效果。
 
-> **S50（2026-11-11，执行窗口，单命令 unittest 红线清零）：** 根因是解释器选择，不是环境时序——`python` 指向无 tkinter 的 3.13.14，GUI 模块无法导入，只跑 711 项；系统 `py -3.13`（3.13.7 + Tk 8.6）同命令 **719 项 OK（717.5 s）**。断言改为 `requires.tkinter` + 前置检查 + `tools/run_unittest_single.py`，探针解析并记录 `sys.executable`/`TkVersion`；探针 **24/24**，自检 **12/12**，`f3e209c` 四格全绿。S49 的四次 FAIL 历史保留，只追加根因修正段。**未验证**：现场人工 GUI A–E、教师验收、PPT 页脚渲染。报告见 [S50 报告](docs/s50-closeout.md)。
+> **S50（2026-11-11，执行窗口，单命令 unittest 红线清零）：** 根因是解释器选择，不是环境时序——`python` 指向无 tkinter 的 3.13.14，GUI 模块无法导入，只跑 711 项；系统 `py -3.13`（3.13.7 + Tk 8.6）同命令 **719 项 OK（717.5 s）**。断言改为 `requires.tkinter` + 前置检查 + `tools/run_unittest_single.py`，探针解析并记录 `sys.executable`/`TkVersion`；探针 **24/24**，自检 **all_pass=true**（11 PASS / 2 N/A / 0 FAIL），`f3e209c` 四格全绿。S49 的四次 FAIL 历史保留，只追加根因修正段。**未验证**：现场人工 GUI A–E、教师验收、PPT 页脚渲染。报告见 [S50 报告](docs/s50-closeout.md)。
 
 ## 目标与课程评分
 

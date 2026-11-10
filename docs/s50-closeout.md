@@ -75,7 +75,9 @@ S49 遗留的唯一红线（探针 `unittest` 行 FAIL，连带自检 `all_pass=
 
 ### 5.1 一键自检
 
-第一次运行（`selfcheck-20261110T163235Z`）：**11 步 PASS / 1 步 FAIL / 2 步 N/A**。唯一 FAIL 是 `doc_consistency`，原因是执行窗口先在 manifest 里声明了 `evidence.s50_closeout`，而本报告尚未写入——证据可达性测试如实报红，不是代码或测试失败。补上本报告后复跑，结果以 `reports/s50-closeout/selfcheck/` 下最新 JSON 为准；本报告在最终复跑后回填 `all_pass`。
+第一次运行（`selfcheck-20261110T163235Z`）：**11 步 PASS / 1 步 FAIL / 2 步 N/A**。唯一 FAIL 是 `doc_consistency`，原因是执行窗口先在 manifest 里声明了 `evidence.s50_closeout`，而本报告尚未写入——证据可达性测试如实报红，不是代码或测试失败。
+
+补上本报告后在干净树（`fd54546`）复跑（`selfcheck-20261110T164712Z`）：**`all_pass=true`，11 步 PASS、0 步 FAIL、2 步 N/A**（`gui_evidence` 与 `agent_eval` 是人工/GUI 状态，不作为门禁）。任务书把这称作“12/12”；按实际步骤计数是 **11 PASS + 2 N/A + 0 FAIL**，本报告不把 N/A 写成 PASS。
 
 **为什么 unittest_count 从 713 变成 719**：任务书要求新增 `tests/test_unittest_claim.py`，新增 6 个测试必然进入 `discover` 集合。若把 manifest 硬留在 713，就会与实测矛盾，也违反“manifest 是唯一数字来源”。因此按实测写 **719**，并同步 `SUBMISSION.md`、`demo-script`、`答辩卡`、`runbook`；`project.md`/路线图里的 S49 段落保留 713（带日期，属历史）。这是对任务书“713 不变”的唯一偏离，理由是算术事实，不是凑数。
 

@@ -1,0 +1,128 @@
+{
+  "all_pass": true,
+  "environment": {
+    "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.14 (main, Jun 11 2026, 04:04:46) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "generated_at_utc": "2026-11-10T16:54:35Z",
+  "gui_checklist": [
+    "语义实验室：python -m app.language_lab，提交预测→运行→对照反馈",
+    "日志工作台：python -m app.lwt_workbench（若存在），真实鼠标选择/滚动/切换",
+    "LWT Snake：python -m app.lwt_snake，方向键、吃食物、结束重开、失焦恢复",
+    "S41 策略查看器：真实 Tk 窗口打开见证目录并逐步解释",
+    "PPT 逐页播放：18/19 页在放映模式下无溢出、图表可读",
+    "桌面无遮挡与输入归属：窗口置顶/焦点/输入法不误触"
+  ],
+  "note": "Agent blind eval and on-site GUI acceptance are separate: NOT_RUN / 未验证 is never a pass. Heavy steps can be skipped only with --skip-heavy, and show as null, not true.",
+  "schema_version": 1,
+  "steps": {
+    "agent_eval": {
+      "detail": "reports\\s47-submission\\agent-eval.json; blind eval is not a pass/fail gate, and a clarified post-hoc re-run is recorded separately",
+      "pass": null,
+      "pass_at_1": 0.8333333333333334,
+      "passed": 5,
+      "status": "PARTIAL",
+      "submitted": 6
+    },
+    "blackbox": {
+      "exit_code": 0,
+      "parsed": {
+        "failed": 0,
+        "passed": 400,
+        "total": 400
+      },
+      "pass": true,
+      "seconds": 203.04
+    },
+    "compare_perf": {
+      "all_pass": true,
+      "exit_code": 0,
+      "pass": true
+    },
+    "defense_probe": {
+      "detail": "last probe PASS 24/24; rerun --all to include heavy rows",
+      "failed": 0,
+      "pass": true,
+      "passed": 24,
+      "ran": 24,
+      "status": "PASS"
+    },
+    "determinism": {
+      "exit_code": 0,
+      "failures_zero": true,
+      "output": "reports\\s50-closeout\\selfcheck\\determinism.json",
+      "pass": true,
+      "seconds": 223.344,
+      "stable": true
+    },
+    "doc_consistency": {
+      "exit_code": 0,
+      "pass": true
+    },
+    "git": {
+      "branch": "main",
+      "clean": true,
+      "commits_since_main": 88,
+      "head": "fd545468022724ad89e581b29a36b3c8cac6d46e",
+      "pass": true,
+      "status_porcelain": "## main...origin/main [ahead 3]"
+    },
+    "gui_evidence": {
+      "detail": "GUI A-E must be confirmed by the user; this step only counts registered evidence",
+      "not_automated": true,
+      "pass": null,
+      "registered": 0,
+      "status": "REGISTERED 0/5",
+      "total": 5
+    },
+    "integrity": {
+      "exit_code": 0,
+      "parsed": {
+        "cases": 400,
+        "matrix_links": 497,
+        "referenced_cases": 400,
+        "unreferenced": 0
+      },
+      "pass": true,
+      "stderr": ""
+    },
+    "model_check": {
+      "budget_exhausted": 0,
+      "exit_code": 0,
+      "invalid_prefixes": 0,
+      "output": "reports\\s50-closeout\\selfcheck\\model-check\\summary.json",
+      "pass": true,
+      "runs": 32,
+      "seconds": 5.741,
+      "status": "PASS",
+      "violations": 0
+    },
+    "ppt": {
+      "chart_points": 12,
+      "chart_series": 2,
+      "manifest_chart_points": 12,
+      "manifest_pages": 21,
+      "pass": true,
+      "sha256": "7cb28b13948942b7a4b1b8fb64fb68e8aba04ab627188272a8b55c367355878c",
+      "sha_matches_manifest": true,
+      "slides": 21
+    },
+    "protected_diff": {
+      "dirty": [],
+      "exit_code": 0,
+      "pass": true
+    },
+    "submission": {
+      "bundle": "dist\\lwt-submission-20261110T152326Z\\lwt-history.bundle",
+      "bundle_verify_exit": 0,
+      "pass": true,
+      "seconds": 0.045,
+      "submission_md": "SUBMISSION.md",
+      "zip": "dist\\lwt-submission-20261110T152326Z\\lwt-submission.zip",
+      "zip_entries": 1672,
+      "zip_manifest_ok": true
+    }
+  },
+  "tool": "lwt-acceptance-selfcheck"
+}
