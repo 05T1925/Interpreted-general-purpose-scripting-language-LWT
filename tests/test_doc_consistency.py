@@ -33,6 +33,8 @@ CURRENT_STATE_DOCS = [
     "docs/demo-script.md",
     "docs/defense-qa-card.md",
     "docs/concurrency.md",
+    "docs/agent-eval/README.md",
+    "SUBMISSION.md",
 ]
 
 # Historical stage reports: frozen snapshots, explicitly exempt.
@@ -46,6 +48,7 @@ HISTORICAL_MARKERS = (
     "当时",
     "基线",
     "历史基线",
+    "本阶段",
     "S23 ",
     "S24 ",
     "S26 ",
@@ -61,6 +64,10 @@ HISTORICAL_MARKERS = (
 # Lines carrying an explicit dated review record (e.g. "（2026-10-07）") are
 # historical records inside current-state documents such as the roadmap.
 HISTORICAL_DATE_RE = re.compile(r"[（(]20\d\d-\d\d-\d\d[）)]")
+
+# The roadmap's phase table rows (``| S5 | ... |``) are a frozen stage index, not
+# a current-status sentence; they are allowed to say "未推送" of that stage.
+HISTORICAL_STAGE_ROW_RE = re.compile(r"^\|\s*S\d+\s*\|")
 
 
 def _load_manifest() -> dict:
@@ -81,8 +88,10 @@ def _is_historical(rel: str) -> bool:
 
 
 def _has_historical_marker(line: str) -> bool:
-    return any(marker in line for marker in HISTORICAL_MARKERS) or bool(
-        HISTORICAL_DATE_RE.search(line)
+    return (
+        any(marker in line for marker in HISTORICAL_MARKERS)
+        or bool(HISTORICAL_DATE_RE.search(line))
+        or bool(HISTORICAL_STAGE_ROW_RE.match(line))
     )
 
 
@@ -204,6 +213,68 @@ class StatusConsistencyTests(unittest.TestCase):
         text = report.read_text(encoding="utf-8")
         self.assertIn(str(doc["unittest_count"]), text)
         self.assertIn(f"{doc['ppt_pages']} 页", text)
+
+
+class SemanticStatusConsistencyTests(unittest.TestCase):
+    """S48 WP0-2: status words must agree with the recorded evaluation result.
+
+    Fixing prose is not enough: if the manifest says the blind evaluation ran
+    (PARTIAL/PASS), no current-state document may still present NOT_RUN as the
+    current conclusion. Lines carrying a historical marker (S45/S46 sections,
+    "当时", "历史") stay exempt.
+    """
+
+    def _scan(self, pattern: re.Pattern[str]) -> list[str]:
+        offenders: list[str] = []
+        for path in _current_state_files():
+            rel = path.relative_to(REPO_ROOT).as_posix()
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if pattern.search(line) and not _has_historical_marker(line):
+                    offenders.append(f"{rel}:{number}: {line.strip()[:140]}")
+        return offenders
+
+    def test_blind_eval_status_matches_manifest(self) -> None:
+        status = str(_load_manifest().get("agent_eval_status", ""))
+        if not ("PARTIAL" in status or status.startswith("PASS")):
+            self.skipTest("manifest does not record an executed blind evaluation")
+        pattern = re.compile(r"未执行（NOT_RUN）|盲测未执行|Agent 盲测[^。|]{0,16}未执行")
+        offenders = self._scan(pattern)
+        self.assertEqual(
+            offenders, [],
+            "manifest records an executed blind eval, but current docs still say NOT_RUN:\n"
+            + "\n".join(offenders),
+        )
+
+    def test_no_unpushed_claim_as_current_status(self) -> None:
+        # A current delivery claim lives in the delivery-facing documents, not in
+        # the roadmap (a frozen per-stage ledger whose rows legitimately say
+        # "该阶段未推送"). Scanning only delivery docs avoids a blanket file
+        # exemption while still catching a stale current statement.
+        docs = [
+            "README.md", "project.md", "SUBMISSION.md",
+            "docs/final-acceptance-checklist.md", "docs/demo-script.md",
+            "docs/defense-qa-card.md", "docs/s48-defense-readiness.md",
+        ]
+        offenders: list[str] = []
+        for rel in docs:
+            path = REPO_ROOT / rel
+            if not path.exists():
+                continue
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if "未推送" in line and not _has_historical_marker(line):
+                    offenders.append(f"{rel}:{number}: {line.strip()[:140]}")
+        self.assertEqual(offenders, [], "stale '未推送' as current status:\n" + "\n".join(offenders))
+
+    def test_submission_points_to_committed_package_index(self) -> None:
+        doc = _load_manifest()
+        self.assertEqual(
+            doc.get("submission_bundle"),
+            "reports/s48-defense/package-index.json",
+            "manifest.submission_bundle must point at the committed index, not the gitignored dist/",
+        )
+        submission = (REPO_ROOT / "SUBMISSION.md").read_text(encoding="utf-8")
+        self.assertIn("reports/s48-defense/package-index.json", submission)
+        self.assertTrue((REPO_ROOT / "reports/s48-defense/package-index.json").exists())
 
 
 if __name__ == "__main__":

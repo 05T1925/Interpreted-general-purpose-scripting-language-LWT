@@ -1,0 +1,17 @@
+{
+  "authoritative_reports": [
+    "docs/s47-agent-eval.md",
+    "docs/s48-agent-eval.md"
+  ],
+  "correction": "The S47 first round DID run: six fresh isolated subagent sessions, 5/6 passed. The single failure (producer-consumer-channel) was a task defect (the prompt never stated the thrown message), clarified afterwards and re-run 1/1 in a new session; that post-hoc result is separate and not merged.",
+  "generated_at_utc": "2026-11-10T02:43:54Z",
+  "original_pass_at_1": 0.8333333333333334,
+  "original_passed": 5,
+  "original_path": "reports/s47-submission/agent-eval.json",
+  "original_status": "PARTIAL",
+  "original_submitted": 6,
+  "schema_version": 1,
+  "stale_note": "The original note says the blind eval is NOT_RUN / not executed.",
+  "tool": "manual derivation (S48 WP0-2)",
+  "why_not_edited": "reports/s47-submission/** is protected evidence (read-only) per the S47/S48 red line; this derived file records the correction without rewriting history."
+}

@@ -14,6 +14,8 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 
 然后打开 `slides/LWT介绍.pptx`（20 页）。所有命令在仓库根目录执行；Python 3.10+ 标准库，无第三方运行时依赖。
 
+> 离线提交件：bundle/zip 位于 `dist/`（默认 gitignore，不入库），索引见 `reports/s48-defense/package-index.json`。老师 clone 仓库后若 `dist/` 为空，请现场运行 `python tools/build_submission.py`，或直接携带 `dist/` 目录。
+
 ## 提交内容 1–8（对应课程要求）
 
 | # | 提交内容 | 分值 | 仓库位置 | 一条验证命令 | 证据 | 状态 |
@@ -24,7 +26,7 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 | 4 | 性能测试报告 | 10 | `reports/performance.md、bench/results.json` | `python tools/compare_perf.py` | S11 正式报告 + S44 分层对照 | 完成 |
 | 5 | 开发指南（人 + AI） | 20 | `docs/developer-guide.md、.agents/skills/lwt-app/SKILL.md` | `python -m lwt --check examples/modules/main.lwt` | S42–S46 已按指南实现 | 完成 |
 | 6 | Agent 应用与开发记录 | 30 | `app/log_report.lwt、app/concurrent_log_report.lwt、app/lwt_snake/game.lwt、docs/agent-dev-log.md` | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log` | 有效行数 243 / 233 / 313（`tools/count_lwt_lines.py`） | 完成 |
-| 7 | Git 历史 | — | `lwt-history.bundle、lwt-history.graph.txt` | `git log --oneline --decorate -12` | bundle 含全部 refs；verify 见报告 | 完成 |
+| 7 | Git 历史 | — | `dist/ 内的 lwt-history.bundle、lwt-history.graph.txt` | `python tools/build_submission.py`（索引 `reports/s48-defense/package-index.json`） | bundle 含全部 branches/tags/HEAD；verify=0；索引记录截止 SHA | 完成 |
 | 8 | 系统介绍 PPT | — | `slides/LWT介绍.pptx（20 页）` | 打开 `slides/LWT介绍.pptx` | 第 10 页原生图表 12 数值点自 S43 起未变 | 完成 |
 
 合计 100 分：解释器 20 + 自动测试 20 + 性能 10 + 语法/指南 20 + Agent 应用 30。
@@ -48,6 +50,8 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 
 ## 交付包
 
-- `lwt-history.bundle`：`git bundle --branches --tags HEAD`，含全部分支/标签与历史（排除临时 worktree refs）；`git bundle verify` 见 `reports/s47-submission/build.json`。
+- `lwt-history.bundle`：`git bundle --branches --tags HEAD`，含全部分支/标签与历史（排除临时 worktree refs）；`git bundle verify` 见 `reports/s48-defense/package-index.json`。
 - `lwt-submission.zip`：HEAD 跟踪树 + 本文件 + bundle；`manifest.sha256` 逐文件摘要。
-- 重新生成：`python tools/build_submission.py`；新克隆验证：`python tools/verify_fresh_clone.py --bundle <bundle>`。
+- 包不入库：`dist/` 被 gitignore，入库的是索引 `reports/s48-defense/package-index.json`（记录 bundle 截止 SHA 与允许的差异白名单）。
+- 重新生成：`python tools/build_submission.py --package-index reports/s48-defense/package-index.json`；新克隆验证：`python tools/verify_fresh_clone.py --package-index reports/s48-defense/package-index.json`。
+- S47 盲测派生说明：`reports/s47-submission/agent-eval.json` 的 `note` 是历史快照，与后续执行状态不一致；以 `reports/s48-defense/agent-eval-s47-derivation.json` 为准（记录原始 overall、失败题判定与澄清单列）。

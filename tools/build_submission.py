@@ -11,6 +11,10 @@ Outputs (default ``dist/lwt-submission-<UTC>/``; ``dist/`` is git-ignored):
   build.json                 machine-readable build record
   ../latest.json             pointer used by the acceptance selfcheck
 
+``--package-index`` additionally writes ``reports/s48-defense/package-index.json``
+(committed) recording the bundle tip and the whitelist of paths allowed between
+that tip and the final commit, so the package never has to contain its own hash.
+
 The zip is built from ``git archive HEAD`` (tracked files only), so no
 ``__pycache__``, ``*.pyc``, temporary worktrees or untracked files leak in.
 Protected evidence is only read, never written.
@@ -28,6 +32,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -39,6 +44,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "docs" / "delivery-manifest.json"
 SUBMISSION = ROOT / "SUBMISSION.md"
 DIST = ROOT / "dist"
+INDEX_REL = Path("reports/s48-defense/package-index.json")
 
 SCORES = {
     "language-spec": 0,
@@ -109,8 +115,9 @@ def submission_markdown() -> str:
         ("6", "Agent 应用与开发记录", "30", "app/log_report.lwt、app/concurrent_log_report.lwt、app/lwt_snake/game.lwt、docs/agent-dev-log.md",
          "`python -m lwt app/log_report.lwt -- app/fixtures/sample.log`",
          "有效行数 243 / 233 / 313（`tools/count_lwt_lines.py`）", "完成"),
-        ("7", "Git 历史", "—", "lwt-history.bundle、lwt-history.graph.txt",
-         "`git log --oneline --decorate -12`", "bundle 含全部 refs；verify 见报告", "完成"),
+        ("7", "Git 历史", "—", "dist/ 内的 lwt-history.bundle、lwt-history.graph.txt",
+         "`python tools/build_submission.py`（索引 `reports/s48-defense/package-index.json`）",
+         "bundle 含全部 branches/tags/HEAD；verify=0；索引记录截止 SHA", "完成"),
         ("8", "系统介绍 PPT", "—", f"slides/LWT介绍.pptx（{pages} 页）",
          "打开 `slides/LWT介绍.pptx`", "第 10 页原生图表 12 数值点自 S43 起未变", "完成"),
     ]
@@ -133,6 +140,8 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 ```
 
 然后打开 `slides/LWT介绍.pptx`（{pages} 页）。所有命令在仓库根目录执行；Python 3.10+ 标准库，无第三方运行时依赖。
+
+> 离线提交件：bundle/zip 位于 `dist/`（默认 gitignore，不入库），索引见 `reports/s48-defense/package-index.json`。老师 clone 仓库后若 `dist/` 为空，请现场运行 `python tools/build_submission.py`，或直接携带 `dist/` 目录。
 
 ## 提交内容 1–8（对应课程要求）
 
@@ -161,9 +170,11 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 
 ## 交付包
 
-- `lwt-history.bundle`：`git bundle --branches --tags HEAD`，含全部分支/标签与历史（排除临时 worktree refs）；`git bundle verify` 见 `reports/s47-submission/build.json`。
+- `lwt-history.bundle`：`git bundle --branches --tags HEAD`，含全部分支/标签与历史（排除临时 worktree refs）；`git bundle verify` 见 `reports/s48-defense/package-index.json`。
 - `lwt-submission.zip`：HEAD 跟踪树 + 本文件 + bundle；`manifest.sha256` 逐文件摘要。
-- 重新生成：`python tools/build_submission.py`；新克隆验证：`python tools/verify_fresh_clone.py --bundle <bundle>`。
+- 包不入库：`dist/` 被 gitignore，入库的是索引 `reports/s48-defense/package-index.json`（记录 bundle 截止 SHA 与允许的差异白名单）。
+- 重新生成：`python tools/build_submission.py --package-index reports/s48-defense/package-index.json`；新克隆验证：`python tools/verify_fresh_clone.py --package-index reports/s48-defense/package-index.json`。
+- S47 盲测派生说明：`reports/s47-submission/agent-eval.json` 的 `note` 是历史快照，与后续执行状态不一致；以 `reports/s48-defense/agent-eval-s47-derivation.json` 为准（记录原始 overall、失败题判定与澄清单列）。
 """
 
 
@@ -171,6 +182,59 @@ def _write_submission() -> str:
     text = submission_markdown()
     SUBMISSION.write_text(text, encoding="utf-8", newline="\n")
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _git_rev(rev: str = "HEAD") -> str:
+    return _run(["git", "rev-parse", rev]).get("stdout", "").strip()
+
+
+def _bundle_main_sha(list_heads_stdout: str) -> str | None:
+    """Return the SHA recorded for refs/heads/main in ``git bundle list-heads``."""
+
+    for line in list_heads_stdout.splitlines():
+        parts = line.split()
+        if len(parts) == 2 and parts[1] == "refs/heads/main":
+            return parts[0]
+    return None
+
+
+def _package_index(
+    out_dir: Path,
+    *,
+    bundle_ref_sha: str,
+    final_tip_sha: str,
+    bundle_sha256: str | None,
+    zip_sha256: str | None,
+    rebuild_command: str,
+) -> dict:
+    """S48 WP0-1: a committed index that never contains its own hash.
+
+    The bundle cannot contain the commit that records the bundle (that is a
+    self-reference), so the index declares the bundle tip and the whitelist of
+    paths allowed between that tip and the final tip.
+    """
+
+    lag = _run(["git", "diff", "--name-only", f"{bundle_ref_sha}..{final_tip_sha}"])
+    diff_paths = [line for line in lag["stdout"].splitlines() if line.strip()]
+    document = {
+        "schema_version": 1,
+        "tool": "tools/build_submission.py",
+        "bundle_ref_sha": bundle_ref_sha,
+        "final_tip_sha": final_tip_sha,
+        "bundle_ref_matches_final_tip": bundle_ref_sha == final_tip_sha,
+        "diff_paths": diff_paths,
+        "diff_whitelist": [INDEX_REL.as_posix()],
+        "generated_at_utc": _utc(),
+        "rebuild_command": rebuild_command,
+        "package_dir": _display(out_dir),
+        "bundle_sha256": bundle_sha256,
+        "zip_sha256": zip_sha256,
+        "note": (
+            "bundle 截止 SHA 见 bundle_ref_sha；本索引提交是其后唯一允许的差异"
+            "（diff_whitelist）。复核：git fetch <bundle> main && git log <bundle_ref_sha>..<final_tip_sha>"
+        ),
+    }
+    return document
 
 
 def _bundle(out_dir: Path) -> dict:
@@ -241,12 +305,31 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-bundle", action="store_true")
     parser.add_argument("--no-zip", action="store_true")
     parser.add_argument("--no-latest", action="store_true")
+    parser.add_argument("--final-tip", default=None,
+                        help="SHA the delivered history must reach (default: HEAD)")
+    parser.add_argument("--allow-ref-lag", action="store_true",
+                        help="allow bundle main != final tip, printing the lag diff")
+    parser.add_argument("--package-index", default=None,
+                        help=f"write a committed index (suggested: {INDEX_REL})")
     args = parser.parse_args(argv)
 
     out_dir = Path(args.out)
     if not out_dir.is_absolute():
         out_dir = ROOT / out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    head_sha = _git_rev("HEAD")
+    final_tip = args.final_tip or head_sha
+    if args.final_tip and not re.fullmatch(r"[0-9a-f]{7,40}", args.final_tip):
+        print(f"build_submission: --final-tip is not a SHA: {args.final_tip}", file=sys.stderr)
+        return 2
+    if args.final_tip and not head_sha.startswith(args.final_tip):
+        print(
+            f"build_submission: --final-tip {args.final_tip} != HEAD {head_sha}; "
+            "checkout the final tip first",
+            file=sys.stderr,
+        )
+        return 2
 
     submission_sha = _write_submission()
     record: dict = {
@@ -256,11 +339,28 @@ def main(argv: list[str] | None = None) -> int:
         "out_dir": _display(out_dir),
         "submission_md": "SUBMISSION.md",
         "submission_sha256": submission_sha,
+        "final_tip_sha": final_tip,
     }
     bundle_info = None
     if not args.no_bundle:
         bundle_info = _bundle(out_dir)
         record["bundle"] = bundle_info
+        bundle_main = _bundle_main_sha(bundle_info["list_heads"]["stdout"])
+        record["bundle_main_sha"] = bundle_main
+        if bundle_main != final_tip:
+            lag = _run(["git", "log", "--oneline", f"{bundle_main}..{final_tip}"])
+            print(
+                f"build_submission: REF LAG: bundle main {bundle_main} != final tip {final_tip}\n"
+                + lag["stdout"],
+                file=sys.stderr,
+            )
+            if not args.allow_ref_lag:
+                print(
+                    "build_submission: refusing to claim the final tip is packaged; "
+                    "re-run at the final tip or pass --allow-ref-lag",
+                    file=sys.stderr,
+                )
+                return 2
     if not args.no_zip:
         bundle_path = out_dir / "lwt-history.bundle" if bundle_info else None
         record["zip"] = _zip(out_dir, bundle_path)
@@ -276,6 +376,9 @@ def main(argv: list[str] | None = None) -> int:
             "out_dir": record["out_dir"],
             "bundle": (bundle_info or {}).get("bundle"),
             "bundle_sha256": (bundle_info or {}).get("bundle_sha256"),
+            "bundle_main_sha": record.get("bundle_main_sha"),
+            "final_tip_sha": final_tip,
+            "package_index": args.package_index,
             "zip": (record.get("zip") or {}).get("zip"),
             "zip_sha256": (record.get("zip") or {}).get("zip_sha256"),
             "submission_sha256": submission_sha,
@@ -284,6 +387,25 @@ def main(argv: list[str] | None = None) -> int:
             json.dumps(latest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
             encoding="utf-8", newline="\n",
         )
+
+    if args.package_index:
+        index_path = Path(args.package_index)
+        if not index_path.is_absolute():
+            index_path = ROOT / index_path
+        index_path.parent.mkdir(parents=True, exist_ok=True)
+        document = _package_index(
+            out_dir,
+            bundle_ref_sha=record.get("bundle_main_sha") or final_tip,
+            final_tip_sha=final_tip,
+            bundle_sha256=(bundle_info or {}).get("bundle_sha256"),
+            zip_sha256=(record.get("zip") or {}).get("zip_sha256"),
+            rebuild_command="python tools/build_submission.py",
+        )
+        index_path.write_text(
+            json.dumps(document, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8", newline="\n",
+        )
+        print(f"  package index -> {_display(index_path)}")
 
     print(
         f"build_submission: {record['out_dir']} "

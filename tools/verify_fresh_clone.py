@@ -9,8 +9,13 @@ with no reuse of this working tree's untracked files) and runs:
   4. ``python -m compileall -q lwt tests tools``
   5. ``python tools/check_project_integrity.py --require-all-referenced``
 
+S48 adds ``--package-index``: the clone's HEAD must equal the index's
+``bundle_ref_sha`` and the commits between that SHA and the final tip may only
+touch the declared whitelist (the index file itself), so "bundle tip verified"
+is never reported as "final tip verified".
+
 Every command's real exit code and key output is recorded in
-``reports/s47-submission/fresh-clone.{json,md}``.
+``reports/s48-defense/fresh-clone.{json,md}``.
 """
 
 from __future__ import annotations
@@ -27,7 +32,7 @@ import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OUT = ROOT / "reports" / "s47-submission" / "fresh-clone.json"
+DEFAULT_OUT = ROOT / "reports" / "s48-defense" / "fresh-clone.json"
 LATEST = ROOT / "dist" / "latest.json"
 
 
@@ -67,6 +72,10 @@ def main(argv: list[str] | None = None) -> int:
                         help="bundle path (default: dist/latest.json's bundle)")
     parser.add_argument("--branch", default="main")
     parser.add_argument("--out", default=str(DEFAULT_OUT))
+    parser.add_argument("--package-index", default=None,
+                        help="committed package index to bound-check against")
+    parser.add_argument("--final-tip", default=None,
+                        help="final tip SHA (default: this workspace's HEAD)")
     parser.add_argument("--keep", action="store_true", help="keep the clone for inspection")
     args = parser.parse_args(argv)
 
@@ -121,7 +130,35 @@ def main(argv: list[str] | None = None) -> int:
             blackbox.get("parsed", {}).get("passed") == 400
             and blackbox.get("parsed", {}).get("failed") == 0
         )
-        all_ok = all(step["exit_code"] == 0 for step in steps) and blackbox_ok
+
+        clone_head = (
+            _run(["git", "rev-parse", "HEAD"], clone, timeout=30)["stdout"].strip()
+            if clone.exists() else None
+        )
+        index_doc: dict = {}
+        lag_paths: list[str] = []
+        lag_ok = True
+        final_tip = args.final_tip
+        if args.package_index:
+            index_path = Path(args.package_index)
+            if not index_path.is_absolute():
+                index_path = ROOT / index_path
+            if not index_path.exists():
+                raise SystemExit(f"verify_fresh_clone: package index missing: {index_path}")
+            index_doc = json.loads(index_path.read_text(encoding="utf-8"))
+            if clone_head != index_doc.get("bundle_ref_sha"):
+                lag_ok = False
+            if final_tip is None:
+                final_tip = index_doc.get("final_tip_sha")
+            workspace_head = _run(["git", "rev-parse", "HEAD"], ROOT, timeout=30)["stdout"].strip()
+            tip = final_tip or workspace_head
+            diff = _run(["git", "diff", "--name-only", f"{clone_head}..{tip}"], ROOT, timeout=60)
+            lag_paths = [line for line in diff["stdout"].splitlines() if line.strip()]
+            whitelist = set(index_doc.get("diff_whitelist") or [])
+            lag_ok = lag_ok and set(lag_paths) <= whitelist
+            final_tip = tip
+
+        all_ok = all(step["exit_code"] == 0 for step in steps) and blackbox_ok and lag_ok
         document = {
             "schema_version": 1,
             "tool": "tools/verify_fresh_clone.py",
@@ -129,8 +166,12 @@ def main(argv: list[str] | None = None) -> int:
             "bundle": str(bundle_path),
             "branch": args.branch,
             "clone_dir": str(clone) if args.keep else "(temporary, removed)",
-            "head": _run(["git", "rev-parse", "HEAD"], clone, timeout=30)["stdout"].strip()
-            if clone.exists() else None,
+            "head": clone_head,
+            "bundle_ref_sha": index_doc.get("bundle_ref_sha"),
+            "final_tip_sha": final_tip,
+            "lag_paths": lag_paths,
+            "lag_whitelist": index_doc.get("diff_whitelist"),
+            "lag_ok": lag_ok,
             "all_pass": all_ok,
             "blackbox_ok": blackbox_ok,
             "seconds": round(time.monotonic() - started, 2),
@@ -149,7 +190,14 @@ def main(argv: list[str] | None = None) -> int:
             "# S47 fresh-clone verification",
             "",
             f"- Bundle: `{bundle_path}`",
-            f"- Branch: `{args.branch}`；HEAD `{(document['head'] or '')[:12]}`",
+            f"- Branch: `{args.branch}`；bundle HEAD `{(document['head'] or '')[:12]}`",
+        ]
+        if args.package_index:
+            lines.append(
+                f"- 最终 tip `{(final_tip or '')[:12]}`；lag 白名单 "
+                f"{'通过' if lag_ok else 'FAIL'}：{', '.join(lag_paths) or '(无差异)'}"
+            )
+        lines += [
             f"- Result: **{'PASS' if all_ok else 'FAIL'}**（{document['seconds']} s）",
             "",
             "| step | exit | seconds | key output |",

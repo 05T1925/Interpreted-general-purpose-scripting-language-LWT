@@ -59,7 +59,7 @@
     "S46 的模型检查 corpus 在 tests/concurrency-model/，不属于 tests/cases 的 400 项黑盒；模型检查证据在 reports/s46-concurrency-model/。",
     "S47 的 Agent 盲测首轮 5/6；唯一失败为题面欠定，澄清题面后单题隔离复跑 1/1（post-hoc，不并入首轮）。"
   ],
-  "submission_bundle": "dist/latest.json",
+  "submission_bundle": "reports/s48-defense/package-index.json",
   "agent_eval_status": "PARTIAL 5/6 (pass@1=0.833; task-defect clarified re-run 1/1)",
   "default_branch": "main"
 }

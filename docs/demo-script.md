@@ -14,8 +14,8 @@
 | 4:20–6:00 | **并发子语言**：多文件每文件一任务并发读取、按输入顺序归并（与串行逐字节等价）；换种子得到另一交错，轨迹可记录/重放；再用 5 秒展示 S46 有界探索（clean 0 违反 / mutant 命中）。 | `python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log`；下方“并发演示片段” |
 | 6:00–7:00 | **Agent 应用**：日志分析器 243 行有效 LWT（坏行/等级/关键字/top-k）；并发版 233 行。若桌面可用，再开 LWT Snake；否则说明 GUI 为展示层、规则在 .lwt。 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log --level WARN --keyword retry --top 2`；`python tools/count_lwt_lines.py app/log_report.lwt` |
 | 7:00–8:00 | **策略证据链**（可选压缩）：S39 原局复核 → S41 自动差异见证 → S40 一步分支；强调同一已验证观察前缀与预算内成立。 | 下方“证据链命令” |
-| 8:00–9:20 | **交付自检**：一条命令跑 Git/保护路径/完整性/黑盒/确定性/性能门槛/文档一致性/PPT 静态检查/有界调度探索，输出 JSON+MD；并明确 Agent 盲测与人工 GUI 仍未执行/未验证。 | `python tools/run_acceptance_selfcheck.py`；`reports/s45-acceptance/selfcheck-*.md` |
-| 9:20–10:00 | 收尾：读 `git status -sb`（干净、未推送）与未验证项清单（Python 3.10/Linux CI、Agent 盲测、现场 GUI）。 | `git status -sb`；[S45 报告](s45-final-hardening.md)；[S46 报告](s46-concurrency-verification.md) |
+| 8:00–9:20 | **交付自检**：一条命令跑 Git/保护路径/完整性/黑盒/确定性/性能门槛/文档一致性/PPT 静态检查/有界调度探索/提交包，输出 JSON+MD；并说明 Agent 盲测已执行（S48 主口径见报告）、人工 GUI 由本人现场验收。 | `python tools/run_acceptance_selfcheck.py`；`reports/s48-defense/selfcheck/` |
+| 9:20–10:00 | 收尾：读 `git status -sb`（干净）与未验证项清单（现场人工 GUI A–E、教师线下验收）；说明 main 已收敛并已推送，CI 四格按精确 SHA 记录。 | `git status -sb`；[S48 报告](s48-defense-readiness.md)；[S47 报告](s47-final-submission.md) |
 
 **取舍**：时间只有 5–8 分钟时，保留 0:00–0:40、0:40–1:30、2:20–3:20、3:20–4:20、4:20–6:00、8:00–9:20，其余口头带过。
 
