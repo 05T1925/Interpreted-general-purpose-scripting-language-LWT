@@ -564,11 +564,20 @@ class EvidenceReachabilityTests(unittest.TestCase):
 
 
 class S49ReportTests(unittest.TestCase):
-    def test_s49_report_quotes_current_manifest_counts(self) -> None:
+    def test_phase_reports_quote_their_own_or_current_counts(self) -> None:
+        # S49 is a dated snapshot: its 713 tests were true then and must not be
+        # rewritten when a later phase adds tests. The *current* report carries
+        # the moving manifest value instead, so the two cannot drift together.
+        s49 = REPO_ROOT / "docs" / "s49-defense-rehearsal.md"
+        self.assertTrue(s49.exists(), "docs/s49-defense-rehearsal.md is missing")
+        frozen = s49.read_text(encoding="utf-8")
+        self.assertIn("713", frozen)
+        self.assertIn("21 页", frozen)
+
         doc = _load_manifest()
-        report = REPO_ROOT / "docs" / "s49-defense-rehearsal.md"
-        self.assertTrue(report.exists(), "docs/s49-defense-rehearsal.md is missing")
-        text = report.read_text(encoding="utf-8")
+        current = REPO_ROOT / "docs" / "s50-closeout.md"
+        self.assertTrue(current.exists(), "docs/s50-closeout.md is missing")
+        text = current.read_text(encoding="utf-8")
         self.assertIn(str(doc["unittest_count"]), text)
         self.assertIn(f"{doc['ppt_pages']} 页", text)
 
