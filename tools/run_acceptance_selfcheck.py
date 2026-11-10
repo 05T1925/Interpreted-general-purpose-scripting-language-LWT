@@ -86,13 +86,24 @@ def _step_git() -> dict[str, Any]:
     head = run(["git", "rev-parse", "HEAD"], timeout=15)
     branch = run(["git", "branch", "--show-current"], timeout=15)
     count = run(["git", "rev-list", "--count", "5027860..HEAD"], timeout=15)
+    # The selfcheck's own evidence directory is untracked by design; counting it
+    # as a dirty tree would make every run fail on itself (S49).
+    try:
+        out_rel = OUT_DIR.relative_to(ROOT).as_posix()
+    except ValueError:
+        out_rel = None
+    lines = status["stdout"].strip().splitlines()
+    dirty = [
+        line for line in lines[1:]
+        if line.strip() and not (out_rel and line.startswith("?? " + out_rel))
+    ]
     return {
         "status_porcelain": status["stdout"].strip(),
         "head": head["stdout"].strip(),
         "branch": branch["stdout"].strip(),
         "commits_since_main": int(count["stdout"].strip() or 0),
-        "clean": status["stdout"].strip().count("\n") == 0,
-        "pass": status["stdout"].strip().count("\n") == 0,
+        "clean": not dirty,
+        "pass": not dirty,
     }
 
 
