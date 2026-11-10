@@ -1,17 +1,21 @@
 {
   "bundle_ref_matches_final_tip": true,
-  "bundle_ref_sha": "76bb4fb1e7dd00a9d5923f4f99e3f2b0b4225ee8",
-  "bundle_sha256": "f85571e33d000cbb603aebe19a0463750dc13ae9fcf6e391da0fdf483471e83e",
+  "bundle_ref_sha": "bdde5d9dd32d9f155357eabd70be12a42a873975",
+  "bundle_sha256": "a3c5d2632b4ec76c7e3cb8759bdd11d4005ca6473928f09c941735614a41deee",
   "diff_paths": [],
   "diff_whitelist": [
-    "reports/s48-defense/package-index.json"
+    "reports/s48-defense/package-index.json",
+    "reports/s48-defense/fresh-clone.json",
+    "reports/s48-defense/fresh-clone.md",
+    "reports/s48-defense/selfcheck/",
+    "docs/s48-defense-readiness.md"
   ],
-  "final_tip_sha": "76bb4fb1e7dd00a9d5923f4f99e3f2b0b4225ee8",
-  "generated_at_utc": "2026-11-10T02:50:20Z",
+  "final_tip_sha": "bdde5d9dd32d9f155357eabd70be12a42a873975",
+  "generated_at_utc": "2026-11-10T07:44:35Z",
   "note": "bundle 截止 SHA 见 bundle_ref_sha；本索引提交是其后唯一允许的差异（diff_whitelist）。复核：git fetch <bundle> main && git log <bundle_ref_sha>..<final_tip_sha>",
-  "package_dir": "dist/lwt-submission-20261110T024954Z",
+  "package_dir": "dist/lwt-submission-20261110T074408Z",
   "rebuild_command": "python tools/build_submission.py",
   "schema_version": 1,
   "tool": "tools/build_submission.py",
-  "zip_sha256": "0911f625ce6315c1b52969936f2fe07ce76c949754f816aaa44c31eefc35d826"
+  "zip_sha256": "0324c84f049a6ce594a8bd885a82a66a7d4db3c110ce975fe61f1388a1c65b8e"
 }

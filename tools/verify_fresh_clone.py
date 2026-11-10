@@ -155,8 +155,15 @@ def main(argv: list[str] | None = None) -> int:
             tip = final_tip or workspace_head
             diff = _run(["git", "diff", "--name-only", f"{clone_head}..{tip}"], ROOT, timeout=60)
             lag_paths = [line for line in diff["stdout"].splitlines() if line.strip()]
-            whitelist = set(index_doc.get("diff_whitelist") or [])
-            lag_ok = lag_ok and set(lag_paths) <= whitelist
+            whitelist = list(index_doc.get("diff_whitelist") or [])
+
+            def _allowed(path: str) -> bool:
+                return any(
+                    path == entry or (entry.endswith("/") and path.startswith(entry))
+                    for entry in whitelist
+                )
+
+            lag_ok = lag_ok and all(_allowed(path) for path in lag_paths)
             final_tip = tip
 
         all_ok = all(step["exit_code"] == 0 for step in steps) and blackbox_ok and lag_ok
