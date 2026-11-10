@@ -245,3 +245,35 @@ process.wait(timeout=max(1.0, float(self.timeout)))
 - **PPT 页脚视觉效果**：只做了 XML 文本替换与页数/图表数值校验，未逐页渲染截图确认排版不溢出（属 GUI E 人工项）。
 - **S49 最终 SHA 的 CI 四格**：推送后按精确 SHA 查；若网络/API 不可达，写“未验证”，不用徽章推断。
 - 彩排是本地脚本化演练，**不替代**教师现场提问与评分。
+
+## 10. S50 根因修正（2026-11-11 追加，不改写上文）
+
+> 本节**只追加**结论，不删除、不改写 §2.4 的 S49 记录。§2.4 的四次 FAIL 与当时“环境时序 / 2 s bridge”的判断是那一刻的真实观察，仍然保留；下面是事后对照实验得出的因果更正。
+
+### 10.1 真实根因：解释器缺少 tkinter，不是环境时序
+
+`docs/defense-claims.json` 的 `unittest` 行当时写死为 `python -m unittest discover -s tests -q`。在本机，`python` 解析到 WorkBuddy 内置的 `C://Users//28641//.workbuddy//binaries//python//versions//3.13.12//python.exe`（报告版本 3.13.14），它**不带 tkinter**：
+
+- `test_lwt_snake_counterfactual_gui` 在 **import 阶段**就抛 `ModuleNotFoundError: No module named 'tkinter'`，整个 GUI 模块没有加载，所以只跑 **711** 项而不是 713；
+- `test_tcl_creation_failure_module_entry_exits_nonzero_without_traceback` 期望 stderr 含“LWT 语义实验室不可用”，实际拿到 tkinter 的 traceback，于是记为 FAIL。
+
+同一命令改由系统 `py -3.13`（`C://Users//28641//AppData//Local//Programs//Python//Python313//python.exe`，3.13.7 + **Tk 8.6**）执行：**Ran 713 tests in 641.762s / OK / exit 0**。两份日志与哈希见 `reports/s50-closeout/unittest-interpreter-root-cause.json`（实验 A：711 + 2 个 tkinter 失败；实验 B：713 OK）。
+
+### 10.2 对 §2.4 的更正
+
+S49 第 4 次定位看到的 `BridgeFailure: timed out after 2s waiting for request 000001` 与“空 `python -c pass` 需 334 ms”，是当时机器降速下的**真实现象**；但它不是这条红线的根因。根因是**探针把 `python` 的解析结果当成了固定运行时**，而不同解释器的 tkinter 可用性不同。两者可以同时为真：机器确实一度降速，但即使机器空闲，用无 Tk 的 `python` 跑全量也只会得到 711 项和 2 个假失败。
+
+因此：
+
+- §2.2 的两批 **713/713** 仍然有效，但它们不是“单命令”的等价替代口径，而是当时用**系统 Python** 跑出来的结果；
+- §2.4 的“不把该断言写成 PASS”在当时是正确的；S50 修复解释器选择后，该断言才具备转绿的条件；
+- 不再把“环境时序”写成这条红线的结论，也不再需要放宽任何 timeout。
+
+### 10.3 S50 的修复方向
+
+1. 断言显式声明 `requires.tkinter` 与“能 `import tkinter`”的前置检查；
+2. 探针在运行该断言前解析一个满足 Tk 的解释器，并把 `sys.executable`、Python 版本、`TkVersion` 写进证据；
+3. 用 `tools/run_unittest_single.py` 保持**一次** `unittest discover`，输出重定向到文件（避免管道被孙进程占住）；
+4. 新增 `tests/test_unittest_claim.py` 固化以上四点，并保护本节与 §2.4 的历史记录。
+
+S50 的完整结果见 [s50-closeout.md](s50-closeout.md)。

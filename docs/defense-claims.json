@@ -112,24 +112,31 @@
     {
       "id": "unittest",
       "area": "交付物 2/3",
-      "claim": "全量 unittest 713 项通过",
+      "claim": "全量 unittest 一次跑完并通过（需带 tkinter 的解释器；实际解释器、Python 版本、TkVersion 与项数记录在证据文件里）",
       "command": [
         "python",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "tests",
-        "-q"
+        "tools/run_unittest_single.py"
       ],
       "expect": {
         "exit_code": 0,
-        "stdout_contains": null,
-        "stderr_contains": "OK"
+        "stdout_contains": "OK",
+        "stderr_contains": null
       },
       "heavy": true,
-      "evidence_path": "tests/",
-      "status": "UNRUN"
+      "evidence_path": "reports/s50-closeout/unittest-single-command.json",
+      "status": "UNRUN",
+      "requires": {
+        "tkinter": true
+      },
+      "precondition": {
+        "command": [
+          "python",
+          "-c",
+          "import tkinter, sys; print(sys.executable); print(tkinter.TkVersion)"
+        ],
+        "expect_exit_code": 0,
+        "note": "GUI 测试模块在 import 时就需要 tkinter。缺少它时只跑 711 项并出现 ModuleNotFoundError，那不是 unittest 失败，而是解释器选错。"
+      }
     },
     {
       "id": "determinism",
