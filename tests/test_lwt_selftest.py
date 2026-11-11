@@ -73,6 +73,17 @@ class LwtSelfTestSuiteTests(unittest.TestCase):
         # Every ticked row must name a check that the LWT suite actually prints.
         ticked = re.findall(r"^\|\s*[^|]+\|\s*✅\s*\|", text, re.MULTILINE)
         self.assertGreaterEqual(len(ticked), 30, "功能清单应有 ≥30 行逐项打勾")
+        # "测试名与功能清单一一对应" only holds if the names are literally the
+        # same strings; a near-miss (an extra suffix, a reworded item) would make
+        # the checklist unverifiable by a reader diffing the two.
+        row_names = set()
+        for line in text.splitlines():
+            if line.startswith("|") and "✅" in line:
+                cells = [cell.strip() for cell in line.strip("|").split("|")]
+                if len(cells) >= 3:
+                    row_names.add(cells[2])
+        missing = sorted(set(self.names) - row_names)
+        self.assertEqual(missing, [], f"功能清单缺少这些自测项（名字必须逐字一致）：{missing}")
 
     def test_suite_is_written_in_lwt(self) -> None:
         self.assertTrue(SELFTEST.is_file())

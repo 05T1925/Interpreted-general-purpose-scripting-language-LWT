@@ -393,6 +393,16 @@ def main(argv: list[str] | None = None) -> int:
         "exit_code": doc_consistency["exit_code"], "pass": doc_consistency["exit_code"] == 0,
     }
 
+    selftest = run(
+        [sys.executable, "tools/run_selftest.py", "--out", "reports/s55-selftest/selftest.json"],
+        timeout=180,
+    )
+    steps["selftest"] = {
+        "exit_code": selftest["exit_code"],
+        "pass": selftest["exit_code"] == 0,
+        "tail": selftest["stdout"].strip().splitlines()[-1] if selftest["stdout"].strip() else "",
+    }
+
     steps["ppt"] = _step_ppt()
     if args.skip_heavy:
         steps["model_check"] = {"skipped": True, "pass": None}
@@ -475,6 +485,8 @@ def render(doc: dict[str, Any]) -> str:
             detail = f"stable={value.get('stable')} failures_zero={value.get('failures_zero')} out={value.get('output')}"
         elif name == "compare_perf":
             detail = f"all_pass={value.get('all_pass')}"
+        elif name == "selftest":
+            detail = str(value.get("tail") or f"exit={value.get('exit_code')}")
         elif name == "ppt":
             detail = (f"slides={value.get('slides')} chart_points={value.get('chart_points')} "
                       f"sha={str(value.get('sha256'))[:12]}")

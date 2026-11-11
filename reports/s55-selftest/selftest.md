@@ -4,7 +4,7 @@
 - 命令：`python -m lwt tests/selftest/lwt_selftest.lwt`
 - 结果：**38/38**，失败 0，退出码 0
 - 结论：**PASS**
-- 记录时间（UTC）：2026-11-11T18:08:27Z
+- 记录时间（UTC）：2026-11-11T18:22:38Z
 
 ## 逐项结果
 

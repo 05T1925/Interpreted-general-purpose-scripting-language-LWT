@@ -139,7 +139,7 @@
 | 断言解释器口径 | `docs/defense-claims.json` | `requires.tkinter` + `import tkinter` 前置检查 + 单命令工具；探针解析 Tk 解释器并记录 `sys.executable`/`TkVersion` | 执行实现完成 |
 | 固化测试 | `tests/test_unittest_claim.py` | 6 项：断言声明、非两批口径、探针解析/替换、证据字段、S49 历史保留与 S50 修正段 | 6/6 通过 |
 | 探针 | `reports/s50-closeout/defense-probe-merge.json` | 以 S49 的 24 行为底稿，只重跑 `unittest` 并合并；`719` 项 `OK`、`exit 0`、`717.5 s` | **24/24 PASS** |
-| 一键自检 | `reports/s50-closeout/selfcheck/` | `git/protected_diff/integrity/blackbox/determinism/compare_perf/doc_consistency/ppt/model_check/submission/defense_probe` 全 PASS；GUI/agent N/A | **all_pass=true**（11 PASS / 2 N/A / 0 FAIL） |
+| 一键自检 | `reports/s50-closeout/selfcheck/` | `git/protected_diff/integrity/blackbox/determinism/compare_perf/doc_consistency/selftest/ppt/model_check/submission/defense_probe` 全 PASS；GUI/agent N/A | **all_pass=true**（12 PASS / 2 N/A / 0 FAIL，S55 起含 LWT 原生自测） |
 | CI 四格 | `reports/s49-rehearsal/ci-cells.json` | `f3e209c`（run 42844502753）逐 job：ubuntu 3.10 7m47s、ubuntu 3.13 5m46s、windows 3.10 9m13s、windows 3.13 8m39s，4 succeeded | 4/4 通过 |
 | PPT | `slides/LWT介绍.pptx` | 本阶段不改内容；21 页、第 10 页图表 12 数值点、SHA `7cb28b13…` 静态校验 | 未改动 |
 | 现场人工 GUI A–E | 无 | 用户本人稍后执行；登记前保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |

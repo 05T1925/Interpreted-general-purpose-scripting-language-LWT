@@ -65,7 +65,7 @@ python tools/run_tests.py        # 401 项黑盒：逐用例结果 + 分类汇�
 | 字符串 `split` | ✅ | 特色：字符串 split | `split-preserves-empty-fields`、`split-overlap-is-nonoverlapping` | §7 |
 | 字符串 `trim` | ✅ | 特色：字符串 trim | `trim-only-ascii-whitespace`、`trim-arity` | §7 |
 | 字符串转整数 `to_int` | ✅ | 特色：字符串转整数 | `to-int-sign-and-leading-zero`、`to-int-whitespace-rejected`、`to-int-plus-rejected` | §7 |
-| 确定性调度与轨迹重放 | ✅ | 特色：并发 spawn 与 join 返回值（最小形态） | 46 项 `concurrency` 用例 + [`reports/s42-schedules/`](../reports/s42-schedules/summary.md) | §11.4 |
+| 确定性调度与轨迹重放 | ✅ | 特色：并发 spawn 与 join 返回值 | 46 项 `concurrency` 用例 + [`reports/s42-schedules/`](../reports/s42-schedules/summary.md) | §11.4 |
 
 > 说明：`dict` 的存在性判定、`finally` 的正常/异常两条路径，在自测里各拆成独立项，因此自测项数（38）多于上表的功能行数；这是「一项功能多条断言」而不是「重复计数」。上表每一行的自测项名字都**逐字**出现在 `python tools/run_selftest.py` 的输出里，可直接核对。
 

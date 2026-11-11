@@ -1,0 +1,133 @@
+$ C:\Users\28641\AppData\Local\Programs\Python\Python313\python.exe -m unittest discover -s tests -q
+run_selftest: refusing to treat tests/cases/values-operators/arithmetic-precedence.lwt as a self-test script
+CounterfactualError: total deadline exceeded or cancelled; process tree reclaimed
+WitnessError: total deadline or cancellation; process tree reclaimed
+benchmark_v2: output must stay under reports/s44-performance/ (got bench/results.json)
+benchmark_v2: output must stay under reports/s44-performance/ (got reports/performance.md)
+benchmark_v2: output must stay under reports/s44-performance/ (got reports/runtime-profile.json)
+benchmark_v2: output must stay under reports/s44-performance/ (got out.json)
+measure_startup: refusing to overwrite protected evidence reports/runtime-profile.json
+measure_startup: refusing to overwrite protected evidence bench/results.json
+measure_startup: refusing to overwrite protected evidence reports/performance.md
+verify_fresh_clone: bundle not found: C:\Users\28641\AppData\Local\Temp\lwt-s47-missing-p4zisv4e\does-not-exist.bundle
+----------------------------------------------------------------------
+Ran 758 tests in 805.706s
+
+OK
+model-check: mutant=none programs=8 runs=8 violations=0 budget_exhausted=3 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=2.73s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  deadlock-two-receivers: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
+  nested-spawn-drain: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
+model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=3.04s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  deadlock-two-receivers: COMPLETE runs=3 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+  nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
+model-check: mutant=none programs=1 runs=19 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=0.61s
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+model-check: mutant=none programs=1 runs=5 violations=1 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=1.08s
+  order-fixed: COMPLETE runs=5 outcomes=2 violations=1 min_prefix=[2]
+model-check: mutant=duplicate-delivery programs=8 runs=32 violations=4 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=4.36s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  deadlock-two-receivers: COMPLETE runs=3 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+  nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
+model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=3.89s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  deadlock-two-receivers: COMPLETE runs=3 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+  nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
+P1 version          PLANNED          0.0s
+P2 help             PLANNED          0.0s
+P3 hello            PLANNED          0.0s
+P4 check            PLANNED          0.0s
+P5 hello            PLANNED          0.0s
+P5 dap              PLANNED          0.0s
+P6 blackbox         PLANNED          0.0s
+P6 integrity        PLANNED          0.0s
+P7 blind            PLANNED          0.0s
+P8 diff-eq          PLANNED          0.0s
+P9 replay           PLANNED          0.0s
+P10 s11              PLANNED          0.0s
+P10 compare-perf     PLANNED          0.0s
+P11 determinism      PLANNED          0.0s
+P12 doc-consistency  PLANNED          0.0s
+P13 determinism      PLANNED          0.0s
+P14 replay           PLANNED          0.0s
+P15 diff-eq          PLANNED          0.0s
+P16 no-concurrency   PLANNED          0.0s
+P16 s44-startup      PLANNED          0.0s
+P17 s44-exec         PLANNED          0.0s
+P17 compare-perf     PLANNED          0.0s
+P18 unittest         PLANNED          0.0s
+P18 integrity        PLANNED          0.0s
+P19 s46-clean        PLANNED          0.0s
+P19 s46-mutant       PLANNED          0.0s
+P20 bundle-index     PLANNED          0.0s
+P20 fresh-clone      PLANNED          0.0s
+P21 blind            PLANNED          0.0s
+P21 blind-ci         PLANNED          0.0s
+P21 ppt              PLANNED          0.0s
+P21 doc-consistency  PLANNED          0.0s
+rehearse_defense: dry-run planned=32 PASS=0 FAIL=0 TIMEOUT=0 SKIPPED=0 -> C:\Users\28641\AppData\Local\Temp\s49-rehearse-t0u6iysk\rehearsal.json
+[PASS] 基本类型：整数算术与优先级
+[PASS] 基本类型：整除与取余
+[PASS] 基本类型：任意精度整数
+[PASS] 基本类型：字符串拼接与 Unicode 长度
+[PASS] 基本类型：布尔不是整数且无隐式转换
+[PASS] 基本类型：str 与 emit 的值显示
+[PASS] 数组：字面量、索引与长度
+[PASS] 数组：push 追加元素
+[PASS] 数组：按引用传递，别名修改可见
+[PASS] 数组：嵌套下标
+[PASS] 结构：record 声明、构造与字段访问
+[PASS] 结构：字段可运行时写入
+[PASS] 结构：显示按声明字段顺序
+[PASS] 基本输入：input() 读取一行标准输入
+[PASS] 基本输出：字符串拼接构成结果行
+[PASS] 分支：when / otherwise
+[PASS] 循环：while 重复求值条件
+[PASS] 循环：each 遍历数组
+[PASS] 循环：break 与 continue
+[PASS] 函数：定义与调用
+[PASS] 函数：递归
+[PASS] 作用域：函数内更新外层绑定
+[PASS] 特色：dict 显示与遍历按插入顺序
+[PASS] 特色：dict has 判断键存在
+[PASS] 特色：dict get 缺键返回默认值
+[PASS] 特色：dict put / delete
+[PASS] 特色：dict 身份相等
+[PASS] 特色：throw 与 attempt / recover
+[PASS] 特色：finally 在异常路径执行
+[PASS] 特色：finally 在正常路径也执行
+[PASS] 特色：模块导入 import
+[PASS] 特色：模块内函数调用
+[PASS] 特色：并发 spawn 与 join 返回值
+[PASS] 特色：通道 send / receive
+[PASS] 特色：通道关闭后 receive 返回 null
+[PASS] 特色：字符串 split
+[PASS] 特色：字符串 trim
+[PASS] 特色：字符串转整数
+38/38 全部通过
+run_selftest: 38/38 通过，失败 0，exit=0 -> reports/s55-selftest/selftest.json
+Project integrity: OK; cases=401; matrix_links=498; referenced_cases=401
+build_submission: C:/Users/28641/AppData/Local/Temp/lwt-s47-pkg-m4b3vifo/pkg bundle=yes zip=yes
+  zip sha256=02751b94a41c3c1e entries=1861
+  bundle verify exit=0 sha256=cb7b7a676d6c6ebd
