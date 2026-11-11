@@ -215,8 +215,11 @@ class FirstScreenTests(unittest.TestCase):
 
         checklist = (ROOT / "docs" / "final-acceptance-checklist.md").read_text(encoding="utf-8")
         self.assertIn("## S50", checklist)
-        after = checklist.split("## S50", 1)[1]
-        self.assertIn(str(manifest["unittest_count"]), after)
+        # S50 is a frozen snapshot: it keeps 719. The current phase section must
+        # quote the moving manifest count.
+        self.assertIn("719", checklist.split("## S50", 1)[1])
+        self.assertIn("## S52", checklist)
+        self.assertIn(str(manifest["unittest_count"]), checklist.split("## S52", 1)[1])
 
         for rel in ("SUBMISSION.md", "docs/defense-qa-card.md"):
             text = (ROOT / rel).read_text(encoding="utf-8")
