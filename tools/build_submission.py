@@ -242,8 +242,14 @@ def _package_index(
         "diff_paths": diff_paths,
         "diff_whitelist": [
             INDEX_REL.as_posix(),
+            # Stage evidence written *after* the pack: it records the pack's own
+            # SHA, so it can never be inside the pack. Each stage appends its own
+            # files here; the older entries stay so a rebuild at an older tip
+            # still validates.
             "reports/s54-closeout/fresh-clone.json",
             "reports/s54-closeout/fresh-clone.md",
+            "reports/s55-selftest/fresh-clone.json",
+            "reports/s55-selftest/fresh-clone.md",
             # The platform checklist describes the package's own SHA, so it can
             # never be inside that package; regenerate it after each repack.
             "docs/platform-submission.json",
