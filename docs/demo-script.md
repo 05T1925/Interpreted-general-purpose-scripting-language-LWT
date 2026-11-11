@@ -1,15 +1,15 @@
 # LWT 答辩演示脚本（S48 最终候选）
 
-从仓库根目录运行。建议提前打开[系统介绍 PPT](../slides/LWT介绍.pptx)（21 页），准备 Python 3.13 和终端。所有命令均使用公开 CLI；固定证据保持只读。现场按教师要求调整顺序。**主线目标 8–10 分钟**；附录片段按时间取舍。当前状态数字以 [交付清单](delivery-manifest.json) 为唯一来源（401 黑盒 / 752 unittest / 21 页 PPT）。
+从仓库根目录运行。建议提前打开[系统介绍 PPT](../slides/LWT介绍.pptx)（21 页），准备 Python 3.13 和终端。所有命令均使用公开 CLI；固定证据保持只读。现场按教师要求调整顺序。**主线目标 8–10 分钟**；附录片段按时间取舍。当前状态数字以 [交付清单](delivery-manifest.json) 为唯一来源（401 黑盒 / 758 unittest / 38 项 LWT 原生自测 / 21 页 PPT）。
 
 ## 主流程（8–10 分钟）
 
 | 时间 | 操作与讲解 | 命令或证据 |
 |---|---|---|
-| 0:00–0:40 | 说明课程五项评分与八项提交物；先报当前身份：**LWT 0.3.0**，401 黑盒 / 752 unittest / 21 页 PPT，S42–S49 执行完成、main 已推送，现场人工 GUI A–E 待本人验收。 | `python -m lwt --version`；`python -m lwt --help`；[交付清单](delivery-manifest.json) |
+| 0:00–0:40 | 说明课程五项评分与八项提交物；先报当前身份：**LWT 0.3.0**，401 黑盒 / 758 unittest / 21 页 PPT，S42–S55 执行完成、main 已推送，现场人工 GUI A–E 待本人验收。 | `python -m lwt --version`；`python -m lwt --help`；[交付清单](delivery-manifest.json) |
 | 0:40–1:30 | 跑最小程序，说明源码经 lexer、parser、AST 和树遍历运行；再演示可定位的除零错误（退出 3）。点出 `record`/`when-otherwise`/`each`/`emit` 的语法特色。 | `python -m lwt examples/guide/hello.lwt`；`python -m lwt examples/language_lab/division_by_zero.lwt` |
 | 1:30–2:20 | S42 语言核心增量：dict 插入序与内置、throw/finally 的控制流覆盖；时间紧可只看两条 emit。 | `python -m lwt examples/dicts.lwt`；`python -m lwt examples/throw_finally.lwt` |
-| 2:20–3:20 | **测试抓手**：一条命令跑 401 项黑盒并显示分类统计；再用完整性检查证明 401 个用例全部被矩阵链接（unreferenced=0）。不在现场重跑时，展示已记录输出并说明是记录值。 | `python tools/run_tests.py`；`python tools/check_project_integrity.py --require-all-referenced`；[矩阵](test-matrix.md) |
+| 2:20–3:20 | **测试抓手**：先跑课程任务 2 要求的 LWT 原生自测——断言函数 `expect` 用 LWT 写，逐项打印 `[PASS]`、末尾给 `38/38 全部通过`；再跑 401 项黑盒显示分类统计；最后用完整性检查证明 401 个用例全部被矩阵链接（unreferenced=0）。逐项打勾见功能清单。不在现场重跑时，展示已记录输出并说明是记录值。 | `python tools/run_selftest.py`；`python tools/run_tests.py`；`python tools/check_project_integrity.py --require-all-referenced`；[功能清单](feature-checklist.md)；[矩阵](test-matrix.md) |
 | 3:20–4:20 | **性能抓手**：先给 S11 正式结论（端到端 2.7–5.0×，明确未做优化），再给 S44 附录的分层对照：启动 1.256×/1.224×，纯执行 N=5000 1.45–2.99×；强调端到端仍比 Python 慢、两种口径不混用。 | `python tools/compare_perf.py`；[S11](../reports/performance.md)；[S44](s44-performance.md) |
 | 4:20–6:00 | **并发子语言**：多文件每文件一任务并发读取、按输入顺序归并（与串行逐字节等价）；换种子得到另一交错，轨迹可记录/重放；再用 5 秒展示 S46 有界探索（clean 0 违反 / mutant 命中）。 | `python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log`；下方“并发演示片段” |
 | 6:00–7:00 | **Agent 应用**：日志分析器 243 行有效 LWT（坏行/等级/关键字/top-k）；并发版 233 行。若桌面可用，再开 LWT Snake；否则说明 GUI 为展示层、规则在 .lwt。 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log --level WARN --keyword retry --top 2`；`python tools/count_lwt_lines.py app/log_report.lwt` |

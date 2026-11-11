@@ -335,6 +335,7 @@ NUMBER_DOCS = [
     "docs/agent-friendly-interface.md",
     "docs/platform-submission.md",
     "docs/s54-closeout.md",
+    "docs/feature-checklist.md",
 ]
 
 # Push/CI claims are also checked inside the latest phase report, because that
@@ -643,9 +644,13 @@ class S49ReportTests(unittest.TestCase):
         self.assertIn("747", frozen53)  # frozen at S53
         self.assertIn("21 页", frozen53)
 
+        s54 = REPO_ROOT / "docs" / "s54-closeout.md"
+        self.assertTrue(s54.exists(), "docs/s54-closeout.md is missing")
+        self.assertIn("752", s54.read_text(encoding="utf-8"))  # frozen at S54
+
         doc = _load_manifest()
-        current = REPO_ROOT / "docs" / "s54-closeout.md"
-        self.assertTrue(current.exists(), "docs/s54-closeout.md is missing")
+        current = REPO_ROOT / "docs" / "s55-selftest.md"
+        self.assertTrue(current.exists(), "docs/s55-selftest.md is missing")
         text = current.read_text(encoding="utf-8")
         self.assertIn(str(doc["unittest_count"]), text)
         self.assertIn(f"{doc['ppt_pages']} 页", text)

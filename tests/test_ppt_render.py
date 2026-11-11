@@ -12,7 +12,12 @@ from pathlib import Path
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-REPORT = ROOT / "reports" / "s54-closeout" / "ppt-render.json"
+# S55 re-rendered the deck after fixing stale counts on pages 2/6/18/21, so the
+# current render record lives in reports/s55-selftest/. S54's record stays as a
+# frozen snapshot of the previous SHA.
+CURRENT_REPORT = ROOT / "reports" / "s55-selftest" / "ppt-render.json"
+FROZEN_REPORT = ROOT / "reports" / "s54-closeout" / "ppt-render.json"
+REPORT = CURRENT_REPORT if CURRENT_REPORT.exists() else FROZEN_REPORT
 MANIFEST = ROOT / "docs" / "delivery-manifest.json"
 
 

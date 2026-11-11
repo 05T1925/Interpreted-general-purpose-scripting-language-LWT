@@ -197,8 +197,19 @@
 | 键序盲区 | `tests/cases/dict-maps/dict-display-insertion-order.{lwt,json}` | 新增用例（公开 CLI 实测 expected），黑盒 **400 → 401**；既有用例零改动 | 闭环 |
 | 变异探针 | `reports/s54-closeout/mutation-report.json` | `dict-display-sorts-keys` 由新用例判红；**19/19 killed**、invalid 0 | 19/19 |
 | 逐页目视排版 | 无 | 像素统计只能证明“有内容、非空白”；页脚是否裁切仍属 **GUI-E 人工项** | 未验证 |
-| 当前计数 | `docs/delivery-manifest.json` | **401 黑盒 / 752 unittest / 21 页**；S52/S53 报告保留 731/747 作为冻结快照 | 已同步 |
+| S54 时点计数（历史） | `docs/delivery-manifest.json` | **401 黑盒 / 752 unittest / 21 页**（历史值；当前值见文末 S55 段）；S52/S53 报告保留 731/747 作为冻结快照 | 历史 |
 | 现场人工 GUI A–E | 无 | 本轮仍不执行；只提供只读启动预检，保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
 
 **重要（S54）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。报告见 [s54-closeout.md](s54-closeout.md)。
 
+## S55 用 LWT 测试 LWT 与功能清单逐项打勾（执行窗口自测；基线未经主窗口复核 S43–S54）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| LWT 原生自测 | `tests/selftest/lwt_selftest.lwt`、`tests/selftest/selftest_helper.lwt` | `python tools/run_selftest.py`：断言函数 `fn expect` 由 LWT 实现，逐项打印 `[PASS]`，末尾 `38/38 全部通过`；证据 `reports/s55-selftest/selftest.{json,md}` | 38/38 |
+| 功能清单逐项打勾 | `docs/feature-checklist.md` | 两张表：任务 1 五项基本功能 22 行 + LWT 特色功能 18 行；每行给出**自测项名字**、代表黑盒用例与规范节 | 40 行全勾 |
+| 门禁测试 | `tests/test_lwt_selftest.py` | 6 项：自测必须全绿且末尾总数自洽、检查项名字唯一、清单存在且 ≥30 行打勾、脚本不得出现宿主语言痕迹、工具拒绝把黑盒用例当自测脚本、工具必须写出证据 | 6/6 |
+| 当前计数 | `docs/delivery-manifest.json` | **401 黑盒 / 758 unittest / 21 页**；unittest 752→758 为新增 6 项门禁的算术结果，S54 报告保留 752 作为冻结快照 | 已同步 |
+| 现场人工 GUI A–E | 无 | 仍不执行；保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
+
+**重要（S55）**：本阶段只补课程第 8 章任务 2 的“测试脚本由 LWT 编写、测试名与功能清单一一对应、一个命令输出每项与总数”口径——**不改语言语义、不改 401 项黑盒期望**。自测证明“清单里每个功能项在语言层面可用”，边界与错误路径仍由 401 项黑盒与 19 条变异探针负责；两者不互相替代。
