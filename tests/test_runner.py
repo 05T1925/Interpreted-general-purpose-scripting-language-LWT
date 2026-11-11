@@ -112,6 +112,22 @@ class CaseInventoryTests(unittest.TestCase):
         cases = runner.discover_cases(self.root)
         self.assertEqual(sorted(case.spec_refs[0] for case in cases), sorted(refs))
 
+    def test_course_sections_8_1_to_10_5_are_valid_references(self) -> None:
+        # S52 gate: chapter 8 requires every feature row to be ticked, so the
+        # §8/§9/§10 subsection numbers must be registered before cases use them.
+        refs = ("8.1", "8.2", "8.3", "8.4", "8.5", "8.6", "8.7", "8.8",
+                "9.1", "9.2", "9.3", "9.4", "9.5",
+                "10.1", "10.2", "10.3", "10.4", "10.5")
+        for ref in refs:
+            with self.subTest(ref=ref):
+                self.write_case(
+                    filename=f"ref-{ref.replace('.', '-')}",
+                    case_id=f"ref-{ref.replace('.', '-')}",
+                    metadata={"spec_refs": [ref]},
+                )
+        cases = runner.discover_cases(self.root)
+        self.assertEqual(len(cases), len(refs))
+
     def test_unknown_spec_section_12_is_rejected(self) -> None:
         # Unknown references must still fail as a configuration error; widening
         # the set for 11.x must not turn validation into a no-op.

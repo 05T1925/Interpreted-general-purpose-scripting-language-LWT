@@ -1,7 +1,8 @@
 {
   "id": "each-break",
   "spec_refs": [
-    "5"
+    "5",
+    "8.5"
   ],
   "tags": [
     "normal"

@@ -1,1 +1,19 @@
-{"id":"module-same-name-namespaces","spec_refs":["9"],"tags":["modules"],"args":[],"stdin":{"text":""},"expected":{"exit_code":0,"stdout":"main\nA\nB\n","stderr":""}}
+{
+  "id": "module-same-name-namespaces",
+  "spec_refs": [
+    "9",
+    "9.3"
+  ],
+  "tags": [
+    "modules"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "main\nA\nB\n",
+    "stderr": ""
+  }
+}

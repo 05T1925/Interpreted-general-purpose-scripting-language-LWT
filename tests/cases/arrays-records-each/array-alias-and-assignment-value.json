@@ -2,7 +2,8 @@
   "id": "array-alias-and-assignment-value",
   "spec_refs": [
     "4.1",
-    "4.3"
+    "4.3",
+    "8.2"
   ],
   "args": [],
   "stdin": {

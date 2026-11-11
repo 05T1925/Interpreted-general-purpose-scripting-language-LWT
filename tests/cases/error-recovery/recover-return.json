@@ -2,7 +2,8 @@
   "id": "recover-return",
   "spec_refs": [
     "5",
-    "10"
+    "10",
+    "10.2"
   ],
   "tags": [
     "error-recovery",

@@ -1,1 +1,21 @@
-{"id":"module-runtime-source-location","spec_refs":["9","7"],"tags":["modules","diagnostics"],"args":[],"stdin":{"text":""},"expected":{"exit_code":3,"stdout":"","stderr":"fixtures/runtime_bad.lwt:2:14: RuntimeError: division by zero\n"}}
+{
+  "id": "module-runtime-source-location",
+  "spec_refs": [
+    "7",
+    "9",
+    "9.4"
+  ],
+  "tags": [
+    "modules",
+    "diagnostics"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "fixtures/runtime_bad.lwt:2:14: RuntimeError: division by zero\n"
+  }
+}

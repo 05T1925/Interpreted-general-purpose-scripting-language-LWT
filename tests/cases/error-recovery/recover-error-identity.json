@@ -3,7 +3,8 @@
   "spec_refs": [
     "4.3",
     "7",
-    "10"
+    "10",
+    "10.3"
   ],
   "tags": [
     "error-recovery",

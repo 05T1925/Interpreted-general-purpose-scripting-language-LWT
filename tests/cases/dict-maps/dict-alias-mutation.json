@@ -2,7 +2,8 @@
   "id": "dict-alias-mutation",
   "spec_refs": [
     "4.1",
-    "4.4"
+    "4.4",
+    "8.7"
   ],
   "tags": [
     "normal",

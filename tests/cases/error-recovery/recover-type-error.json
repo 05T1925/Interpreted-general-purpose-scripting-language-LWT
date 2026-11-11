@@ -1,7 +1,8 @@
 {
   "id": "recover-type-error",
   "spec_refs": [
-    "10"
+    "10",
+    "10.4"
   ],
   "tags": [
     "error-recovery",

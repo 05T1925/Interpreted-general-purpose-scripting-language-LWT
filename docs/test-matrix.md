@@ -1,6 +1,6 @@
 # LWT 0.3.0 黑盒覆盖矩阵（S8 主窗口审查通过；当前基数 400 项）
 
-> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24、S25 和 S26 的实测快照分列于 §4。S8 当时尚无远端 GitHub Actions 结果；S32 精确 SHA 的四格结果见 [主窗口复核](s32-main-review.md)。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。
+> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24、S25 和 S26 的实测快照分列于 §4。S8 当时尚无远端 GitHub Actions 结果；S32 精确 SHA 的四格结果见 [主窗口复核](s32-main-review.md)。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。**“用 LWT 测试 LWT”（第 8 章任务 2 口径）**：`tests/cases/**/*.lwt` 共 426 个、`.json` 400 个——输入与断言都由 LWT 脚本执行，`tools/run_tests.py` 只调用公开 CLI（`python -m lwt`），不导入解释器、不生成 expected。
 
 ## 1. 课程要求对应关系
 
@@ -142,6 +142,21 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | §7 诊断路径/行列、EOF、错误触发位置、首个未处理运行时错误、无 traceback | [diagnostic-path-keeps-cli-argument](../tests/cases/cli-errors/diagnostic-path-keeps-cli-argument.lwt)；[unicode-codepoint-error-column](../tests/cases/lexer-parser/unicode-codepoint-error-column.lwt)；[runtime-location-accessor](../tests/cases/cli-errors/runtime-location-accessor.lwt) | [syntax-eof-location](../tests/cases/cli-errors/syntax-eof-location.lwt) | [integrated-runtime-failure-preserves-stdout](../tests/cases/integrated/integrated-runtime-failure-preserves-stdout.lwt) | 可适用；S8 历史运行的 194 项完整 stderr 均无意外 traceback；S26 保留未捕获行为并增加第 10 节恢复覆盖，实测见 §4.5。 |
 | §7 禁止 Python `eval`/`exec` 执行 LWT；实现约束而非语言语义 | — | — | — | 运行结果不可观察，矩阵不伪造黑盒覆盖；通过源码审查约束验证（runner 不导入 LWT 前端/运行时作为被测路径）。 |
 
+### §8 规范性示例与设计决策（S52 逐项打勾）
+
+> 课程第 8 章任务 2 要求“测试名与功能清单一一对应——逐项打勾，缺一项就不算完整覆盖”。本节按 §8.1–§8.8 逐条给出规范示例、预期行为与真实用例；§8.6 是设计取舍，没有可执行语义，如实标为“间接支撑”，不伪造用例。
+
+| 规范条款 | 规范示例要点 | 预期行为 | 真实用例（直接/间接） | CLI 实测 |
+|---|---|---|---|---|
+| §8.1 | 变量、分支、循环与函数 | 按 §5/§6 语义执行，退出 0 | `integrated-control-and-record`（直接） | 是（400 项内） |
+| §8.2 | 结构、数组和浅快照 | 别名与快照语义；`9` / `[9]`，退出 0 | `array-alias-and-assignment-value`（直接） | 是 |
+| §8.3 | 输入输出、参数和文件 | `input()`/`args()`/`read_text()` 的进程级语义，退出 0 | `integrated-input-text-and-args`（直接） | 是 |
+| §8.4 | 错误类别 | 五类错误与退出码；Error 五字段 | `recover-error-fields-display`（直接） | 是 |
+| §8.5 | 循环控制 | `break`/`continue` 跨块与快照 | `each-break`（直接） | 是 |
+| §8.6 | 与既有草案的差异和取舍 | **设计决策，无可执行语义** | 间接：由 §8.7/§8.8 与 §4.4 的用例支撑 | 不适用 |
+| §8.7 | 映射（S42） | 键类型、别名、重复键错误 | `dict-alias-mutation`（直接） | 是 |
+| §8.8 | throw 与 finally（S42） | finally 分类、控制流与覆盖 | `finally-category-dispatch`（直接） | 是 |
+
 ### §9 静态函数库模块
 
 | 规则与用例 | 覆盖目的 | 结果 |
@@ -152,6 +167,16 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | [module-same-name-namespaces](../tests/cases/modules/same-name-namespaces.lwt)；[module-forward-recursion](../tests/cases/modules/forward-recursion.lwt)；[module-unqualified-import-is-not-visible](../tests/cases/modules/unqualified-import-is-not-visible.lwt)；[module-undefined-alias-link-error](../tests/cases/modules/undefined-alias-link-error.lwt)；[module-undefined-member-link-error](../tests/cases/modules/undefined-member-link-error.lwt)；[module-alias-is-not-value](../tests/cases/modules/module-alias-is-not-value.lwt)；[module-call-result-not-callable](../tests/cases/modules/module-call-result-not-callable.lwt)；[module-cannot-call-main-function](../tests/cases/modules/module-cannot-call-main-function.lwt)；[module-cannot-read-main-global](../tests/cases/modules/module-cannot-read-main-global.lwt) | 独立命名空间、前向调用/递归、别名/成员解析、调用结果不可继续调用和非闭包边界 | 9 项 CLI 黑盒；链接失败在入口执行前报告，运行时命名错误使用 RuntimeError/3。 |
 | [module-array-record-aliasing](../tests/cases/modules/array-record-aliasing.lwt)；[module-process-io](../tests/cases/modules/module-process-io.lwt) | 数组和 record 引用参数；模块中的 `args()`/`input()`/`read_text()` 仍使用进程级语义 | 2 项 CLI 黑盒；`read_text` 仍以进程 cwd 为基准。另有定向临时目录测试覆盖绝对路径、非法 UTF-8、同一规范文件多 alias。 |
 
+#### §9 小节级映射（S52）
+
+| 规范条款 | 覆盖目标 | 真实用例（直接） |
+|---|---|---|
+| §9.1 | 声明与语法限制：模块只含 import/fn、导入仅顶层 | `module-import-after-top-level-item` |
+| §9.2 | 路径与模块图：相对 importer、`..`、Unicode/空格、目录依赖 | `module-directory-dependency` |
+| §9.3 | 独立命名空间与调用：别名、前向递归、不可见性 | `module-same-name-namespaces` |
+| §9.4 | 来源路径与错误：词法/语法/运行时的模块来源 | `module-runtime-source-location` |
+| §9.5 | 规范性示例与实现约束：失败前不产生入口输出 | `module-missing-dependency-no-partial-output` |
+
 ### §10 运行时错误恢复
 
 | 规则与用例 | 覆盖目的 | 实测范围 |
@@ -159,6 +184,16 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | [attempt-comments-between-blocks](../tests/cases/error-recovery/attempt-comments-between-blocks.lwt)；[attempt-empty-blocks](../tests/cases/error-recovery/attempt-empty-blocks.lwt)；[attempt-missing-recover](../tests/cases/error-recovery/attempt-missing-recover.lwt)；[attempt-normal-flow](../tests/cases/error-recovery/attempt-normal-flow.lwt)；[attempt-requires-blocks](../tests/cases/error-recovery/attempt-requires-blocks.lwt)；[attempt-semicolon-rejected](../tests/cases/error-recovery/attempt-semicolon-rejected.lwt)；[recover-standalone-rejected](../tests/cases/error-recovery/recover-standalone-rejected.lwt)；[recover-parameter-required](../tests/cases/error-recovery/recover-parameter-required.lwt)；[recover-parameter-one-only](../tests/cases/error-recovery/recover-parameter-one-only.lwt)；[attempt-reserved-variable](../tests/cases/error-recovery/attempt-reserved-variable.lwt)；[attempt-reserved-module-alias](../tests/cases/error-recovery/attempt-reserved-module-alias.lwt)；[recover-reserved-function](../tests/cases/error-recovery/recover-reserved-function.lwt) | 关键字保留、注释、块、参数数目、分号边界、缺少/孤立 recover、无错路径 | 12 项 CLI 黑盒；语法错误位置和首错诊断精确比较。 |
 | [recover-array-bounds](../tests/cases/error-recovery/recover-array-bounds.lwt)；[recover-division-by-zero](../tests/cases/error-recovery/recover-division-by-zero.lwt)；[recover-type-error](../tests/cases/error-recovery/recover-type-error.lwt)；[recover-undefined-variable](../tests/cases/error-recovery/recover-undefined-variable.lwt)；[recover-error-display-unicode](../tests/cases/error-recovery/recover-error-display-unicode.lwt)；[recover-error-fields-display](../tests/cases/error-recovery/recover-error-fields-display.lwt)；[recover-error-identity](../tests/cases/error-recovery/recover-error-identity.lwt)；[recover-error-index-type](../tests/cases/error-recovery/recover-error-index-type.lwt)；[recover-error-len-type](../tests/cases/error-recovery/recover-error-len-type.lwt)；[recover-error-not-record-type](../tests/cases/error-recovery/recover-error-not-record-type.lwt)；[recover-readonly-error-fields](../tests/cases/error-recovery/recover-readonly-error-fields.lwt)；[recover-unknown-error-field](../tests/cases/error-recovery/recover-unknown-error-field.lwt) | 代表性 RuntimeError、Error 五字段、稳定显示/Unicode 转义、身份相等、只读字段、未知字段与不匹配类型 | 12 项 CLI 黑盒；包括成功捕获和严格类型/字段错误结果。 |
 | [recover-each-break](../tests/cases/error-recovery/recover-each-break.lwt)；[recover-each-continue](../tests/cases/error-recovery/recover-each-continue.lwt)；[recover-handler-error-not-self-caught](../tests/cases/error-recovery/recover-handler-error-not-self-caught.lwt)；[recover-handler-error-outer](../tests/cases/error-recovery/recover-handler-error-outer.lwt)；[recover-import-error-not-caught](../tests/cases/error-recovery/recover-import-error-not-caught.lwt)；[recover-lex-error-not-caught](../tests/cases/error-recovery/recover-lex-error-not-caught.lwt)；[recover-module-chain-source](../tests/cases/error-recovery/recover-module-chain-source.lwt)；[recover-nearest-handler](../tests/cases/error-recovery/recover-nearest-handler.lwt)；[recover-preserves-side-effects](../tests/cases/error-recovery/recover-preserves-side-effects.lwt)；[recover-return](../tests/cases/error-recovery/recover-return.lwt)；[recover-syntax-error-not-caught](../tests/cases/error-recovery/recover-syntax-error-not-caught.lwt)；[recover-unhandled-runtime-keeps-output](../tests/cases/error-recovery/recover-unhandled-runtime-keeps-output.lwt)；[recover-user-function](../tests/cases/error-recovery/recover-user-function.lwt)；[recover-variable-scope](../tests/cases/error-recovery/recover-variable-scope.lwt)；[recover-while-break](../tests/cases/error-recovery/recover-while-break.lwt)；[recover-while-continue](../tests/cases/error-recovery/recover-while-continue.lwt) | 最近动态 handler、嵌套处理、函数/模块传播、静态预检边界、return/break/continue、作用域、输出和修改副作用 | 16 项 CLI 黑盒；错误码、完整 stdout/stderr 和模块来源位置端到端比较。 |
+
+#### §10 小节级映射（S52）
+
+| 规范条款 | 覆盖目标 | 真实用例（直接） |
+|---|---|---|
+| §10.1 | 语法与捕获边界：attempt/recover 块、参数与保留字 | `attempt-normal-flow` |
+| §10.2 | 控制流、作用域与副作用：return/break/continue、最近 handler | `recover-return` |
+| §10.3 | Error 值：五字段、身份相等、只读字段 | `recover-error-identity` |
+| §10.4 | 规范性示例：除零、越界、类型错误、未定义变量 | `recover-type-error` |
+| §10.5 | 设计边界：语法/词法/导入错误不被捕获 | `recover-syntax-error-not-caught` |
 
 ### §11 确定性并发（S43）
 
@@ -173,6 +208,13 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 | §11.6 错误与死锁 | 原位置重抛、收尾抛出、三类死锁、attempt 捕获 | [join-reraises-location](../tests/cases/concurrency/join-reraises-location.lwt)、[attempt-catches-task-error](../tests/cases/concurrency/attempt-catches-task-error.lwt)、[unjoined-task-error](../tests/cases/concurrency/unjoined-task-error.lwt)、[join-twice](../tests/cases/concurrency/join-twice.lwt)、[throw-in-task](../tests/cases/concurrency/throw-in-task.lwt)、[task-error-preserves-identity](../tests/cases/concurrency/task-error-preserves-identity.lwt)、[deadlock-double-receive](../tests/cases/concurrency/deadlock-double-receive.lwt)、[deadlock-join-cycle](../tests/cases/concurrency/deadlock-join-cycle.lwt)、[deadlock-mixed](../tests/cases/concurrency/deadlock-mixed.lwt) |
 | §11.7 收尾 | 按编号 drain、join 保留输出、后代覆盖 | [drain-order](../tests/cases/concurrency/drain-order.lwt)、[join-preserves-output](../tests/cases/concurrency/join-preserves-output.lwt) |
 | §11.8 工具关系 | `--check` 诊断、`--profile` 执行前拒绝 | [profile-rejects-spawn](../tests/cases/concurrency/profile-rejects-spawn.lwt)、[check-spawn-undefined](../tests/cases/concurrency/check-spawn-undefined.lwt) |
+
+#### §11 小节级映射（S52）
+
+| 规范条款 | 覆盖目标 | 真实用例（直接/间接） |
+|---|---|---|
+| §11.1 | 范围与边界：Task 值、input() 拒绝、join 自身/非任务错误 | `spawn-no-args`（直接） |
+| §11.9 | 兼容性与设计取舍：**设计决策，无可执行语义** | 间接：由 §11.2–§11.8 的 46 项并发用例支撑 |
 
 ## 4. 本次实测摘要、未覆盖边界和 CI
 

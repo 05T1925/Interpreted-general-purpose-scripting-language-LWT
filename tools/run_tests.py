@@ -28,7 +28,9 @@ CASE_ID_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 VALID_SPEC_REFS = frozenset(
     {
         "1", "2", "2.1", "2.2", "3", "4", "4.1", "4.2", "4.3", "4.4",
-        "5", "6", "7", "8", "8.7", "8.8", "9", "10", "10.6",
+        "5", "6", "7", "8", "8.1", "8.2", "8.3", "8.4", "8.5",
+        "8.6", "8.7", "8.8", "9", "9.1", "9.2", "9.3", "9.4", "9.5",
+        "10", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6",
         # S43 deterministic concurrency: language-spec section 11 and its nine
         # subsections. Unknown references (e.g. "12") remain a configuration
         # error; this gate must land before any 11.x case is added.

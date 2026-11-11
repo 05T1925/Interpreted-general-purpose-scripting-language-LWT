@@ -1,6 +1,7 @@
 {
   "id": "spawn-no-args",
   "spec_refs": [
+    "11.1",
     "11.2"
   ],
   "tags": [
