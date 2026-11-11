@@ -249,6 +249,10 @@ def _package_index(
             "reports/s53-mutation/mutation-report.md",
             "reports/s49-rehearsal/ci-cells.json",
             "docs/s53-mutation-interface.md",
+            # The platform checklist describes the package's own SHA, so it can
+            # never be inside that package; regenerate it after each repack.
+            "docs/platform-submission.json",
+            "docs/platform-submission.md",
         ],
         "generated_at_utc": _utc(),
         "rebuild_command": rebuild_command,
