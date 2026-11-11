@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-11T10:46:02Z",
+  "generated_at_utc": "2026-11-11T14:18:04Z",
   "platform": {
     "name": "教学云平台",
     "url": "https://ucloud.bupt.edu.cn/",
@@ -45,8 +45,8 @@
       "name": "README.md",
       "path": "README.md",
       "exists": true,
-      "sha256": "b7c34b6fe4ebab8abf764b3422a8de1d34cefff6d6d0875acd5220f2cf49edd7",
-      "expected_sha256": "b7c34b6fe4ebab8abf764b3422a8de1d34cefff6d6d0875acd5220f2cf49edd7",
+      "sha256": "f614e07aeee40f31a0ecbc3f3a2551814bd5cd9d477392c2bb05fa3ddb124a4f",
+      "expected_sha256": "f614e07aeee40f31a0ecbc3f3a2551814bd5cd9d477392c2bb05fa3ddb124a4f",
       "sha_ok": true,
       "required": true,
       "note": "教师入口：三分钟验收路径 + 当前状态"
@@ -105,8 +105,8 @@
       "name": "docs/s53-mutation-interface.md",
       "path": "docs/s53-mutation-interface.md",
       "exists": true,
-      "sha256": "0b4e8e812c3ad39e22c0da1a80197dfd6e9932621e13a2775bea8749f10a4a1a",
-      "expected_sha256": "0b4e8e812c3ad39e22c0da1a80197dfd6e9932621e13a2775bea8749f10a4a1a",
+      "sha256": "dcbc481eb0118a4ccbb0bf93fc2a33decbf71dd328df3c8540aa7c83e14925ad",
+      "expected_sha256": "dcbc481eb0118a4ccbb0bf93fc2a33decbf71dd328df3c8540aa7c83e14925ad",
       "sha_ok": true,
       "required": false,
       "note": "S53 报告"
