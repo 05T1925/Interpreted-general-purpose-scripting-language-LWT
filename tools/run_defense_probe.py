@@ -338,7 +338,11 @@ def main(argv: list[str] | None = None) -> int:
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
                    encoding="utf-8", newline="\n")
     out.with_suffix(".md").write_text(render(doc), encoding="utf-8", newline="\n")
-    print(f"run_defense_probe: PASS {passed}/{len(results)} -> {out.relative_to(ROOT)}")
+    try:
+        shown = out.relative_to(ROOT).as_posix()
+    except ValueError:  # --out outside the repo (baseline runs into a temp dir)
+        shown = str(out)
+    print(f"run_defense_probe: PASS {passed}/{len(results)} -> {shown}")
     return 0 if passed == len(results) else 1
 
 

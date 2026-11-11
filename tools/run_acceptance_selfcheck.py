@@ -426,7 +426,11 @@ def main(argv: list[str] | None = None) -> int:
     json_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
                          encoding="utf-8", newline="\n")
     md_path.write_text(render(report), encoding="utf-8", newline="\n")
-    print(f"selfcheck: {'PASS' if all_pass else 'FAIL'} -> {json_path.relative_to(ROOT)}")
+    try:
+        shown = json_path.relative_to(ROOT).as_posix()
+    except ValueError:  # --out outside the repo (baseline runs into a temp dir)
+        shown = str(json_path)
+    print(f"selfcheck: {'PASS' if all_pass else 'FAIL'} -> {shown}")
     for name, value in steps.items():
         state = ("SKIP" if value.get("skipped") else
                  ("PASS" if value.get("pass") else ("N/A" if value.get("pass") is None else "FAIL")))
