@@ -86,7 +86,7 @@
 | 单命令全量 | **747 项 OK，exit 0**：探针内运行 **1103.1 s**、独立运行 **1065.7 s**（`py -3.13`，3.13.7，Tk 8.6；`reports/s53-mutation/unittest-single-command.json`） |
 | 第一次全量（失败留证） | 同一命令 747 项 **exit 1**，3 条 Tk GUI 用例失败（`test_real_verify_button_shows_lwt_response_and_step_switch`、`test_real_buttons_keys_focus_reset_and_close`、`test_space_wasd_r_and_close_during_request`），报错为“验真失败，退出码 3”；随后单独跑三个 GUI 模块 **68/68 OK**（612.8 s），再跑全量即通过。判定为**负载下的瞬态**，不是 S53 改动引入的缺陷；未修改任何 GUI 用例 |
 | 24 断言探针 | **24/24 PASS**：23 条非 heavy 在 S53 重跑；`unittest` 行在 S53 重跑（**747 项 OK**，`recorded_at_utc` 10:31:21Z）；`blackbox`/`determinism` 两条 heavy 沿用上一阶段记录并保留各自时间戳（`reports/s53-mutation/defense-probe.json`） |
-| 一键自检 | 待回填 |
+| 一键自检 | **`all_pass=true`**：11 步 PASS、0 FAIL、2 步 N/A（GUI/agent）；`selfcheck-20261111T103228Z`；`defense_probe` 读到 S53 的 24/24 |
 | 交付包 / 克隆 | 待回填 |
 | CI | 待回填（精确 SHA 逐格） |
 
