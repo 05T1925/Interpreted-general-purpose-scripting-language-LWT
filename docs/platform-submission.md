@@ -7,13 +7,13 @@
 
 | 项 | 路径 | 存在 | SHA-256 | 校验 | 说明 |
 |---|---|---|---|---|---|
-| 提交包 zip | `dist/lwt-submission-20261111T142435Z/lwt-submission.zip` | 是 | `e5db74b7c91a…` | 一致 | 解压后即为完整仓库；--verify-blackbox 会实跑 401 黑盒 |
-| Git 历史 bundle | `dist/lwt-submission-20261111T142435Z/lwt-history.bundle` | 是 | `065b0bb97d2c…` | 一致 | 截止 SHA 429b78fcc232；git fetch <bundle> main 可复核 |
+| 提交包 zip | `dist/lwt-submission-20261111T164926Z/lwt-submission.zip` | 是 | `ca67816f03c5…` | 一致 | 解压后即为完整仓库；--verify-blackbox 会实跑 401 黑盒 |
+| Git 历史 bundle | `dist/lwt-submission-20261111T164926Z/lwt-history.bundle` | 是 | `0b4271dbb7f9…` | 一致 | 截止 SHA 12b26810b3b0；git fetch <bundle> main 可复核 |
 | PPT | `slides/LWT介绍.pptx` | 是 | `809320b2aee6…` | 一致 | 21 页；内容本阶段未改动 |
 | README.md | `README.md` | 是 | `1cc415582a8f…` | 一致 | 教师入口：三分钟验收路径 + 当前状态 |
 | SUBMISSION.md | `SUBMISSION.md` | 是 | `df50c1307ce4…` | 一致 | 8 项提交内容 + 第 8 章任务对照 |
 | docs/language-spec.md | `docs/language-spec.md` | 是 | `f7d8a9649ea0…` | 一致 | §1–§11 正式语言规范 |
-| docs/test-matrix.md | `docs/test-matrix.md` | 是 | `dd4d609b5f66…` | 一致 | 覆盖矩阵（§8 逐项打勾） |
+| docs/test-matrix.md | `docs/test-matrix.md` | 是 | `70b37b201d9c…` | 一致 | 覆盖矩阵（§8 逐项打勾） |
 | docs/defense-qa-card.md | `docs/defense-qa-card.md` | 是 | `91319542a354…` | 一致 | 答辩问答卡 |
 | docs/agent-friendly-interface.md | `docs/agent-friendly-interface.md` | 是 | `409621c1bffd…` | 一致 | 课件 4.4/4.5 接口对照 |
 | docs/s53-mutation-interface.md | `docs/s53-mutation-interface.md` | 是 | `5c0593ffd3a0…` | 一致 | S53 报告 |
@@ -32,9 +32,9 @@
 ## 3. 校验结果
 
 - 必需文件 SHA 全部一致：**True**
-- 解压后 401 黑盒：**None/None**（checked=False，exit=—）
+- 解压后 401 黑盒：**401/401**（checked=True，exit=0）
 - 总判定 `all_pass`：**True**
-- 包索引：`reports/s48-defense/package-index.json`（tip `429b78fcc232`）
+- 包索引：`reports/s48-defense/package-index.json`（tip `12b26810b3b0`）
 
 ## 4. 复现
 

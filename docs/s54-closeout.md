@@ -76,7 +76,7 @@ S53 记录的真实盲区：所有显示类用例的键恰好是字典序，所�
 |---|---|
 | 彩排（21 页 dry-run） | `--pages 1-21 --dry-run`：**32 条断言**计划（21 页共 32 条），0 执行 |
 | 彩排（random 5 实跑） | seed 54：**5/5 PASS**（page 4 check、16 no-concurrency、10 s11、12 doc-consistency、21 ppt） |
-| 平台包终核 | 待回填 |
+| 平台包终核 | `check_platform_bundle.py --verify-blackbox`：文件 SHA 全一致、解压后 **401/401**、`all_pass=true`；`uploaded=false`（未上传） |
 | GUI 启动预检 | **4/4 窗口出现**（0.5 s 内）：语义实验室 / 日志侦探 / 贪吃蛇 / 反事实实验台；只读预检，**不是**人工验收 |
 
 ## 5. 验证记录
