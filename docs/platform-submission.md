@@ -7,8 +7,8 @@
 
 | 项 | 路径 | 存在 | SHA-256 | 校验 | 说明 |
 |---|---|---|---|---|---|
-| 提交包 zip | `dist/lwt-submission-20261111T165426Z/lwt-submission.zip` | 是 | `a22bd72452e3…` | 一致 | 解压后即为完整仓库；--verify-blackbox 会实跑 401 黑盒 |
-| Git 历史 bundle | `dist/lwt-submission-20261111T165426Z/lwt-history.bundle` | 是 | `47da8b58b6a6…` | 一致 | 截止 SHA f563866a219d；git fetch <bundle> main 可复核 |
+| 提交包 zip | `dist/lwt-submission-20261111T171232Z/lwt-submission.zip` | 是 | `e930d8b6d74d…` | 一致 | 解压后即为完整仓库；--verify-blackbox 会实跑 401 黑盒 |
+| Git 历史 bundle | `dist/lwt-submission-20261111T171232Z/lwt-history.bundle` | 是 | `6f8d2d0749df…` | 一致 | 截止 SHA ad366e09db9d；git fetch <bundle> main 可复核 |
 | PPT | `slides/LWT介绍.pptx` | 是 | `809320b2aee6…` | 一致 | 21 页；内容本阶段未改动 |
 | README.md | `README.md` | 是 | `1cc415582a8f…` | 一致 | 教师入口：三分钟验收路径 + 当前状态 |
 | SUBMISSION.md | `SUBMISSION.md` | 是 | `df50c1307ce4…` | 一致 | 8 项提交内容 + 第 8 章任务对照 |
@@ -34,7 +34,7 @@
 - 必需文件 SHA 全部一致：**True**
 - 解压后 401 黑盒：**401/401**（checked=True，exit=0）
 - 总判定 `all_pass`：**True**
-- 包索引：`reports/s48-defense/package-index.json`（tip `f563866a219d`）
+- 包索引：`reports/s48-defense/package-index.json`（tip `ad366e09db9d`）
 
 ## 4. 复现
 
