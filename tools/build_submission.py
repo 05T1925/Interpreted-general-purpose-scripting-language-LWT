@@ -250,8 +250,9 @@ def _package_index(
             "reports/s54-closeout/fresh-clone.md",
             "reports/s55-selftest/fresh-clone.json",
             "reports/s55-selftest/fresh-clone.md",
-            # The platform checklist describes the package's own SHA, so it can
-            # never be inside that package; regenerate it after each repack.
+            # The stage report quotes the package's own SHA and clone result, so
+            # it also postdates the pack.
+            "docs/s55-selftest.md",
             "docs/platform-submission.json",
             "docs/platform-submission.md",
         ],
