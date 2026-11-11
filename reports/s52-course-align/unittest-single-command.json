@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "tool": "tools/run_unittest_single.py",
+  "claim_id": "unittest",
+  "command": [
+    "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-q"
+  ],
+  "started_at_utc": "2026-11-11T04:49:07Z",
+  "finished_at_utc": "2026-11-11T05:01:35Z",
+  "exit_code": 0,
+  "ran": 731,
+  "ok": true,
+  "timed_out": false,
+  "seconds": 748.408,
+  "sys_executable": "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+  "python_version": "3.13.7",
+  "tk_version": 8.6,
+  "log_path": "reports/s52-course-align/unittest-system.log",
+  "note": "single invocation of unittest discover; stdout+stderr redirected to a file (no pipe) so a surviving grandchild cannot block capture"
+}

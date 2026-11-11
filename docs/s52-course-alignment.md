@@ -66,7 +66,8 @@ S50 的两次“覆盖冻结证据”事故按第 6 章流程处理，并留下�
 | 白名单 | `VALID_SPEC_REFS` 注册 §8.1–§8.6、§9.1–§9.5、§10.1–§10.5；未知 `12` 仍拒绝 |
 | 性能补充 | `performance-space.json`：3 负载 × N=100/1000/5000 + 压力 N=1000/5000/20000；`peak_bytes_monotonic=true`；证据测试 4/4 |
 | 探针（非 heavy） | **21/21 PASS**（`reports/s52-course-align/baseline-probe.json`） |
-| 全量 / 自检 / CI | 待回填 |
+| 单命令全量 | **731 项 OK，exit 0，748.4 s**（`py -3.13`，Tk 8.6；`reports/s52-course-align/unittest-single-command.json`） |
+| 自检 / CI | 待回填 |
 
 **红→绿留证**：先只加 `tests/test_course_coverage_matrix.py` 并运行，报出 `§8.1…§11.9` 共 20 条缺口；随后登记白名单、给 18 个真实用例补 refs、补矩阵与声明，5/5 转绿。没有新增黑盒用例，也没有伪造 §8.6/§11.9 的可执行语义。
 
