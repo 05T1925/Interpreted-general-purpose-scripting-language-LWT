@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "source": "GitHub REST check-runs（逐格读取，不用 run 级徽章）",
+  "recorded_at_utc": "2026-11-11T18:48:42Z",
+  "cells": [
+    {
+      "os": "ubuntu-latest",
+      "python": "3.10",
+      "conclusion": "success",
+      "started_at": "2026-11-11T18:39:23Z",
+      "completed_at": "2026-11-11T18:46:34Z",
+      "seconds": 431
+    },
+    {
+      "os": "ubuntu-latest",
+      "python": "3.13",
+      "conclusion": "success",
+      "started_at": "2026-11-11T18:39:23Z",
+      "completed_at": "2026-11-11T18:46:34Z",
+      "seconds": 431
+    },
+    {
+      "os": "windows-latest",
+      "python": "3.10",
+      "conclusion": "success",
+      "started_at": "2026-11-11T18:39:23Z",
+      "completed_at": "2026-11-11T18:46:40Z",
+      "seconds": 437
+    },
+    {
+      "os": "windows-latest",
+      "python": "3.13",
+      "conclusion": "success",
+      "started_at": "2026-11-11T18:39:23Z",
+      "completed_at": "2026-11-11T18:47:34Z",
+      "seconds": 491
+    }
+  ],
+  "all_success": true,
+  "sha": "0f6538a10ea7dba713aa60ec562e944725826184",
+  "sha_short": "0f6538a"
+}
