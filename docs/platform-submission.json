@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-11T14:18:04Z",
+  "generated_at_utc": "2026-11-11T14:21:49Z",
   "platform": {
     "name": "教学云平台",
     "url": "https://ucloud.bupt.edu.cn/",
@@ -9,27 +9,27 @@
   "uploaded": false,
   "upload_note": "上传动作由本人执行；本工具只校验清单与 SHA，不代表已经提交。",
   "package_index": "reports/s48-defense/package-index.json",
-  "final_tip_sha": "9d48a9ec125e391361bf6570db1955523d0ac6c7",
+  "final_tip_sha": "70499d0348dc6d432a3be06f4115cf81d73268ab",
   "items": [
     {
       "name": "提交包 zip",
-      "path": "dist/lwt-submission-20261111T104022Z/lwt-submission.zip",
+      "path": "dist/lwt-submission-20261111T141856Z/lwt-submission.zip",
       "exists": true,
-      "sha256": "3b1824e56396f9bf687d5c586f770d51eaf73c38512176b16d49babdd4dac149",
-      "expected_sha256": "3b1824e56396f9bf687d5c586f770d51eaf73c38512176b16d49babdd4dac149",
+      "sha256": "02658c112a65c6d3b79b4ecf73b3a07ebcfb1cf343389918237b1db74c11a436",
+      "expected_sha256": "02658c112a65c6d3b79b4ecf73b3a07ebcfb1cf343389918237b1db74c11a436",
       "sha_ok": true,
       "required": true,
       "note": "解压后即为完整仓库；--verify-blackbox 会实跑 400 黑盒"
     },
     {
       "name": "Git 历史 bundle",
-      "path": "dist/lwt-submission-20261111T104022Z/lwt-history.bundle",
+      "path": "dist/lwt-submission-20261111T141856Z/lwt-history.bundle",
       "exists": true,
-      "sha256": "dc09784d904f9f53d5432410ba334b7982311cf7e658f0ad30b29a8e404f0f02",
-      "expected_sha256": "dc09784d904f9f53d5432410ba334b7982311cf7e658f0ad30b29a8e404f0f02",
+      "sha256": "f03d1c98658dabaf9d28f538373ec8de28dfbb586a6ae5894d8511e08d11eb17",
+      "expected_sha256": "f03d1c98658dabaf9d28f538373ec8de28dfbb586a6ae5894d8511e08d11eb17",
       "sha_ok": true,
       "required": true,
-      "note": "截止 SHA 9d48a9ec125e；git fetch <bundle> main 可复核"
+      "note": "截止 SHA 70499d0348dc；git fetch <bundle> main 可复核"
     },
     {
       "name": "PPT",
