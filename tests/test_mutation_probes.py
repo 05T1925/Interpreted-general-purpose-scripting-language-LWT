@@ -13,9 +13,9 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REPORT = ROOT / "reports" / "s53-mutation" / "mutation-report.json"
-MARKDOWN = ROOT / "reports" / "s53-mutation" / "mutation-report.md"
-INVENTORY = ROOT / "reports" / "s53-mutation" / "probe-inventory.md"
+REPORT = ROOT / "reports" / "s54-closeout" / "mutation-report.json"
+MARKDOWN = ROOT / "reports" / "s54-closeout" / "mutation-report.md"
+INVENTORY = ROOT / "reports" / "s54-closeout" / "probe-inventory.md"
 CASES = ROOT / "tests" / "cases"
 
 

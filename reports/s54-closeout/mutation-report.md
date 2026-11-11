@@ -10,7 +10,7 @@
 
 ## 2. 隔离与还原核验
 
-- 每个探针只修改 `TemporaryDirectory` 中的项目副本，主工作树从不写入；运行前 `git status --porcelain` 为空：**False**；运行后仍为空：**False**。
+- 每个探针只修改 `TemporaryDirectory` 中的项目副本，主工作树从不写入；运行前 `git status --porcelain` 为空：**True**；运行后仍为空：**True**。
 - 补丁只有在源码片段**唯一匹配**时才应用（`patch target must occur once`）；基线副本先跑同一用例确认原本是绿的，否则记为 invalid 而不是 killed。
 
 ## 3. 探针结果
