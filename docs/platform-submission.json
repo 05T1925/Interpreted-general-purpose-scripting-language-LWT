@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-11T08:08:59Z",
+  "generated_at_utc": "2026-11-11T10:46:02Z",
   "platform": {
     "name": "教学云平台",
     "url": "https://ucloud.bupt.edu.cn/",
@@ -9,27 +9,27 @@
   "uploaded": false,
   "upload_note": "上传动作由本人执行；本工具只校验清单与 SHA，不代表已经提交。",
   "package_index": "reports/s48-defense/package-index.json",
-  "final_tip_sha": "eee659f2125d1e24a6a8d5c3b78602202ba336af",
+  "final_tip_sha": "9d48a9ec125e391361bf6570db1955523d0ac6c7",
   "items": [
     {
       "name": "提交包 zip",
-      "path": "dist/lwt-submission-20261111T055440Z/lwt-submission.zip",
+      "path": "dist/lwt-submission-20261111T104022Z/lwt-submission.zip",
       "exists": true,
-      "sha256": "c1953017c9a254b28de9877742c03c665adfb38ef3518650277db8e1f6877bd5",
-      "expected_sha256": "c1953017c9a254b28de9877742c03c665adfb38ef3518650277db8e1f6877bd5",
+      "sha256": "3b1824e56396f9bf687d5c586f770d51eaf73c38512176b16d49babdd4dac149",
+      "expected_sha256": "3b1824e56396f9bf687d5c586f770d51eaf73c38512176b16d49babdd4dac149",
       "sha_ok": true,
       "required": true,
       "note": "解压后即为完整仓库；--verify-blackbox 会实跑 400 黑盒"
     },
     {
       "name": "Git 历史 bundle",
-      "path": "dist/lwt-submission-20261111T055440Z/lwt-history.bundle",
+      "path": "dist/lwt-submission-20261111T104022Z/lwt-history.bundle",
       "exists": true,
-      "sha256": "4aac7b24f01de5191eb6d82b43ca3f010e14815ec5a5041645c238f8a2aa9325",
-      "expected_sha256": "4aac7b24f01de5191eb6d82b43ca3f010e14815ec5a5041645c238f8a2aa9325",
+      "sha256": "dc09784d904f9f53d5432410ba334b7982311cf7e658f0ad30b29a8e404f0f02",
+      "expected_sha256": "dc09784d904f9f53d5432410ba334b7982311cf7e658f0ad30b29a8e404f0f02",
       "sha_ok": true,
       "required": true,
-      "note": "截止 SHA eee659f2125d；git fetch <bundle> main 可复核"
+      "note": "截止 SHA 9d48a9ec125e；git fetch <bundle> main 可复核"
     },
     {
       "name": "PPT",
@@ -45,8 +45,8 @@
       "name": "README.md",
       "path": "README.md",
       "exists": true,
-      "sha256": "4bb91fc1509453cb45456f5b9d5263bc0dbd4648da5a83d82b0af7d865f30b00",
-      "expected_sha256": "4bb91fc1509453cb45456f5b9d5263bc0dbd4648da5a83d82b0af7d865f30b00",
+      "sha256": "b7c34b6fe4ebab8abf764b3422a8de1d34cefff6d6d0875acd5220f2cf49edd7",
+      "expected_sha256": "b7c34b6fe4ebab8abf764b3422a8de1d34cefff6d6d0875acd5220f2cf49edd7",
       "sha_ok": true,
       "required": true,
       "note": "教师入口：三分钟验收路径 + 当前状态"
@@ -55,8 +55,8 @@
       "name": "SUBMISSION.md",
       "path": "SUBMISSION.md",
       "exists": true,
-      "sha256": "f3079a102987d9f49e6eb9f1c6c35ee45f8ae2794ed64fbc659abcdb76d5d7ee",
-      "expected_sha256": "f3079a102987d9f49e6eb9f1c6c35ee45f8ae2794ed64fbc659abcdb76d5d7ee",
+      "sha256": "7e8690417fb70afbec8e0547ea0128825e362fc1e08ae6426123f9d95f44dd4c",
+      "expected_sha256": "7e8690417fb70afbec8e0547ea0128825e362fc1e08ae6426123f9d95f44dd4c",
       "sha_ok": true,
       "required": true,
       "note": "8 项提交内容 + 第 8 章任务对照"
@@ -85,8 +85,8 @@
       "name": "docs/defense-qa-card.md",
       "path": "docs/defense-qa-card.md",
       "exists": true,
-      "sha256": "757ed5d1fe009001e60c9f0c2b0f5a8f2001f8dee199b95ab006cb5bf65ecf4e",
-      "expected_sha256": "757ed5d1fe009001e60c9f0c2b0f5a8f2001f8dee199b95ab006cb5bf65ecf4e",
+      "sha256": "b00878ae4b592d8c235e0475a4737208389667edbc457559ad719bde376ac0cc",
+      "expected_sha256": "b00878ae4b592d8c235e0475a4737208389667edbc457559ad719bde376ac0cc",
       "sha_ok": true,
       "required": true,
       "note": "答辩问答卡"
@@ -95,8 +95,8 @@
       "name": "docs/agent-friendly-interface.md",
       "path": "docs/agent-friendly-interface.md",
       "exists": true,
-      "sha256": "95153dfb3d4adbc74493c65286e496f34194781db91d67101c567bb4ec33f397",
-      "expected_sha256": "95153dfb3d4adbc74493c65286e496f34194781db91d67101c567bb4ec33f397",
+      "sha256": "409621c1bffd5364249abe4238b657a1993274f51b958e878a8379f85137e3b9",
+      "expected_sha256": "409621c1bffd5364249abe4238b657a1993274f51b958e878a8379f85137e3b9",
       "sha_ok": true,
       "required": true,
       "note": "课件 4.4/4.5 接口对照"
@@ -104,10 +104,10 @@
     {
       "name": "docs/s53-mutation-interface.md",
       "path": "docs/s53-mutation-interface.md",
-      "exists": false,
-      "sha256": null,
-      "expected_sha256": null,
-      "sha_ok": false,
+      "exists": true,
+      "sha256": "0b4e8e812c3ad39e22c0da1a80197dfd6e9932621e13a2775bea8749f10a4a1a",
+      "expected_sha256": "0b4e8e812c3ad39e22c0da1a80197dfd6e9932621e13a2775bea8749f10a4a1a",
+      "sha_ok": true,
       "required": false,
       "note": "S53 报告"
     },
@@ -134,10 +134,11 @@
   ],
   "artifacts_ok": true,
   "blackbox": {
-    "checked": false,
-    "passed": null,
-    "total": null,
-    "detail": "not requested"
+    "checked": true,
+    "exit_code": 0,
+    "passed": 400,
+    "total": 400,
+    "detail": "Black-box tests: passed=400 failed=0 total=400; categories (passed/total): arrays-records-each=32/32, builtins-text-io=43/43, cli-errors=13/13, concurrency=46/46, control-functions=43/43, dict-maps=43/43, error-recovery=64/64, integrated=3/3, lexer-parser=52/52, modules=30/30, values-operators=31/31"
   },
   "all_pass": true
 }

@@ -7,16 +7,16 @@
 
 | 项 | 路径 | 存在 | SHA-256 | 校验 | 说明 |
 |---|---|---|---|---|---|
-| 提交包 zip | `dist/lwt-submission-20261111T055440Z/lwt-submission.zip` | 是 | `c1953017c9a2…` | 一致 | 解压后即为完整仓库；--verify-blackbox 会实跑 400 黑盒 |
-| Git 历史 bundle | `dist/lwt-submission-20261111T055440Z/lwt-history.bundle` | 是 | `4aac7b24f01d…` | 一致 | 截止 SHA eee659f2125d；git fetch <bundle> main 可复核 |
+| 提交包 zip | `dist/lwt-submission-20261111T104022Z/lwt-submission.zip` | 是 | `3b1824e56396…` | 一致 | 解压后即为完整仓库；--verify-blackbox 会实跑 400 黑盒 |
+| Git 历史 bundle | `dist/lwt-submission-20261111T104022Z/lwt-history.bundle` | 是 | `dc09784d904f…` | 一致 | 截止 SHA 9d48a9ec125e；git fetch <bundle> main 可复核 |
 | PPT | `slides/LWT介绍.pptx` | 是 | `7cb28b139489…` | 一致 | 21 页；内容本阶段未改动 |
-| README.md | `README.md` | 是 | `4bb91fc15094…` | 一致 | 教师入口：三分钟验收路径 + 当前状态 |
-| SUBMISSION.md | `SUBMISSION.md` | 是 | `f3079a102987…` | 一致 | 8 项提交内容 + 第 8 章任务对照 |
+| README.md | `README.md` | 是 | `b7c34b6fe4eb…` | 一致 | 教师入口：三分钟验收路径 + 当前状态 |
+| SUBMISSION.md | `SUBMISSION.md` | 是 | `7e8690417fb7…` | 一致 | 8 项提交内容 + 第 8 章任务对照 |
 | docs/language-spec.md | `docs/language-spec.md` | 是 | `f7d8a9649ea0…` | 一致 | §1–§11 正式语言规范 |
 | docs/test-matrix.md | `docs/test-matrix.md` | 是 | `820bf48da8b2…` | 一致 | 覆盖矩阵（§8 逐项打勾） |
-| docs/defense-qa-card.md | `docs/defense-qa-card.md` | 是 | `757ed5d1fe00…` | 一致 | 答辩问答卡 |
-| docs/agent-friendly-interface.md | `docs/agent-friendly-interface.md` | 是 | `95153dfb3d4a…` | 一致 | 课件 4.4/4.5 接口对照 |
-| docs/s53-mutation-interface.md | `docs/s53-mutation-interface.md` | **否** | `—…` | **不一致** | S53 报告 |
+| docs/defense-qa-card.md | `docs/defense-qa-card.md` | 是 | `b00878ae4b59…` | 一致 | 答辩问答卡 |
+| docs/agent-friendly-interface.md | `docs/agent-friendly-interface.md` | 是 | `409621c1bffd…` | 一致 | 课件 4.4/4.5 接口对照 |
+| docs/s53-mutation-interface.md | `docs/s53-mutation-interface.md` | 是 | `0b4e8e812c3a…` | 一致 | S53 报告 |
 | reports/s53-mutation/mutation-report.json | `reports/s53-mutation/mutation-report.json` | 是 | `594a4eb4bd9d…` | 一致 | 变异探针证据 |
 | reports/s52-course-align/performance-space.json | `reports/s52-course-align/performance-space.json` | 是 | `bfa147edf48c…` | 一致 | 空间/分位数性能证据 |
 
@@ -32,9 +32,9 @@
 ## 3. 校验结果
 
 - 必需文件 SHA 全部一致：**True**
-- 解压后 400 黑盒：**None/None**（checked=False，exit=—）
+- 解压后 400 黑盒：**400/400**（checked=True，exit=0）
 - 总判定 `all_pass`：**True**
-- 包索引：`reports/s48-defense/package-index.json`（tip `eee659f2125d`）
+- 包索引：`reports/s48-defense/package-index.json`（tip `9d48a9ec125e`）
 
 ## 4. 复现
 
