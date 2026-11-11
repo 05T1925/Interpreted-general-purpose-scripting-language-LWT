@@ -99,7 +99,7 @@ S51 新增 2 项固化测试（`test_no_stale_current_status_with_date`、`First
 | 彩排 | `--random 5 --seed 51`：**4 PASS + 1 TIMEOUT**（`determinism` 在 60 s 时间盒内必然超时，heavy 断言；不是缺陷） |
 | 交付包 | 在 `1404f1e` 重建：bundle `c56609cb13a8…`、zip `0462cba56f3a…`、**1725 项**、verify 0 |
 | 新克隆 | head `1404f1e` → tip `dfc1ee8`，lag 仅索引，6 条命令 exit 0，**400/400**（193.8 s，总 201.8 s） |
-| CI | 推送后按精确 SHA 逐格查；结果写入 `reports/s49-rehearsal/ci-cells.json` |
+| CI | **`f36ebe0` 四格 4/4 success**：ubuntu 3.10 `7m36s`、ubuntu 3.13 `5m31s`、windows 3.10 `9m51s`、windows 3.13 `4m43s`（REST check-runs 逐格，不用徽章） |
 
 ## 7. 未验证 / 边界（如实）
 
