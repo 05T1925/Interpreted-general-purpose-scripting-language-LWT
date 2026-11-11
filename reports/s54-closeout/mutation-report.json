@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "tool": "tools/audit_semantic_mutants.py",
+  "generated_at_utc": "2026-11-11T16:02:29Z",
+  "invariants": {
+    "objective": "每处最小语义变异都必须被至少一个既有黑盒用例判红；用来量化 400 项黑盒的判别力，而不是证明解释器正确。",
+    "baseline": "S23 的 10 条探针（9 killed / 1 survived / 0 invalid 的历史快照）；S53 复跑时发现 1 条补丁锚点因 S42 改动失效（invalid），另 1 条 survived 与另一条探针同补丁。",
+    "stop_rule": "任何探针出现 invalid、或补丁锚点不再唯一匹配、或工作树被改动，立即停止并修正；不为了 killed 数量伪造用例。"
+  },
+  "isolation": "TemporaryDirectory copies only; the working tree is never patched",
+  "repo_clean_before": false,
+  "repo_clean_after": false,
+  "totals": {
+    "killed": 19,
+    "survived": 0,
+    "equivalent": 0,
+    "invalid": 0,
+    "total": 19
+  },
+  "probes": [
+    {
+      "name": "division-truncates-toward-zero",
+      "area": "core",
+      "targets": [
+        "negative-floor-division-modulo"
+      ],
+      "mutation": "Replace floor division with truncation toward zero.",
+      "status": "killed",
+      "killed_by": [
+        "negative-floor-division-modulo"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=8060e8beea792203adf1e11364d183b9e05c109514d83df9336470659b66cc6c; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-wx_wxyqu\\mutant-project\\lwt\\runtime.py; mutant_results=negative-floor-division-modulo: exit=0 stdout=b'-2\\n2\\n-2\\n-2\\n' stderr=b''",
+      "note": ""
+    },
+    {
+      "name": "modulo-loses-divisor-sign",
+      "area": "core",
+      "targets": [
+        "negative-floor-division-modulo"
+      ],
+      "mutation": "Return a nonnegative magnitude remainder for every divisor sign.",
+      "status": "killed",
+      "killed_by": [
+        "negative-floor-division-modulo"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=49b52b9f49d2e0f653c32249bf0d194079a3acc5f44a293f1907f241b4915660; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-_ud8tc70\\mutant-project\\lwt\\runtime.py; mutant_results=negative-floor-division-modulo: exit=0 stdout=b'-3\\n1\\n-3\\n1\\n' stderr=b''",
+      "note": ""
+    },
+    {
+      "name": "and-evaluates-skipped-right-side",
+      "area": "core",
+      "targets": [
+        "short-circuit-and"
+      ],
+      "mutation": "Remove the false-left early return for and.",
+      "status": "killed",
+      "killed_by": [
+        "short-circuit-and"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=fc8dcb786f8b03e01ce43f4d83ca52b691ba78a7b22c65c53363c6d4c387e1cf; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-__37mrsp\\mutant-project\\lwt\\runtime.py; mutant_results=short-circuit-and: exit=3 stdout=b'' stderr=b'tests/cases/values-operators/short-circuit-and.lwt:1:16: RuntimeError: skip\\n'",
+      "note": ""
+    },
+    {
+      "name": "or-evaluates-skipped-right-side",
+      "area": "core",
+      "targets": [
+        "short-circuit-or"
+      ],
+      "mutation": "Remove the true-left early return for or.",
+      "status": "killed",
+      "killed_by": [
+        "short-circuit-or"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=d62c2cbead7edf302aad84961056133586618b50df3d00c0bb0fa2513a26e199; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-5wa77uca\\mutant-project\\lwt\\runtime.py; mutant_results=short-circuit-or: exit=3 stdout=b'' stderr=b'tests/cases/values-operators/short-circuit-or.lwt:1:14: RuntimeError: skip\\n'",
+      "note": ""
+    },
+    {
+      "name": "composite-values-use-structural-equality",
+      "area": "core",
+      "targets": [
+        "arrays-identity-equality",
+        "record-instance-identity"
+      ],
+      "mutation": "Use list value equality and record type/field equality instead of object identity.",
+      "status": "killed",
+      "killed_by": [
+        "record-instance-identity",
+        "arrays-identity-equality"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=df7e5cfd37398534a5a3ac4117e43e81068e39d9333d37696b390a47ed2254be; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-yl86dfk9\\mutant-project\\lwt\\runtime.py; mutant_results=record-instance-identity: exit=0 stdout=b'true\\ntrue\\n' stderr=b''; arrays-identity-equality: exit=0 stdout=b'true\\ntrue\\n' stderr=b''",
+      "note": "S53 re-anchored: S42 added _DictValue/_TaskValue/_ChannelValue to the isinstance tuple, so the S23 anchor no longer matched (it had become invalid)."
+    },
+    {
+      "name": "each-iterates-live-array",
+      "area": "core",
+      "targets": [
+        "each-snapshot-replacement"
+      ],
+      "mutation": "Iterate the mutable source array directly instead of an entry snapshot.",
+      "status": "killed",
+      "killed_by": [
+        "each-snapshot-replacement"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=d4d8823252ea273e3dbfc675e5db75b69fdbaaac864bd065fb1492445fa6cde4; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-mzpdt0k3\\mutant-project\\lwt\\runtime.py; mutant_results=each-snapshot-replacement: exit=0 stdout=b'1\\n8\\n[1, 8]\\n' stderr=b''",
+      "note": ""
+    },
+    {
+      "name": "call-arguments-reversed",
+      "area": "core",
+      "targets": [
+        "argument-evaluation-order",
+        "argument-evaluation-order-distinct-effects"
+      ],
+      "mutation": "Evaluate user-call arguments in reversed source order.",
+      "status": "killed",
+      "killed_by": [
+        "argument-evaluation-order-distinct-effects"
+      ],
+      "passed_targets": [
+        "argument-evaluation-order"
+      ],
+      "evidence": "correct baseline passed; patch_sha256=cc2ddd484e7dd138fe1817d67ecbee349824b5954a9a0b7ad00414222f5eb061; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-ljzjl0uj\\mutant-project\\lwt\\runtime.py; mutant_results=argument-evaluation-order-distinct-effects: exit=0 stdout=b'[22, 11]\\n[22, 11]\\n' stderr=b''",
+      "note": "S23 listed this patch twice, once per target case. The symmetric-effects case alone stayed green for eight phases - the weak-case trap chapter 5.5 warns about; the distinct-effects case kills the patch. They are merged into one probe with both targets so the report shows which case discriminates."
+    },
+    {
+      "name": "and-accepts-host-truthiness",
+      "area": "core",
+      "targets": [
+        "boolean-left-is-strict"
+      ],
+      "mutation": "Skip the strict boolean type check for the left and operand.",
+      "status": "killed",
+      "killed_by": [
+        "boolean-left-is-strict"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=88505b4ff5f2d3965e8647df4349edae3a293171794b1ce4c9bb3228f7317f22; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-87uxe8kp\\mutant-project\\lwt\\runtime.py; mutant_results=boolean-left-is-strict: exit=0 stdout=b'true\\n' stderr=b''",
+      "note": ""
+    },
+    {
+      "name": "len-counts-utf8-bytes",
+      "area": "core",
+      "targets": [
+        "len-unicode-codepoints"
+      ],
+      "mutation": "Count UTF-8 bytes rather than Unicode code points for strings.",
+      "status": "killed",
+      "killed_by": [
+        "len-unicode-codepoints"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=177d10107f1822ad9e191b0cd4b5273e27d1a38e2b26ab7512a296cdab611734; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-29ju6ctk\\mutant-project\\lwt\\runtime.py; mutant_results=len-unicode-codepoints: exit=0 stdout=b'7\\n2\\n' stderr=b''",
+      "note": ""
+    },
+    {
+      "name": "dict-display-sorts-keys",
+      "area": "dict",
+      "targets": [
+        "dict-display-insertion-order"
+      ],
+      "mutation": "Sort dict entries by key text instead of preserving insertion order.",
+      "status": "killed",
+      "killed_by": [
+        "dict-display-insertion-order"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=fccca6a7d8ce60122283ab9e9c667fd46d1b6e466def51de5cd46080f6bb0cb4; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-rz_hvd7o\\mutant-project\\lwt\\runtime.py; mutant_results=dict-display-insertion-order: exit=0 stdout=b'dict{\"a\": 2, \"b\": 1, \"c\": 3}\\n' stderr=b''",
+      "note": "S53 recorded this mutation as a genuine blind spot: every display case inserted keys in lexical order, so sorting was unobservable. S54 adds dict-display-insertion-order (b, a, c) and this probe is now killed."
+    },
+    {
+      "name": "dict-display-reverses-insertion-order",
+      "area": "dict",
+      "targets": [
+        "dict-literal-display-order",
+        "dict-nested-display",
+        "dict-put-update-keeps-position"
+      ],
+      "mutation": "Format dict entries in reverse insertion order.",
+      "status": "killed",
+      "killed_by": [
+        "dict-literal-display-order",
+        "dict-nested-display",
+        "dict-put-update-keeps-position"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=7594657ab28b47877146a1df4aab95608fe7fa60bd3e9f352afa422ca2feb03f; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-t9v5xgdr\\mutant-project\\lwt\\runtime.py; mutant_results=dict-literal-display-order: exit=0 stdout=b'dict{\"b\": 2, \"a\": 1}\\n' stderr=b''; dict-nested-display: exit=0 stdout=b'dict{\"sub\": dict{\"x\": 1}, \"arr\": [1, 2]}\\n' stderr=b''; dict-put-update-keeps-position: exit=0 stdout=b'dict{\"b\": 2, \"a\": 9}\\n' stderr=b''",
+      "note": "Sorted-by-key display was tried first and survived: every existing display case happens to insert keys in lexical order, so the suite cannot see sorting. That is a real blind spot in the display cases; the reverse-order mutation is observable on the same cases, so it is kept and the blind spot is recorded here."
+    },
+    {
+      "name": "dict-get-missing-returns-null",
+      "area": "dict",
+      "targets": [
+        "dict-missing-key-read"
+      ],
+      "mutation": "Return null for an absent key instead of raising a runtime error.",
+      "status": "killed",
+      "killed_by": [
+        "dict-missing-key-read"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=f8c596f9942e16436a0999984db7b81c79fd98abeacd7b3e2c8ec648232e1e1c; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-v7e4qbiz\\mutant-project\\lwt\\runtime.py; mutant_results=dict-missing-key-read: exit=0 stdout=b'null\\n' stderr=b''",
+      "note": ""
+    },
+    {
+      "name": "dict-delete-missing-reports-true",
+      "area": "dict",
+      "targets": [
+        "dict-delete-missing"
+      ],
+      "mutation": "Report success when deleting a key that is not present.",
+      "status": "killed",
+      "killed_by": [
+        "dict-delete-missing"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=1fc2cc36d553b99b51d75e122d3b793bc5297fdb5b9b42f8d24cfd731fd4f86f; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-jhfveur6\\mutant-project\\lwt\\runtime.py; mutant_results=dict-delete-missing: exit=0 stdout=b'true\\ndict{\"a\": 1}\\n' stderr=b''",
+      "note": ""
+    },
+    {
+      "name": "finally-runs-only-on-unrecovered-error",
+      "area": "finally",
+      "targets": [
+        "finally-on-normal-flow",
+        "finally-return-in-body-runs-first",
+        "finally-break-passes"
+      ],
+      "mutation": "Run the finally body only when the attempt ended in an unrecovered error.",
+      "status": "killed",
+      "killed_by": [
+        "finally-break-passes",
+        "finally-on-normal-flow",
+        "finally-return-in-body-runs-first"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=5606a615b38f1c97228e387b3b208116eec54d9ef46880ebde196583dc375187; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-39az4frr\\mutant-project\\lwt\\runtime.py; mutant_results=finally-break-passes: exit=0 stdout=b'after\\n' stderr=b''; finally-on-normal-flow: exit=0 stdout=b'body\\nafter\\n' stderr=b''; finally-return-in-body-runs-first: exit=0 stdout=b'1\\n' stderr=b''",
+      "note": "§10.6 requires finally to run on normal, return, break, continue and recovered paths, at most once per attempt."
+    },
+    {
+      "name": "throw-rethrow-loses-category",
+      "area": "throw",
+      "targets": [
+        "throw-error-rethrow",
+        "uncaught-throw-error-category"
+      ],
+      "mutation": "Re-throw every Error value as category User instead of preserving its category.",
+      "status": "killed",
+      "killed_by": [
+        "uncaught-throw-error-category"
+      ],
+      "passed_targets": [
+        "throw-error-rethrow"
+      ],
+      "evidence": "correct baseline passed; patch_sha256=d73d3d7255fc2b16ed6ef36d8fac8df703202eec56fd6729f17caa04923e7d36; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-kmzcuxza\\mutant-project\\lwt\\runtime.py; mutant_results=uncaught-throw-error-category: exit=3 stdout=b'' stderr=b'tests/cases/error-recovery/uncaught-throw-error-category.lwt:1:7: User: timeout\\n'",
+      "note": ""
+    },
+    {
+      "name": "channel-receive-is-lifo",
+      "area": "concurrency",
+      "targets": [
+        "channel-fifo"
+      ],
+      "mutation": "Pop the newest queued channel value instead of the oldest.",
+      "status": "killed",
+      "killed_by": [
+        "channel-fifo"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=0c3fb9bcac5c84e8e16887c44600f34f7b969213a3ab0275141690d0bedde813; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-vk02dz6r\\mutant-project\\lwt\\runtime.py; mutant_results=channel-fifo: exit=0 stdout=b'3\\n2\\n1\\n' stderr=b''",
+      "note": "§11.5 fixes channel order as FIFO; the 46-case concurrency suite is the only black-box evidence for it, so this probe is its first mutation check."
+    },
+    {
+      "name": "send-skips-blocked-receiver",
+      "area": "concurrency",
+      "targets": [
+        "channel-block-receive",
+        "channel-multi-producer"
+      ],
+      "mutation": "Queue a sent value instead of handing it to a receiver that is already blocked.",
+      "status": "killed",
+      "killed_by": [
+        "channel-block-receive"
+      ],
+      "passed_targets": [
+        "channel-multi-producer"
+      ],
+      "evidence": "correct baseline passed; patch_sha256=3315958c492b3a143fa206b5e21464dee7f9c8dac5d8555f70f935926b01f73a; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-cp22ltqx\\mutant-project\\lwt\\runtime.py; mutant_results=channel-block-receive: exit=0 stdout=b'got:null\\n' stderr=b''",
+      "note": "This is the S45 defect shape: send appears to succeed but the blocked receiver never receives the value."
+    },
+    {
+      "name": "scheduler-picks-last-ready",
+      "area": "concurrency",
+      "targets": [
+        "fifo-order",
+        "yield-three-tasks"
+      ],
+      "mutation": "Pick the most recently queued ready task instead of the queue head (FIFO -> LIFO).",
+      "status": "killed",
+      "killed_by": [
+        "fifo-order",
+        "yield-three-tasks"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=7cc8b9e6e031883be35d26361957e466d0b937f10d7361ba40f59518b5a352b2; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-qro3o6qv\\mutant-project\\lwt\\runtime.py; mutant_results=fifo-order: exit=0 stdout=b'20\\n10\\n30\\n' stderr=b''; yield-three-tasks: exit=0 stdout=b'3\\n3\\n2\\n2\\n1\\n1\\n' stderr=b''",
+      "note": "§11.4 fixes the ready queue as FIFO; the choice must stay pure so a recorded schedule still replays."
+    },
+    {
+      "name": "join-returns-before-completion",
+      "area": "concurrency",
+      "targets": [
+        "spawn-join-return",
+        "join-preserves-output"
+      ],
+      "mutation": "Let join return immediately instead of blocking until the target is done.",
+      "status": "killed",
+      "killed_by": [
+        "join-preserves-output",
+        "spawn-join-return"
+      ],
+      "passed_targets": [],
+      "evidence": "correct baseline passed; patch_sha256=ebbb4b29364d06d1c4997917527d5dfc7e5acc134d1e3f759b919bfdd84ba378; runtime_import=C:\\Users\\28641\\AppData\\Local\\Temp\\lwt-s23-mutant-audit-oztvy11q\\mutant-project\\lwt\\runtime.py; mutant_results=join-preserves-output: exit=0 stdout=b'mid\\nnull\\nbefore\\n' stderr=b''; spawn-join-return: exit=0 stdout=b'null\\n' stderr=b''",
+      "note": "join lives in runtime.py's built-in dispatch, not in concurrency.py."
+    }
+  ]
+}

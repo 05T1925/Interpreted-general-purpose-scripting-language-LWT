@@ -134,6 +134,17 @@ PROBES = (
     ),
     # -- S53: semantics added by S42 (dict / throw / finally) -----------------
     Probe(
+        "dict-display-sorts-keys",
+        ("dict-display-insertion-order",),
+        "Sort dict entries by key text instead of preserving insertion order.",
+        "for key, item in value.entries.items()",
+        "for key, item in sorted(value.entries.items(), key=lambda pair: str(pair[0]))",
+        area="dict",
+        note="S53 recorded this mutation as a genuine blind spot: every display case "
+             "inserted keys in lexical order, so sorting was unobservable. S54 adds "
+             "dict-display-insertion-order (b, a, c) and this probe is now killed.",
+    ),
+    Probe(
         "dict-display-reverses-insertion-order",
         ("dict-literal-display-order", "dict-nested-display", "dict-put-update-keeps-position"),
         "Format dict entries in reverse insertion order.",

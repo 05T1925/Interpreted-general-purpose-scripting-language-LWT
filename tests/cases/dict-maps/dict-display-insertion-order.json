@@ -1,0 +1,20 @@
+{
+  "id": "dict-display-insertion-order",
+  "spec_refs": [
+    "4.3",
+    "4.4"
+  ],
+  "tags": [
+    "normal",
+    "dict"
+  ],
+  "args": [],
+  "stdin": {
+    "text": ""
+  },
+  "expected": {
+    "exit_code": 0,
+    "stdout": "dict{\"b\": 1, \"a\": 2, \"c\": 3}\n",
+    "stderr": ""
+  }
+}

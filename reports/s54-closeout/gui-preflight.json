@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-11T16:11:08Z",
+  "tool": "tools/gui_preflight.py",
+  "kind": "startup precheck",
+  "note": "A window appearing only proves the process starts and creates its Tk window. No input was sent and nothing was judged. This is NOT the S21 manual GUI acceptance: A-E remain NOT_RUN until the user performs them.",
+  "timeout_seconds": 30.0,
+  "apps": [
+    {
+      "id": "A_language_lab",
+      "command": [
+        "-m",
+        "app.language_lab"
+      ],
+      "status": "window_appeared",
+      "seconds": 0.5,
+      "window": {
+        "title": "LWT 语义实验室（Python 教学前端）",
+        "width": 1136,
+        "height": 799
+      }
+    },
+    {
+      "id": "B_log_detective",
+      "command": [
+        "-m",
+        "app.log_detective",
+        "--",
+        "app/fixtures/sample.log"
+      ],
+      "status": "window_appeared",
+      "seconds": 0.5,
+      "window": {
+        "title": "LWT 日志侦探",
+        "width": 1096,
+        "height": 789
+      }
+    },
+    {
+      "id": "C_lwt_snake",
+      "command": [
+        "-m",
+        "app.lwt_snake"
+      ],
+      "status": "window_appeared",
+      "seconds": 0.5,
+      "window": {
+        "title": "LWT 驱动贪吃蛇",
+        "width": 836,
+        "height": 739
+      }
+    },
+    {
+      "id": "D_counterfactual",
+      "command": [
+        "-m",
+        "app.lwt_snake.counterfactual_ui"
+      ],
+      "status": "window_appeared",
+      "seconds": 0.5,
+      "window": {
+        "title": "LWT 策略反事实实验台 · 同一观察轨迹",
+        "width": 716,
+        "height": 519
+      }
+    }
+  ]
+}

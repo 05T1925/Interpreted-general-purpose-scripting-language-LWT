@@ -1,0 +1,30 @@
+﻿[
+    {
+        "slide":  14,
+        "shape":  "TextBox 7",
+        "before":  "reports/s42-schedules/summary.md；46 项并发黑盒 + 19 项单测；401/400 全绿。",
+        "after":  "reports/s42-schedules/summary.md；46 项并发黑盒 + 19 项单测；401/401 全绿。",
+        "calls":  1
+    },
+    {
+        "slide":  17,
+        "shape":  "TextBox 6",
+        "before":  "语义零变化：401/400 黑盒、46×10 确定性、S28 事件计数、595 项 unittest；S11 原始数据未改。",
+        "after":  "语义零变化：401/401 黑盒、46×10 确定性、S28 事件计数、595 项 unittest；S11 原始数据未改。",
+        "calls":  1
+    },
+    {
+        "slide":  18,
+        "shape":  "TextBox 4",
+        "before":  "python -m lwt --version / --help；401 项黑盒 400/400",
+        "after":  "python -m lwt --version / --help；401 项黑盒 401/401",
+        "calls":  2
+    },
+    {
+        "slide":  20,
+        "shape":  "TextBox 15",
+        "before":  "· 新克隆黑盒 401/400（不依赖未跟踪文件）",
+        "after":  "· 新克隆黑盒 401/401（不依赖未跟踪文件）",
+        "calls":  1
+    }
+]

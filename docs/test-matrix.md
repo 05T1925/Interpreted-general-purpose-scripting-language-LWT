@@ -1,6 +1,6 @@
-# LWT 0.3.0 黑盒覆盖矩阵（S8 主窗口审查通过；当前基数 400 项）
+# LWT 0.3.0 黑盒覆盖矩阵（S8 主窗口审查通过；当前基数 401 项）
 
-> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24、S25 和 S26 的实测快照分列于 §4。S8 当时尚无远端 GitHub Actions 结果；S32 精确 SHA 的四格结果见 [主窗口复核](s32-main-review.md)。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。**“用 LWT 测试 LWT”（第 8 章任务 2 口径）**：`tests/cases/**/*.lwt` 共 426 个、`.json` 400 个——输入与断言都由 LWT 脚本执行，`tools/run_tests.py` 只调用公开 CLI（`python -m lwt`），不导入解释器、不生成 expected。
+> 覆盖基线为冻结的 [`language-spec.md`](language-spec.md)，课程范围来自 [`大作业内容.md`](../大作业内容.md)。矩阵从 S8 建立并在后续阶段扩充；S8、S23、S24、S25 和 S26 的实测快照分列于 §4。S8 当时尚无远端 GitHub Actions 结果；S32 精确 SHA 的四格结果见 [主窗口复核](s32-main-review.md)。被测主体是 `.lwt` 文件；Python runner 只作为外部 CLI 驱动。**“用 LWT 测试 LWT”（第 8 章任务 2 口径）**：`tests/cases/**/*.lwt` 共 427 个、`.json` 401 个——输入与断言都由 LWT 脚本执行，`tools/run_tests.py` 只调用公开 CLI（`python -m lwt`），不导入解释器、不生成 expected。
 
 ## 1. 课程要求对应关系
 
@@ -148,7 +148,7 @@ stdout、stderr 和退出码都精确比较。跨平台时只将 `CRLF` 规范�
 
 | 规范条款 | 规范示例要点 | 预期行为 | 真实用例（直接/间接） | CLI 实测 |
 |---|---|---|---|---|
-| §8.1 | 变量、分支、循环与函数 | 按 §5/§6 语义执行，退出 0 | `integrated-control-and-record`（直接） | 是（400 项内） |
+| §8.1 | 变量、分支、循环与函数 | 按 §5/§6 语义执行，退出 0 | `integrated-control-and-record`（直接） | 是（401 项内） |
 | §8.2 | 结构、数组和浅快照 | 别名与快照语义；`9` / `[9]`，退出 0 | `array-alias-and-assignment-value`（直接） | 是 |
 | §8.3 | 输入输出、参数和文件 | `input()`/`args()`/`read_text()` 的进程级语义，退出 0 | `integrated-input-text-and-args`（直接） | 是 |
 | §8.4 | 错误类别 | 五类错误与退出码；Error 五字段 | `recover-error-fields-display`（直接） | 是 |
@@ -257,7 +257,7 @@ S42 新增 `dict-maps` 类别 43 项，覆盖映射字面量与插入序显示�
 
 ### 4.5.2 S43 新增覆盖（确定性并发）
 
-S43（确定性并发）新增 **46 项** `concurrency` 黑盒（含任务书一键命令引用的 `race-lost-update`），使语言黑盒总数由 354 增至 **400 项**（`error-recovery` 64、`dict-maps` 43 等既有类别零回归）。46 项按八组分布：spawn/join 基础、调度与 yield、共享状态、通道、错误、死锁、显示/相等、工具边界；每条 `spec_refs` 用 `11.1`–`11.9`，`tags` 含 `concurrency`。expected 由公开 CLI 在默认 `fifo` 策略下实测并逐条断言语义后记录，工具边界用例（profile 拒绝、`--check` 诊断）用 `cli_args_override`。`python tools/check_project_integrity.py` 实测 `cases=400; matrix_links=445; referenced_cases=348`；`python tools/run_concurrency_determinism.py --repeat 10` 对 46 项各重复 10 次并逐字节比对 stdout/stderr/退出码，结果见 `reports/s42-determinism.json`。全量黑盒 400 项实测结果见 S43 阶段报告（`docs/s42-deterministic-concurrency.md`，WP8 收口时交付）。该结果不代表 Python 3.10、Linux 或远端 Actions 已运行。
+S43（确定性并发）新增 **46 项** `concurrency` 黑盒（含任务书一键命令引用的 `race-lost-update`），使语言黑盒总数由 354 增至 **400 项**（S43 当时）（`error-recovery` 64、`dict-maps` 43 等既有类别零回归）。46 项按八组分布：spawn/join 基础、调度与 yield、共享状态、通道、错误、死锁、显示/相等、工具边界；每条 `spec_refs` 用 `11.1`–`11.9`，`tags` 含 `concurrency`。expected 由公开 CLI 在默认 `fifo` 策略下实测并逐条断言语义后记录，工具边界用例（profile 拒绝、`--check` 诊断）用 `cli_args_override`。`python tools/check_project_integrity.py` 实测 `cases=400; matrix_links=445; referenced_cases=348`；`python tools/run_concurrency_determinism.py --repeat 10` 对 46 项各重复 10 次并逐字节比对 stdout/stderr/退出码，结果见 `reports/s42-determinism.json`。全量黑盒 400 项实测结果见 S43 阶段报告（`docs/s42-deterministic-concurrency.md`，WP8 收口时交付）。该结果不代表 Python 3.10、Linux 或远端 Actions 已运行。
 
 ### 4.5.3 S44 覆盖矩阵闭环（补齐 52 个未链接用例）
 
@@ -302,8 +302,11 @@ S43（确定性并发）新增 **46 项** `concurrency` 黑盒（含任务书一
 
 截至本文编写时没有触发远端 GitHub Actions。CI 的 Linux、Python 3.10 结果均未运行；工作流语法与关键字段由本地结构检查复核，最终是否可执行仍须实际 GitHub runner 确认。CI 通过也只表示当前用例通过，不代替主窗口语义审查。
 
-## 5. 开发工具验证（S27，不计入语言黑盒）
+### 4.8 键序盲区闭环（S54）
 
+S53 的变异审计发现：所有 `emit <dict>` 显示用例的键恰好按字典序插入，于是“把显示改成按 key 排序”的变异无法被观察，属真实盲区。S54 新增 [dict-display-insertion-order](../tests/cases/dict-maps/dict-display-insertion-order.lwt)，用 `b, a, c` 的非字典序插入锁住“显示按插入序”（§4.4），期望值由公开 CLI 实测得到；该用例使黑盒总数由 400 增至 **401**，并让 `dict-display-sorts-keys` 探针转为 killed。
+
+## 5. 开发工具验证（S27，不计入语言黑盒）
 静态检查 CLI 的目标是验证运行前工具行为，不是执行 LWT 语义用例。因此这些用例位于 unittest，而不加入 `tests/cases/`，也不改变上方 400 项语言黑盒契约。`tests/test_static_checker.py` 通过 `python -m lwt --check` 子进程覆盖模块图扫描、名称/调用/record 诊断、词法/语法/CLI/文件错误、JSON schema、作用域边界与不执行语义；无效 AST 夹具由测试临时目录创建。阶段报告记录 S27 本轮实际测试结果，不将工具用例数量并入语言黑盒总数。
 
 ## 6. 执行档案工具验证（S28，不计入语言黑盒）
