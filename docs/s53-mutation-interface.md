@@ -90,7 +90,7 @@
 | 交付包 | 在 `9d48a9e` 重建：zip `3b1824e56396…`（**1785 项**）、bundle `dc09784d904f…`、`git bundle verify` exit 0 |
 | 新克隆 | head `9d48a9e` → tip `b39a91e`，lag 仅索引，6 条命令 exit 0，**400/400**（124.1 s，总 133.2 s） |
 | 平台提交清单 | `check_platform_bundle.py --verify-blackbox`：文件 SHA 全一致、解压后 **400/400**、`all_pass=true`；`uploaded=false`（未上传） |
-| CI | 推送后按精确 SHA 逐格查；结果见 `reports/s49-rehearsal/ci-cells.json` |
+| CI | **`675e99a` 四格 4/4 success**：ubuntu 3.10 `4m40s`、ubuntu 3.13 `4m42s`、windows 3.10 `9m34s`、windows 3.13 `4m28s`（REST check-runs 逐格） |
 
 ### 5.1 自指死锁与工具修正（过程事故，如实披露）
 
