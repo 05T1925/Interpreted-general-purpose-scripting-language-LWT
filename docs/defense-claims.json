@@ -115,7 +115,9 @@
       "claim": "全量 unittest 一次跑完并通过（需带 tkinter 的解释器；实际解释器、Python 版本、TkVersion 与项数记录在证据文件里）",
       "command": [
         "python",
-        "tools/run_unittest_single.py"
+        "tools/run_unittest_single.py",
+        "--out-dir",
+        "reports/s52-course-align"
       ],
       "expect": {
         "exit_code": 0,
@@ -123,7 +125,7 @@
         "stderr_contains": null
       },
       "heavy": true,
-      "evidence_path": "reports/s50-closeout/unittest-single-command.json",
+      "evidence_path": "reports/s52-course-align/unittest-single-command.json",
       "status": "UNRUN",
       "requires": {
         "tkinter": true

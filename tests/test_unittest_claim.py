@@ -27,7 +27,7 @@ from tools import run_defense_probe
 
 ROOT = Path(__file__).resolve().parents[1]
 CLAIMS = ROOT / "docs" / "defense-claims.json"
-EVIDENCE = ROOT / "reports" / "s50-closeout" / "unittest-single-command.json"
+EVIDENCE = ROOT / "reports" / "s52-course-align" / "unittest-single-command.json"
 S49_REPORT = ROOT / "docs" / "s49-defense-rehearsal.md"
 
 
@@ -76,7 +76,8 @@ class UnittestClaimTests(unittest.TestCase):
             self.skipTest(f"no Tk-enabled interpreter on this host: {error}")
         self.assertNotEqual(command[0], "python",
                             "a bare python must be replaced by a resolved interpreter")
-        self.assertEqual(command[-1], "tools/run_unittest_single.py")
+        self.assertIn("tools/run_unittest_single.py", command)
+        self.assertIn("--out-dir", command, "the evidence directory must be explicit")
         self.assertEqual(list(interpreter["argv"]), command[:len(interpreter["argv"])])
         # A claim without the Tk requirement keeps the historical behaviour.
         plain = {"id": "version", "command": ["python", "-m", "lwt", "--version"]}
