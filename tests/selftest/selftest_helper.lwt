@@ -1,0 +1,12 @@
+# tests/selftest/selftest_helper.lwt
+#
+# 自测脚本的模块依赖：用于验证 import 与跨模块函数调用（课程任务 1 的
+# 「函数定义和调用」与 LWT 的模块特色）。
+
+fn twice(n) {
+    return n * 2;
+}
+
+fn label() {
+    return "helper";
+}

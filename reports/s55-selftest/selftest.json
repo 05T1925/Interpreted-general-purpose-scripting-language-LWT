@@ -1,0 +1,209 @@
+{
+  "tool": "run_selftest",
+  "script": "tests/selftest/lwt_selftest.lwt",
+  "script_sha256": "1cb689ce87cc4d500d5db860431c562ee59b4a5890f0d9f39b0067e56e55168d",
+  "command": "python -m lwt tests/selftest/lwt_selftest.lwt",
+  "python": "3.13.14",
+  "stdin": "42\n",
+  "exit_code": 0,
+  "elapsed_ms": 458.5,
+  "passed": 38,
+  "failed": 0,
+  "total": 38,
+  "summary_line": "38/38 全部通过",
+  "items": [
+    {
+      "index": 1,
+      "result": "PASS",
+      "name": "基本类型：整数算术与优先级"
+    },
+    {
+      "index": 2,
+      "result": "PASS",
+      "name": "基本类型：整除与取余"
+    },
+    {
+      "index": 3,
+      "result": "PASS",
+      "name": "基本类型：任意精度整数"
+    },
+    {
+      "index": 4,
+      "result": "PASS",
+      "name": "基本类型：字符串拼接与 Unicode 长度"
+    },
+    {
+      "index": 5,
+      "result": "PASS",
+      "name": "基本类型：布尔不是整数且无隐式转换"
+    },
+    {
+      "index": 6,
+      "result": "PASS",
+      "name": "基本类型：str 与 emit 的值显示"
+    },
+    {
+      "index": 7,
+      "result": "PASS",
+      "name": "数组：字面量、索引与长度"
+    },
+    {
+      "index": 8,
+      "result": "PASS",
+      "name": "数组：push 追加元素"
+    },
+    {
+      "index": 9,
+      "result": "PASS",
+      "name": "数组：按引用传递，别名修改可见"
+    },
+    {
+      "index": 10,
+      "result": "PASS",
+      "name": "数组：嵌套下标"
+    },
+    {
+      "index": 11,
+      "result": "PASS",
+      "name": "结构：record 声明、构造与字段访问"
+    },
+    {
+      "index": 12,
+      "result": "PASS",
+      "name": "结构：字段可运行时写入"
+    },
+    {
+      "index": 13,
+      "result": "PASS",
+      "name": "结构：显示按声明字段顺序"
+    },
+    {
+      "index": 14,
+      "result": "PASS",
+      "name": "基本输入：input() 读取一行标准输入"
+    },
+    {
+      "index": 15,
+      "result": "PASS",
+      "name": "基本输出：字符串拼接构成结果行"
+    },
+    {
+      "index": 16,
+      "result": "PASS",
+      "name": "分支：when / otherwise"
+    },
+    {
+      "index": 17,
+      "result": "PASS",
+      "name": "循环：while 重复求值条件"
+    },
+    {
+      "index": 18,
+      "result": "PASS",
+      "name": "循环：each 遍历数组"
+    },
+    {
+      "index": 19,
+      "result": "PASS",
+      "name": "循环：break 与 continue"
+    },
+    {
+      "index": 20,
+      "result": "PASS",
+      "name": "函数：定义与调用"
+    },
+    {
+      "index": 21,
+      "result": "PASS",
+      "name": "函数：递归"
+    },
+    {
+      "index": 22,
+      "result": "PASS",
+      "name": "作用域：函数内更新外层绑定"
+    },
+    {
+      "index": 23,
+      "result": "PASS",
+      "name": "特色：dict 显示与遍历按插入顺序"
+    },
+    {
+      "index": 24,
+      "result": "PASS",
+      "name": "特色：dict has 判断键存在"
+    },
+    {
+      "index": 25,
+      "result": "PASS",
+      "name": "特色：dict get 缺键返回默认值"
+    },
+    {
+      "index": 26,
+      "result": "PASS",
+      "name": "特色：dict put / delete"
+    },
+    {
+      "index": 27,
+      "result": "PASS",
+      "name": "特色：dict 身份相等"
+    },
+    {
+      "index": 28,
+      "result": "PASS",
+      "name": "特色：throw 与 attempt / recover"
+    },
+    {
+      "index": 29,
+      "result": "PASS",
+      "name": "特色：finally 在异常路径执行"
+    },
+    {
+      "index": 30,
+      "result": "PASS",
+      "name": "特色：finally 在正常路径也执行"
+    },
+    {
+      "index": 31,
+      "result": "PASS",
+      "name": "特色：模块导入 import"
+    },
+    {
+      "index": 32,
+      "result": "PASS",
+      "name": "特色：模块内函数调用"
+    },
+    {
+      "index": 33,
+      "result": "PASS",
+      "name": "特色：并发 spawn 与 join 返回值"
+    },
+    {
+      "index": 34,
+      "result": "PASS",
+      "name": "特色：通道 send / receive"
+    },
+    {
+      "index": 35,
+      "result": "PASS",
+      "name": "特色：通道关闭后 receive 返回 null"
+    },
+    {
+      "index": 36,
+      "result": "PASS",
+      "name": "特色：字符串 split"
+    },
+    {
+      "index": 37,
+      "result": "PASS",
+      "name": "特色：字符串 trim"
+    },
+    {
+      "index": 38,
+      "result": "PASS",
+      "name": "特色：字符串转整数"
+    }
+  ],
+  "stderr": "",
+  "recorded_at_utc": "2026-11-11T18:00:28Z",
+  "ok": true
+}

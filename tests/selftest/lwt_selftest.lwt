@@ -1,0 +1,217 @@
+# tests/selftest/lwt_selftest.lwt
+#
+# 课程第 8 章任务 2「用 LWT 测试 LWT」的原生自测脚本。
+#
+# 本文件完全由 LWT 语言编写：断言函数 expect 用 LWT 的 fn / when / emit 实现，
+# 逐项打印 [PASS] 或 [FAIL]，最后打印 "<通过数>/<总数> 全部通过"。
+# 没有任何 Python 侧断言参与判定——Python 只是把本文件交给 `python -m lwt` 执行。
+#
+# 一个命令执行全部自测并输出每一项结果与总数：
+#     python tools/run_selftest.py
+# 也可以直接运行（会等待一行标准输入，用于「基本输入」一项）：
+#     python -m lwt tests/selftest/lwt_selftest.lwt
+#
+# 功能清单与逐项打勾见 docs/feature-checklist.md。
+
+import "selftest_helper.lwt" as helper;
+
+let passed = 0;
+let total = 0;
+
+fn expect(cond, name) {
+    total = total + 1;
+    when (cond) {
+        passed = passed + 1;
+        emit "[PASS] " + name;
+    } otherwise {
+        emit "[FAIL] " + name;
+    }
+}
+
+# ---------------------------------------------------------------------------
+# 任务 1 五项基本功能之一：整数、字符串等基本数据类型
+# ---------------------------------------------------------------------------
+
+expect(1 + 2 * 3 == 7, "基本类型：整数算术与优先级");
+expect((7 / 2 == 3) and (7 % 3 == 1), "基本类型：整除与取余");
+expect(9007199254740991 + 9007199254740991 == 18014398509481982, "基本类型：任意精度整数");
+expect(("ab" + "cd" == "abcd") and (len("雪") == 1), "基本类型：字符串拼接与 Unicode 长度");
+expect((true != 1) and (not false), "基本类型：布尔不是整数且无隐式转换");
+expect(str(42) == "42", "基本类型：str 与 emit 的值显示");
+
+# ---------------------------------------------------------------------------
+# 任务 1 五项基本功能之二：数组、结构类型
+# ---------------------------------------------------------------------------
+
+expect([10, 20, 30][1] == 20, "数组：字面量、索引与长度");
+let numbers = [1, 2, 3];
+push(numbers, 4);
+expect(len(numbers) == 4, "数组：push 追加元素");
+let alias = numbers;
+alias[0] = 99;
+expect(numbers[0] == 99, "数组：按引用传递，别名修改可见");
+let nested = [[1, 2], [3]];
+expect(nested[1][0] == 3, "数组：嵌套下标");
+
+record Task { name, done };
+
+let task = Task{name: "draft", done: false};
+expect(task.name == "draft", "结构：record 声明、构造与字段访问");
+task.done = true;
+expect(task.done == true, "结构：字段可运行时写入");
+expect(
+    str(Task{name: "a", done: false}) == "Task{name: \"a\", done: false}",
+    "结构：显示按声明字段顺序"
+);
+
+# ---------------------------------------------------------------------------
+# 任务 1 五项基本功能之三：基本输入输出
+# ---------------------------------------------------------------------------
+
+# 输入由 runner 通过标准输入提供一行 "42"；无输入时该项记为 FAIL 而不是中断整套测试。
+attempt {
+    let typed = input();
+    expect(typed == "42", "基本输入：input() 读取一行标准输入");
+} recover (problem) {
+    expect(false, "基本输入：input() 读取一行标准输入");
+}
+
+# 输出已在上面每一条 [PASS] 行中体现；这里再断言一次格式化结果。
+expect(str(1) + "/" + str(2) == "1/2", "基本输出：字符串拼接构成结果行");
+
+# ---------------------------------------------------------------------------
+# 任务 1 五项基本功能之四：分支循环控制
+# ---------------------------------------------------------------------------
+
+let branch = "";
+when (3 > 2) {
+    branch = "then";
+} otherwise {
+    branch = "else";
+}
+expect(branch == "then", "分支：when / otherwise");
+
+let index = 0;
+let sum = 0;
+while (index < 5) {
+    sum = sum + index;
+    index = index + 1;
+}
+expect(sum == 10, "循环：while 重复求值条件");
+
+let visited = 0;
+each (value in [1, 2, 3]) {
+    visited = visited + value;
+}
+expect(visited == 6, "循环：each 遍历数组");
+
+let step = 0;
+let kept = 0;
+while (step < 10) {
+    step = step + 1;
+    when (step == 2) {
+        continue;
+    }
+    when (step == 5) {
+        break;
+    }
+    kept = kept + 1;
+}
+expect(kept == 3, "循环：break 与 continue");
+
+# ---------------------------------------------------------------------------
+# 任务 1 五项基本功能之五：函数定义和调用
+# ---------------------------------------------------------------------------
+
+fn add(left, right) {
+    return left + right;
+}
+
+expect(add(2, 3) == 5, "函数：定义与调用");
+
+fn factorial(n) {
+    when (n <= 1) {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+expect(factorial(5) == 120, "函数：递归");
+
+# 用独立计数器验证「函数内可更新外层绑定」，避免污染通过数/总数统计。
+let outer_counter = 0;
+
+fn bump_outer() {
+    outer_counter = outer_counter + 1;
+    return outer_counter;
+}
+
+bump_outer();
+expect(outer_counter == 1, "作用域：函数内更新外层绑定");
+
+# ---------------------------------------------------------------------------
+# LWT 追加的特色功能
+# ---------------------------------------------------------------------------
+
+let scores = dict{"b": 1, "a": 2, "c": 3};
+let order = keys(scores);
+expect(
+    (order[0] == "b") and (order[1] == "a") and (order[2] == "c"),
+    "特色：dict 显示与遍历按插入顺序"
+);
+expect(has(scores, "a") and (not has(scores, "zz")), "特色：dict has 判断键存在");
+expect(get(scores, "zz", 0) == 0, "特色：dict get 缺键返回默认值");
+put(scores, "d", 4);
+expect(delete(scores, "d"), "特色：dict put / delete");
+expect((scores == scores) and (dict{} != dict{}), "特色：dict 身份相等");
+
+let caught = "";
+let cleanup = 0;
+attempt {
+    throw error("Validation", "age < 0");
+} recover (problem) {
+    caught = problem.category + ":" + problem.message;
+} finally {
+    cleanup = cleanup + 1;
+}
+expect(caught == "Validation:age < 0", "特色：throw 与 attempt / recover");
+expect(cleanup == 1, "特色：finally 在异常路径执行");
+cleanup = 0;
+attempt {
+    cleanup = cleanup + 1;
+} recover (problem) {
+    cleanup = cleanup + 100;
+} finally {
+    cleanup = cleanup + 10;
+}
+expect(cleanup == 11, "特色：finally 在正常路径也执行");
+
+expect(helper.twice(21) == 42, "特色：模块导入 import");
+expect(helper.label() == "helper", "特色：模块内函数调用");
+
+fn double(n) {
+    return n * 2;
+}
+
+let worker = spawn double(21);
+expect(join(worker) == 42, "特色：并发 spawn 与 join 返回值");
+let pipe = channel();
+send(pipe, "ping");
+expect(receive(pipe) == "ping", "特色：通道 send / receive");
+close(pipe);
+expect(receive(pipe) == null, "特色：通道关闭后 receive 返回 null");
+
+let words = split("a b c", " ");
+expect((len(words) == 3) and (words[2] == "c"), "特色：字符串 split");
+expect(trim("  x  ") == "x", "特色：字符串 trim");
+expect(to_int("42") + 1 == 43, "特色：字符串转整数");
+
+# ---------------------------------------------------------------------------
+# 汇总：一个命令的最后一行给出总数
+# ---------------------------------------------------------------------------
+
+when (passed == total) {
+    emit str(passed) + "/" + str(total) + " 全部通过";
+} otherwise {
+    emit str(passed) + "/" + str(total) + " 有失败";
+}
