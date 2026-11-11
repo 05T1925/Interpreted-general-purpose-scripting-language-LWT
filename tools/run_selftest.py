@@ -72,6 +72,16 @@ def _render_markdown(report: dict) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Windows CI runs under a cp1252 console: echoing the suite's Chinese item
+    # names would raise UnicodeEncodeError and turn a green suite into a red
+    # build. Replacing unencodable characters keeps the exit code and the JSON
+    # evidence correct (the evidence itself is always written as UTF-8).
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--script", default=str(DEFAULT_SCRIPT))
     parser.add_argument("--out", default=str(DEFAULT_OUT))
