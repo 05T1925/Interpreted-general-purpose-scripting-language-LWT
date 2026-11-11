@@ -332,6 +332,7 @@ NUMBER_DOCS = [
     "docs/agent-eval/README.md",
     "docs/defense-runbook.md",
     "docs/gui-acceptance-quickref.md",
+    "docs/s52-course-alignment.md",
 ]
 
 # Push/CI claims are also checked inside the latest phase report, because that
@@ -626,9 +627,13 @@ class S49ReportTests(unittest.TestCase):
         self.assertTrue(s50.exists(), "docs/s50-closeout.md is missing")
         self.assertIn("719", s50.read_text(encoding="utf-8"))  # frozen at S50
 
+        s51 = REPO_ROOT / "docs" / "s51-first-screen.md"
+        self.assertTrue(s51.exists(), "docs/s51-first-screen.md is missing")
+        self.assertIn("721", s51.read_text(encoding="utf-8"))  # frozen at S51
+
         doc = _load_manifest()
-        current = REPO_ROOT / "docs" / "s51-first-screen.md"
-        self.assertTrue(current.exists(), "docs/s51-first-screen.md is missing")
+        current = REPO_ROOT / "docs" / "s52-course-alignment.md"
+        self.assertTrue(current.exists(), "docs/s52-course-alignment.md is missing")
         text = current.read_text(encoding="utf-8")
         self.assertIn(str(doc["unittest_count"]), text)
         self.assertIn(f"{doc['ppt_pages']} 页", text)

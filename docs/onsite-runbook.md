@@ -1,5 +1,6 @@
 # 现场验收零翻车预案（S51 一页纸）
 
+> **验收窗口**：最近一次为 **11/17（周二）**；课件写“12 月 28 日周二”，但 2026-12-28 实为**周一**——以教师当周通知为准，不自行推断。
 > 用途：线下 60–90 分钟验收的**执行清单**，不是教师评分记录。GUI A–E 当前 `REGISTERED 0/5`、`NOT_RUN`；本页只准备材料与降级路径，不代替本人验收。
 > 逐页口播与追问见 [defense-runbook.md](defense-runbook.md)；断言与命令见 [defense-index.html](defense-index.html)。
 
@@ -22,7 +23,7 @@
 > **全量 unittest 请用 `py -3.13`（3.13.7 + Tk 8.6）。** 本机 `python` 是 WorkBuddy 内置 3.13.14，**没有 tkinter**：GUI 测试模块在 import 阶段失败，只跑 711 项并出现 2 个假失败。根因与两份日志见 `reports/s50-closeout/unittest-interpreter-root-cause.json`。
 
 ```bash
-py -3.13 tools/run_unittest_single.py     # 期望：721 项 OK（S51 后为 721，以 manifest 为准）
+py -3.13 tools/run_unittest_single.py     # 期望：731 项 OK（S51 后为 731，以 manifest 为准）
 ```
 
 ## 3. 必现场跑的 5 条命令
@@ -43,7 +44,7 @@ py -3.13 tools/run_unittest_single.py     # 期望：721 项 OK（S51 后为 721
 |---|---|---|
 | GUI 打不开 / 无显示 | 走 [gui-acceptance-quickref.md](gui-acceptance-quickref.md) 的 CLI 轨（语义实验室、日志、Snake 协议、S41、PPT 静态） | 各场景的已提交 JSON/MD |
 | 无网络 | 只用本地 bundle 与已提交证据；不现场 clone/pull | `reports/s48-defense/package-index.json`、`reports/s50-closeout/fresh-clone.json` |
-| 解释器无 Tk（711 项） | 改用 `py -3.13`；或直接展示 `unittest-single-command.json`（721 OK，Tk 8.6） | `reports/s50-closeout/` |
+| 解释器无 Tk（711 项） | 改用 `py -3.13`；或直接展示 `unittest-single-command.json`（731 OK，Tk 8.6） | `reports/s50-closeout/` |
 | 时间不足 | 保留六段主线，跳过 9/13/15/19 页 | [demo-script.md](demo-script.md) 取舍表 |
 | PPT 排版被质疑 | 说明只做静态校验（21 页 / 12 数值点 / SHA），**未渲染**；属 GUI E 人工项 | `reports/s51-closeout/ppt-static.json` |
 | Snake 无法开窗 | 协议回放：`python -m lwt app/lwt_snake/game.lwt < app/lwt_snake/demo.commands`，与 `demo.expected` 逐行比对（仅 CRLF） | `app/lwt_snake/demo.expected` |

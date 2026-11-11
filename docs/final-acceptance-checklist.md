@@ -159,3 +159,17 @@
 | 现场人工 GUI A–E | 无 | 本轮不执行，保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
 
 **重要（S51）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。报告见 [s51-first-screen.md](s51-first-screen.md)。
+
+## S52 课程口径覆盖与性能维度（执行窗口自测；基线未经主窗口复核 S43–S51）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| §8 覆盖矩阵 | `docs/test-matrix.md` | §8.1–8.8 逐行列真实用例；§9/§10/§11 补到小节级；§8.6/§11.9 标设计决策 | 完成 |
+| 覆盖门禁 | `tests/test_course_coverage_matrix.py` | 先红 20 缺口后 5/5；`VALID_SPEC_REFS` 注册 16 个新小节；runner 35/35 | 完成 |
+| 用 LWT 测试 LWT | `README.md`、`docs/test-matrix.md`、`SUBMISSION.md` | 426 个 `*.lwt` / 400 JSON；runner 只驱动公开 CLI；测试固化 | 完成 |
+| 性能补充 | `reports/s52-course-align/performance-space.{json,md}` | P50/P95/P99 + peak_bytes + 压力 N=1000/5000/20000；S11/S44 零改动 | 完成（Ubuntu RSS 未验证） |
+| 课件口径 | `docs/s52-course-alignment.md`、答辩卡 +4 问、SUBMISSION 任务表 | 第 8 章任务 1–5 / 提交 8 项 / 评分 5 项逐条对照；11/17 窗口提醒 | 完成 |
+| 现场人工 GUI A–E | 无 | 本轮不执行，保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
+
+**重要（S52）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。报告见 [s52-course-alignment.md](s52-course-alignment.md)。
+
