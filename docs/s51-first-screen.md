@@ -92,8 +92,8 @@ S51 新增 2 项固化测试（`test_no_stale_current_status_with_date`、`First
 
 | 项 | 结果 |
 |---|---|
-| 单命令全量 | 待回填（`py -3.13 tools/run_unittest_single.py`） |
-| 探针 | 待回填（21 非 heavy + `unittest` 重跑后合并） |
+| 单命令全量 | **721 项 OK，exit 0，897.9 s**（`py -3.13`，3.13.7，Tk 8.6；`reports/s51-closeout/unittest-single-command.json`） |
+| 探针 | **24/24 PASS**：21 条非 heavy 在 S51 重跑；`blackbox`/`determinism`/`unittest` 三行沿用 S50 的 heavy 记录（代码路径未变，各自保留 `recorded_at_utc`），其中 `unittest` 行记录的是 S50 的 719 次运行，S51 的 721 次见上一行 |
 | 一键自检 | 待回填（`all_pass`） |
 | PPT 静态 | **21 页 / 12 数值点 / SHA `7cb28b13…` / zip 完整**；`render_check=false`（未渲染） |
 | 彩排 | `--random 5 --seed 51`：**4 PASS + 1 TIMEOUT**（`determinism` 在 60 s 时间盒内必然超时，heavy 断言；不是缺陷） |

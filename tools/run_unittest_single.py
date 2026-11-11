@@ -32,7 +32,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OUT = ROOT / "reports" / "s50-closeout"
+DEFAULT_OUT = ROOT / "reports" / "s51-closeout"
 
 
 def _utc() -> str:
