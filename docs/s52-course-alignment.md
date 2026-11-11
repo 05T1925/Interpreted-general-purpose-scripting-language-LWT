@@ -68,6 +68,8 @@ S50 的两次“覆盖冻结证据”事故按第 6 章流程处理，并留下�
 | 探针 | **24/24 PASS**：21 条非 heavy 在 S52 重跑；`unittest` 行在 S52 重跑（**731 项 OK**）；`blackbox`/`determinism` 沿用 S51 的 heavy 记录并保留各自时间戳（`reports/s52-course-align/defense-probe.json`） |
 | 单命令全量 | **731 项 OK，exit 0，748.4 s**（`py -3.13`，Tk 8.6；`reports/s52-course-align/unittest-single-command.json`） |
 | 一键自检 | **`all_pass=true`**：11 步 PASS、0 FAIL、2 步 N/A（GUI/agent）；`selfcheck-20261111T054315Z` |
+| 交付包 | 在 `eee659f` 重建：bundle `4aac7b24f01d…`、zip `c1953017c9a2…`、**1754 项**、verify 0 |
+| 新克隆 | head `eee659f` → tip `8f960c3`，lag 仅索引，6 条命令 exit 0，**400/400**（164.2 s，总 170.1 s） |
 | CI | 推送后按精确 SHA 逐格查；结果见 `reports/s49-rehearsal/ci-cells.json` |
 
 **红→绿留证**：先只加 `tests/test_course_coverage_matrix.py` 并运行，报出 `§8.1…§11.9` 共 20 条缺口；随后登记白名单、给 18 个真实用例补 refs、补矩阵与声明，5/5 转绿。没有新增黑盒用例，也没有伪造 §8.6/§11.9 的可执行语义。
