@@ -65,7 +65,7 @@ S50 的两次“覆盖冻结证据”事故按第 6 章流程处理，并留下�
 | 修后（绿） | `test_course_coverage_matrix` **5/5**；矩阵 §8 表 8 行；18 个既有用例补 `spec_refs`；`test_runner` 35/35 |
 | 白名单 | `VALID_SPEC_REFS` 注册 §8.1–§8.6、§9.1–§9.5、§10.1–§10.5；未知 `12` 仍拒绝 |
 | 性能补充 | `performance-space.json`：3 负载 × N=100/1000/5000 + 压力 N=1000/5000/20000；`peak_bytes_monotonic=true`；证据测试 4/4 |
-| 探针（非 heavy） | **21/21 PASS**（`reports/s52-course-align/baseline-probe.json`） |
+| 探针 | **24/24 PASS**：21 条非 heavy 在 S52 重跑；`unittest` 行在 S52 重跑（**731 项 OK**）；`blackbox`/`determinism` 沿用 S51 的 heavy 记录并保留各自时间戳（`reports/s52-course-align/defense-probe.json`） |
 | 单命令全量 | **731 项 OK，exit 0，748.4 s**（`py -3.13`，Tk 8.6；`reports/s52-course-align/unittest-single-command.json`） |
 | 自检 / CI | 待回填 |
 

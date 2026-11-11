@@ -8,12 +8,12 @@ benchmark_v2: output must stay under reports/s44-performance/ (got out.json)
 measure_startup: refusing to overwrite protected evidence reports/runtime-profile.json
 measure_startup: refusing to overwrite protected evidence bench/results.json
 measure_startup: refusing to overwrite protected evidence reports/performance.md
-verify_fresh_clone: bundle not found: C:\Users\28641\AppData\Local\Temp\lwt-s47-missing-9w1xidwn\does-not-exist.bundle
+verify_fresh_clone: bundle not found: C:\Users\28641\AppData\Local\Temp\lwt-s47-missing-_1ggkbzo\does-not-exist.bundle
 ----------------------------------------------------------------------
-Ran 731 tests in 747.759s
+Ran 731 tests in 999.824s
 
 OK
-model-check: mutant=none programs=8 runs=8 violations=0 budget_exhausted=3 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=2.04s
+model-check: mutant=none programs=8 runs=8 violations=0 budget_exhausted=3 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=3.51s
   channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
   channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
   channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
@@ -22,7 +22,7 @@ model-check: mutant=none programs=8 runs=8 violations=0 budget_exhausted=3 inval
   join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
   lost-update: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
   nested-spawn-drain: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
-model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=2.69s
+model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=3.36s
   channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
   channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
   channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
@@ -31,11 +31,11 @@ model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 inva
   join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
   lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
   nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
-model-check: mutant=none programs=1 runs=19 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=0.65s
+model-check: mutant=none programs=1 runs=19 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=0.68s
   lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
-model-check: mutant=none programs=1 runs=5 violations=1 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=0.84s
+model-check: mutant=none programs=1 runs=5 violations=1 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=0.97s
   order-fixed: COMPLETE runs=5 outcomes=2 violations=1 min_prefix=[2]
-model-check: mutant=duplicate-delivery programs=8 runs=32 violations=4 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=3.91s
+model-check: mutant=duplicate-delivery programs=8 runs=32 violations=4 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=5.33s
   channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
   channel-close-drain: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
   channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
@@ -44,7 +44,7 @@ model-check: mutant=duplicate-delivery programs=8 runs=32 violations=4 budget_ex
   join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
   lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
   nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
-model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=2.73s
+model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=3.94s
   channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
   channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
   channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
@@ -85,8 +85,8 @@ P21 blind            PLANNED          0.0s
 P21 blind-ci         PLANNED          0.0s
 P21 ppt              PLANNED          0.0s
 P21 doc-consistency  PLANNED          0.0s
-rehearse_defense: dry-run planned=32 PASS=0 FAIL=0 TIMEOUT=0 SKIPPED=0 -> C:\Users\28641\AppData\Local\Temp\s49-rehearse-nq917r8z\rehearsal.json
+rehearse_defense: dry-run planned=32 PASS=0 FAIL=0 TIMEOUT=0 SKIPPED=0 -> C:\Users\28641\AppData\Local\Temp\s49-rehearse-haynvl2m\rehearsal.json
 Project integrity: OK; cases=400; matrix_links=497; referenced_cases=400
-build_submission: C:/Users/28641/AppData/Local/Temp/lwt-s47-pkg-3ihhrcon/pkg bundle=yes zip=yes
-  zip sha256=30614cfb2bd6d130 entries=1736
-  bundle verify exit=0 sha256=3821781bff3057c8
+build_submission: C:/Users/28641/AppData/Local/Temp/lwt-s47-pkg-p0t5adwu/pkg bundle=yes zip=yes
+  zip sha256=c30271523ff38def entries=1738
+  bundle verify exit=0 sha256=77d3a42b8ad746c8
