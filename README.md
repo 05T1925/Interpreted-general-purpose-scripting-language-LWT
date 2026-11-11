@@ -1,6 +1,6 @@
 # LWT：解释型通用脚本语言大作业
 
-本仓库实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S31–S41 已由主窗口复核并进入本地 `main`；S12 最终交付候选也已通过复核并集成。S42（语言核心 0.2）、S43（确定性并发 §11）、S44（引擎可验证加速）、S45（最终交付加固）、S46（并发有界系统探索）、S47（提交可达性与首次盲测）、S48（证据自洽与指南消融）、S49（答辩彩排与一致性收敛）、S50（单命令 unittest 红线清零）、S51（教师第一屏与现场预案）、S52（第 8 章覆盖与性能维度）、S53（变异探针与 MCP 接口）**已执行完成并合入 `main`**；当前版本 **0.3.0**，**400 黑盒 / 747 unittest / 21 页 PPT**，`main` 已推送；测试集由 **426 个 `*.lwt` 脚本**编写，Python runner 只驱动公开 CLI（`python -m lwt`），符合第 8 章任务 2“用 LWT 测试 LWT”口径。现场人工 GUI A–E 仍由本人验收（`REGISTERED 0/5`、`NOT_RUN`）；当前状态见 [project.md](project.md) 和[交付清单](docs/delivery-manifest.json)。
+本仓库实现 LWT 语言、解释器、黑盒测试、性能对比、开发指南和 Agent 编写的应用。S31–S41 已由主窗口复核并进入本地 `main`；S12 最终交付候选也已通过复核并集成。S42（语言核心 0.2）、S43（确定性并发 §11）、S44（引擎可验证加速）、S45（最终交付加固）、S46（并发有界系统探索）、S47（提交可达性与首次盲测）、S48（证据自洽与指南消融）、S49（答辩彩排与一致性收敛）、S50（单命令 unittest 红线清零）、S51（教师第一屏与现场预案）、S52（第 8 章覆盖与性能维度）、S53（变异探针与 MCP 接口）**已执行完成并合入 `main`**；当前版本 **0.3.0**，**401 黑盒 / 752 unittest / 21 页 PPT**，`main` 已推送；测试集由 **427 个 `*.lwt` 脚本**编写，Python runner 只驱动公开 CLI（`python -m lwt`），符合第 8 章任务 2“用 LWT 测试 LWT”口径。现场人工 GUI A–E 仍由本人验收（`REGISTERED 0/5`、`NOT_RUN`）；当前状态见 [project.md](project.md) 和[交付清单](docs/delivery-manifest.json)。
 
 教师/助教入口：[**SUBMISSION.md**](SUBMISSION.md)（8 项提交内容 → 路径/命令/证据/状态，含三分钟验收路径）。 课程第 8 章任务 1–5 的仓库证据与复算命令见 [SUBMISSION.md 的口径对照](SUBMISSION.md#课程第-8-章口径对照任务-15)。
 
@@ -85,7 +85,7 @@ python tools/check_project_integrity.py
 python tools/run_tests.py
 ```
 
-语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。S26 当时集合为 287 项，其中 282 项执行配对 LWT 程序、5 项专测 CLI 参数契约；错误恢复类别 40 项（该段为 S26 历史快照；**当前集合为 400 项**，见 [S44 执行报告](docs/s44-performance.md)）。精确环境结果、完整性链接数和单元测试数以 [S26 报告](docs/s26-runtime-recovery.md)为准。S8/S23/S24/S25 历史快照原值保留；Python 3.10 和远端 Actions 未验证。
+语义用例以 `.lwt` 源程序经 `python -m lwt` 执行，同名 `.json` 精确记录退出码、stdout、stderr、参数、stdin 和超时；CLI argv 专项用例使用显式 override。格式、发现规则、逐条规范覆盖及实测状态见[覆盖矩阵](docs/test-matrix.md)。S26 当时集合为 287 项，其中 282 项执行配对 LWT 程序、5 项专测 CLI 参数契约；错误恢复类别 40 项（该段为 S26 历史快照；**当前集合为 401 项**，见 [S44 执行报告](docs/s44-performance.md)）。精确环境结果、完整性链接数和单元测试数以 [S26 报告](docs/s26-runtime-recovery.md)为准。S8/S23/S24/S25 历史快照原值保留；Python 3.10 和远端 Actions 未验证。
 
 运行 lexer、parser、runtime、CLI 和黑盒 runner 的开发辅助 unittest：
 
@@ -212,7 +212,7 @@ python tools/benchmark.py --calibration
 
 校准数据仍保存在 JSON 中并标注 `calibration`；不会纳入正式表格。更多协议、环境、源文件哈希和限制见[性能报告](reports/performance.md)。
 
-> **当前状态（S51，2026-11-11）**：语言黑盒 **400 项**、unittest **747 项**（须用 `py -3.13` + Tk 8.6；本机 `python` 是无 tkinter 的 WorkBuddy 3.13.14，会得 711 项 + 2 个假失败）、PPT **21 页**、46×10 确定性稳定；`main` 已推送，CI 四格按精确 SHA 逐格记录。S44 的引擎加速数字（纯执行 N=5000 提升 1.45–2.99×、启动 `--help` 1.256×）保留为 **S44 历史结论**，不是当前基线。见 [S44 执行报告](docs/s44-performance.md) 与 [S51 报告](docs/s51-first-screen.md)。
+> **当前状态（S51，2026-11-11）**：语言黑盒 **401 项**、unittest **752 项**（须用 `py -3.13` + Tk 8.6；本机 `python` 是无 tkinter 的 WorkBuddy 3.13.14，会得 711 项 + 2 个假失败）、PPT **21 页**、46×10 确定性稳定；`main` 已推送，CI 四格按精确 SHA 逐格记录。S44 的引擎加速数字（纯执行 N=5000 提升 1.45–2.99×、启动 `--help` 1.256×）保留为 **S44 历史结论**，不是当前基线。见 [S44 执行报告](docs/s44-performance.md) 与 [S51 报告](docs/s51-first-screen.md)。
 
 当前实现支持标量、变量/块、I/O、分支循环、函数、数组/record、dict 映射、throw/finally 错误恢复、协作式确定性并发（`spawn`/`join`/通道，见[并发契约卡](docs/concurrency.md)）与文本内置函数、静态函数模块。S27 `--check`、S28 `--profile`、S29 Language Server、S30 调试器和 S31–S33 VS Code 集成都属于开发工具，不属于 LWT 语言语义；LSP 不执行被分析源码，调试器会执行它。S33 阶段语言黑盒为 287 项（历史快照）；工具测试单列于 unittest。S33 在本机 Windows VS Code Extension Host 中实测 287 项发现、选择运行、失败差异、取消刷新和 DAP 断点；本阶段 SHA 的远端 CI、人工鼠标/键盘操作和 VSIX 安装未验证。S23–S30 独立审查记录不完整。S12 已完成；S42–S44 待复核/集成。详见 [S33 执行报告](docs/s33-testing-workbench.md) 与[最终交付规划](docs/s12-final-delivery-plan.md)。
 

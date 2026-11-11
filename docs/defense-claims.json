@@ -79,14 +79,14 @@
     {
       "id": "blackbox",
       "area": "交付物 3 黑盒",
-      "claim": "400/400 黑盒通过",
+      "claim": "401/401 黑盒通过",
       "command": [
         "python",
         "tools/run_tests.py"
       ],
       "expect": {
         "exit_code": 0,
-        "stdout_contains": "passed=400 failed=0"
+        "stdout_contains": "passed=401 failed=0"
       },
       "heavy": true,
       "evidence_path": "tests/cases/",
@@ -95,7 +95,7 @@
     {
       "id": "integrity",
       "area": "交付物 3 黑盒",
-      "claim": "覆盖闭环 400/400 unreferenced=0",
+      "claim": "覆盖闭环 401/401 unreferenced=0",
       "command": [
         "python",
         "tools/check_project_integrity.py",
@@ -117,7 +117,7 @@
         "python",
         "tools/run_unittest_single.py",
         "--out-dir",
-        "reports/s53-mutation"
+        "reports/s54-closeout"
       ],
       "expect": {
         "exit_code": 0,
@@ -125,7 +125,7 @@
         "stderr_contains": null
       },
       "heavy": true,
-      "evidence_path": "reports/s53-mutation/unittest-single-command.json",
+      "evidence_path": "reports/s54-closeout/unittest-single-command.json",
       "status": "UNRUN",
       "requires": {
         "tkinter": true
@@ -299,7 +299,7 @@
     {
       "id": "fresh-clone",
       "area": "交付物 7 Git",
-      "claim": "新克隆 400/400 且 6 条命令退出 0",
+      "claim": "新克隆 401/401 且 6 条命令退出 0",
       "command": [
         "python",
         "-c",
@@ -392,7 +392,7 @@
       "command": [
         "python",
         "-c",
-        "import zipfile,re\nz=zipfile.ZipFile('slides/LWT介绍.pptx')\npages=len([n for n in z.namelist() if re.match(r'ppt/slides/slide\\d+\\.xml$',n)])\npts=0\nfor n in z.namelist():\n    if re.match(r'ppt/slides/charts/chart\\d+\\.xml$',n):\n        xml=z.read(n).decode('utf-8','replace')\n        for val in re.findall(r'<c:val>.*?</c:val>',xml,re.S):\n            pts+=val.count('<c:pt ')\nprint('OK' if pages==21 and pts==12 else f'MISS pages={pages} points={pts}')"
+        "import zipfile,re\nz=zipfile.ZipFile('slides/LWT介绍.pptx')\npages=len([n for n in z.namelist() if re.match(r'ppt/slides/slide\\d+\\.xml$',n)])\npts=0\nfor n in z.namelist():\n    if re.match(r'ppt/(?:slides/)?charts/chart\\d+\\.xml$',n):\n        xml=z.read(n).decode('utf-8','replace')\n        for val in re.findall(r'<c:val>.*?</c:val>',xml,re.S):\n            pts+=val.count('<c:pt ')\nprint('OK' if pages==21 and pts==12 else f'MISS pages={pages} points={pts}')"
       ],
       "expect": {
         "exit_code": 0,

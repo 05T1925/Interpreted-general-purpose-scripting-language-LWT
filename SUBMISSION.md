@@ -1,6 +1,6 @@
 # LWT 提交入口（教师版）
 
-> 版本 **0.3.0** ｜ 黑盒 **400** ｜ unittest **747** ｜ PPT **21 页**
+> 版本 **0.3.0** ｜ 黑盒 **401** ｜ unittest **752** ｜ PPT **21 页**
 > 默认分支 `main` 与本交付分支同一提交；分支/CI 的精确 SHA 见 `docs/s47-final-submission.md`。
 > 本文件由 `tools/build_submission.py` 生成，数字取自 `docs/delivery-manifest.json`。
 
@@ -8,7 +8,7 @@
 
 ```bash
 python -m lwt --version                     # lwt 0.3.0
-python tools/run_tests.py                   # Black-box tests: passed=400 failed=0
+python tools/run_tests.py                   # Black-box tests: passed=401 failed=0
 python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/确定性/性能/文档/PPT/模型检查
 ```
 
@@ -36,8 +36,8 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 | # | 提交内容 | 分值 | 仓库位置 | 一条验证命令 | 证据 | 状态 |
 |---|---|---|---|---|---|---|
 | 1 | LWT 语法规则文档 | — | `docs/language-spec.md` | `python -m lwt --version` | 规范 §1–§11；版本号由 manifest 统一 | 完成 |
-| 2 | 解释器源程序 | 20 | `lwt/` | `python -m lwt examples/guide/hello.lwt` | `tests/cases/` 400 项 | 完成 |
-| 3 | 完整黑盒测试集 | 20 | `tests/cases/` | `python tools/run_tests.py` | 400/400；矩阵 `referenced_cases=400/400`；426 个 `*.lwt` 脚本（用 LWT 测试 LWT） | 完成 |
+| 2 | 解释器源程序 | 20 | `lwt/` | `python -m lwt examples/guide/hello.lwt` | `tests/cases/` 401 项 | 完成 |
+| 3 | 完整黑盒测试集 | 20 | `tests/cases/` | `python tools/run_tests.py` | 401/401；矩阵 `referenced_cases=401/401`；427 个 `*.lwt` 脚本（用 LWT 测试 LWT） | 完成 |
 | 4 | 性能测试报告 | 10 | `reports/performance.md、bench/results.json` | `python tools/compare_perf.py` | S11 正式报告 + S44 分层对照 | 完成 |
 | 5 | 开发指南（人 + AI） | 20 | `docs/developer-guide.md、.agents/skills/lwt-app/SKILL.md` | `python -m lwt --check examples/modules/main.lwt` | S42–S46 已按指南实现 | 完成 |
 | 6 | Agent 应用与开发记录 | 30 | `app/log_report.lwt、app/concurrent_log_report.lwt、app/lwt_snake/game.lwt、docs/agent-dev-log.md` | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log` | 有效行数 243 / 233 / 313（`tools/count_lwt_lines.py`） | 完成 |

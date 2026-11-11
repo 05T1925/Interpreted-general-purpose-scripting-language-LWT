@@ -1,15 +1,15 @@
 # LWT 答辩演示脚本（S48 最终候选）
 
-从仓库根目录运行。建议提前打开[系统介绍 PPT](../slides/LWT介绍.pptx)（21 页），准备 Python 3.13 和终端。所有命令均使用公开 CLI；固定证据保持只读。现场按教师要求调整顺序。**主线目标 8–10 分钟**；附录片段按时间取舍。当前状态数字以 [交付清单](delivery-manifest.json) 为唯一来源（400 黑盒 / 747 unittest / 21 页 PPT）。
+从仓库根目录运行。建议提前打开[系统介绍 PPT](../slides/LWT介绍.pptx)（21 页），准备 Python 3.13 和终端。所有命令均使用公开 CLI；固定证据保持只读。现场按教师要求调整顺序。**主线目标 8–10 分钟**；附录片段按时间取舍。当前状态数字以 [交付清单](delivery-manifest.json) 为唯一来源（401 黑盒 / 752 unittest / 21 页 PPT）。
 
 ## 主流程（8–10 分钟）
 
 | 时间 | 操作与讲解 | 命令或证据 |
 |---|---|---|
-| 0:00–0:40 | 说明课程五项评分与八项提交物；先报当前身份：**LWT 0.3.0**，400 黑盒 / 747 unittest / 21 页 PPT，S42–S49 执行完成、main 已推送，现场人工 GUI A–E 待本人验收。 | `python -m lwt --version`；`python -m lwt --help`；[交付清单](delivery-manifest.json) |
+| 0:00–0:40 | 说明课程五项评分与八项提交物；先报当前身份：**LWT 0.3.0**，401 黑盒 / 752 unittest / 21 页 PPT，S42–S49 执行完成、main 已推送，现场人工 GUI A–E 待本人验收。 | `python -m lwt --version`；`python -m lwt --help`；[交付清单](delivery-manifest.json) |
 | 0:40–1:30 | 跑最小程序，说明源码经 lexer、parser、AST 和树遍历运行；再演示可定位的除零错误（退出 3）。点出 `record`/`when-otherwise`/`each`/`emit` 的语法特色。 | `python -m lwt examples/guide/hello.lwt`；`python -m lwt examples/language_lab/division_by_zero.lwt` |
 | 1:30–2:20 | S42 语言核心增量：dict 插入序与内置、throw/finally 的控制流覆盖；时间紧可只看两条 emit。 | `python -m lwt examples/dicts.lwt`；`python -m lwt examples/throw_finally.lwt` |
-| 2:20–3:20 | **测试抓手**：一条命令跑 400 项黑盒并显示分类统计；再用完整性检查证明 400 个用例全部被矩阵链接（unreferenced=0）。不在现场重跑时，展示已记录输出并说明是记录值。 | `python tools/run_tests.py`；`python tools/check_project_integrity.py --require-all-referenced`；[矩阵](test-matrix.md) |
+| 2:20–3:20 | **测试抓手**：一条命令跑 401 项黑盒并显示分类统计；再用完整性检查证明 401 个用例全部被矩阵链接（unreferenced=0）。不在现场重跑时，展示已记录输出并说明是记录值。 | `python tools/run_tests.py`；`python tools/check_project_integrity.py --require-all-referenced`；[矩阵](test-matrix.md) |
 | 3:20–4:20 | **性能抓手**：先给 S11 正式结论（端到端 2.7–5.0×，明确未做优化），再给 S44 附录的分层对照：启动 1.256×/1.224×，纯执行 N=5000 1.45–2.99×；强调端到端仍比 Python 慢、两种口径不混用。 | `python tools/compare_perf.py`；[S11](../reports/performance.md)；[S44](s44-performance.md) |
 | 4:20–6:00 | **并发子语言**：多文件每文件一任务并发读取、按输入顺序归并（与串行逐字节等价）；换种子得到另一交错，轨迹可记录/重放；再用 5 秒展示 S46 有界探索（clean 0 违反 / mutant 命中）。 | `python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log`；下方“并发演示片段” |
 | 6:00–7:00 | **Agent 应用**：日志分析器 243 行有效 LWT（坏行/等级/关键字/top-k）；并发版 233 行。若桌面可用，再开 LWT Snake；否则说明 GUI 为展示层、规则在 .lwt。 | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log --level WARN --keyword retry --top 2`；`python tools/count_lwt_lines.py app/log_report.lwt` |
@@ -114,11 +114,11 @@ python tools/run_defense_probe.py --claim blind
 # 3) 看包索引：bundle 截止 SHA、最终 tip、允许的 lag 白名单
 cat reports/s48-defense/package-index.json
 
-# 4) 从 bundle 新克隆并跑 400 黑盒（验证交付可达）
+# 4) 从 bundle 新克隆并跑 401 黑盒（验证交付可达）
 python tools/verify_fresh_clone.py --package-index reports/s48-defense/package-index.json
 ```
 
-讲解词：`SUBMISSION.md` 是教师第一眼入口；现场用 `run_defense_probe.py --claim <id>` 复算任一断言；`package-index.json` 明确写出 bundle 截止 SHA 与最终 tip 的差异白名单（自引用无法把“记录包的那一笔”打进包内）；新克隆在空目录重跑 400/400，不依赖本工作区未跟踪文件。
+讲解词：`SUBMISSION.md` 是教师第一眼入口；现场用 `run_defense_probe.py --claim <id>` 复算任一断言；`package-index.json` 明确写出 bundle 截止 SHA 与最终 tip 的差异白名单（自引用无法把“记录包的那一笔”打进包内）；新克隆在空目录重跑 401/401，不依赖本工作区未跟踪文件。
 
 ## 无 GUI 后退
 
@@ -129,4 +129,4 @@ python tools/verify_fresh_clone.py --package-index reports/s48-defense/package-i
 - 逐页口播/追问/断言/命令：`docs/defense-runbook.md`（21 页，与 PPT 一一对应）。
 - 随机抽问排练：`python tools/rehearse_defense.py --random 5 --timeout 60`；只走口播：`--dry-run`；无网络/无 GUI：`--offline`。
 - 现场证据台：`docs/defense-index.html`（离线单文件，按页码或断言 id 跳转）。
-- 口径：排练是本地演练，不是教师验收；heavy 断言（400 黑盒/全量 unittest/46×10）不要塞进 60 秒时间盒，改为只展示已记录证据。
+- 口径：排练是本地演练，不是教师验收；heavy 断言（401 黑盒/全量 unittest/46×10）不要塞进 60 秒时间盒，改为只展示已记录证据。

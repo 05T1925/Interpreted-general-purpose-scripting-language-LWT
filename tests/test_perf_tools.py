@@ -148,9 +148,16 @@ class ComparePerfTests(unittest.TestCase):
 
 
 class CoverageGateTests(unittest.TestCase):
-    def test_all_400_cases_are_referenced(self) -> None:
+    def test_every_discovered_case_is_referenced(self) -> None:
+        # Read the expected count from the manifest instead of hard-coding it:
+        # a new case must update one place (the manifest), not every test.
+        import json
+
+        manifest = json.loads(
+            (REPO_ROOT / "docs" / "delivery-manifest.json").read_text(encoding="utf-8")
+        )
         result = inspect_project(REPO_ROOT)
-        self.assertEqual(result.case_count, 400)
+        self.assertEqual(result.case_count, manifest["blackbox_cases"])
         self.assertEqual(result.case_count - result.referenced_case_count, 0,
                          "every discovered case must be linked in docs/test-matrix.md")
 

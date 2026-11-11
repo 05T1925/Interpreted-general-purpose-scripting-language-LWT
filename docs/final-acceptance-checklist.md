@@ -188,3 +188,17 @@
 
 **重要（S53）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。变异分数不是总体正确率。报告见 [s53-mutation-interface.md](s53-mutation-interface.md)。
 
+## S54 PPT 真渲染与键序盲区闭环（执行窗口自测；基线未经主窗口复核 S43–S53）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| PPT 真渲染 | `reports/s54-closeout/ppt-render.json`、`ppt-pages/slide-01..21.png` | PowerPoint COM 16.0 只读无窗口渲染：**21/21** 导出、`blank_pages=[]`、PDF 395,794 B、第 10 页方差/墨迹比/饱和度均第 1、XML 12 数值点 | 已自动验证 |
+| PPT 文案 | `slides/LWT介绍.pptx` | 第 14/17/18/20 页 400→401（`TextRange.Replace` 保格式），改后**重新渲染**；SHA `7cb28b13…`→`809320b2…` | 完成 |
+| 键序盲区 | `tests/cases/dict-maps/dict-display-insertion-order.{lwt,json}` | 新增用例（公开 CLI 实测 expected），黑盒 **400 → 401**；既有用例零改动 | 闭环 |
+| 变异探针 | `reports/s54-closeout/mutation-report.json` | `dict-display-sorts-keys` 由新用例判红；**19/19 killed**、invalid 0 | 19/19 |
+| 逐页目视排版 | 无 | 像素统计只能证明“有内容、非空白”；页脚是否裁切仍属 **GUI-E 人工项** | 未验证 |
+| 当前计数 | `docs/delivery-manifest.json` | **401 黑盒 / 752 unittest / 21 页**；S52/S53 报告保留 731/747 作为冻结快照 | 已同步 |
+| 现场人工 GUI A–E | 无 | 本轮仍不执行；只提供只读启动预检，保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
+
+**重要（S54）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。报告见 [s54-closeout.md](s54-closeout.md)。
+

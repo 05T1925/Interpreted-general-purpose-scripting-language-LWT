@@ -105,9 +105,9 @@ def submission_markdown() -> str:
         ("1", "LWT 语法规则文档", "—", "docs/language-spec.md",
          "`python -m lwt --version`", "规范 §1–§11；版本号由 manifest 统一", "完成"),
         ("2", "解释器源程序", "20", "lwt/",
-         "`python -m lwt examples/guide/hello.lwt`", "`tests/cases/` 400 项", "完成"),
+         "`python -m lwt examples/guide/hello.lwt`", "`tests/cases/` 401 项", "完成"),
         ("3", "完整黑盒测试集", "20", "tests/cases/", "`python tools/run_tests.py`",
-         f"400/400；矩阵 `referenced_cases=400/400`；426 个 `*.lwt` 脚本（用 LWT 测试 LWT）", "完成"),
+         f"401/401；矩阵 `referenced_cases=401/401`；427 个 `*.lwt` 脚本（用 LWT 测试 LWT）", "完成"),
         ("4", "性能测试报告", "10", "reports/performance.md、bench/results.json",
          "`python tools/compare_perf.py`", "S11 正式报告 + S44 分层对照", "完成"),
         ("5", "开发指南（人 + AI）", "20", "docs/developer-guide.md、.agents/skills/lwt-app/SKILL.md",
@@ -135,7 +135,7 @@ def submission_markdown() -> str:
 
 ```bash
 python -m lwt --version                     # lwt {version}
-python tools/run_tests.py                   # Black-box tests: passed=400 failed=0
+python tools/run_tests.py                   # Black-box tests: passed=401 failed=0
 python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/确定性/性能/文档/PPT/模型检查
 ```
 

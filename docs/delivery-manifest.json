@@ -3,10 +3,10 @@
   "product": "LWT",
   "version": "0.3.0",
   "version_rationale": "S42 语言核心增强（dict/throw/finally/REPL）与 S43 确定性并发子语言（规范 §11）为新增语言特性，S44 为性能与可验证加速；按语义化版本属次版本升级。版本号由主窗口裁决（2026-11-08），执行窗口按裁决写入，不自行二选一。",
-  "blackbox_cases": 400,
-  "unittest_count": 747,
+  "blackbox_cases": 401,
+  "unittest_count": 752,
   "ppt_pages": 21,
-  "ppt_sha256": "7cb28b13948942b7a4b1b8fb64fb68e8aba04ab627188272a8b55c367355878c",
+  "ppt_sha256": "809320b2aee60089b1df23d1d2ed8362d4f09819f4315749ab063d9eff90ef99",
   "ppt_chart_points": 12,
   "protected_paths": [
     "bench/results.json",
@@ -68,9 +68,13 @@
     "s53_mutation": "reports/s53-mutation/mutation-report.json",
     "s53_interface": "docs/agent-friendly-interface.md",
     "s53_mcp": "lwt/mcp_server.py",
-    "s53_platform": "docs/platform-submission.json"
+    "s53_platform": "docs/platform-submission.json",
+    "s54_closeout": "docs/s54-closeout.md",
+    "s54_ppt_render": "reports/s54-closeout/ppt-render.json",
+    "s54_ci": "reports/s54-closeout/ci-cells.json",
+    "s54_gui_preflight": "reports/s54-closeout/gui-preflight.json"
   },
-  "last_verified_utc": "2026-11-11T08:11:57Z",
+  "last_verified_utc": "2026-11-11T16:38:29Z",
   "notes": [
     "unittest_count 为 S53 实测 747（S52 的 731 + 变异门禁 8 + MCP 协议测试 8）。",
     "ppt_pages / ppt_sha256 为 S48 最终 PPT（20→21 页，新增「指南消融与现场可质询验收」；旧第 10 页原生图表 12 数值点未变）。",
@@ -82,7 +86,8 @@
     "S50：unittest 断言改为「带 Tk 的解释器 + 单命令工具」；实测 719 项 OK（717.5 s，py -3.13 / 3.13.7 / Tk 8.6）；探针 24/24；PPT 未改动（21 页 / 7cb28b13… / 第 10 页 12 点）。",
     "S51：文档一致性的“日期即历史”改为“当前状态断言优先”；README 632/未推送、project 过期核对日期已修；PPT 仅静态校验（21 页/12 点/7cb28b13…），未渲染。",
     "S52：矩阵补 §8 表与 20 个小节缺口；新增 P95/P99 与峰值内存补充测量（不替代 S11/S44）；课件第 8/7/6 章口径写入教师入口与答辩卡；PPT 未改动。",
-    "S53：语义变异探针扩到 18 条（S42 dict/finally/throw + S43 并发），killed 18/18、invalid 0、隔离核验 repo_clean=true；一条 sorted-display 变异真实存活，作为盲区记录而非计入。新增 MCP server（协议级 8 项测试，未做宿主端到端）。PPT 未改动。"
+    "S53：语义变异探针扩到 18 条（S42 dict/finally/throw + S43 并发），killed 18/18、invalid 0、隔离核验 repo_clean=true；一条 sorted-display 变异真实存活，作为盲区记录而非计入。新增 MCP server（协议级 8 项测试，未做宿主端到端）。PPT 未改动。",
+    "S54：dict 键序盲区闭环——新增 dict-display-insertion-order，黑盒 400→401；PPT 第 14/17/18/20 页文案 400→401 并用 PowerPoint COM 重渲染（21/21、无空白、第 10 页图表 12 点仍在），PPT SHA 7cb28b13→809320b2。"
   ],
   "submission_bundle": "reports/s48-defense/package-index.json",
   "agent_eval_status": "EXECUTED; T 30/30 (1.000, Wilson 0.886-1.000); C 29/30 (0.967, 0.833-0.995); T-C +0.033 [-0.031,+0.098]",

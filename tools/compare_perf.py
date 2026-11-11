@@ -113,7 +113,7 @@ def compare() -> dict[str, Any]:
             },
         },
         "all_pass": startup_ok and execute_ok,
-        "note": "Non-spawn sys.modules (no lwt.concurrency) and 400/400 black-box / "
+        "note": "Non-spawn sys.modules (no lwt.concurrency) and 401/401 black-box / "
                 "46x10 determinism / S28 event counts are verified by tests and "
                 "runner commands, not by this timing comparator.",
     }

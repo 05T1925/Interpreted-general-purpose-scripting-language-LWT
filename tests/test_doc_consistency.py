@@ -122,7 +122,7 @@ class ManifestShapeTests(unittest.TestCase):
     def test_manifest_values_are_plausible(self) -> None:
         doc = _load_manifest()
         self.assertRegex(doc["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual(doc["blackbox_cases"], 400)
+        self.assertEqual(doc["blackbox_cases"], 401)
         self.assertGreaterEqual(doc["unittest_count"], 600)
         self.assertGreaterEqual(doc["ppt_pages"], 17)
         self.assertEqual(len(doc["ppt_sha256"]), 64)
@@ -332,10 +332,9 @@ NUMBER_DOCS = [
     "docs/agent-eval/README.md",
     "docs/defense-runbook.md",
     "docs/gui-acceptance-quickref.md",
-    "docs/s52-course-alignment.md",
-    "docs/s53-mutation-interface.md",
     "docs/agent-friendly-interface.md",
     "docs/platform-submission.md",
+    "docs/s54-closeout.md",
 ]
 
 # Push/CI claims are also checked inside the latest phase report, because that
@@ -638,9 +637,15 @@ class S49ReportTests(unittest.TestCase):
         self.assertTrue(s52.exists(), "docs/s52-course-alignment.md is missing")
         self.assertIn("731", s52.read_text(encoding="utf-8"))  # frozen at S52
 
+        s53 = REPO_ROOT / "docs" / "s53-mutation-interface.md"
+        self.assertTrue(s53.exists(), "docs/s53-mutation-interface.md is missing")
+        frozen53 = s53.read_text(encoding="utf-8")
+        self.assertIn("747", frozen53)  # frozen at S53
+        self.assertIn("21 页", frozen53)
+
         doc = _load_manifest()
-        current = REPO_ROOT / "docs" / "s53-mutation-interface.md"
-        self.assertTrue(current.exists(), "docs/s53-mutation-interface.md is missing")
+        current = REPO_ROOT / "docs" / "s54-closeout.md"
+        self.assertTrue(current.exists(), "docs/s54-closeout.md is missing")
         text = current.read_text(encoding="utf-8")
         self.assertIn(str(doc["unittest_count"]), text)
         self.assertIn(f"{doc['ppt_pages']} 页", text)

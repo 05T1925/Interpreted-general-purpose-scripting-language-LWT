@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "tool": "tools/run_unittest_single.py",
+  "claim_id": "unittest",
+  "command": [
+    "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-q"
+  ],
+  "started_at_utc": "2026-11-11T16:12:17Z",
+  "finished_at_utc": "2026-11-11T16:24:26Z",
+  "exit_code": 1,
+  "ran": 752,
+  "ok": false,
+  "timed_out": false,
+  "seconds": 728.604,
+  "sys_executable": "C:\\Users\\28641\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+  "python_version": "3.13.7",
+  "tk_version": 8.6,
+  "log_path": "reports/s54-closeout/unittest-system.failed.log",
+  "note": "FAILED run archived separately; the passing evidence at unittest-single-command.json was left untouched."
+}

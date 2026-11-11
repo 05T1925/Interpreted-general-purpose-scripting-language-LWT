@@ -6,8 +6,8 @@
 
 | 任务 | 课件要求 | 仓库证据 | 一条复算命令 | 状态 |
 |---|---|---|---|---|
-| 1 解释器 | 解释型通用脚本语言，至少五类基本功能，体现特色 | `docs/language-spec.md` §1–§11；`lwt/`；400 项黑盒 | `python -m lwt examples/guide/hello.lwt` | 完成 |
-| 2 黑盒测试集 | **用 LWT 测试 LWT**；覆盖全部功能；一个命令；测试名与功能清单一一对应，**缺一项不算完整覆盖** | 426 个 `tests/cases/**/*.lwt`（400 个 `.json`）；`docs/test-matrix.md` 的 §8 表（8.1–8.8）与 §9/§10/§11 小节映射；`tests/test_course_coverage_matrix.py` 机械门禁 | `python tools/run_tests.py` | 完成 |
+| 1 解释器 | 解释型通用脚本语言，至少五类基本功能，体现特色 | `docs/language-spec.md` §1–§11；`lwt/`；400 项黑盒（S52 当时） | `python -m lwt examples/guide/hello.lwt` | 完成 |
+| 2 黑盒测试集 | **用 LWT 测试 LWT**；覆盖全部功能；一个命令；测试名与功能清单一一对应，**缺一项不算完整覆盖** | 427 个 `tests/cases/**/*.lwt`（400 个 `.json`）；`docs/test-matrix.md` 的 §8 表（8.1–8.8）与 §9/§10/§11 小节映射；`tests/test_course_coverage_matrix.py` 机械门禁 | `python tools/run_tests.py` | 完成 |
 | 3 性能测试 | LWT 脚本 vs 同功能 Python；同一机器同一负载；重点是测量方法 | S11 `reports/performance.md`（中位数）、S44 分层加速、**S52 `reports/s52-course-align/performance-space.json`（P95/P99 + 峰值内存）** | `python tools/compare_perf.py` | 完成（Ubuntu RSS 未验证） |
 | 4 Agent 开发指南 | Skills/Rules 形式；覆盖运行方式、语法、语义、内置函数；**Agent 能否写对是指南试金石** | `.agents/skills/lwt-app/SKILL.md`、`docs/developer-guide.md`；S48 60 会话消融（区间含 0，观察性） | `python -m lwt --check examples/modules/main.lwt` | 完成（消融不外推因果） |
 | 5 Agent 应用 | ≥200 行、功能完整；**重点不是凑行数，是协作过程** | 243 / 233 / 313 行 LWT 应用；`docs/agent-dev-log.md`、`docs/s42-app-dev-log.md`（需求→架构→编码→测试→文档→排错，人负责设计与审查） | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log` | 完成 |
@@ -18,7 +18,7 @@
 |---|---|---|---|
 | 1 | 语法规则文档 | `docs/language-spec.md` | 完成 |
 | 2 | 解释器源程序 | `lwt/` | 完成 |
-| 3 | 完整黑盒测试集 | `tests/cases/`（400 项 / 426 个 LWT 脚本） | 完成 |
+| 3 | 完整黑盒测试集 | `tests/cases/`（400 项 / 427 个 LWT 脚本） | 完成 |
 | 4 | 性能测试报告 | `reports/performance.md`、`reports/s44-performance/`、`reports/s52-course-align/` | 完成（补充测量） |
 | 5 | 开发指南（人 + AI） | `docs/developer-guide.md`、`.agents/skills/lwt-app/SKILL.md` | 完成 |
 | 6 | Agent 应用与开发记录 | `app/log_report.lwt`、`app/concurrent_log_report.lwt`、`app/lwt_snake/game.lwt`、`docs/agent-dev-log.md` | 完成 |
@@ -29,8 +29,8 @@
 
 | 分值 | 评分项 | 对应证据 | 自评边界 |
 |---|---|---|---|
-| 20 | 解释器实现 | §1–§11、400 黑盒、46×10 确定性 | 不与现存语言完全相同；未声称形式化证明 |
-| 20 | 自动测试脚本 | 400/400；§8 逐项矩阵；426 个 LWT 脚本 | “完整”指规范可执行小节全覆盖，不含纯设计取舍（8.6/11.9） |
+| 20 | 解释器实现 | §1–§11、400 黑盒（S52 当时）、46×10 确定性 | 不与现存语言完全相同；未声称形式化证明 |
+| 20 | 自动测试脚本 | 400/400；§8 逐项矩阵；427 个 LWT 脚本 | “完整”指规范可执行小节全覆盖，不含纯设计取舍（8.6/11.9） |
 | 10 | 性能测试 | S11 正式 + S44 分层 + S52 分位数/空间 | 仍慢于 CPython；重点是测量方法与空间维度 |
 | 20 | 语法说明 + 开发指南 | 规范 §1–§11、开发者指南、Skill | 指南有效性由 S48 观察性消融支撑，非因果证明 |
 | 30 | Agent 应用 | 243/233/313 行 + 协作记录 | 行数可复算；功能完整由 CLI 复现，非口头声明 |

@@ -55,7 +55,7 @@ close(ch);                    # 幂等关闭；关闭后 send 报错
 `tools/model_check_concurrency.py` 对小型程序做**有界**系统化调度探索：枚举每个调度点的 `ready` 备选，强制前缀重跑，检查 corpus 的 `.model.json` 不变量（通道精确一次/FIFO/close 排空、join 错误重抛、死锁、后代收尾）。违反时贪心最小化前缀并写 `--schedule-replay` 轨迹。
 
 - **不是形式化证明**：只覆盖 `--max-runs`/`--max-decisions`/`--time-budget` 内的路径；预算耗尽写 `BUDGET_EXHAUSTED`，不写 PASS。
-- corpus 在 `tests/concurrency-model/`（**不在** `tests/cases/`，黑盒计数仍 400）；`lost-update` 的两种结果是 `allowed_outcomes`，不是违规。
+- corpus 在 `tests/concurrency-model/`（**不在** `tests/cases/`，黑盒计数仍 401）；`lost-update` 的两种结果是 `allowed_outcomes`，不是违规。
 - `--mutant duplicate-delivery` 仅在工具进程内复现 S45 缺陷，用于证明检查器能抓到随机抽样漏掉的交接时序；产品路径不变。
 - 算法、预算、witness 读法与限制见[模型检查说明](concurrency-model-check.md)；S46 实测见[S46 验证报告](s46-concurrency-verification.md)。
 

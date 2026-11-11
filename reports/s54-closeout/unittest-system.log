@@ -1,0 +1,92 @@
+$ C:\Users\28641\AppData\Local\Programs\Python\Python313\python.exe -m unittest discover -s tests -q
+CounterfactualError: total deadline exceeded or cancelled; process tree reclaimed
+WitnessError: total deadline or cancellation; process tree reclaimed
+benchmark_v2: output must stay under reports/s44-performance/ (got bench/results.json)
+benchmark_v2: output must stay under reports/s44-performance/ (got reports/performance.md)
+benchmark_v2: output must stay under reports/s44-performance/ (got reports/runtime-profile.json)
+benchmark_v2: output must stay under reports/s44-performance/ (got out.json)
+measure_startup: refusing to overwrite protected evidence reports/runtime-profile.json
+measure_startup: refusing to overwrite protected evidence bench/results.json
+measure_startup: refusing to overwrite protected evidence reports/performance.md
+verify_fresh_clone: bundle not found: C:\Users\28641\AppData\Local\Temp\lwt-s47-missing-n_hrsrat\does-not-exist.bundle
+----------------------------------------------------------------------
+Ran 752 tests in 739.744s
+
+OK
+model-check: mutant=none programs=8 runs=8 violations=0 budget_exhausted=3 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=2.26s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  deadlock-two-receivers: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
+  nested-spawn-drain: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
+model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=2.81s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  deadlock-two-receivers: COMPLETE runs=3 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+  nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
+model-check: mutant=none programs=1 runs=19 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=0.86s
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+model-check: mutant=none programs=1 runs=5 violations=1 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=0.96s
+  order-fixed: COMPLETE runs=5 outcomes=2 violations=1 min_prefix=[2]
+model-check: mutant=duplicate-delivery programs=8 runs=32 violations=4 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=4.33s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  deadlock-two-receivers: COMPLETE runs=3 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+  nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
+model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=3.40s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  deadlock-two-receivers: COMPLETE runs=3 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+  nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
+P1 version          PLANNED          0.0s
+P2 help             PLANNED          0.0s
+P3 hello            PLANNED          0.0s
+P4 check            PLANNED          0.0s
+P5 hello            PLANNED          0.0s
+P5 dap              PLANNED          0.0s
+P6 blackbox         PLANNED          0.0s
+P6 integrity        PLANNED          0.0s
+P7 blind            PLANNED          0.0s
+P8 diff-eq          PLANNED          0.0s
+P9 replay           PLANNED          0.0s
+P10 s11              PLANNED          0.0s
+P10 compare-perf     PLANNED          0.0s
+P11 determinism      PLANNED          0.0s
+P12 doc-consistency  PLANNED          0.0s
+P13 determinism      PLANNED          0.0s
+P14 replay           PLANNED          0.0s
+P15 diff-eq          PLANNED          0.0s
+P16 no-concurrency   PLANNED          0.0s
+P16 s44-startup      PLANNED          0.0s
+P17 s44-exec         PLANNED          0.0s
+P17 compare-perf     PLANNED          0.0s
+P18 unittest         PLANNED          0.0s
+P18 integrity        PLANNED          0.0s
+P19 s46-clean        PLANNED          0.0s
+P19 s46-mutant       PLANNED          0.0s
+P20 bundle-index     PLANNED          0.0s
+P20 fresh-clone      PLANNED          0.0s
+P21 blind            PLANNED          0.0s
+P21 blind-ci         PLANNED          0.0s
+P21 ppt              PLANNED          0.0s
+P21 doc-consistency  PLANNED          0.0s
+rehearse_defense: dry-run planned=32 PASS=0 FAIL=0 TIMEOUT=0 SKIPPED=0 -> C:\Users\28641\AppData\Local\Temp\s49-rehearse-hlya1wpi\rehearsal.json
+Project integrity: OK; cases=401; matrix_links=498; referenced_cases=401
+build_submission: C:/Users/28641/AppData/Local/Temp/lwt-s47-pkg-lrcmllal/pkg bundle=yes zip=yes
+  zip sha256=171cbd1707e3649b entries=1787
+  bundle verify exit=0 sha256=47835d49465a1c4b

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-11T14:27:46Z",
+  "generated_at_utc": "2026-11-11T16:08:06Z",
   "platform": {
     "name": "教学云平台",
     "url": "https://ucloud.bupt.edu.cn/",
@@ -19,7 +19,7 @@
       "expected_sha256": "e5db74b7c91a629411766738349c6e1ac8b754dcbcc9d10484c29718795485b4",
       "sha_ok": true,
       "required": true,
-      "note": "解压后即为完整仓库；--verify-blackbox 会实跑 400 黑盒"
+      "note": "解压后即为完整仓库；--verify-blackbox 会实跑 401 黑盒"
     },
     {
       "name": "Git 历史 bundle",
@@ -35,8 +35,8 @@
       "name": "PPT",
       "path": "slides/LWT介绍.pptx",
       "exists": true,
-      "sha256": "7cb28b13948942b7a4b1b8fb64fb68e8aba04ab627188272a8b55c367355878c",
-      "expected_sha256": "7cb28b13948942b7a4b1b8fb64fb68e8aba04ab627188272a8b55c367355878c",
+      "sha256": "809320b2aee60089b1df23d1d2ed8362d4f09819f4315749ab063d9eff90ef99",
+      "expected_sha256": "809320b2aee60089b1df23d1d2ed8362d4f09819f4315749ab063d9eff90ef99",
       "sha_ok": true,
       "required": true,
       "note": "21 页；内容本阶段未改动"
@@ -45,8 +45,8 @@
       "name": "README.md",
       "path": "README.md",
       "exists": true,
-      "sha256": "f614e07aeee40f31a0ecbc3f3a2551814bd5cd9d477392c2bb05fa3ddb124a4f",
-      "expected_sha256": "f614e07aeee40f31a0ecbc3f3a2551814bd5cd9d477392c2bb05fa3ddb124a4f",
+      "sha256": "1cc415582a8ff635ecf0a17490cfebd32fe06a1778cad24debf3007ba249052b",
+      "expected_sha256": "1cc415582a8ff635ecf0a17490cfebd32fe06a1778cad24debf3007ba249052b",
       "sha_ok": true,
       "required": true,
       "note": "教师入口：三分钟验收路径 + 当前状态"
@@ -55,8 +55,8 @@
       "name": "SUBMISSION.md",
       "path": "SUBMISSION.md",
       "exists": true,
-      "sha256": "7e8690417fb70afbec8e0547ea0128825e362fc1e08ae6426123f9d95f44dd4c",
-      "expected_sha256": "7e8690417fb70afbec8e0547ea0128825e362fc1e08ae6426123f9d95f44dd4c",
+      "sha256": "df50c1307ce4aba5a46c090e97c591ce2708f4e7757f9597a58b75f2ea40e4e8",
+      "expected_sha256": "df50c1307ce4aba5a46c090e97c591ce2708f4e7757f9597a58b75f2ea40e4e8",
       "sha_ok": true,
       "required": true,
       "note": "8 项提交内容 + 第 8 章任务对照"
@@ -75,8 +75,8 @@
       "name": "docs/test-matrix.md",
       "path": "docs/test-matrix.md",
       "exists": true,
-      "sha256": "820bf48da8b283e900d30046a24f04ba1599d0878faca42ea49b095f44727e0a",
-      "expected_sha256": "820bf48da8b283e900d30046a24f04ba1599d0878faca42ea49b095f44727e0a",
+      "sha256": "dd4d609b5f66d34861174d15d366db9a0af0a215aeb096ed4bb2df95d1a2b1c3",
+      "expected_sha256": "dd4d609b5f66d34861174d15d366db9a0af0a215aeb096ed4bb2df95d1a2b1c3",
       "sha_ok": true,
       "required": true,
       "note": "覆盖矩阵（§8 逐项打勾）"
@@ -85,8 +85,8 @@
       "name": "docs/defense-qa-card.md",
       "path": "docs/defense-qa-card.md",
       "exists": true,
-      "sha256": "b00878ae4b592d8c235e0475a4737208389667edbc457559ad719bde376ac0cc",
-      "expected_sha256": "b00878ae4b592d8c235e0475a4737208389667edbc457559ad719bde376ac0cc",
+      "sha256": "91319542a35496e2bd43eae4a088dac25263c3ef15069954ba3afe30cecb50d3",
+      "expected_sha256": "91319542a35496e2bd43eae4a088dac25263c3ef15069954ba3afe30cecb50d3",
       "sha_ok": true,
       "required": true,
       "note": "答辩问答卡"
@@ -134,11 +134,10 @@
   ],
   "artifacts_ok": true,
   "blackbox": {
-    "checked": true,
-    "exit_code": 0,
-    "passed": 400,
-    "total": 400,
-    "detail": "Black-box tests: passed=400 failed=0 total=400; categories (passed/total): arrays-records-each=32/32, builtins-text-io=43/43, cli-errors=13/13, concurrency=46/46, control-functions=43/43, dict-maps=43/43, error-recovery=64/64, integrated=3/3, lexer-parser=52/52, modules=30/30, values-operators=31/31"
+    "checked": false,
+    "passed": null,
+    "total": null,
+    "detail": "not requested"
   },
   "all_pass": true
 }

@@ -1,7 +1,7 @@
 # LWT 答辩逐页讲稿（21 页，S49）
 
 > 用途：现场答辩的逐页口播、追问应答与证据复算入口。**这是本地彩排脚本，不是教师线下验收**；验收是否通过由教师现场判定。
-> 唯一数字来源：`docs/delivery-manifest.json`（当前 0.3.0 / 400 黑盒 / 747 unittest / 21 页）。页码与断言映射的机器可读版本见 [`defense-pages.json`](defense-pages.json)，证据台见 [`defense-index.html`](defense-index.html)。
+> 唯一数字来源：`docs/delivery-manifest.json`（当前 0.3.0 / 401 黑盒 / 752 unittest / 21 页）。页码与断言映射的机器可读版本见 [`defense-pages.json`](defense-pages.json)，证据台见 [`defense-index.html`](defense-index.html)。
 > 标记：**现场跑** = 该页命令必须在现场真实执行；**只展示** = 打开已提交证据，不假装现场重跑；**口播** = 无命令。
 > 时间盒：满时约 14 分钟；若限 8 分钟，跳过 9/13/15/19 四张（只讲 17 张），并在第 21 张补一句“细节在证据台”。
 
@@ -15,12 +15,12 @@
 
 | 页 | 标题 | 口播要点（≤3 句） | 追问与一句话回答 | 断言 | 现场命令 / 降级证据 | 模式 |
 |---|---|---|---|---|---|---|
-| 1 | 封面：LWT 可执行语言与可复验应用 | 我做的是一个可执行语言 LWT：规范、解释器、400 项黑盒、指南、应用、Git 与 PPT 八项齐全。今天每一页都配一条可当场复算的命令。 | Q：一句话说清它是什么？ A：带 record/dict/throw-finally/协作式并发子语言的解释型脚本语言，实现与证据同仓。 | `version` | `python -m lwt --version`；降级：`docs/delivery-manifest.json` | **现场跑** |
+| 1 | 封面：LWT 可执行语言与可复验应用 | 我做的是一个可执行语言 LWT：规范、解释器、401 项黑盒、指南、应用、Git 与 PPT 八项齐全。今天每一页都配一条可当场复算的命令。 | Q：一句话说清它是什么？ A：带 record/dict/throw-finally/协作式并发子语言的解释型脚本语言，实现与证据同仓。 | `version` | `python -m lwt --version`；降级：`docs/delivery-manifest.json` | **现场跑** |
 | 2 | 课程八项交付物 | 八项交付物对应课程五个评分项：解释器 20、测试 20、性能 10、语法+指南 20、应用 30。入口是 `SUBMISSION.md`，每项一行命令。 | Q：哪一项最弱？ A：性能只做到端到端 2.7–5.0×，比 Python 慢，这是结构性成本，不美化。 | `help` | `python -m lwt --help`；降级：`SUBMISSION.md` | 口播 |
 | 3 | LWT 语言的特色组合 | 语言特色是 `record` 字段访问、`each` 浅快照、`when/otherwise` 与 `emit` 的输出模型。下面跑最小程序。 | Q：和 Python 差在哪？ A：静态记录形状 + 显式错误分类 + 可调度并发的确定性，不是通用库生态。 | `hello` | `python -m lwt examples/guide/hello.lwt`；降级：`examples/guide/hello.lwt` | **现场跑** |
 | 4 | 解释器执行路径 | 源码经 lexer、parser 到 AST，再由树遍历执行；`--check` 只做静态检查不执行。 | Q：为什么不用字节码？ A：课程目标是语义与可验证性，树遍历更容易保证错误定位与轨迹一致。 | `check` | `python -m lwt --check examples/modules/main.lwt`；降级：`docs/developer-guide.md` | **现场跑** |
 | 5 | 关键语义与可定位错误 | 除零会带行列与类别退出 3；错误分类让 `recover` 能按 category 分流。DAP 侧对 `spawn` 直接拒绝，避免调试器与调度器语义冲突。 | Q：DAP 为什么拒绝 spawn？ A：调试暂停点与调度点无法同时保证确定性，宁可拒绝也不静默降级。 | `hello` `dap` | `python -m unittest tests.test_dap_spawn_rejection -q`；降级：`tests/test_dap_spawn_rejection.py` | **现场跑** |
-| 6 | 一键黑盒测试与覆盖矩阵 | 一条命令跑 400 项黑盒，按类别统计；完整性检查证明 400 项全部被矩阵引用、无孤儿用例。 | Q：400 项够吗？ A：覆盖五类语法与 46 项并发，且每项都能被矩阵追溯；不足在“真实程序规模”，用应用与差分等价补。 | `blackbox` `integrity` | `python tools/run_tests.py`（约 4 分钟）；降级：`tests/cases/`、`docs/test-matrix.md` | **现场跑** |
+| 6 | 一键黑盒测试与覆盖矩阵 | 一条命令跑 401 项黑盒，按类别统计；完整性检查证明 401 项全部被矩阵引用、无孤儿用例。 | Q：401 项够吗？ A：覆盖五类语法与 46 项并发，且每项都能被矩阵追溯；不足在“真实程序规模”，用应用与差分等价补。 | `blackbox` `integrity` | `python tools/run_tests.py`（约 4 分钟）；降级：`tests/cases/`、`docs/test-matrix.md` | **现场跑** |
 | 7 | Agent 指南与真实 LWT 应用 | 指南 + Skill 让 Agent 能独立写出 243 行日志分析器与 233 行并发版；S48 用 60 个会话做了 T/C 消融。 | Q：指南真有用吗？ A：本样本下没测出增量（T−C 区间含 0），我不把“能写出来”说成指南的因果功劳。 | `blind` | `python tools/run_defense_probe.py --claim blind`；降级：`docs/s48-agent-eval.md` | 口播 |
 | 8 | 日志分析器：公开 CLI 结果 | 日志分析器支持坏行、等级、关键字与 top-k；并发版按输入顺序归并，与串行版逐字节等价。 | Q：并发版快吗？ A：并发是为确定性与结构，不是提速；性能对照见第 15 页，不宣称 CPU 加速。 | `diff-eq` `replay` | `python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log`；降级：`app/concurrent_log_report.lwt` | **现场跑** |
 | 9 | LWT Snake 与策略证据链 | Snake 的规则层是 LWT，GUI 只是展示层；策略证据链给出同一观察前缀下的分支与预算。 | Q：GUI 能现在演示吗？ A：桌面演示属人工 GUI 验收项（A–E），我今天按 CLI 降级轨给等价证据，不冒充已验收。 | `replay` | 只展示：`docs/s41-gui-acceptance.md`；`reports/s42-schedules/` | 只展示 |

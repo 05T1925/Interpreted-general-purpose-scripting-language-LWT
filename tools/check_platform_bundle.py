@@ -102,7 +102,7 @@ def main(argv: list[str] | None = None) -> int:
         })
 
     add("提交包 zip", zip_path, index["zip_sha256"], True,
-        "解压后即为完整仓库；--verify-blackbox 会实跑 400 黑盒")
+        "解压后即为完整仓库；--verify-blackbox 会实跑 401 黑盒")
     add("Git 历史 bundle", bundle_path, index["bundle_sha256"], True,
         f"截止 SHA {index['bundle_ref_sha'][:12]}；git fetch <bundle> main 可复核")
     add("PPT", ROOT / "slides" / "LWT介绍.pptx", manifest["ppt_sha256"], True,
@@ -173,7 +173,7 @@ def main(argv: list[str] | None = None) -> int:
 ## 3. 校验结果
 
 - 必需文件 SHA 全部一致：**{doc['artifacts_ok']}**
-- 解压后 400 黑盒：**{blackbox.get('passed')}/{blackbox.get('total')}**（checked={blackbox.get('checked')}，exit={blackbox.get('exit_code', '—')}）
+- 解压后 401 黑盒：**{blackbox.get('passed')}/{blackbox.get('total')}**（checked={blackbox.get('checked')}，exit={blackbox.get('exit_code', '—')}）
 - 总判定 `all_pass`：**{doc['all_pass']}**
 - 包索引：`{args.package_index}`（tip `{str(doc['final_tip_sha'])[:12]}`）
 

@@ -1,0 +1,143 @@
+$ C:\Users\28641\AppData\Local\Programs\Python\Python313\python.exe -m unittest discover -s tests -q
+CounterfactualError: total deadline exceeded or cancelled; process tree reclaimed
+WitnessError: total deadline or cancellation; process tree reclaimed
+Project integrity: FAILED; unreferenced=1 exceeds exempt=0 (cases=401, referenced_cases=400)
+benchmark_v2: output must stay under reports/s44-performance/ (got bench/results.json)
+benchmark_v2: output must stay under reports/s44-performance/ (got reports/performance.md)
+benchmark_v2: output must stay under reports/s44-performance/ (got reports/runtime-profile.json)
+benchmark_v2: output must stay under reports/s44-performance/ (got out.json)
+measure_startup: refusing to overwrite protected evidence reports/runtime-profile.json
+measure_startup: refusing to overwrite protected evidence bench/results.json
+measure_startup: refusing to overwrite protected evidence reports/performance.md
+verify_fresh_clone: bundle not found: C:\Users\28641\AppData\Local\Temp\lwt-s47-missing-7vk3v22m\does-not-exist.bundle
+======================================================================
+FAIL: test_evidence_paths_exist (test_delivery_readiness.DefenseClaimsTests.test_evidence_paths_exist)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\28641\Desktop\大三上\程序设计实践\大作业\tests\test_delivery_readiness.py", line 38, in test_evidence_paths_exist
+    self.assertEqual(missing, [], f"claims point at missing evidence: {missing}")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['reports/s54-closeout/unittest-single-command.json'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'reports/s54-closeout/unittest-single-command.json'
+
+- ['reports/s54-closeout/unittest-single-command.json']
++ [] : claims point at missing evidence: ['reports/s54-closeout/unittest-single-command.json']
+
+======================================================================
+FAIL: test_defense_claim_evidence_paths_exist (test_doc_consistency.EvidenceReachabilityTests.test_defense_claim_evidence_paths_exist)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\28641\Desktop\大三上\程序设计实践\大作业\tests\test_doc_consistency.py", line 602, in test_defense_claim_evidence_paths_exist
+    self.assertEqual(missing, [], f"defense claims point at missing evidence: {missing}")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['reports/s54-closeout/unittest-single-command.json'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'reports/s54-closeout/unittest-single-command.json'
+
+- ['reports/s54-closeout/unittest-single-command.json']
++ [] : defense claims point at missing evidence: ['reports/s54-closeout/unittest-single-command.json']
+
+======================================================================
+FAIL: test_all_400_cases_are_referenced (test_perf_tools.CoverageGateTests.test_all_400_cases_are_referenced)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\28641\Desktop\大三上\程序设计实践\大作业\tests\test_perf_tools.py", line 153, in test_all_400_cases_are_referenced
+    self.assertEqual(result.case_count, 400)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 401 != 400
+
+======================================================================
+FAIL: test_require_all_referenced_cli_passes (test_perf_tools.CoverageGateTests.test_require_all_referenced_cli_passes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\28641\Desktop\大三上\程序设计实践\大作业\tests\test_perf_tools.py", line 167, in test_require_all_referenced_cli_passes
+    self.assertEqual(code, 0, buf.getvalue())
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : 
+
+----------------------------------------------------------------------
+Ran 752 tests in 728.042s
+
+FAILED (failures=4, skipped=1)
+model-check: mutant=none programs=8 runs=8 violations=0 budget_exhausted=3 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=1.87s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  deadlock-two-receivers: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
+  nested-spawn-drain: BUDGET_EXHAUSTED runs=1 outcomes=1 violations=0 min_prefix=None
+model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=1.90s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  deadlock-two-receivers: COMPLETE runs=3 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+  nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
+model-check: mutant=none programs=1 runs=19 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=0.41s
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+model-check: mutant=none programs=1 runs=5 violations=1 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=0.65s
+  order-fixed: COMPLETE runs=5 outcomes=2 violations=1 min_prefix=[2]
+model-check: mutant=duplicate-delivery programs=8 runs=32 violations=4 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=3.22s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=1 min_prefix=[]
+  deadlock-two-receivers: COMPLETE runs=3 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+  nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
+model-check: mutant=none programs=8 runs=32 violations=0 budget_exhausted=0 invalid_prefixes=0 thread_leaks=0 replay_failures=0 elapsed=2.38s
+  channel-blocked-then-queued: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-close-drain: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-exactly-once: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  channel-fifo-three: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  deadlock-two-receivers: COMPLETE runs=3 outcomes=1 violations=0 min_prefix=None
+  join-error-origin: COMPLETE runs=1 outcomes=1 violations=0 min_prefix=None
+  lost-update: COMPLETE runs=19 outcomes=2 violations=0 min_prefix=None
+  nested-spawn-drain: COMPLETE runs=5 outcomes=1 violations=0 min_prefix=None
+P1 version          PLANNED          0.0s
+P2 help             PLANNED          0.0s
+P3 hello            PLANNED          0.0s
+P4 check            PLANNED          0.0s
+P5 hello            PLANNED          0.0s
+P5 dap              PLANNED          0.0s
+P6 blackbox         PLANNED          0.0s
+P6 integrity        PLANNED          0.0s
+P7 blind            PLANNED          0.0s
+P8 diff-eq          PLANNED          0.0s
+P9 replay           PLANNED          0.0s
+P10 s11              PLANNED          0.0s
+P10 compare-perf     PLANNED          0.0s
+P11 determinism      PLANNED          0.0s
+P12 doc-consistency  PLANNED          0.0s
+P13 determinism      PLANNED          0.0s
+P14 replay           PLANNED          0.0s
+P15 diff-eq          PLANNED          0.0s
+P16 no-concurrency   PLANNED          0.0s
+P16 s44-startup      PLANNED          0.0s
+P17 s44-exec         PLANNED          0.0s
+P17 compare-perf     PLANNED          0.0s
+P18 unittest         PLANNED          0.0s
+P18 integrity        PLANNED          0.0s
+P19 s46-clean        PLANNED          0.0s
+P19 s46-mutant       PLANNED          0.0s
+P20 bundle-index     PLANNED          0.0s
+P20 fresh-clone      PLANNED          0.0s
+P21 blind            PLANNED          0.0s
+P21 blind-ci         PLANNED          0.0s
+P21 ppt              PLANNED          0.0s
+P21 doc-consistency  PLANNED          0.0s
+rehearse_defense: dry-run planned=32 PASS=0 FAIL=0 TIMEOUT=0 SKIPPED=0 -> C:\Users\28641\AppData\Local\Temp\s49-rehearse-amebtdg2\rehearsal.json
+Project integrity: OK; cases=401; matrix_links=497; referenced_cases=400
+build_submission: C:/Users/28641/AppData/Local/Temp/lwt-s47-pkg-bqy15_4m/pkg bundle=yes zip=yes
+  zip sha256=dc30873cf499a63d entries=1787
+  bundle verify exit=0 sha256=0b3a2049cbd99710

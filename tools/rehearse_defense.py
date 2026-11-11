@@ -121,7 +121,7 @@ def render_markdown(doc: dict) -> str:
         "",
         "- 超时记 `TIMEOUT`，命令失败记 `FAIL`，未提交记 `UNRUN`；没有“基本通过”。",
         "- `--dry-run` 只打印计划；`--offline` 不执行命令，只用已提交证据。",
-        "- heavy 断言（400 黑盒、全量 unittest、46×10）默认 60 秒会超时，这是时间盒的真实结果；"
+        "- heavy 断言（401 黑盒、全量 unittest、46×10）默认 60 秒会超时，这是时间盒的真实结果；"
         "现场应改为只展示已记录证据，或用 `--allow-heavy` 单独排练。",
         "",
     ]
