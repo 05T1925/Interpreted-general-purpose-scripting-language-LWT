@@ -32,7 +32,7 @@ import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OUT = ROOT / "reports" / "s53-mutation" / "fresh-clone.json"
+DEFAULT_OUT = ROOT / "reports" / "s54-closeout" / "fresh-clone.json"
 LATEST = ROOT / "dist" / "latest.json"
 
 

@@ -240,15 +240,8 @@ def _package_index(
         "diff_paths": diff_paths,
         "diff_whitelist": [
             INDEX_REL.as_posix(),
-            "reports/s53-mutation/fresh-clone.json",
-            "reports/s53-mutation/fresh-clone.md",
-            "reports/s53-mutation/selfcheck/",
-            "reports/s53-mutation/defense-probe.json",
-            "reports/s53-mutation/defense-probe.md",
-            "reports/s53-mutation/mutation-report.json",
-            "reports/s53-mutation/mutation-report.md",
-            "reports/s49-rehearsal/ci-cells.json",
-            "docs/s53-mutation-interface.md",
+            "reports/s54-closeout/fresh-clone.json",
+            "reports/s54-closeout/fresh-clone.md",
             # The platform checklist describes the package's own SHA, so it can
             # never be inside that package; regenerate it after each repack.
             "docs/platform-submission.json",
