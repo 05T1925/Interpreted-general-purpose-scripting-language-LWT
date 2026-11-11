@@ -155,6 +155,9 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 | 任务 4 Agent 开发指南 | `.agents/skills/lwt-app/SKILL.md`、`docs/developer-guide.md` | `python -m lwt --check examples/modules/main.lwt` |
 | 任务 5 Agent 应用（≥200 行，重功能与协作） | `app/log_report.lwt`、`app/concurrent_log_report.lwt`、`app/lwt_snake/game.lwt`、`docs/agent-dev-log.md` | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log` |
 
+> **第 4 章口径对照**：CLI 的退出码合同、stdout/stderr 分流、结构化输出（`--check --format=json`、`--profile`、`--schedule-log`）与“只增不改”的兼容做法，逐条见 [docs/agent-friendly-interface.md](docs/agent-friendly-interface.md)。
+> **第 5 章口径对照**：测试不是“永真断言”——18 条语义变异探针全部被判红，证据见 [reports/s53-mutation/mutation-report.json](reports/s53-mutation/mutation-report.json)；边界与本机解释器陷阱见 [docs/s53-mutation-interface.md](docs/s53-mutation-interface.md)。
+'''
 ## 提交内容 1–8（对应课程要求）
 
 | # | 提交内容 | 分值 | 仓库位置 | 一条验证命令 | 证据 | 状态 |

@@ -165,11 +165,26 @@
 | 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
 |---|---|---|---|
 | §8 覆盖矩阵 | `docs/test-matrix.md` | §8.1–8.8 逐行列真实用例；§9/§10/§11 补到小节级；§8.6/§11.9 标设计决策 | 完成 |
-| 覆盖门禁 | `tests/test_course_coverage_matrix.py` | 先红 20 缺口后 5/5；`VALID_SPEC_REFS` 注册 16 个新小节；runner 35/35；当前 400 黑盒 / **731** unittest / 21 页 | 完成 |
+| 覆盖门禁 | `tests/test_course_coverage_matrix.py` | 先红 20 缺口后 5/5；`VALID_SPEC_REFS` 注册 16 个新小节；runner 35/35；**S52 当时** 400 黑盒 / 731 unittest / 21 页 | 完成 |
 | 用 LWT 测试 LWT | `README.md`、`docs/test-matrix.md`、`SUBMISSION.md` | 426 个 `*.lwt` / 400 JSON；runner 只驱动公开 CLI；测试固化 | 完成 |
 | 性能补充 | `reports/s52-course-align/performance-space.{json,md}` | P50/P95/P99 + peak_bytes + 压力 N=1000/5000/20000；S11/S44 零改动 | 完成（Ubuntu RSS 未验证） |
 | 课件口径 | `docs/s52-course-alignment.md`、答辩卡 +4 问、SUBMISSION 任务表 | 第 8 章任务 1–5 / 提交 8 项 / 评分 5 项逐条对照；11/17 窗口提醒 | 完成 |
 | 现场人工 GUI A–E | 无 | 本轮不执行，保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
 
 **重要（S52）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。报告见 [s52-course-alignment.md](s52-course-alignment.md)。
+
+## S53 变异探针、接口对照与提交链路（执行窗口自测；基线未经主窗口复核 S43–S52）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| 变异探针 | `tools/audit_semantic_mutants.py`、`reports/s53-mutation/mutation-report.json` | 18 条（S42/S43 新增 9 条）；killed **18**、invalid **0**；每条有 `patch_sha256` 与 `killed_by` | 18/18 |
+| 隔离与还原 | `reports/s53-mutation/mutation-report.json` | 只在 `TemporaryDirectory` 副本打补丁；运行前后 `git status --porcelain` 为空 | `repo_clean=true` |
+| 诚实边界 | `reports/s53-mutation/probe-inventory.md` | 三个“目标用例单独不判别”的弱用例 + 一个真实盲区（按 key 排序的显示变异存活） | 已记录 |
+| Agent 友好接口 | `docs/agent-friendly-interface.md` | 课件 4.4/4.5 逐条对照，每条给复算命令；`--fields`/`--debug` 标注未实现 | 完成 |
+| MCP | `lwt/mcp_server.py`、`tests/test_mcp_server.py` | 行分隔 JSON-RPC 2.0；`initialize`/`tools/list`/`tools/call`；协议级 **8/8** | 已实现，未做宿主端到端 |
+| 平台提交清单 | `docs/platform-submission.md`、`tools/check_platform_bundle.py` | 文件存在 + SHA 一致 +（可选）解压后 400 黑盒；`uploaded=false` | 工具通过，未上传 |
+| 当前计数 | `docs/delivery-manifest.json` | **400 黑盒 / 747 unittest / 21 页**；S52 报告保留 731 作为冻结快照 | 已同步 |
+| 现场人工 GUI A–E | 无 | 本轮不执行，保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
+
+**重要（S53）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。变异分数不是总体正确率。报告见 [s53-mutation-interface.md](s53-mutation-interface.md)。
 

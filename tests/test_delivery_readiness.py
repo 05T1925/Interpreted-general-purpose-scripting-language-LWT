@@ -219,7 +219,10 @@ class FirstScreenTests(unittest.TestCase):
         # quote the moving manifest count.
         self.assertIn("719", checklist.split("## S50", 1)[1])
         self.assertIn("## S52", checklist)
-        self.assertIn(str(manifest["unittest_count"]), checklist.split("## S52", 1)[1])
+        # S52 is frozen at 731; only the S53 section tracks the manifest.
+        self.assertIn("731", checklist.split("## S52", 1)[1].split("## S53", 1)[0])
+        self.assertIn("## S53", checklist)
+        self.assertIn(str(manifest["unittest_count"]), checklist.split("## S53", 1)[1])
 
         for rel in ("SUBMISSION.md", "docs/defense-qa-card.md"):
             text = (ROOT / rel).read_text(encoding="utf-8")

@@ -1,7 +1,7 @@
 # LWT 答辩逐页讲稿（21 页，S49）
 
 > 用途：现场答辩的逐页口播、追问应答与证据复算入口。**这是本地彩排脚本，不是教师线下验收**；验收是否通过由教师现场判定。
-> 唯一数字来源：`docs/delivery-manifest.json`（当前 0.3.0 / 400 黑盒 / 731 unittest / 21 页）。页码与断言映射的机器可读版本见 [`defense-pages.json`](defense-pages.json)，证据台见 [`defense-index.html`](defense-index.html)。
+> 唯一数字来源：`docs/delivery-manifest.json`（当前 0.3.0 / 400 黑盒 / 747 unittest / 21 页）。页码与断言映射的机器可读版本见 [`defense-pages.json`](defense-pages.json)，证据台见 [`defense-index.html`](defense-index.html)。
 > 标记：**现场跑** = 该页命令必须在现场真实执行；**只展示** = 打开已提交证据，不假装现场重跑；**口播** = 无命令。
 > 时间盒：满时约 14 分钟；若限 8 分钟，跳过 9/13/15/19 四张（只讲 17 张），并在第 21 张补一句“细节在证据台”。
 
