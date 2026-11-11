@@ -108,8 +108,8 @@ python tools/run_selftest.py
 | 黑盒 | **401/401 不变**（本阶段只新增 `tests/selftest/`，不进 `tests/cases/`） |
 | PPT | 文案修正后重渲染 **21/21、0 空白**，PDF 395,643 B，第 10 页图表 12 点未变；SHA `809320b2…`→`329483857513…` |
 | 保护路径 | S11/S44/S46/S48–S54 冻结证据零 diff；`tests/cases/**` 零改动；S54 的渲染证据与 752 计数保留为冻结快照 |
-| 交付包 | 在 `72da29e` 重建：bundle `5d77a642…`（verify=0）、zip `4cee6aa1…`、1880 项 |
-| 干净克隆 | `72da29e` → 6 条命令 exit 0、**401/401**（不依赖未跟踪文件）；`check_package_lag` 的 `lag=1`（仅包索引）、`outside=0` |
+| 交付包 | 在 S55 内容 tip 重建（`bundle_ref_sha` / bundle / zip 的 SHA 与条目数以 [`reports/s48-defense/package-index.json`](../reports/s48-defense/package-index.json) 为准；`git bundle verify` 退出 0、1880 项）。报告不写死这些 SHA——每重打一次包它们都会变，写死即失效 |
+| 干净克隆 | 从该包 clone（不复用工作区未跟踪文件）：6 条命令 exit 0、**401/401**；`check_package_lag` 的 `lag=1`（仅包索引本身）、`outside=0` |
 
 > 自检工具默认把证据写到 `reports/s45-acceptance/`（S45 的历史默认值）。本次运行后已把新产物移到 `reports/s55-selftest/selfcheck/`，冻结目录的**已跟踪内容**没有任何改动；以后跑自检请显式加 `--out`，避免在被冻结的目录里留下未跟踪文件。
 
