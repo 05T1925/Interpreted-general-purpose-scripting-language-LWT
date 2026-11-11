@@ -1,24 +1,26 @@
 {
   "bundle_ref_matches_final_tip": true,
-  "bundle_ref_sha": "eee659f2125d1e24a6a8d5c3b78602202ba336af",
-  "bundle_sha256": "4aac7b24f01de5191eb6d82b43ca3f010e14815ec5a5041645c238f8a2aa9325",
+  "bundle_ref_sha": "9d48a9ec125e391361bf6570db1955523d0ac6c7",
+  "bundle_sha256": "dc09784d904f9f53d5432410ba334b7982311cf7e658f0ad30b29a8e404f0f02",
   "diff_paths": [],
   "diff_whitelist": [
     "reports/s48-defense/package-index.json",
-    "reports/s52-course-align/fresh-clone.json",
-    "reports/s52-course-align/fresh-clone.md",
-    "reports/s52-course-align/selfcheck/",
-    "reports/s52-course-align/defense-probe.json",
-    "reports/s52-course-align/defense-probe.md",
+    "reports/s53-mutation/fresh-clone.json",
+    "reports/s53-mutation/fresh-clone.md",
+    "reports/s53-mutation/selfcheck/",
+    "reports/s53-mutation/defense-probe.json",
+    "reports/s53-mutation/defense-probe.md",
+    "reports/s53-mutation/mutation-report.json",
+    "reports/s53-mutation/mutation-report.md",
     "reports/s49-rehearsal/ci-cells.json",
-    "docs/s52-course-alignment.md"
+    "docs/s53-mutation-interface.md"
   ],
-  "final_tip_sha": "eee659f2125d1e24a6a8d5c3b78602202ba336af",
-  "generated_at_utc": "2026-11-11T05:56:45Z",
+  "final_tip_sha": "9d48a9ec125e391361bf6570db1955523d0ac6c7",
+  "generated_at_utc": "2026-11-11T10:40:46Z",
   "note": "bundle 截止 SHA 见 bundle_ref_sha；本索引提交是其后唯一允许的差异（diff_whitelist）。复核：git fetch <bundle> main && git log <bundle_ref_sha>..<final_tip_sha>",
-  "package_dir": "dist/lwt-submission-20261111T055440Z",
+  "package_dir": "dist/lwt-submission-20261111T104022Z",
   "rebuild_command": "python tools/build_submission.py",
   "schema_version": 1,
   "tool": "tools/build_submission.py",
-  "zip_sha256": "c1953017c9a254b28de9877742c03c665adfb38ef3518650277db8e1f6877bd5"
+  "zip_sha256": "3b1824e56396f9bf687d5c586f770d51eaf73c38512176b16d49babdd4dac149"
 }
