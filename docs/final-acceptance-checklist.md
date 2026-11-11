@@ -159,4 +159,3 @@
 | 现场人工 GUI A–E | 无 | 本轮不执行，保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
 
 **重要（S51）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。报告见 [s51-first-screen.md](s51-first-screen.md)。
-
