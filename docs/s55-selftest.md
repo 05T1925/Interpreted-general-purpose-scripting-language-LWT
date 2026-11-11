@@ -102,10 +102,14 @@ python tools/run_selftest.py
 |---|---|
 | LWT 原生自测 | **38/38 全部通过**，exit 0（`reports/s55-selftest/selftest.json`） |
 | 新增门禁 | **6/6 OK** |
-| 文档一致性 | 全绿（含本轮新增计数与功能清单） |
+| 单命令全量 unittest | **758 项 OK，exit 0，807.1 s**（`py -3.13` / 3.13.7 / Tk 8.6），与 manifest 的 758 一致 |
+| 一键自检 | **all_pass=true**：**12 PASS / 2 N/A / 0 FAIL**（13 步，新增 `selftest` 步）；证据 `reports/s55-selftest/selfcheck/` |
+| 文档一致性 | 28/28；全仓 Markdown 275 文件 **0 断链** |
 | 黑盒 | **401/401 不变**（本阶段只新增 `tests/selftest/`，不进 `tests/cases/`） |
 | PPT | 文案修正后重渲染 **21/21、0 空白**，PDF 395,643 B，第 10 页图表 12 点未变；SHA `809320b2…`→`329483857513…` |
 | 保护路径 | S11/S44/S46/S48–S54 冻结证据零 diff；`tests/cases/**` 零改动；S54 的渲染证据与 752 计数保留为冻结快照 |
+
+> 自检工具默认把证据写到 `reports/s45-acceptance/`（S45 的历史默认值）。本次运行后已把新产物移到 `reports/s55-selftest/selfcheck/`，冻结目录的**已跟踪内容**没有任何改动；以后跑自检请显式加 `--out`，避免在被冻结的目录里留下未跟踪文件。
 
 ## 4. 计数变化与同步
 

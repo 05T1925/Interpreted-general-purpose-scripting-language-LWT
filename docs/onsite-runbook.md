@@ -34,7 +34,7 @@ py -3.13 tools/run_unittest_single.py     # 期望：752 项 OK（S51 后为 752
 | 2 | `python tools/run_tests.py` | `passed=401 failed=0 total=401`（约 3–5 分钟） | 已提交的 S51 基线日志 `reports/s51-closeout/`；缩短为 `--filter cli-errors` |
 | 3 | `python tools/run_concurrency_determinism.py --repeat 10` | `stable=True; failures=0`（46×10） | `reports/s42-determinism.json`（历史 46×10 逐字节结果） |
 | 4 | `python -m lwt --version` | `lwt 0.3.0`，exit 0 | `docs/delivery-manifest.json` 的 version 字段 |
-| 5 | `python tools/run_acceptance_selfcheck.py --skip-heavy` | `selfcheck: PASS`，12 PASS / 2 N/A / 0 FAIL（含 LWT 原生自测 38/38） | 最近一次 `reports/s51-closeout/selfcheck/` JSON（`all_pass=true`） |
+| 5 | `python tools/run_acceptance_selfcheck.py --skip-heavy --out reports/onsite/selfcheck` | `selfcheck: PASS`，12 PASS / 2 N/A / 0 FAIL（含 LWT 原生自测 38/38） | 最近一次 `reports/s51-closeout/selfcheck/` JSON（`all_pass=true`） |
 
 > 第 2、3 条是 heavy：若现场只剩 2 分钟，**只展示已记录证据**，不要现场重跑；不要把“没跑”说成“通过”。
 
