@@ -5,7 +5,7 @@ with no reuse of this working tree's untracked files) and runs:
 
   1. ``python -m lwt --version``
   2. ``python -m lwt --check examples/modules/main.lwt``
-  3. ``python tools/run_tests.py``            (expect 400/400)
+  3. ``python tools/run_tests.py``            (expect manifest.blackbox_cases)
   4. ``python -m compileall -q lwt tests tools``
   5. ``python tools/check_project_integrity.py --require-all-referenced``
 
@@ -126,8 +126,13 @@ def main(argv: list[str] | None = None) -> int:
             [sys.executable, "tools/check_project_integrity.py",
              "--require-all-referenced"], clone, timeout=300)})
 
+        # Compare against the clone's own manifest: hard-coding 400 made every
+        # repack after a new case fail this check for the wrong reason.
+        expected_cases = json.loads(
+            (clone / "docs" / "delivery-manifest.json").read_text(encoding="utf-8")
+        )["blackbox_cases"]
         blackbox_ok = (
-            blackbox.get("parsed", {}).get("passed") == 400
+            blackbox.get("parsed", {}).get("passed") == expected_cases
             and blackbox.get("parsed", {}).get("failed") == 0
         )
 
@@ -228,7 +233,7 @@ def main(argv: list[str] | None = None) -> int:
 
         print(
             f"verify_fresh_clone: {'PASS' if all_ok else 'FAIL'} "
-            f"(blackbox={'400/400' if blackbox_ok else 'FAIL'}) -> {out}"
+            f"(blackbox={'{}/{}'.format(expected_cases, expected_cases) if blackbox_ok else 'FAIL'}) -> {out}"
         )
         return 0 if all_ok else 1
     finally:
