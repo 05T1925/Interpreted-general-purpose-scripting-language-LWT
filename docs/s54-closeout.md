@@ -70,6 +70,8 @@ S53 记录的真实盲区：所有显示类用例的键恰好是字典序，所�
 
 证据：`reports/s54-closeout/ci-cells.json`（REST check-runs 逐格，不用徽章）。
 
+S54 内容 tip `8845164` 同样逐格：ubuntu 3.10 **7m49s**、ubuntu 3.13 **5m45s**、windows 3.10 **7m26s**、windows 3.13 **6m22s**，4/4 success。其后的提交只改证据与文档，未再按新 SHA 逐格复验（不把这次的绿外推给它们）。
+
 ### 4.2 彩排与平台包
 
 | 项 | 结果 |
