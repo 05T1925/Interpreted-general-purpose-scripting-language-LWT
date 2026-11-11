@@ -27,7 +27,7 @@ from tools import run_defense_probe
 
 ROOT = Path(__file__).resolve().parents[1]
 CLAIMS = ROOT / "docs" / "defense-claims.json"
-EVIDENCE = ROOT / "reports" / "s52-course-align" / "unittest-single-command.json"
+EVIDENCE = ROOT / "reports" / "s53-mutation" / "unittest-single-command.json"
 S49_REPORT = ROOT / "docs" / "s49-defense-rehearsal.md"
 
 

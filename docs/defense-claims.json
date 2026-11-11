@@ -117,7 +117,7 @@
         "python",
         "tools/run_unittest_single.py",
         "--out-dir",
-        "reports/s52-course-align"
+        "reports/s53-mutation"
       ],
       "expect": {
         "exit_code": 0,
@@ -125,7 +125,7 @@
         "stderr_contains": null
       },
       "heavy": true,
-      "evidence_path": "reports/s52-course-align/unittest-single-command.json",
+      "evidence_path": "reports/s53-mutation/unittest-single-command.json",
       "status": "UNRUN",
       "requires": {
         "tkinter": true

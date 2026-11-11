@@ -86,8 +86,11 @@ def main(argv: list[str] | None = None) -> int:
     started = _utc()
     t0 = time.perf_counter()
     timed_out = False
+    # Write to a scratch log first: a failing run must not destroy the log of the
+    # last passing run (the gate test reads that pair).
+    scratch_log = out_dir / "unittest-system.running.log"
     try:
-        with log_path.open("w", encoding="utf-8", newline="\n") as handle:
+        with scratch_log.open("w", encoding="utf-8", newline="\n") as handle:
             handle.write("$ " + " ".join(command) + "\n")
             handle.flush()
             completed = subprocess.run(
@@ -100,10 +103,21 @@ def main(argv: list[str] | None = None) -> int:
         timed_out = True
     seconds = round(time.perf_counter() - t0, 3)
 
-    text = log_path.read_text(encoding="utf-8", errors="replace")
+    text = scratch_log.read_text(encoding="utf-8", errors="replace")
     match = re.search(r"^Ran (\d+) tests? in", text, re.M)
     ran = int(match.group(1)) if match else None
     ok = any(line.strip() == "OK" for line in text.splitlines())
+    passed = exit_code == 0 and ok
+
+    if passed:
+        final_log = log_path
+        final_evidence = evidence_path
+    else:
+        # Keep the last passing evidence intact and archive the failure next to
+        # it, so one red run cannot make the gate test permanently red.
+        final_log = out_dir / "unittest-system.failed.log"
+        final_evidence = out_dir / "unittest-single-command.failed.json"
+    scratch_log.replace(final_log)
 
     doc = {
         "schema_version": 1,
@@ -120,15 +134,25 @@ def main(argv: list[str] | None = None) -> int:
         "sys_executable": sys.executable,
         "python_version": sys.version.split()[0],
         "tk_version": tk_version,
-        "log_path": log_path.relative_to(ROOT).as_posix()
-                    if log_path.is_relative_to(ROOT) else str(log_path),
+        "log_path": final_log.relative_to(ROOT).as_posix()
+                    if final_log.is_relative_to(ROOT) else str(final_log),
         "note": "single invocation of unittest discover; stdout+stderr redirected "
                 "to a file (no pipe) so a surviving grandchild cannot block capture",
     }
-    _write_json(evidence_path, doc)
+    _write_json(final_evidence, doc)
+    if not passed:
+        doc["note"] = (
+            "FAILED run archived separately; the passing evidence at "
+            f"{evidence_path.name} was left untouched."
+        )
+        _write_json(final_evidence, doc)
+        print(f"unittest-single: ran={ran} ok={ok} exit={exit_code} in {seconds}s "
+              f"tk={tk_version} exe={sys.executable}")
+        print(f"FAILED (archived as {final_evidence.name}; passing evidence kept)")
+        return exit_code
     print(f"unittest-single: ran={ran} ok={ok} exit={exit_code} in {seconds}s "
           f"tk={tk_version} exe={sys.executable}")
-    print("OK" if (exit_code == 0 and ok) else "FAILED")
+    print("OK")
     return exit_code
 
 

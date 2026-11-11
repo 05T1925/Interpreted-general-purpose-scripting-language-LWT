@@ -188,9 +188,10 @@ def _step_agent_eval() -> dict[str, Any]:
 def _step_defense_probe() -> dict[str, Any]:
     """S48: summarize the last defense-probe run; never invent a pass."""
 
-    # S50 keeps its merged probe (23 carried rows + a fresh unittest row) in
-    # reports/s50-closeout/; fall back to the frozen S49/S48 files when absent.
+    # Each phase keeps its own merged probe; prefer the newest and fall back to
+    # the frozen S50/S49/S48 files when a phase directory is absent.
     candidates = [
+        ROOT / "reports" / "s53-mutation" / "defense-probe.json",
         ROOT / "reports" / "s50-closeout" / "defense-probe-merge.json",
         ROOT / "reports" / "s49-rehearsal" / "defense-probe.json",
         ROOT / "reports" / "s48-defense" / "defense-probe.json",

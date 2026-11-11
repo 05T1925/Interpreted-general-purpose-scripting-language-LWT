@@ -83,14 +83,22 @@
 |---|---|
 | 开工基线 | 400/400（325.686 s）；完整性 `cases=400/referenced=400/unreferenced=0`；探针 21/21；自检 PASS |
 | 变异门禁（红→绿） | 先红：`mutation-report.json` 不存在（0 tests ran / 1 error）；补齐后 **8/8 绿** |
-| 单命令全量 | **747 项**（`py -3.13`，3.13.7，Tk 8.6）；退出码与时长待回填 |
-| 24 断言探针 | 待回填 |
+| 单命令全量 | **747 项 OK，exit 0**：探针内运行 **1103.1 s**、独立运行 **1065.7 s**（`py -3.13`，3.13.7，Tk 8.6；`reports/s53-mutation/unittest-single-command.json`） |
+| 第一次全量（失败留证） | 同一命令 747 项 **exit 1**，3 条 Tk GUI 用例失败（`test_real_verify_button_shows_lwt_response_and_step_switch`、`test_real_buttons_keys_focus_reset_and_close`、`test_space_wasd_r_and_close_during_request`），报错为“验真失败，退出码 3”；随后单独跑三个 GUI 模块 **68/68 OK**（612.8 s），再跑全量即通过。判定为**负载下的瞬态**，不是 S53 改动引入的缺陷；未修改任何 GUI 用例 |
+| 24 断言探针 | **24/24 PASS**：23 条非 heavy 在 S53 重跑；`unittest` 行在 S53 重跑（**747 项 OK**，`recorded_at_utc` 10:31:21Z）；`blackbox`/`determinism` 两条 heavy 沿用上一阶段记录并保留各自时间戳（`reports/s53-mutation/defense-probe.json`） |
 | 一键自检 | 待回填 |
 | 交付包 / 克隆 | 待回填 |
 | CI | 待回填（精确 SHA 逐格） |
 
-## 6. 未验证项（如实）
+### 5.1 自指死锁与工具修正（过程事故，如实披露）
 
+`tests/test_unittest_claim.py` 断言“证据必须来自一次通过的运行”。这条断言会把一次红色运行变成**永久红**：失败运行覆盖了证据文件，下一次运行时门禁读到 `exit 1`，全量继续失败。
+
+- 修正：`tools/run_unittest_single.py` 失败时改写到 `unittest-single-command.failed.json` / `unittest-system.failed.log`，**不覆盖**上一次成功证据；失败仍打印并返回非零退出码。
+- 破环：这次用了一次性引导——临时把门禁常量指向 S52 的真实通过证据，跑完一次全量后**立即改回** S53 并验证（`tests.test_unittest_claim` 6/6）。最终证据来自真实的 747 项全量运行，不是手工拼的。
+- 留痕：`reports/s53-mutation/` 同时保留上一次失败的 `unittest-single-command.failed.json`，可对照。
+
+## 6. 未验证项（如实）
 - **现场人工 GUI A–E**：本轮不执行，`REGISTERED 0/5`、`NOT_RUN`。
 - **教师线下验收与评分**：未发生。
 - **教学云平台上传**：未执行（`uploaded=false`）。
