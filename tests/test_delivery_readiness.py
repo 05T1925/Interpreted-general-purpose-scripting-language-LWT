@@ -185,5 +185,44 @@ class PackageLagTests(unittest.TestCase):
         self.assertEqual(outside, ["docs/a.md"])
 
 
+class FirstScreenTests(unittest.TestCase):
+    def test_teacher_first_screen_is_consistent_and_names_the_interpreter(self) -> None:
+        """S51: the first screen a teacher reads must agree with the manifest.
+
+        It must also name the interpreter trap explicitly: the bundled
+        ``python`` has no tkinter and yields 711 tests + 2 fake failures.
+        """
+
+        manifest = json.loads(
+            (ROOT / "docs" / "delivery-manifest.json").read_text(encoding="utf-8")
+        )
+        wanted = [
+            str(manifest["blackbox_cases"]),
+            str(manifest["unittest_count"]),
+            f"{manifest['ppt_pages']} 页",
+        ]
+
+        def head(rel: str, lines: int) -> str:
+            text = (ROOT / rel).read_text(encoding="utf-8").splitlines()
+            return "\n".join(text[:lines])
+
+        readme = head("README.md", 6)
+        submission = head("SUBMISSION.md", 8)
+        for name, text in (("README.md", readme), ("SUBMISSION.md", submission)):
+            for value in wanted:
+                self.assertIn(value, text, f"{name} first screen must quote {value}")
+        self.assertIn("S50", readme, "the README first screen must name S50")
+
+        checklist = (ROOT / "docs" / "final-acceptance-checklist.md").read_text(encoding="utf-8")
+        self.assertIn("## S50", checklist)
+        after = checklist.split("## S50", 1)[1]
+        self.assertIn(str(manifest["unittest_count"]), after)
+
+        for rel in ("SUBMISSION.md", "docs/defense-qa-card.md"):
+            text = (ROOT / rel).read_text(encoding="utf-8")
+            self.assertIn("py -3.13", text, f"{rel} must name the Tk-enabled interpreter")
+            self.assertIn("tkinter", text, f"{rel} must explain the tkinter trap")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,6 @@
 # LWT 提交入口（教师版）
 
-> 版本 **0.3.0** ｜ 黑盒 **400** ｜ unittest **719** ｜ PPT **21 页**
+> 版本 **0.3.0** ｜ 黑盒 **400** ｜ unittest **721** ｜ PPT **21 页**
 > 默认分支 `main` 与本交付分支同一提交；分支/CI 的精确 SHA 见 `docs/s47-final-submission.md`。
 > 本文件由 `tools/build_submission.py` 生成，数字取自 `docs/delivery-manifest.json`。
 
@@ -13,6 +13,8 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 ```
 
 然后打开 `slides/LWT介绍.pptx`（21 页）。所有命令在仓库根目录执行；Python 3.10+ 标准库，无第三方运行时依赖。
+
+> **解释器陷阱（现场复现必读）**：全量 unittest 必须用 `py -3.13`（3.13.7 + **Tk 8.6**）。本机 `python` 是 WorkBuddy 内置 3.13.14，**没有 tkinter**：GUI 测试模块在 import 阶段就失败，只会跑 **711** 项并出现 2 个假失败，不是语言缺陷。根因、两份日志与哈希见 `reports/s50-closeout/unittest-interpreter-root-cause.json`；`docs/defense-claims.json` 的 unittest 行也声明了 `requires.tkinter`。
 
 > 离线提交件：bundle/zip 位于 `dist/`（默认 gitignore，不入库），索引见 `reports/s48-defense/package-index.json`。老师 clone 仓库后若 `dist/` 为空，请现场运行 `python tools/build_submission.py`，或直接携带 `dist/` 目录。
 

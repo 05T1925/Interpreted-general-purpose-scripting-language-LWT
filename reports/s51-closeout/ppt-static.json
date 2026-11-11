@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "tool": "S51 inline static check (zipfile + XML)",
+  "generated_at_utc": "2026-11-11T02:48:40Z",
+  "file": "slides/LWT介绍.pptx",
+  "sha256": "7cb28b13948942b7a4b1b8fb64fb68e8aba04ab627188272a8b55c367355878c",
+  "pages": 21,
+  "chart_value_points": 12,
+  "zip_test": null,
+  "expected": {
+    "pages": 21,
+    "chart_value_points": 12,
+    "sha256_prefix": "7cb28b13"
+  },
+  "ok": true,
+  "render_check": false,
+  "note": "STATIC ONLY: page count, chart value points, zip integrity and SHA-256 were checked. No rendering was performed (this machine has PIL only, no LibreOffice/python-pptx). Footer layout remains an unverified GUI-E item and must not be claimed as confirmed."
+}

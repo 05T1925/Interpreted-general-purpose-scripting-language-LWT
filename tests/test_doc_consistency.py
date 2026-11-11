@@ -70,6 +70,16 @@ HISTORICAL_DATE_RE = re.compile(r"20\d\d-\d\d-\d\d")
 # a current-status sentence; they are allowed to say "未推送" of that stage.
 HISTORICAL_STAGE_ROW_RE = re.compile(r"^\|\s*S\d+\s*\|")
 
+# A line that presents *itself* as the current state, e.g.
+# ``> **当前状态（S44，2026-11-07）**``. Such a line is a current claim, so a date
+# may not turn it into history. The regex is anchored on purpose: project.md
+# contains sentences about "当前状态文档" (the test subject), which are not
+# claims about the repository.
+CURRENT_CLAIM_RE = re.compile(
+    r"^\s*>?\s*\*\*当前(?:状态|基数|版本|集合|结论)"
+    r"|^\s*>?\s*当前(?:状态|基数|版本|集合|结论)\s*[（(:：]"
+)
+
 
 def _load_manifest() -> dict:
     return json.loads(MANIFEST.read_text(encoding="utf-8"))
@@ -89,6 +99,10 @@ def _is_historical(rel: str) -> bool:
 
 
 def _has_historical_marker(line: str) -> bool:
+    # Current-state assertions win over the date rule: a stale "current status"
+    # line must not be excused just because it carries a date.
+    if CURRENT_CLAIM_RE.search(line):
+        return False
     return (
         any(marker in line for marker in HISTORICAL_MARKERS)
         or bool(HISTORICAL_DATE_RE.search(line))
@@ -477,6 +491,40 @@ class PushStatusTests(unittest.TestCase):
             return None
         return result.stdout.strip()
 
+    def test_no_stale_current_status_with_date(self) -> None:
+        # S51: the old rule treated any line with a date as history, so
+        # "当前状态（S44，2026-11-07）...632 项...未推送" stayed green. A line that
+        # calls itself the current state is a current claim; its numbers and
+        # status must match the manifest whatever date it carries.
+        doc = _load_manifest()
+        expected = {
+            UNIT_COUNT_RE: str(doc["unittest_count"]),
+            BLACKBOX_RE: str(doc["blackbox_cases"]),
+            INTERMEDIATE_COUNT_RE: str(doc["unittest_count"]),
+            PAGES_RE: str(doc["ppt_pages"]),
+            INTERMEDIATE_PAGE_RE: str(doc["ppt_pages"]),
+        }
+        bad: list[str] = []
+        for rel in NUMBER_DOCS:
+            path = REPO_ROOT / rel
+            if not path.exists():
+                continue
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if not CURRENT_CLAIM_RE.search(line):
+                    continue
+                if not HISTORICAL_DATE_RE.search(line):
+                    continue
+                for pattern, want in expected.items():
+                    for match in pattern.finditer(line):
+                        value = next((group for group in match.groups() if group), None)
+                        if value is not None and value != want:
+                            bad.append(f"{rel}:{number}: {value} != {want} | {line.strip()[:140]}")
+        self.assertEqual(
+            bad, [],
+            "a dated line that calls itself the current state must use manifest numbers://n"
+            + "\n".join(bad),
+        )
+
     def test_push_status_matches_origin(self) -> None:
         head = self._git("rev-parse", "HEAD")
         origin = self._git("rev-parse", "origin/main")
@@ -506,7 +554,7 @@ class PushStatusTests(unittest.TestCase):
             for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
                 if number in marked or _has_historical_marker(line):
                     continue
-                if "未推送" in line or "未合入 main" in line:
+                if any(word in line for word in ("未推送", "未合入 main", "未合并", "待主窗口复核")):
                     stale.append(f"{rel}:{number}: {line.strip()[:140]}")
                 if "待推送" in line:
                     todo.append(f"{rel}:{number}: {line.strip()[:140]}")
@@ -574,9 +622,13 @@ class S49ReportTests(unittest.TestCase):
         self.assertIn("713", frozen)
         self.assertIn("21 页", frozen)
 
+        s50 = REPO_ROOT / "docs" / "s50-closeout.md"
+        self.assertTrue(s50.exists(), "docs/s50-closeout.md is missing")
+        self.assertIn("719", s50.read_text(encoding="utf-8"))  # frozen at S50
+
         doc = _load_manifest()
-        current = REPO_ROOT / "docs" / "s50-closeout.md"
-        self.assertTrue(current.exists(), "docs/s50-closeout.md is missing")
+        current = REPO_ROOT / "docs" / "s51-first-screen.md"
+        self.assertTrue(current.exists(), "docs/s51-first-screen.md is missing")
         text = current.read_text(encoding="utf-8")
         self.assertIn(str(doc["unittest_count"]), text)
         self.assertIn(f"{doc['ppt_pages']} 页", text)

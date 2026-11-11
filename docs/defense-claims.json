@@ -284,14 +284,14 @@
       "command": [
         "python",
         "-c",
-        "import json;d=json.load(open('reports/s48-defense/package-index.json',encoding='utf-8'));c=json.load(open('reports/s49-rehearsal/fresh-clone.json',encoding='utf-8'));print('OK' if d['bundle_ref_sha']==c['bundle_ref_sha'] and c['lag_ok'] and c['all_pass'] else 'MISS')"
+        "import json;d=json.load(open('reports/s48-defense/package-index.json',encoding='utf-8'));c=json.load(open('reports/s50-closeout/fresh-clone.json',encoding='utf-8'));print('OK' if d['bundle_ref_sha']==c['bundle_ref_sha'] and c['lag_ok'] and c['all_pass'] else 'MISS')"
       ],
       "expect": {
         "exit_code": 0,
         "stdout_contains": "OK"
       },
       "heavy": false,
-      "evidence_path": "reports/s49-rehearsal/fresh-clone.json",
+      "evidence_path": "reports/s50-closeout/fresh-clone.json",
       "status": "UNRUN"
     },
     {
@@ -301,14 +301,14 @@
       "command": [
         "python",
         "-c",
-        "import json;d=json.load(open('reports/s49-rehearsal/fresh-clone.json',encoding='utf-8'));bb=[s for s in d['steps'] if s['name']=='blackbox'][0]['parsed']['passed'];print('OK' if d['all_pass'] and all(s['exit_code']==0 for s in d['steps']) and bb==400 else 'MISS')"
+        "import json;d=json.load(open('reports/s50-closeout/fresh-clone.json',encoding='utf-8'));bb=[s for s in d['steps'] if s['name']=='blackbox'][0]['parsed']['passed'];print('OK' if d['all_pass'] and all(s['exit_code']==0 for s in d['steps']) and bb==400 else 'MISS')"
       ],
       "expect": {
         "exit_code": 0,
         "stdout_contains": "OK"
       },
       "heavy": false,
-      "evidence_path": "reports/s49-rehearsal/fresh-clone.json",
+      "evidence_path": "reports/s50-closeout/fresh-clone.json",
       "status": "UNRUN"
     },
     {

@@ -1,12 +1,12 @@
 # LWT 答辩演示脚本（S48 最终候选）
 
-从仓库根目录运行。建议提前打开[系统介绍 PPT](../slides/LWT介绍.pptx)（21 页），准备 Python 3.13 和终端。所有命令均使用公开 CLI；固定证据保持只读。现场按教师要求调整顺序。**主线目标 8–10 分钟**；附录片段按时间取舍。当前状态数字以 [交付清单](delivery-manifest.json) 为唯一来源（400 黑盒 / 719 unittest / 21 页 PPT）。
+从仓库根目录运行。建议提前打开[系统介绍 PPT](../slides/LWT介绍.pptx)（21 页），准备 Python 3.13 和终端。所有命令均使用公开 CLI；固定证据保持只读。现场按教师要求调整顺序。**主线目标 8–10 分钟**；附录片段按时间取舍。当前状态数字以 [交付清单](delivery-manifest.json) 为唯一来源（400 黑盒 / 721 unittest / 21 页 PPT）。
 
 ## 主流程（8–10 分钟）
 
 | 时间 | 操作与讲解 | 命令或证据 |
 |---|---|---|
-| 0:00–0:40 | 说明课程五项评分与八项提交物；先报当前身份：**LWT 0.3.0**，400 黑盒 / 719 unittest / 21 页 PPT，S42–S49 执行完成、main 已推送，现场人工 GUI A–E 待本人验收。 | `python -m lwt --version`；`python -m lwt --help`；[交付清单](delivery-manifest.json) |
+| 0:00–0:40 | 说明课程五项评分与八项提交物；先报当前身份：**LWT 0.3.0**，400 黑盒 / 721 unittest / 21 页 PPT，S42–S49 执行完成、main 已推送，现场人工 GUI A–E 待本人验收。 | `python -m lwt --version`；`python -m lwt --help`；[交付清单](delivery-manifest.json) |
 | 0:40–1:30 | 跑最小程序，说明源码经 lexer、parser、AST 和树遍历运行；再演示可定位的除零错误（退出 3）。点出 `record`/`when-otherwise`/`each`/`emit` 的语法特色。 | `python -m lwt examples/guide/hello.lwt`；`python -m lwt examples/language_lab/division_by_zero.lwt` |
 | 1:30–2:20 | S42 语言核心增量：dict 插入序与内置、throw/finally 的控制流覆盖；时间紧可只看两条 emit。 | `python -m lwt examples/dicts.lwt`；`python -m lwt examples/throw_finally.lwt` |
 | 2:20–3:20 | **测试抓手**：一条命令跑 400 项黑盒并显示分类统计；再用完整性检查证明 400 个用例全部被矩阵链接（unreferenced=0）。不在现场重跑时，展示已记录输出并说明是记录值。 | `python tools/run_tests.py`；`python tools/check_project_integrity.py --require-all-referenced`；[矩阵](test-matrix.md) |

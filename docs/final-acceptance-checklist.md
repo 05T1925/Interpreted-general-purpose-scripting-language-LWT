@@ -145,3 +145,18 @@
 | 现场人工 GUI A–E | 无 | 用户本人稍后执行；登记前保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
 
 **重要（S50）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。报告见 [s50-closeout.md](s50-closeout.md)。
+
+## S51 教师第一屏一致性与现场预案（执行窗口自测；基线未经主窗口复核 S43–S50）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| 当前状态硬伤 | `README.md`、`project.md`、`docs/language-spec.md` | 旧计数、过期分支状态、过期核对日期全部消除；S44 与 S49/S50 数字标为历史 | 已修 |
+| 日期豁免收紧 | `tests/test_doc_consistency.py` | `CURRENT_CLAIM_RE` 当前状态断言优先于日期；先红 4 项后 28/28 绿 | 28/28 |
+| 教师第一屏 | `README.md` 前 6 行、`SUBMISSION.md` 前 8 行、`checklist` S50 段 | 400 / 721 / 21 与 manifest 一致；解释器陷阱写入教师入口 | 固化通过 |
+| 现场预案 | `docs/onsite-runbook.md` | 60–90 分钟编排、5 条必跑命令 + 预期 + 降级路径、追问断言索引 | 工具就绪 |
+| 彩排 | `reports/s51-closeout/rehearsal-s51.json` | `--random 5 --seed 51`：4 PASS + 1 TIMEOUT（heavy `determinism`，60 s 盒） | 如实记录 |
+| PPT 静态边界 | `reports/s51-closeout/ppt-static.json` | 21 页 / 12 数值点 / SHA `7cb28b13…` / zip 完整；`render_check=false` | 静态通过，未渲染 |
+| 现场人工 GUI A–E | 无 | 本轮不执行，保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
+
+**重要（S51）**：以上为执行窗口自测；不替代主窗口复核、教师线下验收与现场人工 GUI。报告见 [s51-first-screen.md](s51-first-screen.md)。
+

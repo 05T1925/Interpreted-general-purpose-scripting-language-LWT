@@ -1,0 +1,862 @@
+{
+  "failed": 1,
+  "generated_at_utc": "2026-11-11T02:45:49Z",
+  "merged": false,
+  "note": "Each row keeps its own recorded_at_utc; --merge replaces only the ids re-run.",
+  "passed": 20,
+  "ran": 21,
+  "results": [
+    {
+      "area": "交付物 1 规范/版本",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "CLI 版本为 lwt 0.3.0",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--version"
+      ],
+      "evidence_path": "docs/delivery-manifest.json",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "version",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.548,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "lwt 0.3.0",
+      "stdout_head": "lwt 0.3.0\n",
+      "stdout_tail": "lwt 0.3.0\n",
+      "tests_ran": null
+    },
+    {
+      "area": "交付物 2 解释器",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "python -m lwt --help 退出 0 且列出入口",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--help"
+      ],
+      "evidence_path": "docs/language-spec.md",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "help",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.544,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "--check",
+      "stdout_head": "LWT 0.3.0 -- tree-walk interpreter for the LWT language\n\nUsage:\n  python -m lwt SOURCE [-- PROGRAM_ARGS...]   run a program\n  python -m lwt --check [--format=json] SOURCE  static check only, no execution\n  python -m lwt --profile OUTPUT SOURCE [-- ARGS...]  collect an execution profile\n  python -m lwt --repl                       interactive REPL (stdin)\n  python -m lwt [--schedule=POLICY] [--schedule-log=FILE | --schedule-replay=FILE] SOURCE\n  python -m lwt -h | --help                  show this help\n  python -m lwt --version                    show the version\n\nSchedule policies: fifo (default) or random:SEED.\nExit codes: 0 success; 2 static check errors; 3 runtime error; 4 CLI/file error.\nLanguage rules: docs/language-spec.md\n",
+      "stdout_tail": " --check [--format=json] SOURCE  static check only, no execution\n  python -m lwt --profile OUTPUT SOURCE [-- ARGS...]  collect an execution profile\n  python -m lwt --repl                       interactive REPL (stdin)\n  python -m lwt [--schedule=POLICY] [--schedule-log=FILE | --schedule-replay=FILE] SOURCE\n  python -m lwt -h | --help                  show this help\n  python -m lwt --version                    show the version\n\nSchedule policies: fifo (default) or random:SEED.\nExit codes: 0 success; 2 static check errors; 3 runtime error; 4 CLI/file error.\nLanguage rules: docs/language-spec.md\n",
+      "tests_ran": null
+    },
+    {
+      "area": "交付物 2 解释器",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "最小程序 hello 输出 Hello, LWT!",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "examples/guide/hello.lwt"
+      ],
+      "evidence_path": "examples/guide/hello.lwt",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "hello",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.69,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "hello, LWT",
+      "stdout_head": "hello, LWT\n42\n",
+      "stdout_tail": "hello, LWT\n42\n",
+      "tests_ran": null
+    },
+    {
+      "area": "交付物 2 解释器",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "--check 对模块示例退出 0",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "lwt",
+        "--check",
+        "examples/modules/main.lwt"
+      ],
+      "evidence_path": "docs/developer-guide.md",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "check",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.593,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "Check passed",
+      "stdout_head": "Check passed: 3 source file(s).\n",
+      "stdout_tail": "Check passed: 3 source file(s).\n",
+      "tests_ran": null
+    },
+    {
+      "area": "交付物 3 黑盒",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "覆盖闭环 400/400 unreferenced=0",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tools/check_project_integrity.py",
+        "--require-all-referenced"
+      ],
+      "evidence_path": "docs/test-matrix.md",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "integrity",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 4.213,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "unreferenced=0",
+      "stdout_head": "Project integrity: OK; cases=400; matrix_links=497; referenced_cases=400; unreferenced=0; exempt=0\n",
+      "stdout_tail": "Project integrity: OK; cases=400; matrix_links=497; referenced_cases=400; unreferenced=0; exempt=0\n",
+      "tests_ran": null
+    },
+    {
+      "area": "S11 性能",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "S11 报告记录 2.759× 端到端中位倍率",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "t=open('reports/performance.md',encoding='utf-8').read();print('OK' if ('2.759' in t and 'median ratio LWT/Python' in t) else 'MISS')"
+      ],
+      "evidence_path": "reports/performance.md",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "s11",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.365,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "S44 加速",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "启动 --help 1.256×、hello 1.224×",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import json;b=json.load(open('reports/s44-performance/before/startup.json',encoding='utf-8'))['summary'];a=json.load(open('reports/s44-performance/after/startup.json',encoding='utf-8'))['summary'];r1=b['lwt-help']['median_ms']/a['lwt-help']['median_ms'];r2=b['lwt-hello']['median_ms']/a['lwt-hello']['median_ms'];print('OK' if abs(r1-1.256)<0.02 and abs(r2-1.224)<0.02 else f'MISS {r1:.3f} {r2:.3f}')"
+      ],
+      "evidence_path": "reports/s44-performance/",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "s44-startup",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.365,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "S44 加速",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "纯执行 N=5000 三负载 ≥1.45×",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import json;b={(m['workload'],m['n']):m for m in json.load(open('reports/s44-performance/before/runtime-profile.json',encoding='utf-8'))['measurements']};a={(m['workload'],m['n']):m for m in json.load(open('reports/s44-performance/after/runtime-profile.json',encoding='utf-8'))['measurements']};rs=[b[(w,5000)]['execute']['median_ns']/a[(w,5000)]['execute']['median_ns'] for w in ('arithmetic','array_scan','dict_counts')];print('OK' if min(rs)>=1.45 else 'MISS '+str([round(r,3) for r in rs]))"
+      ],
+      "evidence_path": "reports/s44-performance/",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "s44-exec",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.401,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "S46 模型检查",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "clean corpus 8 程序 / 0 violation",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import json;d=json.load(open('reports/s46-concurrency-model/summary.json',encoding='utf-8'));print('OK' if d['totals']['violations']==0 and d['all_pass'] and len(d['programs'])==8 else 'MISS')"
+      ],
+      "evidence_path": "reports/s46-concurrency-model/summary.json",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "s46-clean",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.367,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "S46 模型检查",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "mutant 4 violation、最小前缀 []、重放匹配",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import json;d=json.load(open('reports/s46-concurrency-model/mutant/summary.json',encoding='utf-8'));v=[p for p in d['programs'] if p['id']=='channel-exactly-once'][0]['violations'][0];print('OK' if d['totals']['violations']>=1 and v['minimized_prefix']==[] and v['replay']['matches'] else 'MISS')"
+      ],
+      "evidence_path": "reports/s46-concurrency-model/mutant/",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "s46-mutant",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.358,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "S48 Agent 盲测",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "T 组 30/30、C 组 29/30",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import json;d=json.load(open('reports/s48-defense/ablation.json',encoding='utf-8'));t=d['groups']['T'];c=d['groups']['C'];print('OK' if t['passed']==30 and t['samples']==30 and c['passed']==29 and c['samples']==30 else 'MISS')"
+      ],
+      "evidence_path": "docs/s48-agent-eval.md",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "blind",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.365,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "S48 Agent 盲测",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "T−C 的 95% 区间已计算且含 0",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import json;d=json.load(open('reports/s48-defense/ablation.json',encoding='utf-8'));lo,hi=d['difference']['interval_95_wald'];print('OK' if lo<0<hi else f'MISS {lo} {hi}')"
+      ],
+      "evidence_path": "reports/s48-defense/ablation.json",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "blind-ci",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.347,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "交付物 7 Git",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": false
+      },
+      "claim": "包索引与 bundle 截止 SHA 一致且 lag 通过",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import json;d=json.load(open('reports/s48-defense/package-index.json',encoding='utf-8'));c=json.load(open('reports/s49-rehearsal/fresh-clone.json',encoding='utf-8'));print('OK' if d['bundle_ref_sha']==c['bundle_ref_sha'] and c['lag_ok'] and c['all_pass'] else 'MISS')"
+      ],
+      "evidence_path": "reports/s49-rehearsal/fresh-clone.json",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "bundle-index",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.374,
+      "status": "FAIL",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "MISS\n",
+      "stdout_tail": "MISS\n",
+      "tests_ran": null
+    },
+    {
+      "area": "交付物 7 Git",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "新克隆 400/400 且 6 条命令退出 0",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import json;d=json.load(open('reports/s49-rehearsal/fresh-clone.json',encoding='utf-8'));bb=[s for s in d['steps'] if s['name']=='blackbox'][0]['parsed']['passed'];print('OK' if d['all_pass'] and all(s['exit_code']==0 for s in d['steps']) and bb==400 else 'MISS')"
+      ],
+      "evidence_path": "reports/s49-rehearsal/fresh-clone.json",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "fresh-clone",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.348,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "交付物 2 解释器",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "DAP spawn 拒绝：exit 4、无 stopped、无 stdout 泄漏",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "unittest",
+        "tests.test_dap_spawn_rejection",
+        "-q"
+      ],
+      "evidence_path": "tests/test_dap_spawn_rejection.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "dap",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 1.979,
+      "status": "PASS",
+      "stderr_contains": "OK",
+      "stderr_head": "----------------------------------------------------------------------\nRan 2 tests in 1.321s\n\nOK\n",
+      "stderr_tail": "----------------------------------------------------------------------\nRan 2 tests in 1.321s\n\nOK\n",
+      "stdout_contains": null,
+      "stdout_head": "",
+      "stdout_tail": "",
+      "tests_ran": 2
+    },
+    {
+      "area": "交付物 6 应用",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "并发日志应用与串行版逐字节等价（去块头）",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import subprocess,sys;f='app/fixtures/sample.log';s=subprocess.run([sys.executable,'-m','lwt','app/log_report.lwt','--',f],capture_output=True);c=subprocess.run([sys.executable,'-m','lwt','app/concurrent_log_report.lwt','--',f],capture_output=True);body=c.stdout.split(b'\\n',1)[1];print('OK' if s.stdout==body and s.returncode==0 and c.returncode==0 else 'MISS')"
+      ],
+      "evidence_path": "app/concurrent_log_report.lwt",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "diff-eq",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 1.503,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "S44 加速",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "非 spawn 程序不加载 lwt.concurrency",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import sys,lwt.cli;print('OK' if 'lwt.concurrency' not in sys.modules else 'MISS')"
+      ],
+      "evidence_path": "lwt/cli.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "no-concurrency",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.509,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "S44 加速",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "性能门槛 all_pass=true",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tools/compare_perf.py",
+        "--format",
+        "json"
+      ],
+      "evidence_path": "reports/s44-performance/",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "compare-perf",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.382,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "\"all_pass\": true",
+      "stdout_head": "{\n  \"all_pass\": true,\n  \"evidence_dir\": \"reports\\\\s44-performance\",\n  \"gates\": {\n    \"pure_execute\": {\n      \"detail\": {\n        \"arithmetic\": {\n          \"after_ms\": 22.349,\n          \"before_ms\": 32.504,\n          \"pass_15pct\": true,\n          \"ratio\": 1.4543831546543053,\n          \"regressed_gt5pct\": false\n        },\n        \"array_scan\": {\n          \"after_ms\": 71.474,\n          \"before_ms\": 110.945,\n          \"pass_15pct\": true,\n          \"ratio\": 1.5522492888992734,\n          \"regressed_gt5pct\": false\n        },\n        \"dict_counts\": {\n          \"after_ms\": 58.847,\n          \"before_ms\": 176.09,\n          \"pass_15pct\": true,\n          \"ratio\": 2.9923225024767492,\n          \"regressed_gt5pct\": false\n        }\n      },\n      \"pass\": true,\n      \"regressed_gt5pct\": [],\n      \"required\": 2,\n      \"workloads_passing_15pct\": 3\n    },\n    \"startup\": {\n      \"detail\": {\n        \"lwt-hello\": {\n          \"after_ms\": 499.503,\n          \"before_ms\": 611.217,\n          \"gate\": 1.1,\n          \"pass\": true,\n          \"ratio\": 1.2236503084065562\n        },\n        \"lwt-help\": {\n          \"after_ms\": 496.773,\n          \"before_ms\": 624.17,\n          \"gate\": 1.15,\n          \"pass\": true,\n    ",
+      "stdout_tail": "lo\": {\n          \"after_ms\": 499.503,\n          \"before_ms\": 611.217,\n          \"gate\": 1.1,\n          \"pass\": true,\n          \"ratio\": 1.2236503084065562\n        },\n        \"lwt-help\": {\n          \"after_ms\": 496.773,\n          \"before_ms\": 624.17,\n          \"gate\": 1.15,\n          \"pass\": true,\n          \"ratio\": 1.2564491226375023\n        }\n      },\n      \"pass\": true\n    }\n  },\n  \"note\": \"Non-spawn sys.modules (no lwt.concurrency) and 400/400 black-box / 46x10 determinism / S28 event counts are verified by tests and runner commands, not by this timing comparator.\",\n  \"schema_version\": 1\n}\n",
+      "tests_ran": null
+    },
+    {
+      "area": "交付物 8 PPT",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "21 页且第 10 页原生图表 12 数值点",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import zipfile,re\nz=zipfile.ZipFile('slides/LWT介绍.pptx')\npages=len([n for n in z.namelist() if re.match(r'ppt/slides/slide\\d+\\.xml$',n)])\npts=0\nfor n in z.namelist():\n    if re.match(r'ppt/slides/charts/chart\\d+\\.xml$',n):\n        xml=z.read(n).decode('utf-8','replace')\n        for val in re.findall(r'<c:val>.*?</c:val>',xml,re.S):\n            pts+=val.count('<c:pt ')\nprint('OK' if pages==21 and pts==12 else f'MISS pages={pages} points={pts}')"
+      ],
+      "evidence_path": "slides/LWT介绍.pptx",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "ppt",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 0.4,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    },
+    {
+      "area": "交付物 1/5",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "当前状态文档与 manifest 一致（27 项，全部通过）",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-m",
+        "unittest",
+        "tests.test_doc_consistency",
+        "-q"
+      ],
+      "evidence_path": "docs/delivery-manifest.json",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "doc-consistency",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 1.891,
+      "status": "PASS",
+      "stderr_contains": "OK",
+      "stderr_head": "----------------------------------------------------------------------\nRan 27 tests in 1.334s\n\nOK\n",
+      "stderr_tail": "----------------------------------------------------------------------\nRan 27 tests in 1.334s\n\nOK\n",
+      "stdout_contains": null,
+      "stdout_head": "",
+      "stdout_tail": "",
+      "tests_ran": 27
+    },
+    {
+      "area": "S43 并发",
+      "checks": {
+        "exit_code_matches": true,
+        "not_timed_out": true,
+        "stderr_contains_matches": true,
+        "stdout_contains_matches": true
+      },
+      "claim": "调度记录→重放 round-trip 逐字节一致（当前工作树字节；历史 trace 因 CRLF 入库仅作绑定校验素材）",
+      "command": [
+        "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-c",
+        "import subprocess,sys,tempfile,pathlib\nprog='tests/cases/concurrency/race-lost-update.lwt'\ntmp=pathlib.Path(tempfile.mkdtemp(prefix='lwt-rt-'))/'trace.json'\nrec=subprocess.run([sys.executable,'-m','lwt','--schedule=random:6','--schedule-log='+str(tmp),prog],capture_output=True)\nrep=subprocess.run([sys.executable,'-m','lwt','--schedule-replay='+str(tmp),prog],capture_output=True)\nok=rec.returncode==0 and rep.returncode==0 and rec.stdout==rep.stdout and tmp.exists()\nprint('OK' if ok else f'MISS rec={rec.returncode} rep={rep.returncode} same={rec.stdout==rep.stdout}')"
+      ],
+      "evidence_path": "reports/s42-schedules/",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "heavy": false,
+      "id": "replay",
+      "interpreter": {
+        "argv": [
+          "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe"
+        ],
+        "executable": "C:\\Users\\28641\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "tk_version": null,
+        "version": "3.13.14"
+      },
+      "precondition": null,
+      "recorded_at_utc": "2026-11-11T02:45:49Z",
+      "requires": {},
+      "seconds": 1.502,
+      "status": "PASS",
+      "stderr_contains": null,
+      "stderr_head": "",
+      "stderr_tail": "",
+      "stdout_contains": "OK",
+      "stdout_head": "OK\n",
+      "stdout_tail": "OK\n",
+      "tests_ran": null
+    }
+  ],
+  "schema_version": 1,
+  "tool": "tools/run_defense_probe.py"
+}
