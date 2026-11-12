@@ -20,7 +20,7 @@
 | 3 | LWT 语言的特色组合 | 语言特色是 `record` 字段访问、`each` 浅快照、`when/otherwise` 与 `emit` 的输出模型。下面跑最小程序。 | Q：和 Python 差在哪？ A：静态记录形状 + 显式错误分类 + 可调度并发的确定性，不是通用库生态。 | `hello` | `python -m lwt examples/guide/hello.lwt`；降级：`examples/guide/hello.lwt` | **现场跑** |
 | 4 | 解释器执行路径 | 源码经 lexer、parser 到 AST，再由树遍历执行；`--check` 只做静态检查不执行。 | Q：为什么不用字节码？ A：课程目标是语义与可验证性，树遍历更容易保证错误定位与轨迹一致。 | `check` | `python -m lwt --check examples/modules/main.lwt`；降级：`docs/developer-guide.md` | **现场跑** |
 | 5 | 关键语义与可定位错误 | 除零会带行列与类别退出 3；错误分类让 `recover` 能按 category 分流。DAP 侧对 `spawn` 直接拒绝，避免调试器与调度器语义冲突。 | Q：DAP 为什么拒绝 spawn？ A：调试暂停点与调度点无法同时保证确定性，宁可拒绝也不静默降级。 | `hello` `dap` | `python -m unittest tests.test_dap_spawn_rejection -q`；降级：`tests/test_dap_spawn_rejection.py` | **现场跑** |
-| 6 | 一键黑盒测试与覆盖矩阵 | 一条命令跑 401 项黑盒，按类别统计；完整性检查证明 401 项全部被矩阵引用、无孤儿用例。 | Q：401 项够吗？ A：覆盖五类语法与 46 项并发，且每项都能被矩阵追溯；不足在“真实程序规模”，用应用与差分等价补。 | `blackbox` `integrity` | `python tools/run_tests.py`（约 4 分钟）；降级：`tests/cases/`、`docs/test-matrix.md` | **现场跑** |
+| 6 | 一键黑盒测试与覆盖矩阵 | 先用 LWT 原生自测证明“用 LWT 测试 LWT”：断言函数 `expect` 是 LWT 写的，逐项 `[PASS]`、末尾 `38/38 全部通过`；再跑 401 项黑盒按类别统计；完整性检查证明 401 项全部被矩阵引用。 | Q：怎么证明覆盖全？ A：功能清单 77 行逐项打勾（功能 40 + 内置函数 24 + 语法构造 13），每行指到自测项或用例 ID。 Q：401 项够吗？ A：覆盖五类语法与 46 项并发；不足在“真实程序规模”，用应用与差分等价补。 | `blackbox` `integrity` | `python tools/run_selftest.py`（约 1 秒）；`python tools/run_tests.py`（约 4 分钟）；降级：`tests/selftest/lwt_selftest.lwt`、`docs/feature-checklist.md`、`tests/cases/`、`docs/test-matrix.md` | **现场跑** |
 | 7 | Agent 指南与真实 LWT 应用 | 指南 + Skill 让 Agent 能独立写出 243 行日志分析器与 233 行并发版；S48 用 60 个会话做了 T/C 消融。 | Q：指南真有用吗？ A：本样本下没测出增量（T−C 区间含 0），我不把“能写出来”说成指南的因果功劳。 | `blind` | `python tools/run_defense_probe.py --claim blind`；降级：`docs/s48-agent-eval.md` | 口播 |
 | 8 | 日志分析器：公开 CLI 结果 | 日志分析器支持坏行、等级、关键字与 top-k；并发版按输入顺序归并，与串行版逐字节等价。 | Q：并发版快吗？ A：并发是为确定性与结构，不是提速；性能对照见第 15 页，不宣称 CPU 加速。 | `diff-eq` `replay` | `python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log`；降级：`app/concurrent_log_report.lwt` | **现场跑** |
 | 9 | LWT Snake 与策略证据链 | Snake 的规则层是 LWT，GUI 只是展示层；策略证据链给出同一观察前缀下的分支与预算。 | Q：GUI 能现在演示吗？ A：桌面演示属人工 GUI 验收项（A–E），我今天按 CLI 降级轨给等价证据，不冒充已验收。 | `replay` | 只展示：`docs/s41-gui-acceptance.md`；`reports/s42-schedules/` | 只展示 |
@@ -50,3 +50,20 @@
 | 你的指南到底有没有用？ | 60 会话 T/C 对照，T 30/30、C 29/30，差值 +0.033，区间含 0 → **本样本未测得增量**；限制是天花板效应、n=5、单平台；不写成因果。 |
 | CI 四格按哪个 SHA？ | 按最终推送 SHA 逐格记录；`724dc7c` 四格失败（文档一致性抓到过期的分支状态表述）、`446ed4d` 与 `0df0e40` 四格通过；不用徽章推断。 |
 | 现场 GUI 没做怎么办？ | 直说 `REGISTERED 0/5`、A–E 为 NOT_RUN；给 CLI 降级证据（[`gui-acceptance-quickref.md`](gui-acceptance-quickref.md)），不拿自动测试或旧截图冒充人工验收。 |
+
+## 4. 实现细节速查（对应验收要求的“讲解部分实现细节”）
+
+老师若要听实现，按这张表答，每行都能现场指到文件或跑一条命令。**不要背整段代码**，只说“数据怎么流动、边界怎么处理、错误怎么定位”。
+
+| 追问 | 一句话答法 | 代码位置 | 现场可验 |
+|---|---|---|---|
+| 解释器怎么组织的？ | 手写扫描器出 token → 递归下降出 AST（dataclass 节点）→ 树遍历求值，环境是链式作用域；所有诊断带 `file:line:col`。 | `lwt/lexer.py`、`lwt/parser.py`、`lwt/ast_nodes.py`、`lwt/runtime.py` | `python -m lwt examples/guide/hello.lwt`；`python -m lwt examples/language_lab/division_by_zero.lwt`（退出 3，带位置） |
+| 变量和作用域怎么实现的？ | 每个块一个新环境、父指针指向外层；`let` 先查同作用域重名再求初值；赋值沿链写“最近的绑定”。 | `runtime.py` 的 `Environment` 与 `_execute_statement` | `python -m lwt examples/control_flow.lwt` |
+| 整数为什么不用 Python 的 `int()` 直接转？ | CPython 3.11+ 对十进制字符串有 4300 位上限；LWT 用**分块解析**（每 9 位一段）绕开它，所以 6000 位字面量也能精确解析。 | `lwt/_decimal.py::parse_decimal_integer` | `python -m lwt tests/cases/values-operators/arbitrary-precision-integer.lwt` |
+| 错误恢复怎么实现的？ | `throw` 抛出带 `category/message/位置` 的 Error；`attempt/recover/finally` 用块状态机实现，`finally` 在正常/异常/`return` 三条路径都执行，且可覆盖挂起的 return。 | `runtime.py` 的 attempt 处理、`lwt/errors.py` | `python -m lwt examples/throw_finally.lwt` |
+| 多文件模块怎么加载？ | 每个模块独立命名空间，路径相对导入文件解析；循环依赖直接报错且不留半截输出；入口的顶层限制与库文件不同。 | `lwt/modules.py` | `python -m lwt examples/modules/main.lwt`；`python -m lwt --check examples/modules/main.lwt` |
+| 并发为什么是确定性的？ | 单令牌：任一时刻只有一个任务跑；调度点只有 5 类；默认 fifo 真队列，`random:SEED` 用自带 splitmix64；轨迹绑定源码 SHA、实参、策略和输出哈希，重放任何不符就退出 4。 | `lwt/concurrency.py`、`lwt/_sched_support.py` | `python -m lwt app/concurrent_log_report.lwt -- app/fixtures/sample.log app/fixtures/showcase.log`；见 [并发契约卡](concurrency.md) |
+| 为什么启动能快 25%？ | 并发子系统原本在 `runtime.py` 顶层导入，所有程序都要付导入成本；改成只有出现 `spawn`/调度开关时才加载，非并发程序的 `sys.modules` 里没有 `lwt.concurrency`。 | `runtime.py` 顶层 import、`lwt/_sched_support.py` | `python -c "import lwt.runtime, sys; print('lwt.concurrency' in sys.modules)"`（应输出 False） |
+| 静态检查和运行是什么关系？ | `--check` 只走 lexer/parser/analyzer，不执行程序；`--profile`、调试器与 DAP 在遇到 `spawn` 时**执行前**拒绝（退出 4），避免产生半真证据。 | `lwt/analyzer.py`、`lwt/cli.py`、`lwt/dap_server.py` | `python -m lwt --check examples/modules/main.lwt` |
+
+> 边界：这张表只讲**已经实现并在仓库里可验证**的部分。没做的（字节码 VM、闭包、真实 MCP 宿主端到端）在 [答辩卡](defense-qa-card.md) 里按“未实现/未验证”回答，不现场编。

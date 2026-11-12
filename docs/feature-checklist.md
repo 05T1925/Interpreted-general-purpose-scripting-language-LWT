@@ -69,15 +69,66 @@ python tools/run_tests.py        # 401 项黑盒：逐用例结果 + 分类汇�
 
 > 说明：`dict` 的存在性判定、`finally` 的正常/异常两条路径，在自测里各拆成独立项，因此自测项数（38）多于上表的功能行数；这是「一项功能多条断言」而不是「重复计数」。上表每一行的自测项名字都**逐字**出现在 `python tools/run_selftest.py` 的输出里，可直接核对。
 
-## 三、课程任务 2 三点要求 → 证据
+## 三、内置函数清单（24 项，逐项打勾）
+
+规范 §7 定义的全部内置函数。每个函数都至少有一个直接针对它的黑盒用例；「代表用例」列给 1–3 个，全部可在 `tests/cases/` 下按名字找到。
+
+| 内置函数 | 打勾 | 代表黑盒用例 | 规范节 |
+|---|:--:|---|---|
+| `args()` | ✅ | `args-arity`、`args-boundaries`、`args-empty`、`args-returns-fresh-array` | §7 |
+| `channel()` | ✅ | `channel-fifo`、`channel-multi-producer`、`channel-value-any` | §7、§11.5 |
+| `close(ch)` | ✅ | `channel-close-drain`、`channel-close-idempotent`、`channel-send-closed-error` | §7、§11.6 |
+| `delete(d, k)` | ✅ | `dict-delete-present`、`dict-delete-missing` | §7 |
+| `error(cat, msg)` | ✅ | `throw-error-builtin-source-fields`、`throw-error-rethrow` | §7、§10.3 |
+| `fail(msg)` | ✅ | `fail-arity`、`fail-requires-string`、`fail-escapes-lines-and-keeps-prior-output` | §7 |
+| `get(d, k, default)` | ✅ | `dict-get-present`、`dict-get-missing-default`、`dict-get-default-expression` | §7 |
+| `has(d, k)` | ✅ | `dict-has-true`、`dict-has-false`、`dict-has-non-dict` | §7 |
+| `input()` | ✅ | `input-lf-and-crlf`、`input-empty-line-and-eof`、`input-final-line-without-lf`、`input-invalid-utf8` | §7 |
+| `items(d)` | ✅ | `dict-items-order` | §7 |
+| `join(task)` | ✅ | `spawn-join-return`、`join-non-task-error`、`join-reraises-location`、`join-preserves-output` | §7、§11.3 |
+| `keys(d)` | ✅ | `dict-keys-order`、`dict-keys-empty`、`dict-keys-non-dict` | §7 |
+| `len(x)` | ✅ | `dict-len`、`len-unicode-codepoints`、`len-rejects-null` | §7 |
+| `push(arr, v)` | ✅ | `push-mutates-and-returns-null`、`push-arity`、`push-first-argument-type` | §7 |
+| `put(d, k, v)` | ✅ | `dict-put-new-append`、`dict-put-update-keeps-position`、`dict-put-returns-null` | §7 |
+| `read_text(path)` | ✅ | `read-text-missing-file`、`read-text-normalizes-bom-and-newlines`、`read-text-directory`、`read-text-type` | §7 |
+| `receive(ch)` | ✅ | `channel-fifo`、`channel-block-receive`、`channel-closed-empty-null` | §7、§11.5 |
+| `send(ch, v)` | ✅ | `channel-fifo`、`channel-multi-producer`、`channel-send-closed-error` | §7、§11.5 |
+| `split(s, sep)` | ✅ | `split-preserves-empty-fields`、`split-empty-separator`、`split-type` | §7 |
+| `str(v)` | ✅ | `emit-and-str-match`、`str-arity`、`display-control-characters` | §7 |
+| `to_int(s)` | ✅ | `to-int-sign-and-leading-zero`、`to-int-large-decimal`、`to-int-type` | §7 |
+| `trim(s)` | ✅ | `trim-only-ascii-whitespace`、`trim-arity` | §7 |
+| `values(d)` | ✅ | `dict-values-order`、`dict-values-non-dict` | §7 |
+| `yield()` | ✅ | `yield-single-noop`、`yield-two-alternate`、`yield-three-tasks`、`yield-in-function` | §7、§11.4 |
+
+## 四、语法构造清单（逐项打勾）
+
+任务 1 要求的控制结构，以及 LWT 自己追加的结构。每一项都有直接用例，不靠"间接覆盖"。
+
+| 语法构造 | 打勾 | 代表黑盒用例 | 规范节 |
+|---|:--:|---|---|
+| `let` 与作用域/遮蔽 | ✅ | `block-shadow-and-lifetime`、`assignment-updates-nearest-binding`、`outer-visible-during-initializer` | §5.5 |
+| `when` / `otherwise` | ✅ | `when-otherwise`、`when-without-otherwise`、`when-condition-strict` | §5.3 |
+| `while` + `break` / `continue` | ✅ | `while-rechecks-condition`、`while-break`、`while-continue`、`nested-loop-break` | §5.4 |
+| `each` 浅快照遍历 | ✅ | `each-snapshot-append`、`each-snapshot-replacement`、`each-snapshot-keeps-object-reference`、`each-break` | §5.4 |
+| `fn` 定义、调用与递归 | ✅ | `function-forward-call`、`function-arity`、`recursive-factorial`、`mutual-recursion` | §5.1 |
+| `return`（含空返回与嵌套块） | ✅ | `explicit-empty-return-null`、`return-from-nested-block`、`return-through-each` | §5.1 |
+| `record` 声明、构造与字段 | ✅ | `record-fields-accept-any-values`、`record-field-declaration-order`、`record-field-mutation-and-alias`、`duplicate-record-declaration` | §3.3、§4.4 |
+| `dict` 字面量与下标读写 | ✅ | `dict-display-insertion-order`、`dict-index-assign-new`、`dict-missing-key-read`、`dict-bad-key-null` | §3.4、§4.6 |
+| `import ... as ...` | ✅ | `simple-alias-call`、`multi-level-relative-import`、`missing-dependency-no-partial-output`、`import-after-top-level-item` | §9 |
+| `attempt` / `recover` / `finally` | ✅ | `throw-string-recovered`、`finally-on-normal-flow`、`recover-nearest-handler`、`finally-overrides-body-return` | §10.2–§10.5 |
+| `throw`（字符串与 Error 值） | ✅ | `throw-string-recovered`、`throw-in-function-propagates`、`throw-null-is-error` | §10.1 |
+| `spawn`（并发任务） | ✅ | `spawn-join-return`、`spawn-no-args`、`spawn-nested`、`check-spawn-undefined` | §11.2 |
+| `--` 后的程序实参 | ✅ | `args-arity`、`args-boundaries`、`cli-*` 分类用例 | §6 |
+
+## 五、课程任务 2 三点要求 → 证据
 
 | 课程要求 | 仓库证据 | 复算命令 |
 |---|---|---|
 | 测试脚本使用 LWT 编写（用 LWT 测试 LWT） | `tests/selftest/lwt_selftest.lwt`：断言函数 `fn expect(cond, name)` 由 LWT 实现；另有 427 个 `.lwt` 黑盒程序 | `python tools/run_selftest.py` |
-| 覆盖所有功能（五项基本功能 + 特色功能） | 本文件两张表共 40 行、全部打勾；黑盒 401 项覆盖 §1–§11（含 §8 规范性示例） | `python tools/run_tests.py`；[覆盖矩阵](test-matrix.md) |
+| 覆盖所有功能（五项基本功能 + 特色功能） | 本文件四张表共 **77 行**全部打勾：功能项 40 行 + 内置函数 24 行 + 语法构造 13 行；黑盒 401 项覆盖 §1–§11（含 §8 规范性示例） | `python tools/run_tests.py`；[覆盖矩阵](test-matrix.md) |
 | 一个命令执行所有测试，输出每项结果与总数 | `run_selftest.py` 打印 38 行 `[PASS]` 与 `38/38 全部通过`；`run_tests.py` 打印 401 项与分类汇总 | 同上 |
 
-## 四、没有做的事（如实）
+## 六、没有做的事（如实）
 
 - 本清单**不是**形式化证明：它证明「清单里的每一项都有可执行证据」，不证明「语言没有其它缺陷」。缺陷发现依赖黑盒边界用例与 19 条语义变异探针（[`reports/s54-closeout/mutation-report.json`](../reports/s54-closeout/mutation-report.json)）。
 - 自测的「基本输入」项需要一行标准输入；直接运行 `.lwt` 而不提供输入时该项会打印 `[FAIL]`，这是**有意的降级**（不会中断整套测试），一键命令 `python tools/run_selftest.py` 会自动提供 `42\n`。

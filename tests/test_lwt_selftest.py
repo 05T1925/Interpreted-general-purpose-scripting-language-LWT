@@ -75,15 +75,32 @@ class LwtSelfTestSuiteTests(unittest.TestCase):
         self.assertGreaterEqual(len(ticked), 30, "功能清单应有 ≥30 行逐项打勾")
         # "测试名与功能清单一一对应" only holds if the names are literally the
         # same strings; a near-miss (an extra suffix, a reworded item) would make
-        # the checklist unverifiable by a reader diffing the two.
+        # the checklist unverifiable by a reader diffing the two. Only the two
+        # feature tables carry selftest names; the builtin/syntax tables below
+        # them point at black-box case ids instead.
+        feature_part = text.split("## 三、", 1)[0]
         row_names = set()
-        for line in text.splitlines():
+        for line in feature_part.splitlines():
             if line.startswith("|") and "✅" in line:
                 cells = [cell.strip() for cell in line.strip("|").split("|")]
                 if len(cells) >= 3:
                     row_names.add(cells[2])
         missing = sorted(set(self.names) - row_names)
         self.assertEqual(missing, [], f"功能清单缺少这些自测项（名字必须逐字一致）：{missing}")
+
+        # Course chapter 8: "缺一项就不算完整覆盖". The builtin table must list
+        # every documented builtin, and the syntax table must cover the control
+        # structures the task book names explicitly.
+        builtin_part = text.split("## 三、", 1)[1].split("## 四、", 1)[0]
+        builtin_rows = [l for l in builtin_part.splitlines() if l.startswith("|") and "✅" in l]
+        self.assertGreaterEqual(len(builtin_rows), 24, "内置函数清单应有 24 行（规范 §7 的全部函数）")
+        for name in ("`args()`", "`read_text(path)`", "`to_int(s)`", "`yield()`", "`join(task)`"):
+            self.assertIn(name, builtin_part, f"内置函数清单缺少 {name}")
+        syntax_part = text.split("## 四、", 1)[1].split("## 五、", 1)[0]
+        syntax_rows = [l for l in syntax_part.splitlines() if l.startswith("|") and "✅" in l]
+        self.assertGreaterEqual(len(syntax_rows), 12, "语法构造清单应有 ≥12 行")
+        for token in ("`when`", "`while`", "`each`", "`fn`", "`record`", "`import", "`attempt`", "`spawn`"):
+            self.assertIn(token, syntax_part, f"语法构造清单缺少 {token}")
 
     def test_suite_is_written_in_lwt(self) -> None:
         self.assertTrue(SELFTEST.is_file())

@@ -78,7 +78,7 @@
     "s55_feature_checklist": "docs/feature-checklist.md",
     "s55_tool": "tools/run_selftest.py"
   },
-  "last_verified_utc": "2026-11-11T18:07:26Z",
+  "last_verified_utc": "2026-11-12T03:41:58Z",
   "notes": [
     "unittest_count 为 S55 实测 758（S54 的 752 + LWT 原生自测与工具门禁 6）；S54 报告保留 752 作为冻结快照。",
     "ppt_pages / ppt_sha256 为 S48 最终 PPT（20→21 页，新增「指南消融与现场可质询验收」；旧第 10 页原生图表 12 数值点未变）。",
@@ -92,7 +92,7 @@
     "S52：矩阵补 §8 表与 20 个小节缺口；新增 P95/P99 与峰值内存补充测量（不替代 S11/S44）；课件第 8/7/6 章口径写入教师入口与答辩卡；PPT 未改动。",
     "S53：语义变异探针扩到 18 条（S42 dict/finally/throw + S43 并发），killed 18/18、invalid 0、隔离核验 repo_clean=true；一条 sorted-display 变异真实存活，作为盲区记录而非计入。新增 MCP server（协议级 8 项测试，未做宿主端到端）。PPT 未改动。",
     "S54：dict 键序盲区闭环——新增 dict-display-insertion-order，黑盒 400→401；PPT 第 14/17/18/20 页文案 400→401 并用 PowerPoint COM 重渲染（21/21、无空白、第 10 页图表 12 点仍在），PPT SHA 7cb28b13→809320b2。",
-    "S55：按课程第 8 章任务 2「用 LWT 测试 LWT」补 LWT 原生自断言套件 tests/selftest/lwt_selftest.lwt（fn expect + [PASS]/[FAIL] + 末尾 38/38 全部通过，一个命令 python tools/run_selftest.py），并新增 docs/feature-checklist.md 把两项功能清单逐项打勾；黑盒 401 与 §1–§11 覆盖不变。",
+    "S55：按课程第 8 章任务 2「用 LWT 测试 LWT」补 LWT 原生自断言套件 tests/selftest/lwt_selftest.lwt（fn expect + [PASS]/[FAIL] + 末尾 38/38 全部通过，一个命令 python tools/run_selftest.py），并新增 docs/feature-checklist.md（四张表 77 行逐项打勾：功能项 40 + 规范 §7 内置函数 24 + 语法构造 13）；黑盒 401 与 §1–§11 覆盖不变。",
     "S55：PPT 第 2/6/18/21 页的过期计数改为当前值（287→401、282→394、384→498、5→7 项 CLI 契约、632→758、S49 695→S55 758），改后重新用 PowerPoint COM 渲染（21/21、0 空白、第 10 页图表 12 点未变），ppt_sha256 由 809320b2… 变为 32948385…；S54 的渲染证据与 SHA 保留为冻结快照。"
   ],
   "submission_bundle": "reports/s48-defense/package-index.json",
