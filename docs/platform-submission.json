@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-11T17:17:17Z",
+  "generated_at_utc": "2026-11-12T03:48:20Z",
   "platform": {
     "name": "教学云平台",
     "url": "https://ucloud.bupt.edu.cn/",
@@ -9,34 +9,34 @@
   "uploaded": false,
   "upload_note": "上传动作由本人执行；本工具只校验清单与 SHA，不代表已经提交。",
   "package_index": "reports/s48-defense/package-index.json",
-  "final_tip_sha": "ad366e09db9df8cf54aedc54c291621622597403",
+  "final_tip_sha": "d1a827092ac98ebd8c2daff65416937f2ec8119d",
   "items": [
     {
       "name": "提交包 zip",
-      "path": "dist/lwt-submission-20261111T171232Z/lwt-submission.zip",
+      "path": "dist/lwt-submission-20261112T034306Z/lwt-submission.zip",
       "exists": true,
-      "sha256": "e930d8b6d74d44e3b0dba6b73cb6c64ede0f17ac8fa005276ffad7f99b7c626d",
-      "expected_sha256": "e930d8b6d74d44e3b0dba6b73cb6c64ede0f17ac8fa005276ffad7f99b7c626d",
+      "sha256": "a059038ac4fc91c8faad07b4ec77485dc6a3889449f2b39f9e5d057cc396a2a5",
+      "expected_sha256": "a059038ac4fc91c8faad07b4ec77485dc6a3889449f2b39f9e5d057cc396a2a5",
       "sha_ok": true,
       "required": true,
       "note": "解压后即为完整仓库；--verify-blackbox 会实跑 401 黑盒"
     },
     {
       "name": "Git 历史 bundle",
-      "path": "dist/lwt-submission-20261111T171232Z/lwt-history.bundle",
+      "path": "dist/lwt-submission-20261112T034306Z/lwt-history.bundle",
       "exists": true,
-      "sha256": "6f8d2d0749df7f8f3981d13d5acaf77e94c5460ce81982658e2abfd2d2510ca6",
-      "expected_sha256": "6f8d2d0749df7f8f3981d13d5acaf77e94c5460ce81982658e2abfd2d2510ca6",
+      "sha256": "9cc93d1863aff07518a9e8dce14eacc381fd0f63035f6ae7a39b39b6c08ee44c",
+      "expected_sha256": "9cc93d1863aff07518a9e8dce14eacc381fd0f63035f6ae7a39b39b6c08ee44c",
       "sha_ok": true,
       "required": true,
-      "note": "截止 SHA ad366e09db9d；git fetch <bundle> main 可复核"
+      "note": "截止 SHA d1a827092ac9；git fetch <bundle> main 可复核"
     },
     {
       "name": "PPT",
       "path": "slides/LWT介绍.pptx",
       "exists": true,
-      "sha256": "809320b2aee60089b1df23d1d2ed8362d4f09819f4315749ab063d9eff90ef99",
-      "expected_sha256": "809320b2aee60089b1df23d1d2ed8362d4f09819f4315749ab063d9eff90ef99",
+      "sha256": "32948385751316be2073770a9f15145da98a134bb0d2c78b1e883dee880eb379",
+      "expected_sha256": "32948385751316be2073770a9f15145da98a134bb0d2c78b1e883dee880eb379",
       "sha_ok": true,
       "required": true,
       "note": "21 页；内容本阶段未改动"
@@ -45,8 +45,8 @@
       "name": "README.md",
       "path": "README.md",
       "exists": true,
-      "sha256": "1cc415582a8ff635ecf0a17490cfebd32fe06a1778cad24debf3007ba249052b",
-      "expected_sha256": "1cc415582a8ff635ecf0a17490cfebd32fe06a1778cad24debf3007ba249052b",
+      "sha256": "95b2801de941823dee455a51be51baf8acc2034b21e612ae5b908e642c2102ab",
+      "expected_sha256": "95b2801de941823dee455a51be51baf8acc2034b21e612ae5b908e642c2102ab",
       "sha_ok": true,
       "required": true,
       "note": "教师入口：三分钟验收路径 + 当前状态"
@@ -55,8 +55,8 @@
       "name": "SUBMISSION.md",
       "path": "SUBMISSION.md",
       "exists": true,
-      "sha256": "df50c1307ce4aba5a46c090e97c591ce2708f4e7757f9597a58b75f2ea40e4e8",
-      "expected_sha256": "df50c1307ce4aba5a46c090e97c591ce2708f4e7757f9597a58b75f2ea40e4e8",
+      "sha256": "0b02ad80349ab6b245778eacef904d111221255a5f402808976b5f66c9b549b1",
+      "expected_sha256": "0b02ad80349ab6b245778eacef904d111221255a5f402808976b5f66c9b549b1",
       "sha_ok": true,
       "required": true,
       "note": "8 项提交内容 + 第 8 章任务对照"
@@ -85,8 +85,8 @@
       "name": "docs/defense-qa-card.md",
       "path": "docs/defense-qa-card.md",
       "exists": true,
-      "sha256": "91319542a35496e2bd43eae4a088dac25263c3ef15069954ba3afe30cecb50d3",
-      "expected_sha256": "91319542a35496e2bd43eae4a088dac25263c3ef15069954ba3afe30cecb50d3",
+      "sha256": "0f7859d827c6e925d8b1de1f73ffcd5cb0ce55cc475039ba322fd550a668df07",
+      "expected_sha256": "0f7859d827c6e925d8b1de1f73ffcd5cb0ce55cc475039ba322fd550a668df07",
       "sha_ok": true,
       "required": true,
       "note": "答辩问答卡"
