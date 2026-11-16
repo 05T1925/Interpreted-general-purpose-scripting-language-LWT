@@ -24,6 +24,8 @@
 
 > **S55（2026-11-12，执行窗口，用 LWT 测试 LWT 与功能清单逐项打勾）：** 复核课程第 8 章后发现两处口径缺口并补齐——① 仓库原有 427 个黑盒 `.lwt` 程序，但**断言在 Python 侧比对期望输出**，没有课程示例那种"用 LWT 写 `expect`、逐项打印 `[PASS]`、末尾给总数"的原生自测；② 覆盖矩阵映射的是规范小节，**没有"功能清单逐项打勾"**。新增 `tests/selftest/lwt_selftest.lwt`（38 项，`fn expect` 由 LWT 实现，覆盖任务 1 五项基本功能 + dict/错误恢复/模块/并发/通道/字符串工具等特色功能）与 `tests/selftest/selftest_helper.lwt`（模块导入项），一条命令 `python tools/run_selftest.py` 输出 38 行 `[PASS]` 与 `38/38 全部通过`，并写 `reports/s55-selftest/selftest.{json,md}`；新增 `docs/feature-checklist.md` 用两张表（五项基本功能 22 行、特色功能 18 行）把每个功能项对应到自测项名字、黑盒用例与规范节并逐项打勾；新增 `tests/test_lwt_selftest.py` 6 项门禁（必须全绿、名字唯一、清单存在且 ≥30 行打勾、脚本不得出现宿主语言痕迹、工具拒绝把黑盒用例当自测脚本、工具必须写出证据）。黑盒 401 与 §1–§11 覆盖不变；unittest 752→**758**（新增 6 项）；`docs/delivery-manifest.json` 增 `evidence.s55_*`，`unittest_count=758`；README 阶段列表与当前状态、答辩卡、演示脚本、最终清单同步。**未验证**：现场人工 GUI A–E、逐页目视排版、教师线下验收与评分、教学云平台上传。
 
+> **S56（2026-11-17，执行窗口，v0.3.0 正式发布、PPT 校准与人机分工证据）：** 本人裁决 A=main、B=授权推送 main 与附注标签、C=GUI 不执行、D=写明“LWT：刘文涛”。PPT 第 1/6/7/15/18/20/21 页 7 处过期文案按任务书原文替换（第 6 页补“用 LWT 测试 LWT”），COM 重渲染 21/21、0 空白、第 10 页 12 点，SHA `32948385…`→`76e4ea39…`；新增 [CHANGELOG.md](CHANGELOG.md)（Keep a Changelog 1.1.0，0.2 单独说明不发布）与[人机分工证据表](docs/human-agent-collaboration.md)（9 条复核抓到 AI 错误的实例逐条核对原文）；附注标签 `v0.1.0`（`5027860`）/ `v0.3.0`。语义、401 项黑盒期望不变，未新增 test 方法，unittest 保持 **758**。GUI A–E 仍 `REGISTERED 0/5`；平台 `uploaded=false`；不建 GitHub Release（标签即发布点）。报告见 [S56 报告](docs/s56-release.md)。
+
 ## 目标与课程评分
 
 依据[作业原文](大作业内容.md)，交付 LWT 解释型通用脚本语言及解释器、完整黑盒测试、LWT/Python 性能比较、人类与 Agent 开发指南、至少 200 行的 Agent 编写 LWT 应用及开发记录、Git 历史、介绍 PPT 和线下答辩。评分为解释器 20、测试 20、性能 10、指南 20、LWT 应用 30 分。

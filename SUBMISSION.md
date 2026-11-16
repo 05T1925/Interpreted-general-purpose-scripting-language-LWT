@@ -42,7 +42,7 @@ python tools/run_acceptance_selfcheck.py    # Git/保护路径/完整性/黑盒/
 | 4 | 性能测试报告 | 10 | `reports/performance.md、bench/results.json` | `python tools/compare_perf.py` | S11 正式报告 + S44 分层对照 | 完成 |
 | 5 | 开发指南（人 + AI） | 20 | `docs/developer-guide.md、.agents/skills/lwt-app/SKILL.md` | `python -m lwt --check examples/modules/main.lwt` | S42–S46 已按指南实现 | 完成 |
 | 6 | Agent 应用与开发记录 | 30 | `app/log_report.lwt、app/concurrent_log_report.lwt、app/lwt_snake/game.lwt、docs/agent-dev-log.md` | `python -m lwt app/log_report.lwt -- app/fixtures/sample.log` | 有效行数 243 / 233 / 313（`tools/count_lwt_lines.py`） | 完成 |
-| 7 | Git 历史 | — | `dist/ 内的 lwt-history.bundle、lwt-history.graph.txt` | `python tools/build_submission.py`（索引 `reports/s48-defense/package-index.json`） | bundle 含全部 branches/tags/HEAD；verify=0；索引记录截止 SHA | 完成 |
+| 7 | Git 历史 | — | `dist/ 内的 lwt-history.bundle、lwt-history.graph.txt` | `python tools/build_submission.py`（索引 `reports/s48-defense/package-index.json`） | bundle 含全部 branches/tags/HEAD，含附注标签 v0.1.0 / v0.3.0；verify=0；索引记录截止 SHA；变更日志 `CHANGELOG.md` | 完成 |
 | 8 | 系统介绍 PPT | — | `slides/LWT介绍.pptx（21 页）` | 打开 `slides/LWT介绍.pptx` | 第 10 页原生图表 12 数值点自 S43 起未变 | 完成 |
 
 合计 100 分：解释器 20 + 自动测试 20 + 性能 10 + 语法/指南 20 + Agent 应用 30。

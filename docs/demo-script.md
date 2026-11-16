@@ -6,7 +6,7 @@
 
 | 时间 | 操作与讲解 | 命令或证据 |
 |---|---|---|
-| 0:00–0:40 | 说明课程五项评分与八项提交物；先报当前身份：**LWT 0.3.0**，401 黑盒 / 758 unittest / 21 页 PPT，S42–S55 执行完成、main 已推送，现场人工 GUI A–E 待本人验收。 | `python -m lwt --version`；`python -m lwt --help`；[交付清单](delivery-manifest.json) |
+| 0:00–0:40 | 开场一句：“今天的交付版本是 tag `v0.3.0`”（变更见 `CHANGELOG.md`）。说明课程五项评分与八项提交物；先报当前身份：**LWT 0.3.0**，401 黑盒 / 758 unittest / 21 页 PPT，S42–S56 执行完成、main 已推送，现场人工 GUI A–E 待本人验收。 | `python -m lwt --version`；`python -m lwt --help`；[交付清单](delivery-manifest.json) |
 | 0:40–1:30 | 跑最小程序，说明源码经 lexer、parser、AST 和树遍历运行；再演示可定位的除零错误（退出 3）。点出 `record`/`when-otherwise`/`each`/`emit` 的语法特色。 | `python -m lwt examples/guide/hello.lwt`；`python -m lwt examples/language_lab/division_by_zero.lwt` |
 | 1:30–2:20 | S42 语言核心增量：dict 插入序与内置、throw/finally 的控制流覆盖；时间紧可只看两条 emit。 | `python -m lwt examples/dicts.lwt`；`python -m lwt examples/throw_finally.lwt` |
 | 2:20–3:20 | **测试抓手**：先跑课程任务 2 要求的 LWT 原生自测——断言函数 `expect` 用 LWT 写，逐项打印 `[PASS]`、末尾给 `38/38 全部通过`；再跑 401 项黑盒显示分类统计；最后用完整性检查证明 401 个用例全部被矩阵链接（unreferenced=0）。逐项打勾见功能清单。不在现场重跑时，展示已记录输出并说明是记录值。 | `python tools/run_selftest.py`；`python tools/run_tests.py`；`python tools/check_project_integrity.py --require-all-referenced`；[功能清单](feature-checklist.md)；[矩阵](test-matrix.md) |

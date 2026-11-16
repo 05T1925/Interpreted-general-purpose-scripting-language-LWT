@@ -8,6 +8,7 @@ whitelist; the GUI registrar never turns a file's presence into PASS.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 import tempfile
 import unittest
@@ -228,6 +229,23 @@ class FirstScreenTests(unittest.TestCase):
             text = (ROOT / rel).read_text(encoding="utf-8")
             self.assertIn("py -3.13", text, f"{rel} must name the Tk-enabled interpreter")
             self.assertIn("tkinter", text, f"{rel} must explain the tkinter trap")
+
+        # S56: the release is described by a Keep-a-Changelog file whose newest
+        # version agrees with the manifest and with the version the code reports.
+        changelog = ROOT / "CHANGELOG.md"
+        self.assertTrue(changelog.is_file(), "CHANGELOG.md is missing")
+        log = changelog.read_text(encoding="utf-8")
+        version = manifest["version"]
+        self.assertIn("## [Unreleased]", log)
+        self.assertIn(f"## [{version}]", log)
+        self.assertIn("## [0.1.0] - 2026-11-06", log)
+        self.assertLess(log.index("## [Unreleased]"), log.index(f"## [{version}]"))
+        self.assertLess(log.index(f"## [{version}]"), log.index("## [0.1.0]"))
+        code_version = re.search(r'__version__\s*=\s*"([^"]+)"',
+                                 (ROOT / "lwt" / "__init__.py").read_text(encoding="utf-8"))
+        self.assertIsNotNone(code_version)
+        self.assertEqual(code_version.group(1), version)
+        self.assertIn("CHANGELOG.md", readme, "the README first screen must link CHANGELOG.md")
 
 
 if __name__ == "__main__":

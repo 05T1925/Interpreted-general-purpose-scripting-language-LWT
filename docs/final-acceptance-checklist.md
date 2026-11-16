@@ -213,3 +213,16 @@
 | 现场人工 GUI A–E | 无 | 仍不执行；保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
 
 **重要（S55）**：本阶段只补课程第 8 章任务 2 的“测试脚本由 LWT 编写、测试名与功能清单一一对应、一个命令输出每项与总数”口径——**不改语言语义、不改 401 项黑盒期望**。自测证明“清单里每个功能项在语言层面可用”，边界与错误路径仍由 401 项黑盒与 19 条变异探针负责；两者不互相替代。
+
+## S56 v0.3.0 正式发布、PPT 校准与人机分工证据（执行窗口自测；基线未经主窗口复核 S43–S55）
+
+| 交付项 | 仓库位置 | 本轮检查方式 | 状态 |
+|---|---|---|---|
+| PPT 校准 | `slides/LWT介绍.pptx` | 7 处过期文案按任务书原文替换 + 首页“（LWT：刘文涛）”；`tools/render_ppt.py` 重渲染 21/21、0 空白、第 10 页 12 点；7 张改动页由执行窗口（AI）查看 PNG，本人未目视 | 完成 |
+| 变更日志 | `CHANGELOG.md` | Keep a Changelog 1.1.0；`tests/test_delivery_readiness.py` 已有方法内追加断言：版本与 manifest、`lwt/__init__.py` 一致 | 完成 |
+| 附注标签 | `v0.1.0`（`5027860`）、`v0.3.0` | 打在内容提交上，提交包 bundle 须含两个标签；SHA 见 [S56 报告](s56-release.md) | 见报告 |
+| 人机分工 | `docs/human-agent-collaboration.md` | 六环节 × 三角色；3.4 五类决策；9 条实例逐条核对原文 | 完成 |
+| 当前计数 | `docs/delivery-manifest.json` | **401 黑盒 / 758 unittest / 21 页**；未新增 test 方法 | 已同步 |
+| 现场人工 GUI A–E | 无 | 仍不执行；保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
+
+**重要（S56）**：本阶段不改语言语义与黑盒期望；GitHub Release 未建（无 token，标签即发布点）；平台上传 `uploaded=false`；教师线下验收尚未发生。报告见 [s56-release.md](s56-release.md)。

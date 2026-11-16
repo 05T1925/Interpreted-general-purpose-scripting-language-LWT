@@ -76,9 +76,14 @@
     "s55_selftest": "reports/s55-selftest/selftest.json",
     "s55_selftest_md": "reports/s55-selftest/selftest.md",
     "s55_feature_checklist": "docs/feature-checklist.md",
-    "s55_tool": "tools/run_selftest.py"
+    "s55_tool": "tools/run_selftest.py",
+    "s56_release": "docs/s56-release.md",
+    "s56_changelog": "CHANGELOG.md",
+    "s56_collaboration": "docs/human-agent-collaboration.md",
+    "s56_ppt_render": "reports/s56-release/ppt-render.json",
+    "s56_ci": "reports/s56-release/ci-cells.json"
   },
-  "last_verified_utc": "2026-11-12T03:41:58Z",
+  "last_verified_utc": "2026-11-16T16:29:44Z",
   "notes": [
     "unittest_count 为 S55 实测 758（S54 的 752 + LWT 原生自测与工具门禁 6）；S54 报告保留 752 作为冻结快照。",
     "ppt_pages / ppt_sha256 为 S48 最终 PPT（20→21 页，新增「指南消融与现场可质询验收」；旧第 10 页原生图表 12 数值点未变）。",
@@ -93,9 +98,11 @@
     "S53：语义变异探针扩到 18 条（S42 dict/finally/throw + S43 并发），killed 18/18、invalid 0、隔离核验 repo_clean=true；一条 sorted-display 变异真实存活，作为盲区记录而非计入。新增 MCP server（协议级 8 项测试，未做宿主端到端）。PPT 未改动。",
     "S54：dict 键序盲区闭环——新增 dict-display-insertion-order，黑盒 400→401；PPT 第 14/17/18/20 页文案 400→401 并用 PowerPoint COM 重渲染（21/21、无空白、第 10 页图表 12 点仍在），PPT SHA 7cb28b13→809320b2。",
     "S55：按课程第 8 章任务 2「用 LWT 测试 LWT」补 LWT 原生自断言套件 tests/selftest/lwt_selftest.lwt（fn expect + [PASS]/[FAIL] + 末尾 38/38 全部通过，一个命令 python tools/run_selftest.py），并新增 docs/feature-checklist.md（四张表 77 行逐项打勾：功能项 40 + 规范 §7 内置函数 24 + 语法构造 13）；黑盒 401 与 §1–§11 覆盖不变。",
-    "S55：PPT 第 2/6/18/21 页的过期计数改为当前值（287→401、282→394、384→498、5→7 项 CLI 契约、632→758、S49 695→S55 758），改后重新用 PowerPoint COM 渲染（21/21、0 空白、第 10 页图表 12 点未变），ppt_sha256 由 809320b2… 变为 32948385…；S54 的渲染证据与 SHA 保留为冻结快照。"
+    "S55：PPT 第 2/6/18/21 页的过期计数改为当前值（287→401、282→394、384→498、5→7 项 CLI 契约、632→758、S49 695→S55 758），改后重新用 PowerPoint COM 渲染（21/21、0 空白、第 10 页图表 12 点未变），ppt_sha256 由 809320b2… 变为 32948385…；S54 的渲染证据与 SHA 保留为冻结快照。",
+    "S56：v0.3.0 正式发布。PPT 第 1/6/7/15/18/20/21 页 7 处文案校准 + 首页“（LWT：刘文涛）”（裁决 D），COM 重渲染 21/21、无空白、第 10 页 12 点，PPT SHA 32948385→76e4ea39；新增 CHANGELOG.md 与人机分工证据表；附注标签 v0.1.0（5027860）/ v0.3.0；unittest 保持 758，未新增 test 方法。"
   ],
   "submission_bundle": "reports/s48-defense/package-index.json",
   "agent_eval_status": "EXECUTED; T 30/30 (1.000, Wilson 0.886-1.000); C 29/30 (0.967, 0.833-0.995); T-C +0.033 [-0.031,+0.098]",
-  "default_branch": "main"
+  "default_branch": "main",
+  "release_tag": "v0.3.0"
 }

@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "source": "GitHub REST check-runs per exact commit SHA (no badge)",
+  "repo": "05T1925/Interpreted-general-purpose-scripting-language-LWT",
+  "commits": [
+    {
+      "sha": "1973b5468c82ad5bd89f3b24522215d684a3cb71",
+      "role": "S55 final tip, S56 baseline and rollback point",
+      "queried_at_utc": "2026-11-16T16:28:53Z",
+      "cells": [
+        {
+          "name": "ubuntu-latest / Python 3.10",
+          "job_id": 130958780324,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-12T03:48:46Z",
+          "completed_at": "2026-11-12T03:56:31Z",
+          "duration_s": 465,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43150663523/job/130958780324"
+        },
+        {
+          "name": "ubuntu-latest / Python 3.13",
+          "job_id": 130958780247,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-12T03:48:46Z",
+          "completed_at": "2026-11-12T03:53:14Z",
+          "duration_s": 268,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43150663523/job/130958780247"
+        },
+        {
+          "name": "windows-latest / Python 3.10",
+          "job_id": 130958780291,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-12T03:48:47Z",
+          "completed_at": "2026-11-12T03:58:02Z",
+          "duration_s": 555,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43150663523/job/130958780291"
+        },
+        {
+          "name": "windows-latest / Python 3.13",
+          "job_id": 130958780014,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-12T03:48:46Z",
+          "completed_at": "2026-11-12T03:56:50Z",
+          "duration_s": 484,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43150663523/job/130958780014"
+        }
+      ],
+      "all_success": true
+    }
+  ],
+  "note": "Final S56 SHA cells are appended after the release push; a later commit is never inferred from an earlier one."
+}

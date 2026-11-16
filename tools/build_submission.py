@@ -118,7 +118,7 @@ def submission_markdown() -> str:
          "有效行数 243 / 233 / 313（`tools/count_lwt_lines.py`）", "完成"),
         ("7", "Git 历史", "—", "dist/ 内的 lwt-history.bundle、lwt-history.graph.txt",
          "`python tools/build_submission.py`（索引 `reports/s48-defense/package-index.json`）",
-         "bundle 含全部 branches/tags/HEAD；verify=0；索引记录截止 SHA", "完成"),
+         "bundle 含全部 branches/tags/HEAD，含附注标签 v0.1.0 / v0.3.0；verify=0；索引记录截止 SHA；变更日志 `CHANGELOG.md`", "完成"),
         ("8", "系统介绍 PPT", "—", f"slides/LWT介绍.pptx（{pages} 页）",
          "打开 `slides/LWT介绍.pptx`", "第 10 页原生图表 12 数值点自 S43 起未变", "完成"),
     ]
