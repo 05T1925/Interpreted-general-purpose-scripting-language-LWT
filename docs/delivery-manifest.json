@@ -6,7 +6,7 @@
   "blackbox_cases": 401,
   "unittest_count": 758,
   "ppt_pages": 21,
-  "ppt_sha256": "32948385751316be2073770a9f15145da98a134bb0d2c78b1e883dee880eb379",
+  "ppt_sha256": "76e4ea39748a8c47839f31335f7a981e4dbb8ee19314163f602c470dbcdfc5a2",
   "ppt_chart_points": 12,
   "protected_paths": [
     "bench/results.json",
