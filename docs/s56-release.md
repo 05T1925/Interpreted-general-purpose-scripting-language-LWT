@@ -61,20 +61,69 @@ Fixed 只列产品缺陷：S45 的通道重复投递。测试与工具链修正�
 
 ## 4. WP4：人机分工证据表
 
-见 [human-agent-collaboration.md](human-agent-collaboration.md)：六个环节 × 三种角色；第 3 章 3.4 五类决策逐项列本人实际做过的决策（“发起 PR”与“最终评审”如实写未发生）；**9 条**复核抓到 AI 错误的实例，每条都打开原文件核对后给出文件与小节。任务书候选“S48 报告写 16/16、实测 15/16”在全仓找不到对应原文，**未列入**。“是不是 Vibe Coding”的回答：代码层面接近，本人没有逐行审；质量靠可复算证据，决策保留在本人。答辩卡新增一问，runbook 第 7 页降级证据加链接。
+见 [human-agent-collaboration.md](human-agent-collaboration.md)：六个环节 × 三种角色；第 3 章 3.4 五类决策逐项列本人实际做过的决策（“发起 PR”与“最终评审”如实写未发生）；**11 条**复核抓到 AI 错误的实例（第 10、11 条是标签后发现的），每条都打开原文件核对后给出文件与小节。任务书候选“S48 报告写 16/16、实测 15/16”在全仓找不到对应原文，**未列入**。“是不是 Vibe Coding”的回答：代码层面接近，本人没有逐行审；质量靠可复算证据，决策保留在本人。答辩卡新增一问，runbook 第 7 页降级证据加链接。
 
 ## 5. WP3：附注标签与发布
 
 顺序（避开“包里要记录包自身”的循环）：WP1、WP2、WP4 内容全部提交为 X → `v0.1.0` 补打在 `5027860`（已核对 `__version__ == "0.1.0"`）、`v0.3.0` 打在 X → 在 X 之后重建提交包并提交索引 Y → 推送 `main` 与两个标签。标签不能包含记录它自己 SHA 的内容，所以本节与第 6 节的具体 SHA、包与克隆数字在打标签之后追加，不在 `v0.3.0` 指向的提交里。
+
+| 标签 | 标签对象 | 指向提交 | 核对 |
+|---|---|---|---|
+| `v0.1.0` | `f99b6f851aca` | `5027860efc8a1cce342ca13b1434d7724aeeffc4`（S12 main 同步） | 该提交 `__version__ == "0.1.0"` |
+| `v0.3.0` | `0d9e4b3dda6b` | `b551f7eeae0a8093562149026845a011670ca562`（X） | 该提交 `__version__ == "0.3.0"` |
+
+- 两个都是附注标签（`git cat-file -t` 为 `tag`，记录打标签者、时间与说明）；没有打 `v0.2.0`。
+- 推送：先 `main`（`40c56a8`），等 `40c56a8` 四格 4/4 后再推两个标签，均走 SSH；`git ls-remote --tags` 能看到 `refs/tags/v0.1.0`、`refs/tags/v0.3.0` 及其 `^{}`。
+- 在 Y 上 `git describe --tags` 输出 `v0.3.0-1-g40c56a8`。
+- 没有 token，不建 GitHub Release；**标签即发布点**。
 
 **回滚方案（第 6 章 6.2）**：
 
 - 发布有问题时，老师可 `git checkout 1973b54`：S55 最终 tip，四格 CI 4/4。S56 没有改 `lwt/` 运行时代码，语言行为与 `1973b54` 相同，差别只在 PPT 文案、文档、CHANGELOG 和测试常量。
 - 需要修复时，从 `v0.3.0` 拉分支修复，再打 `v0.3.1`；**不移动、不删除、不强推**已推送的标签。
 
-## 6. 包、克隆、CI 与自检
+## 6. 包、克隆、CI 与自检（打标签之后追加）
 
-打标签之后追加。
+### 6.1 发布包与验证
+
+| 项 | 结果 |
+|---|---|
+| 发布包 | 在 X（= `v0.3.0`）打包，权威数字见[包索引](../reports/s48-defense/package-index.json)：zip `a437ac84cbec…`、**1894 项**；bundle `b660c61fbfaa…`，`git bundle verify` 退出 0；`list-heads` 含 `refs/heads/main = b551f7e`、`refs/tags/v0.1.0`、`refs/tags/v0.3.0`、`HEAD` |
+| 包索引提交 Y | `40c56a8`；当时 `check_package_lag` lag=1、outside=0 |
+| 干净克隆 | [fresh-clone.json](../reports/s56-release/fresh-clone.json)：clone HEAD `b551f7e` → tip `40c56a8`，6 条命令退出 0，黑盒 **401/401**（127.9 s，总 133.4 s）；另从同一 bundle 克隆，`git tag -l` 为 `v0.1.0 v0.3.0`，`git describe --tags` 为 `v0.3.0` |
+| 平台包 | `check_platform_bundle.py --verify-blackbox`：每个 SHA 一致，解压后 **401/401**，`all_pass=true`，`uploaded=false` |
+| 401 黑盒（工作区） | `python tools/run_tests.py` **401/401**，165.8 s |
+| 单命令全量（本地） | `py -3.13 tools/run_unittest_single.py --out-dir reports/s56-release`：**758 项 OK，退出 0，871.1 s**，Python 3.13.7、Tk 8.6（[证据](../reports/s56-release/unittest-single-command.json)） |
+| 快速自检 | `--skip-heavy` 在 `be3e5f5` 上 `all_pass=true`（[selfcheck](../reports/s56-release/selfcheck/)）。第一次运行只因克隆与平台证据尚未提交而在 `git` 步失败，该输出已丢弃，在干净树上重跑 |
+| unittest 计数 | `py -3.13` discover **758**，未新增 test 方法 |
+| 保护路径 / `lwt/` | 相对 `1973b54` 零差异 |
+
+### 6.2 CI 四格（按精确 SHA，REST check-runs，[ci-cells.json](../reports/s56-release/ci-cells.json)）
+
+| 提交 | 角色 | 触发 | 结论 | 用时（u3.10 / u3.13 / w3.10 / w3.13） |
+|---|---|---|---|---|
+| `1973b54` | S55 最终 tip、回滚点 | 分支推送 | **4/4 success** | 465 / 268 / 555 / 484 s |
+| `d784867` | WP1 PPT 校准 | 分支推送 | **4/4 success** | 376 / 302 / 533 / 290 s |
+| `b551f7e` | **`v0.3.0` 指向的提交** | **标签推送** | **0/4，四格 failure** | 475 / 342 / 415 / 384 s |
+| `40c56a8` | Y：v0.3.0 的包索引 | 分支推送 | **4/4 success** | 318 / 427 / 575 / 466 s |
+
+最终证据提交自身的四格不写回仓库（写回就会产生新 SHA），在执行交接里报告。
+
+### 6.3 `v0.3.0` 标签提交的 CI 为什么红（如实）
+
+- 现象：工作流 `on: push` 不区分分支和标签，推送标签后 GitHub 对 `b551f7e` 又跑了一次四格，四格全红。作业日志要管理员权限，匿名 API 返回 403，没读到。
+- 本地复现：按 `actions/checkout` 对标签的做法造一个检出（`git init`、`fetch --depth=1 +refs/tags/v0.3.0`、detached checkout，没有任何 `refs/heads/*`），`tests.test_submission_bundle` 的 `test_build_produces_verifiable_bundle_and_zip` 失败：`tools/build_submission.py` 的 S48 守卫从 bundle 里读 `refs/heads/main`，读到 `None`，输出 `REF LAG: bundle main None != final tip …` 并返回 2。在同一个模拟检出里用 `py -3.13` 跑全量：**758 项中只有这 1 条失败**（另有 1 项 skip，`-q` 输出不显示名称），日志见 [tag-checkout-unittest.log](../reports/s56-release/tag-checkout-unittest.log)。
+- 结论：这是打包工具对 CI 检出环境的假设（默认总有本地 `main`），不是产品缺陷。内容相同、只多一个包索引文件的 `40c56a8` 走分支推送，四格 4/4 绿。
+- 裁决（本人，2026-11-17）：**只记录，不发 v0.3.1**；标签不移动、不删除、不强推；今天不改代码。修复方向（留给 v0.3.1）：bundle 里没有 `refs/heads/main` 时改用 bundle 的 `HEAD` 核对最终 tip。
+- 对 PPT 的影响：第 21 页“CI 四格按最终 SHA 逐格通过”指 `main` 的最终 SHA；标签触发的那一次是红的，答辩卡已加对应问答。
+
+### 6.4 发布后的包滞后（如实）
+
+包停在 `v0.3.0`。写 X 时我没有把 S56 的标签后证据路径加进打包白名单，所以之后的证据提交让 `check_package_lag` 出现白名单外文件：`reports/s56-release/fresh-clone.{json,md}`、`reports/s56-release/selfcheck/…`，以及本次收口新增的 S56 报告、CI 与全量证据。为了让发布包与标签一致，**不重打包**；`git diff --stat v0.3.0..HEAD -- lwt app tools tests` 为空，标签之后没有任何代码或测试改动。
+
+### 6.5 已知残留
+
+`app/lwt_snake/strategies/test-fc2a5aed8f1246459baf75667cb5b803.lwt` 是 S55 提交 `9f867eb` 误入库的测试产物，`1973b54` 与 `v0.3.0` 中都有；它不在策略目录 `strategy-catalog.json` 里。代码已冻结，本轮没有删除，留给 v0.3.1。
 
 ## 7. 未验证项（如实）
 
@@ -82,4 +131,5 @@ Fixed 只列产品缺陷：S45 的通道重复投递。测试与工具链修正�
 - PPT 改动页：只有执行窗口（AI）看过 PNG，本人尚未目视。
 - 教学云平台上传：本人动作，`uploaded=false`。
 - GitHub Release：没有 token，不建；**标签即发布点**。
+- `v0.3.0` 标签提交本身的四格 CI：**失败**（见 §6.3），根因已在本地复现，未修复。
 - 教师线下验收：尚未发生。

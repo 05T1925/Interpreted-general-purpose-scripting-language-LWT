@@ -221,7 +221,7 @@
 | PPT 校准 | `slides/LWT介绍.pptx` | 7 处过期文案按任务书原文替换 + 首页“（LWT：刘文涛）”；`tools/render_ppt.py` 重渲染 21/21、0 空白、第 10 页 12 点；7 张改动页由执行窗口（AI）查看 PNG，本人未目视 | 完成 |
 | 变更日志 | `CHANGELOG.md` | Keep a Changelog 1.1.0；`tests/test_delivery_readiness.py` 已有方法内追加断言：版本与 manifest、`lwt/__init__.py` 一致 | 完成 |
 | 附注标签 | `v0.1.0`（`5027860`）、`v0.3.0` | 打在内容提交上，提交包 bundle 须含两个标签；SHA 见 [S56 报告](s56-release.md) | 见报告 |
-| 人机分工 | `docs/human-agent-collaboration.md` | 六环节 × 三角色；3.4 五类决策；9 条实例逐条核对原文 | 完成 |
+| 人机分工 | `docs/human-agent-collaboration.md` | 六环节 × 三角色；3.4 五类决策；11 条实例逐条核对原文；`v0.3.0` 标签触发的四格 CI 失败已记录（见报告 §6.3） | 完成 |
 | 当前计数 | `docs/delivery-manifest.json` | **401 黑盒 / 758 unittest / 21 页**；未新增 test 方法 | 已同步 |
 | 现场人工 GUI A–E | 无 | 仍不执行；保持 `REGISTERED 0/5`、`NOT_RUN` | 未验证 |
 

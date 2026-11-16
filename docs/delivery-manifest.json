@@ -81,7 +81,10 @@
     "s56_changelog": "CHANGELOG.md",
     "s56_collaboration": "docs/human-agent-collaboration.md",
     "s56_ppt_render": "reports/s56-release/ppt-render.json",
-    "s56_ci": "reports/s56-release/ci-cells.json"
+    "s56_ci": "reports/s56-release/ci-cells.json",
+    "s56_fresh_clone": "reports/s56-release/fresh-clone.json",
+    "s56_selfcheck": "reports/s56-release/selfcheck/selfcheck-20261116T164203Z.json",
+    "s56_unittest": "reports/s56-release/unittest-single-command.json"
   },
   "last_verified_utc": "2026-11-16T16:29:44Z",
   "notes": [

@@ -36,6 +36,7 @@
 | 合并 | S47 裁决 B1：`main` 快进到功能分支；S54、S56 裁决 A：直接在 `main` 上工作 | [S47 报告](s47-final-submission.md) §6、[S54 报告](s54-closeout.md) §1 |
 | 生产发布 | 版本号 0.3.0：仓库原文写“版本号由主窗口裁决（2026-11-08），执行窗口按裁决写入，不自行二选一”；任务书经本人下达，但原文没有区分是本人提出还是规划窗口提出 | [manifest](delivery-manifest.json) `version_rationale`、[project.md](../project.md) S45 段 |
 | 生产发布 | S56 裁决 D：PPT 首页与规范 §1 写明“LWT：刘文涛” | [S56 报告](s56-release.md) §1 |
+| 生产发布 / 恢复方案 | `v0.3.0` 标签提交的四格 CI 失败后，执行窗口给出三个选项（只记录 / 只修 main / 发 v0.3.1），本人裁决**只记录、不发 v0.3.1**，标签不动 | [S56 报告](s56-release.md) §6.3 |
 | 评审范围 | S48 裁决 B1：冻结题面 v2，T/C 两组 × 5 样本共 60 个独立会话做指南消融 | [S48 报告](s48-defense-readiness.md)首段、[S48 盲测](s48-agent-eval.md) |
 | 验收 | GUI A–E 由本人执行：截至 2026-11-17 **未执行**，`REGISTERED 0/5`、`NOT_RUN`；启动预检不算验收 | [GUI 速查](gui-acceptance-quickref.md)、[S54 报告](s54-closeout.md) |
 | 发布渠道 | 教学云平台上传由本人做：截至本文 `uploaded=false` | [平台清单](platform-submission.md) |
@@ -53,6 +54,8 @@
 | 7 | S53 的单命令 unittest 工具：失败运行覆盖成功证据，门禁因此永久变红（自指死锁） | S53 执行窗口在全量失败后定位 | 失败另存 `*.failed.json`，不覆盖成功证据 | [S53 报告](s53-mutation-interface.md) §5.1 |
 | 8 | S54 任务书（规划复核窗口）给的 PPT 图表判据是“第 10 页暗像素比最高” | S54 执行窗口实测：第 10 页 `dark_ratio` 排第 21，因为柱状图是彩色的 | 改为“方差高于中位且方差、墨迹比均排第一”，保留 `dark_ratio` 作对照 | [S54 报告](s54-closeout.md) §2.2 |
 | 9 | `tools/verify_fresh_clone.py` 把黑盒期望写死为 400，401 项的树被判 FAIL（实际 401/401、退出 0） | S54 干净克隆时发现 | 改为读被克隆仓库 manifest 的期望数 | 提交 `12b2681` |
+| 10 | S48 加的打包守卫默认 CI 检出里总有本地 `main`；推送 `v0.3.0` 标签后，标签触发的检出没有 `refs/heads/main`，打包测试判 REF LAG，四格全红 | GitHub CI 按精确 SHA 报红；执行窗口按 `actions/checkout` 的标签检出方式在本地复现 | 本人裁决只记录、不发 v0.3.1；标签不动 | [S56 报告](s56-release.md) §6.3、[CI 记录](../reports/s56-release/ci-cells.json) |
+| 11 | S56 执行窗口写内容提交 X 时没把标签后证据路径加进打包白名单，打包后 lag 出现白名单外文件 | 执行窗口用 `tools/check_package_lag.py` 自查发现 | 不重打包（保持发布包 = `v0.3.0`），在报告逐个列出 | [S56 报告](s56-release.md) §6.4 |
 
 **没有列入的候选**：任务书提到“S48 报告写 16/16，实测 15/16”。全仓检索只找到 S49 §3.1 把“领先 15/16 笔”这类一次性数字改成“以 `git rev-list --count` 实测为准”，无法确认“写 16、实为 15”的说法，所以不作为实例。
 

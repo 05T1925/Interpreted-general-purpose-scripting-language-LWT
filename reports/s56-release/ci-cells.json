@@ -50,7 +50,155 @@
         }
       ],
       "all_success": true
+    },
+    {
+      "sha": "d784867a1f98915c0eb69cb4246b49ab42314fa7",
+      "role": "S56 WP1 (PPT calibration) push",
+      "trigger": "branch push",
+      "queried_at_utc": "2026-11-16T17:06:02Z",
+      "cells": [
+        {
+          "name": "ubuntu-latest / Python 3.10",
+          "job_id": 133436571080,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-16T16:20:59Z",
+          "completed_at": "2026-11-16T16:27:15Z",
+          "duration_s": 376,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43906476916/job/133436571080"
+        },
+        {
+          "name": "ubuntu-latest / Python 3.13",
+          "job_id": 133436570640,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-16T16:20:59Z",
+          "completed_at": "2026-11-16T16:26:01Z",
+          "duration_s": 302,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43906476916/job/133436570640"
+        },
+        {
+          "name": "windows-latest / Python 3.10",
+          "job_id": 133436571266,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-16T16:20:59Z",
+          "completed_at": "2026-11-16T16:29:52Z",
+          "duration_s": 533,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43906476916/job/133436571266"
+        },
+        {
+          "name": "windows-latest / Python 3.13",
+          "job_id": 133436573009,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-16T16:20:59Z",
+          "completed_at": "2026-11-16T16:25:49Z",
+          "duration_s": 290,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43906476916/job/133436573009"
+        }
+      ],
+      "all_success": true
+    },
+    {
+      "sha": "b551f7eeae0a8093562149026845a011670ca562",
+      "role": "v0.3.0 tag commit X; run triggered by the tag push",
+      "trigger": "tag push",
+      "queried_at_utc": "2026-11-16T17:06:02Z",
+      "cells": [
+        {
+          "name": "ubuntu-latest / Python 3.10",
+          "job_id": 133454217986,
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-16T16:48:05Z",
+          "completed_at": "2026-11-16T16:56:00Z",
+          "duration_s": 475,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43911476403/job/133454217986"
+        },
+        {
+          "name": "ubuntu-latest / Python 3.13",
+          "job_id": 133454218562,
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-16T16:48:05Z",
+          "completed_at": "2026-11-16T16:53:47Z",
+          "duration_s": 342,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43911476403/job/133454218562"
+        },
+        {
+          "name": "windows-latest / Python 3.10",
+          "job_id": 133454218725,
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-16T16:48:05Z",
+          "completed_at": "2026-11-16T16:55:00Z",
+          "duration_s": 415,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43911476403/job/133454218725"
+        },
+        {
+          "name": "windows-latest / Python 3.13",
+          "job_id": 133454218638,
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-16T16:48:05Z",
+          "completed_at": "2026-11-16T16:54:29Z",
+          "duration_s": 384,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43911476403/job/133454218638"
+        }
+      ],
+      "all_success": false,
+      "failure_analysis": "All four cells failed. Job logs need admin rights and were not read. Reproduced locally by mimicking actions/checkout for a tag (git init; fetch --depth=1 +refs/tags/v0.3.0; detached checkout; no refs/heads/*): tests.test_submission_bundle.BuildPackageTests.test_build_produces_verifiable_bundle_and_zip fails because tools/build_submission.py reads refs/heads/main from the bundle, finds none, prints 'REF LAG: bundle main None != final tip' and returns 2. Packaging-tool assumption about the CI checkout, not a product defect: 40c56a8 (same tree plus the package index, branch push) is 4/4 green. Ruling (author, 2026-11-17): record only, no v0.3.1 today; the tag is not moved. Full suite in the same mimicked tag checkout (py -3.13): Ran 758, FAILED (failures=1, skipped=1); the only failure is that test (reports/s56-release/tag-checkout-unittest.log)."
+    },
+    {
+      "sha": "40c56a83146003dd963655e0109e19e9fd3370f9",
+      "role": "Y: package index at v0.3.0",
+      "trigger": "branch push",
+      "queried_at_utc": "2026-11-16T17:06:02Z",
+      "cells": [
+        {
+          "name": "ubuntu-latest / Python 3.10",
+          "job_id": 133445920631,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-16T16:35:18Z",
+          "completed_at": "2026-11-16T16:40:36Z",
+          "duration_s": 318,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43909133659/job/133445920631"
+        },
+        {
+          "name": "ubuntu-latest / Python 3.13",
+          "job_id": 133445921412,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-16T16:35:18Z",
+          "completed_at": "2026-11-16T16:42:25Z",
+          "duration_s": 427,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43909133659/job/133445921412"
+        },
+        {
+          "name": "windows-latest / Python 3.10",
+          "job_id": 133445921203,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-16T16:35:18Z",
+          "completed_at": "2026-11-16T16:44:53Z",
+          "duration_s": 575,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43909133659/job/133445921203"
+        },
+        {
+          "name": "windows-latest / Python 3.13",
+          "job_id": 133445921313,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-16T16:35:18Z",
+          "completed_at": "2026-11-16T16:43:04Z",
+          "duration_s": 466,
+          "url": "https://github.com/05T1925/Interpreted-general-purpose-scripting-language-LWT/actions/runs/43909133659/job/133445921313"
+        }
+      ],
+      "all_success": true
     }
   ],
-  "note": "Final S56 SHA cells are appended after the release push; a later commit is never inferred from an earlier one."
+  "note": "Exact-SHA REST check-runs, no badge. The final evidence commit's own cells are not written back, because writing them would create a new SHA; they are reported in the hand-off. A later commit is never inferred from an earlier one."
 }
