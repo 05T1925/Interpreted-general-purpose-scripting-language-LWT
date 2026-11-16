@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-12T03:48:20Z",
+  "generated_at_utc": "2026-11-16T16:41:28Z",
   "platform": {
     "name": "教学云平台",
     "url": "https://ucloud.bupt.edu.cn/",
@@ -9,34 +9,34 @@
   "uploaded": false,
   "upload_note": "上传动作由本人执行；本工具只校验清单与 SHA，不代表已经提交。",
   "package_index": "reports/s48-defense/package-index.json",
-  "final_tip_sha": "d1a827092ac98ebd8c2daff65416937f2ec8119d",
+  "final_tip_sha": "b551f7eeae0a8093562149026845a011670ca562",
   "items": [
     {
       "name": "提交包 zip",
-      "path": "dist/lwt-submission-20261112T034306Z/lwt-submission.zip",
+      "path": "dist/lwt-submission-20261116T163412Z/lwt-submission.zip",
       "exists": true,
-      "sha256": "a059038ac4fc91c8faad07b4ec77485dc6a3889449f2b39f9e5d057cc396a2a5",
-      "expected_sha256": "a059038ac4fc91c8faad07b4ec77485dc6a3889449f2b39f9e5d057cc396a2a5",
+      "sha256": "a437ac84cbece3f3c74cdf89f0780ca38b7a213e4d9895a4cb51c4b6ad74beff",
+      "expected_sha256": "a437ac84cbece3f3c74cdf89f0780ca38b7a213e4d9895a4cb51c4b6ad74beff",
       "sha_ok": true,
       "required": true,
       "note": "解压后即为完整仓库；--verify-blackbox 会实跑 401 黑盒"
     },
     {
       "name": "Git 历史 bundle",
-      "path": "dist/lwt-submission-20261112T034306Z/lwt-history.bundle",
+      "path": "dist/lwt-submission-20261116T163412Z/lwt-history.bundle",
       "exists": true,
-      "sha256": "9cc93d1863aff07518a9e8dce14eacc381fd0f63035f6ae7a39b39b6c08ee44c",
-      "expected_sha256": "9cc93d1863aff07518a9e8dce14eacc381fd0f63035f6ae7a39b39b6c08ee44c",
+      "sha256": "b660c61fbfaa55f776ad35cbbd850b66dc59a04dfedfc751c183e2a31cb21d2a",
+      "expected_sha256": "b660c61fbfaa55f776ad35cbbd850b66dc59a04dfedfc751c183e2a31cb21d2a",
       "sha_ok": true,
       "required": true,
-      "note": "截止 SHA d1a827092ac9；git fetch <bundle> main 可复核"
+      "note": "截止 SHA b551f7eeae0a；git fetch <bundle> main 可复核"
     },
     {
       "name": "PPT",
       "path": "slides/LWT介绍.pptx",
       "exists": true,
-      "sha256": "32948385751316be2073770a9f15145da98a134bb0d2c78b1e883dee880eb379",
-      "expected_sha256": "32948385751316be2073770a9f15145da98a134bb0d2c78b1e883dee880eb379",
+      "sha256": "76e4ea39748a8c47839f31335f7a981e4dbb8ee19314163f602c470dbcdfc5a2",
+      "expected_sha256": "76e4ea39748a8c47839f31335f7a981e4dbb8ee19314163f602c470dbcdfc5a2",
       "sha_ok": true,
       "required": true,
       "note": "21 页；内容本阶段未改动"
@@ -45,8 +45,8 @@
       "name": "README.md",
       "path": "README.md",
       "exists": true,
-      "sha256": "95b2801de941823dee455a51be51baf8acc2034b21e612ae5b908e642c2102ab",
-      "expected_sha256": "95b2801de941823dee455a51be51baf8acc2034b21e612ae5b908e642c2102ab",
+      "sha256": "5c7ac465167e71286ac5c342cbd2f7a5a7b17b62adef9544283e959b3ad5fe9d",
+      "expected_sha256": "5c7ac465167e71286ac5c342cbd2f7a5a7b17b62adef9544283e959b3ad5fe9d",
       "sha_ok": true,
       "required": true,
       "note": "教师入口：三分钟验收路径 + 当前状态"
@@ -55,8 +55,8 @@
       "name": "SUBMISSION.md",
       "path": "SUBMISSION.md",
       "exists": true,
-      "sha256": "0b02ad80349ab6b245778eacef904d111221255a5f402808976b5f66c9b549b1",
-      "expected_sha256": "0b02ad80349ab6b245778eacef904d111221255a5f402808976b5f66c9b549b1",
+      "sha256": "cb29767db27fe3ef6da9e4db2c1488ab50d6b40aaee76e149e1172303f878c3e",
+      "expected_sha256": "cb29767db27fe3ef6da9e4db2c1488ab50d6b40aaee76e149e1172303f878c3e",
       "sha_ok": true,
       "required": true,
       "note": "8 项提交内容 + 第 8 章任务对照"
@@ -65,8 +65,8 @@
       "name": "docs/language-spec.md",
       "path": "docs/language-spec.md",
       "exists": true,
-      "sha256": "f7d8a9649ea0f5c4d84a8a59341d3107a8b77e387734671effbb9743b526cabb",
-      "expected_sha256": "f7d8a9649ea0f5c4d84a8a59341d3107a8b77e387734671effbb9743b526cabb",
+      "sha256": "c4c3c3e2f5d970b9b878ec56a04af62a84423cd7559ed7f8aca38069f829260d",
+      "expected_sha256": "c4c3c3e2f5d970b9b878ec56a04af62a84423cd7559ed7f8aca38069f829260d",
       "sha_ok": true,
       "required": true,
       "note": "§1–§11 正式语言规范"
@@ -85,8 +85,8 @@
       "name": "docs/defense-qa-card.md",
       "path": "docs/defense-qa-card.md",
       "exists": true,
-      "sha256": "0f7859d827c6e925d8b1de1f73ffcd5cb0ce55cc475039ba322fd550a668df07",
-      "expected_sha256": "0f7859d827c6e925d8b1de1f73ffcd5cb0ce55cc475039ba322fd550a668df07",
+      "sha256": "b6b5d0c0c5a5f777eccb3da043814e5ce7af91fd60b0ef9d7016afd5c6f26c6f",
+      "expected_sha256": "b6b5d0c0c5a5f777eccb3da043814e5ce7af91fd60b0ef9d7016afd5c6f26c6f",
       "sha_ok": true,
       "required": true,
       "note": "答辩问答卡"
