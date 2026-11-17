@@ -119,7 +119,7 @@ Fixed 只列产品缺陷：S45 的通道重复投递。测试与工具链修正�
 
 ### 6.4 发布后的包滞后（如实）
 
-包停在 `v0.3.0`。写 X 时我没有把 S56 的标签后证据路径加进打包白名单，所以之后的证据提交让 `check_package_lag` 出现白名单外文件：`reports/s56-release/fresh-clone.{json,md}`、`reports/s56-release/selfcheck/…`，以及本次收口新增的 S56 报告、CI 与全量证据。为了让发布包与标签一致，**不重打包**；`git diff --stat v0.3.0..HEAD -- lwt app tools tests` 为空，标签之后没有任何代码或测试改动。
+包停在 `v0.3.0`。写 X 时我没有把 S56 的标签后证据路径加进打包白名单，所以之后的证据提交让 `check_package_lag` 出现白名单外文件：`reports/s56-release/fresh-clone.{json,md}`、`reports/s56-release/selfcheck/…`，以及本次收口新增的 S56 报告、CI 与全量证据。为了让发布包与标签一致，**不重打包**。截至 S56 收口（`878dc05`），`git diff --stat v0.3.0..HEAD -- lwt app tools tests` 为空；S56.1 热修之后，`tools/run_acceptance_selfcheck.py`、`tools/build_defense_index.py`、`tests/test_delivery_readiness.py` 与 `docs/defense-claims.json` 有改动（见 §8），`lwt/`、`app/` 仍与 `v0.3.0` 零差异。
 
 ### 6.5 已知残留
 
@@ -133,3 +133,36 @@ Fixed 只列产品缺陷：S45 的通道重复投递。测试与工具链修正�
 - GitHub Release：没有 token，不建；**标签即发布点**。
 - `v0.3.0` 标签提交本身的四格 CI：**失败**（见 §6.3），根因已在本地复现，未修复。
 - 教师线下验收：尚未发生。
+
+## 8. S56.1 热修：答辩断言 fresh-clone 恒红（2026-11-17，不发版）
+
+裁决（本人）：E 今天热修；B 授权 SSH 推送 `main`，不推任何标签；控制台允许最小改 `tools/build_defense_index.py`。不改 `lwt/`、`app/`、`tests/cases/`、`slides/`，不改版本号与标签，不重打包，不新增 test 方法。
+
+### 8.1 发现与根因
+
+- 发现：规划复核窗口（AI）实跑 `run_defense_probe.py --all --skip-heavy`，21 条中 20 PASS、1 FAIL，只有 `fresh-clone` 失败。
+- 根因：断言命令里写死了 `bb==400`（S48 提交 `682fdd9` 写入）。S54 提交 `ce5be00` 把黑盒加到 401 后，这条断言一直输出 `MISS`。S54 同步计数时，执行窗口漏掉了命令字符串里的这个字面量。
+- 为什么一直显示通过：自检的 `_step_defense_probe` 只读 `reports/s53-mutation/defense-probe.json`（2026-11-11 生成，24/24，早于 S54），而且结果里不带记录路径和时间；离线证据台不显示任何状态，页脚还指向 S49 的探针文件。
+- 修前复现：`py -3.13 tools/run_defense_probe.py --claim fresh-clone` → `FAIL`，退出码 0，stdout `MISS`。
+
+### 8.2 修复（先红后绿）
+
+| 步骤 | 内容 | 结果 |
+|---|---|---|
+| 防复发 | `tests/test_delivery_readiness.py` 已有方法 `test_evidence_paths_exist` 内追加：实跑 fresh-clone 断言命令，stdout 须含 `OK` | 修前红：`'OK' not found in 'MISS\n'`；修后绿 |
+| 断言 | `docs/defense-claims.json` 只改 fresh-clone：期望值读 `docs/delivery-manifest.json` 的 `blackbox_cases`，输出带实际数字与证据路径；`evidence_path` 改指 `reports/s56-release/fresh-clone.json`；claim 文本不动 | `OK blackbox=401/401 reports/s56-release/fresh-clone.json` |
+| 自检 | `_step_defense_probe` 优先读 `reports/s56-hotfix/defense-probe.json`；结果带 `source`、`generated_at_utc`，读到旧记录时标 `fallback_to_older_record` | 见 §8.4 |
+| 证据台 | `tools/build_defense_index.py` 每条断言加“记录状态（非现场）”列，显示状态与 `recorded_at_utc`；页脚写出记录路径与生成时间，并注明它是历史记录 | fresh-clone 显示 `PASS · 2026-11-17T02:26:26Z` |
+
+### 8.3 留证（[defense-probe.json](../reports/s56-hotfix/defense-probe.json)）
+
+- `--all --skip-heavy`：**21/21 PASS**。
+- `--claim blackbox --claim determinism --merge` 写入同一文件：**23/23 PASS**，生成于 2026-11-17T02:32:29Z。blackbox `passed=401 failed=0 total=401`（148.2 s）；determinism 46 项 × 10 次，`stable=True failures=0`。
+- `unittest` 重型断言**没有重跑**：它会改写 S54 证据和对应门禁。全量证据引用 S56 本地运行 [unittest-single-command.json](../reports/s56-release/unittest-single-command.json)：`py -3.13`，758 项 OK，871.1 s。证据台上这一条显示 `UNRUN`。
+
+### 8.4 门禁与边界
+
+- `py -3.13` discover **758**（未新增 test 方法）；`tests.test_delivery_readiness`、`tests.test_doc_consistency` 42 项 OK；完整性 401 cases、498 links、401 referenced；Markdown 链接 0 断链；compileall 通过；`build_defense_index.py --check` up to date。
+- `git diff 878dc05 -- lwt app tests/cases slides` 为空。
+- 快速自检 `--skip-heavy` 在提交后的干净树上运行，输出到系统临时目录，不写回仓库；结果见执行交接。
+- 未做：平台提交包仍是 `v0.3.0` 的包，里面是修前的 `docs/defense-claims.json`（fresh-clone 写死 400）、旧自检与旧证据台；本轮不重打包、不打标签。

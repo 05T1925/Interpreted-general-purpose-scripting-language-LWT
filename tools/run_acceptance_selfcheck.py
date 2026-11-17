@@ -189,8 +189,12 @@ def _step_defense_probe() -> dict[str, Any]:
     """S48: summarize the last defense-probe run; never invent a pass."""
 
     # Each phase keeps its own merged probe; prefer the newest and fall back to
-    # the frozen S50/S49/S48 files when a phase directory is absent.
+    # the frozen S53/S50/S49/S48 files when a phase directory is absent.
+    # S56.1: this step read the 2026-11-11 S53 record for days after the
+    # fresh-clone claim had turned red, so the record's path and timestamp are
+    # now part of the result: an old record can no longer pass as today's run.
     candidates = [
+        ROOT / "reports" / "s56-hotfix" / "defense-probe.json",
         ROOT / "reports" / "s53-mutation" / "defense-probe.json",
         ROOT / "reports" / "s50-closeout" / "defense-probe-merge.json",
         ROOT / "reports" / "s49-rehearsal" / "defense-probe.json",
@@ -199,19 +203,27 @@ def _step_defense_probe() -> dict[str, Any]:
     path = next((item for item in candidates if item.exists()), None)
     if path is None:
         return {"status": "NOT_RUN", "pass": None,
-                "detail": "run tools/run_defense_probe.py --claim unittest --merge "
-                          "--out reports/s50-closeout/defense-probe-merge.json"}
+                "detail": "run tools/run_defense_probe.py --all --skip-heavy "
+                          "--out reports/s56-hotfix/defense-probe.json"}
     doc = json.loads(path.read_text(encoding="utf-8"))
     passed = doc.get("passed", 0)
     ran = doc.get("ran", 0)
     failed = doc.get("failed", 0)
+    source = path.relative_to(ROOT).as_posix()
+    generated = doc.get("generated_at_utc", "unknown")
+    fallback = path != candidates[0]
     return {
         "status": "PASS" if ran and failed == 0 else "FAIL",
         "pass": bool(ran and failed == 0),
         "ran": ran,
         "passed": passed,
         "failed": failed,
-        "detail": f"last probe PASS {passed}/{ran}; rerun --all to include heavy rows",
+        "source": source,
+        "generated_at_utc": generated,
+        "fallback_to_older_record": fallback,
+        "detail": (f"probe record {source} generated {generated}: PASS {passed}/{ran}"
+                   + ("; OLDER RECORD (preferred file missing), not today's run" if fallback else "")
+                   + "; this step reads a record, rerun run_defense_probe.py to refresh it"),
     }
 
 

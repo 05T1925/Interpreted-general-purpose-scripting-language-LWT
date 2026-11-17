@@ -38,6 +38,20 @@ class DefenseClaimsTests(unittest.TestCase):
         ]
         self.assertEqual(missing, [], f"claims point at missing evidence: {missing}")
 
+        # S56.1: the fresh-clone claim hard-coded bb==400 and stayed red after
+        # the suite grew to 401, while the selfcheck kept showing an old PASS.
+        # Run the claim's real command so a stale literal turns this test red.
+        import subprocess
+        import sys
+
+        fresh = next(claim for claim in doc["claims"] if claim["id"] == "fresh-clone")
+        argv = [sys.executable if part == "python" else part for part in fresh["command"]]
+        run = subprocess.run(argv, cwd=ROOT, capture_output=True, text=True,
+                             encoding="utf-8", timeout=120, check=False)
+        self.assertEqual(run.returncode, fresh["expect"]["exit_code"], run.stderr)
+        self.assertIn(fresh["expect"]["stdout_contains"], run.stdout,
+                      f"fresh-clone claim must pass on the current evidence: {run.stdout!r}")
+
     def test_defense_html_is_offline_single_file(self) -> None:
         html = (ROOT / "docs" / "defense-index.html").read_text(encoding="utf-8")
         self.assertIn("LWT 现场可质询证据台", html)
